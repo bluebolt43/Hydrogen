@@ -327,7 +327,7 @@ function restoreMusicAfterCall(){
  if(resume)playMusic();
 }
 const depositSound=new Audio(OFFLINE_AUDIO["/deposit.wav"]);depositSound.preload='auto';
-const fbiEffect=new Audio('/fbi-open-up-sfx.mp3'),approachEffect=new Audio(OFFLINE_AUDIO["/police-approach.wav"]);
+const fbiEffect=new Audio(OFFLINE_AUDIO["/fbi-open-up-sfx.mp3"]),approachEffect=new Audio(OFFLINE_AUDIO["/police-approach.wav"]);
 fbiEffect.preload=approachEffect.preload='none';let policeChoice=null,policeEffectTimer;
 const ring=new Audio(OFFLINE_AUDIO["/ring.wav"]);ring.loop=true;
 const dialTone=new Audio(OFFLINE_AUDIO["/dial.wav"]);dialTone.loop=true;
