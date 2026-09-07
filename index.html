@@ -461,7 +461,7 @@ const phone=document.querySelector('.phone');
  document.querySelector('#chapter [data-task-key=goal]').id='taskCheck';
 let hasCompletedCall=false;
 let messageDraft=null,eventPresentation=null,openingState=null,openingSession=null;
-let pendingAppOpen=null;
+let pendingAppOpen=null,phoneDraft=null;
 const displayed=()=>eventPresentation||state||openingState;
 function renderTaskChecklist(){
  const result=state?.result||'ongoing';
@@ -581,6 +581,7 @@ async function api(path,body){return offlineApi(path,body);}
 function caption(text){$('transcript').replaceChildren();const p=document.createElement('p');p.textContent=text;$('transcript').append(p);}
 function controls(){
  $('choices').replaceChildren();
+ if(phoneDraft){const b=document.createElement('button');b.className='choice';b.textContent=phoneDraft.text;b.onclick=()=>{const resume=phoneDraft.resolve;phoneDraft=null;b.disabled=true;resume();};$('choices').append(b);return;}
  if(connected&&state?.result==='ongoing'&&state.node?.app==='phone')for(const option of state.options){
   const b=document.createElement('button');b.className='choice';b.disabled=busy||!!pending||!!messageDraft;b.textContent=option.text;b.onclick=()=>choose(option.id);$('choices').append(b);
  }
@@ -589,7 +590,7 @@ function controls(){
 }
 function showError(e){$('callError').textContent=e.message;$('callError').classList.remove('hidden');}
 function startConnection(){pauseMusicForCall();stopDialTone();connected=true;callStartedAt=Date.now();syncClock();updateChrome();}
-function endConnection(keepMusicPaused=false){if(connected)hasCompletedCall=true;renderTaskChecklist();stopDialTone();if(connected)elapsed+=Date.now()-callStartedAt;connected=false;$('callStatus').textContent='通話結束';$('recentCall').textContent=`林美華　·　${displayed()?.currentTime||''}　·　${duration(elapsed)}`;$('recentCall').classList.remove('hidden');updateChrome();controls();if(!keepMusicPaused)restoreMusicAfterCall();screen('home');}
+function endConnection(keepMusicPaused=false){if(phoneDraft){const resume=phoneDraft.resolve;phoneDraft=null;resume();}if(connected)hasCompletedCall=true;renderTaskChecklist();stopDialTone();if(connected)elapsed+=Date.now()-callStartedAt;connected=false;$('callStatus').textContent='通話結束';$('recentCall').textContent=`林美華　·　${displayed()?.currentTime||''}　·　${duration(elapsed)}`;$('recentCall').classList.remove('hidden');updateChrome();controls();if(!keepMusicPaused)restoreMusicAfterCall();screen('home');}
 async function dial(){
  if(busy)return;
  screen('conversation');
@@ -601,7 +602,8 @@ async function dial(){
  pauseMusicForCall();dialTone.play().catch(()=>showError(new Error('無法播放撥號音')));
  try{
   const [data]=await Promise.all([openingSession||prepareOpening(),new Promise(resolve=>setTimeout(resolve,1600))]);
-  sessionId=data.sessionId;state=data;if(attempt===dialAttempt)startConnection();caption(state.node?.prompt||'喂？');$('callError').classList.add('hidden');
+  sessionId=data.sessionId;state=data;if(attempt!==dialAttempt)return;startConnection();
+  await playPhoneLines([{role:'npc',text:'喂？'},{role:'player',text:'喂，是我啦。'},{role:'npc',text:state.node?.prompt||'喂？'}]);$('callError').classList.add('hidden');
  }catch(e){restoreMusicAfterCall();showError(e);$('callStatus').textContent='無法接通';}
  finally{stopDialTone();busy=false;$('dial').disabled=false;controls();}
 }
@@ -741,6 +743,19 @@ async function waitForPlayerApp(app){
  await new Promise(resolve=>{pendingAppOpen={app,resolve};});
 }
 
+async function playPhoneLines(lines){
+ for(const line of lines){
+  if(!connected)break;
+  if(line.role==='player'){
+   await new Promise(resolve=>{phoneDraft={text:line.text,resolve};controls();});
+   await new Promise(resolve=>setTimeout(resolve,1200));
+  }else{
+   caption(line.text);
+   await new Promise(resolve=>setTimeout(resolve,Math.max(1500,Math.min(4000,line.text.length*100))));
+  }
+ }
+}
+
 async function processEvents(events=[]){
  for(const event of events){
   if(event.type==='sms_payment'||event.type==='lime_payment'){
@@ -752,13 +767,30 @@ async function processEvents(events=[]){
     if(currentScreen==='lime')renderLime();else renderMessages();
    });
   }
+  if(event.type==='lime_lines'){
+   const shown=structuredClone(event.presentation);
+   shown.messages.splice(-event.lines.length,event.lines.length);
+   eventPresentation=shown;
+   for(const line of event.lines){
+    if(line.role==='player'){
+     await waitForPlayerApp('lime');
+     await new Promise(resolve=>{
+      messageDraft={channel:'lime',text:line.text,send:()=>{messageDraft=null;resolve();}};
+      renderLime();
+     });
+    }else await new Promise(resolve=>setTimeout(resolve,1200));
+    shown.messages.push(line);
+    if(currentScreen==='lime')renderLime();
+    else if(line.role==='npc')notify('lime','LIME','林美華',line.text);
+   }
+   continue;
+  }
   if(event.presentation){eventPresentation=event.presentation;syncClock();}
   if(event.type==='wait'){await new Promise(resolve=>setTimeout(resolve,event.durationMs));}
   else if(['phone_lines','call_end'].includes(event.type)){
-   for(const line of event.lines||[])if(line.role==='npc'){caption(line.text);await new Promise(resolve=>setTimeout(resolve,1500));}
+   await playPhoneLines(event.lines||[]);
    if(event.type==='call_end')endConnection();
   }
-  else if(event.type==='lime_lines'){if(currentScreen==='lime')renderLime();else notify('lime','LIME','林美華',(event.lines||[]).filter(m=>m.role==='npc').at(-1)?.text||'有新的訊息');await new Promise(resolve=>setTimeout(resolve,1500));}
   else if(event.type==='lime_payment'){renderLime();await new Promise(resolve=>setTimeout(resolve,1000));deferNodeRender=false;}
   else if(event.type==='sms_payment'){renderMessages();await new Promise(resolve=>setTimeout(resolve,1000));}
   else if(event.type==='sms_delivery_failed'){screen('messages');renderMessages();await new Promise(resolve=>setTimeout(resolve,1500));}
