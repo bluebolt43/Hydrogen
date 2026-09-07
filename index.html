@@ -612,19 +612,17 @@ async function choose(id,sendCard=false){
  if(!busy&&option?.display==='payment_card'&&!sendCard){messageDraft={...option,payload:{...option.payload,amount:option.payload.amountFromStory?state.story.amount:option.payload.amount}};controls();if(connected)endConnection();return;}
 
  if(busy||(!connected&&!['lime','messages'].includes(state?.node?.app))||!sessionId)return;
+ const previousPresentation=structuredClone(displayed());
  const replyMessages=state.node?.app==='messages'?'smsMessages':state.node?.app==='lime'?'messages':null;
  pending||={choiceId:id,requestId:Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('')};busy=true;$('callError').classList.add('hidden');controls();
  try{
   const [data]=await Promise.all([api('/api/choice',{sessionId,...pending}),new Promise(resolve=>setTimeout(resolve,300))]);
   state=data;eventPresentation=data.beforeEvents||null;pending=null;messageDraft=null;
-  if(replyMessages&&eventPresentation?.[replyMessages]?.at(-1)?.role==='npc'){
-   const received=eventPresentation;eventPresentation=structuredClone(received);
-   eventPresentation[replyMessages].pop();
-   if(currentScreen==='messages')renderMessages();if(currentScreen==='lime')renderLime();
-   await new Promise(resolve=>setTimeout(resolve,1200));
-   eventPresentation=received;
-  }
-  caption(state.reply);if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();if(connected&&(state.node?.nodeType!=='dialogue'||state.node?.app!=='phone')&&!data.events?.some(e=>e.type==='call_end')){const followup=(data.events||[]).filter(e=>e.type==='failure_now'&&e.channel==='phone').flatMap(e=>e.messages||[]);caption([state.reply,...followup].join('\n'));await new Promise(resolve=>setTimeout(resolve,Math.min(5500,1800+state.reply.length*70)));endConnection();}deferNodeRender=false;await processEvents(data.events);if(!deferNodeRender||state?.node?.action==='answer_110')renderCurrentNode();
+  if(replyMessages)await presentMessages(data.beforeEvents,previousPresentation,false);
+  if(!replyMessages&&connected&&state.reply){
+   await playPhoneLines(state.reply.split('\n').filter(Boolean).map(text=>({role:'npc',text})));
+  }else caption(state.reply);
+  if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();deferNodeRender=false;await processEvents(data.events);if(!deferNodeRender||state?.node?.action==='answer_110')renderCurrentNode();
  }catch(e){showError(e);}
  finally{eventPresentation=null;busy=false;controls();if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();}
 }
@@ -756,6 +754,34 @@ async function playPhoneLines(lines){
  }
 }
 
+async function presentMessages(target,previous,waitForPlayer=false){
+ if(!target)return;
+ const shown=structuredClone(target);
+ for(const key of ['messages','smsMessages'])shown[key]=structuredClone(previous?.[key]||[]);
+ shown.blockedContacts=structuredClone(previous?.blockedContacts||[]);
+ eventPresentation=shown;
+ for(const [key,app] of [['messages','lime'],['smsMessages','messages']]){
+  for(const message of (target[key]||[]).slice(shown[key].length)){
+   if(message.role==='player'&&waitForPlayer){
+    await waitForPlayerApp(app);
+    await new Promise(resolve=>{messageDraft={channel:app,text:message.text,send:()=>{messageDraft=null;resolve();}};if(app==='lime')renderLime();else renderMessages();});
+   }else if(message.role!=='player')await new Promise(resolve=>setTimeout(resolve,1200));
+   for(const text of message.type==='payment_card'?[null]:String(message.text||'').split('\n').filter(Boolean)){
+    // Keep the persisted message intact, revealing its lines progressively.
+    const last=shown[key].at(-1);
+    if(text!==null&&last?._revealing){last.text+='\n'+text;}
+    else shown[key].push(text===null?{...message}:{...message,text,_revealing:true});
+    if(currentScreen===app){if(app==='lime')renderLime();else renderMessages();}
+    else if(message.role==='npc')notify(app,app==='lime'?'LIME':'簡訊','林美華',text);
+    if(message.role!=='player')await new Promise(resolve=>setTimeout(resolve,Math.max(1500,Math.min(4000,(text||'').length*100))));
+   }
+   if(shown[key].at(-1))delete shown[key].at(-1)._revealing;
+  }
+ }
+ eventPresentation=target;
+ if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();
+}
+
 async function processEvents(events=[]){
  for(const event of events){
   if(event.type==='sms_payment'||event.type==='lime_payment'){
@@ -767,26 +793,9 @@ async function processEvents(events=[]){
     if(currentScreen==='lime')renderLime();else renderMessages();
    });
   }
-  if(event.type==='lime_lines'){
-   const shown=structuredClone(event.presentation);
-   shown.messages.splice(-event.lines.length,event.lines.length);
-   eventPresentation=shown;
-   for(const line of event.lines){
-    if(line.role==='player'){
-     await waitForPlayerApp('lime');
-     await new Promise(resolve=>{
-      messageDraft={channel:'lime',text:line.text,send:()=>{messageDraft=null;resolve();}};
-      renderLime();
-     });
-    }else await new Promise(resolve=>setTimeout(resolve,1200));
-    shown.messages.push(line);
-    if(currentScreen==='lime')renderLime();
-    else if(line.role==='npc')notify('lime','LIME','林美華',line.text);
-   }
-   continue;
-  }
-  if(event.presentation){eventPresentation=event.presentation;syncClock();}
+  if(event.presentation){await presentMessages(event.presentation,displayed(),event.type==='lime_lines');syncClock();}
   if(event.type==='wait'){await new Promise(resolve=>setTimeout(resolve,event.durationMs));}
+  else if(event.type==='lime_lines'){}
   else if(['phone_lines','call_end'].includes(event.type)){
    await playPhoneLines(event.lines||[]);
    if(event.type==='call_end')endConnection();
@@ -794,10 +803,10 @@ async function processEvents(events=[]){
   else if(event.type==='lime_payment'){renderLime();await new Promise(resolve=>setTimeout(resolve,1000));deferNodeRender=false;}
   else if(event.type==='sms_payment'){renderMessages();await new Promise(resolve=>setTimeout(resolve,1000));}
   else if(event.type==='sms_delivery_failed'){screen('messages');renderMessages();await new Promise(resolve=>setTimeout(resolve,1500));}
-  else if(event.type==='time_skip'){await showTimeSkip(event);deferNodeRender=true;if(state.node?.app==='lime')notify('lime','LIME','林美華',state.node.prompt||'有新的訊息');}
+  else if(event.type==='time_skip'){await showTimeSkip(event);deferNodeRender=true;}
   else if(event.type==='lime_accept'){screen('home');notify('lime','LIME',event.title,'點擊開啟');deferNodeRender=true;}
-  else if(['lime_message','sms_message'].includes(event.type)){screen('home');notify(event.type==='sms_message'?'messages':'lime',event.type==='sms_message'?'簡訊':'LIME','林美華',event.messages.join('　'));deferNodeRender=true;await new Promise(resolve=>setTimeout(resolve,1600));}
-  else if(event.type==='failure_now'){if(event.channel==='messages'){screen('messages');await new Promise(resolve=>setTimeout(resolve,3000));}else if(event.channel==='lime'&&event.blocked){screen('lime');await new Promise(resolve=>setTimeout(resolve,3000));}else{caption('通話已結束');if(connected)endConnection(true);await pause(600);}}
+  else if(['lime_message','sms_message'].includes(event.type)){deferNodeRender=true;}
+  else if(event.type==='failure_now'){if(event.channel==='messages'){screen('messages');await new Promise(resolve=>setTimeout(resolve,3000));}else if(event.channel==='lime'&&event.blocked){screen('lime');await new Promise(resolve=>setTimeout(resolve,3000));}else{await playPhoneLines((event.messages||[]).map(text=>({role:'npc',text})));if(connected)endConnection(true);await pause(600);}}
   else if(event.type==='dajia_mazu')await showMazu(event);
   else if(event.type==='funds_received'){creditedAt=new Date();accountFrozen=false;renderBank();$('bankBadge').classList.remove('hidden');screen('home');notify('bank','理財調度銀行','入帳通知',`+NT${Number(event.amount).toLocaleString('en-US')}`);depositSound.currentTime=0;depositSound.play().catch(()=>{});await pause(900);notify(event.channel==='messages'?'messages':'lime',event.channel==='messages'?'簡訊':'LIME','林美華','好了，轉過去了。');await pause(900);}
   else if(event.type==='bank_frozen'){accountFrozen=true;creditedAt=null;renderBank();screen('bank');await pause(1000);}
@@ -814,7 +823,7 @@ function renderCurrentNode(){
  syncClock();if(!state)return;
  if(state.result!=='ongoing'){screen('home');return;}
  if(state.node?.nodeType==='dialogue'){
-  if(state.node.app==='phone'){screen('conversation');caption([state.reply,state.node.prompt].filter((text,i,list)=>text&&(!i||!list[0]?.endsWith(text))).join('\n'));controls();}
+  if(state.node.app==='phone'){screen('conversation');caption(state.node.prompt||state.reply||'');controls();}
   else if(state.node.app==='messages'){if(currentScreen==='messages')renderMessages();}else if(currentScreen==='lime')renderLime();return;
  }
  if(state.node?.nodeType==='app_action'){
