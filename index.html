@@ -460,9 +460,9 @@ const phone=document.querySelector('.phone');
  document.querySelectorAll('[data-task-content]').forEach(el=>el.append($('taskTemplate').content.cloneNode(true)));
  document.querySelector('#chapter [data-task-key=goal]').id='taskCheck';
 let hasCompletedCall=false;
-let messageDraft=null,eventPresentation=null;
+let messageDraft=null,eventPresentation=null,openingState=null,openingSession=null;
 let pendingAppOpen=null;
-const displayed=()=>eventPresentation||state;
+const displayed=()=>eventPresentation||state||openingState;
 function renderTaskChecklist(){
  const result=state?.result||'ongoing';
  const statuses={goal:result,background:'success',number:'success',call:hasCompletedCall?'success':'ongoing',message:[...(state?.messages||[]),...(state?.smsMessages||[])].some(m=>m.type==='payment_card')?'success':result==='failure'?'failure':'ongoing',funds:result};
@@ -496,7 +496,7 @@ const dialTone=new Audio(OFFLINE_AUDIO["/dial.wav"]);dialTone.loop=true;
 function stopDialTone(){dialTone.pause();dialTone.currentTime=0;}
 const duration=ms=>`${String(Math.floor(ms/60000)).padStart(2,'0')}:${String(Math.floor(ms/1000)%60).padStart(2,'0')}`;
 function syncClock(){
- const now=new Date(),clock=displayed()?.currentTime||timeFormat.format(now);$('clock').textContent=$('homeClock').textContent=clock;$('homeDate').textContent=displayed()?.currentDateLabel||dateFormat.format(now);
+ const now=new Date(),clock=displayed()?.currentTime||'--:--';$('clock').textContent=$('homeClock').textContent=clock;$('homeDate').textContent=displayed()?.currentDateLabel||dateFormat.format(now);
  if(connected)$('callStatus').textContent=duration(elapsed+Date.now()-callStartedAt);
 }
 syncClock();setInterval(syncClock,1000);
@@ -589,7 +589,7 @@ function controls(){
 }
 function showError(e){$('callError').textContent=e.message;$('callError').classList.remove('hidden');}
 function startConnection(){pauseMusicForCall();stopDialTone();connected=true;callStartedAt=Date.now();syncClock();updateChrome();}
-function endConnection(keepMusicPaused=false){if(connected)hasCompletedCall=true;renderTaskChecklist();stopDialTone();if(connected)elapsed+=Date.now()-callStartedAt;connected=false;$('callStatus').textContent='通話結束';$('recentCall').textContent=`林美華　·　${timeFormat.format(new Date())}　·　${duration(elapsed)}`;$('recentCall').classList.remove('hidden');updateChrome();controls();if(!keepMusicPaused)restoreMusicAfterCall();screen('home');}
+function endConnection(keepMusicPaused=false){if(connected)hasCompletedCall=true;renderTaskChecklist();stopDialTone();if(connected)elapsed+=Date.now()-callStartedAt;connected=false;$('callStatus').textContent='通話結束';$('recentCall').textContent=`林美華　·　${displayed()?.currentTime||''}　·　${duration(elapsed)}`;$('recentCall').classList.remove('hidden');updateChrome();controls();if(!keepMusicPaused)restoreMusicAfterCall();screen('home');}
 async function dial(){
  if(busy)return;
  screen('conversation');
@@ -600,7 +600,7 @@ async function dial(){
  const attempt=++dialAttempt;busy=true;$('dial').disabled=true;$('callStatus').textContent='正在撥號…';caption('');
  pauseMusicForCall();dialTone.play().catch(()=>showError(new Error('無法播放撥號音')));
  try{
-  const [data]=await Promise.all([api('/api/session',{}),new Promise(resolve=>setTimeout(resolve,1600))]);
+  const [data]=await Promise.all([openingSession||prepareOpening(),new Promise(resolve=>setTimeout(resolve,1600))]);
   sessionId=data.sessionId;state=data;if(attempt===dialAttempt)startConnection();caption(state.node?.prompt||'喂？');$('callError').classList.add('hidden');
  }catch(e){restoreMusicAfterCall();showError(e);$('callStatus').textContent='無法接通';}
  finally{stopDialTone();busy=false;$('dial').disabled=false;controls();}
@@ -610,10 +610,19 @@ async function choose(id,sendCard=false){
  if(!busy&&option?.display==='payment_card'&&!sendCard){messageDraft={...option,payload:{...option.payload,amount:option.payload.amountFromStory?state.story.amount:option.payload.amount}};controls();if(connected)endConnection();return;}
 
  if(busy||(!connected&&!['lime','messages'].includes(state?.node?.app))||!sessionId)return;
+ const replyMessages=state.node?.app==='messages'?'smsMessages':state.node?.app==='lime'?'messages':null;
  pending||={choiceId:id,requestId:Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('')};busy=true;$('callError').classList.add('hidden');controls();
  try{
   const [data]=await Promise.all([api('/api/choice',{sessionId,...pending}),new Promise(resolve=>setTimeout(resolve,300))]);
-  state=data;eventPresentation=data.beforeEvents||null;pending=null;messageDraft=null;caption(state.reply);if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();if(connected&&(state.node?.nodeType!=='dialogue'||state.node?.app!=='phone')&&!data.events?.some(e=>e.type==='call_end')){const followup=(data.events||[]).filter(e=>e.type==='failure_now'&&e.channel==='phone').flatMap(e=>e.messages||[]);caption([state.reply,...followup].join('\n'));await new Promise(resolve=>setTimeout(resolve,Math.min(5500,1800+state.reply.length*70)));endConnection();}deferNodeRender=false;await processEvents(data.events);if(!deferNodeRender||state?.node?.action==='answer_110')renderCurrentNode();
+  state=data;eventPresentation=data.beforeEvents||null;pending=null;messageDraft=null;
+  if(replyMessages&&eventPresentation?.[replyMessages]?.at(-1)?.role==='npc'){
+   const received=eventPresentation;eventPresentation=structuredClone(received);
+   eventPresentation[replyMessages].pop();
+   if(currentScreen==='messages')renderMessages();if(currentScreen==='lime')renderLime();
+   await new Promise(resolve=>setTimeout(resolve,1200));
+   eventPresentation=received;
+  }
+  caption(state.reply);if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();if(connected&&(state.node?.nodeType!=='dialogue'||state.node?.app!=='phone')&&!data.events?.some(e=>e.type==='call_end')){const followup=(data.events||[]).filter(e=>e.type==='failure_now'&&e.channel==='phone').flatMap(e=>e.messages||[]);caption([state.reply,...followup].join('\n'));await new Promise(resolve=>setTimeout(resolve,Math.min(5500,1800+state.reply.length*70)));endConnection();}deferNodeRender=false;await processEvents(data.events);if(!deferNodeRender||state?.node?.action==='answer_110')renderCurrentNode();
  }catch(e){showError(e);}
  finally{eventPresentation=null;busy=false;controls();if(currentScreen==='lime')renderLime();if(currentScreen==='messages')renderMessages();}
 }
@@ -629,10 +638,10 @@ function renderLime(){
  const node=state?.node;
  if(messageDraft&&messageDraft.channel!=='messages'){
   $('limeStatus').textContent='林美華';const card=document.createElement('div');card.className='payment-card';const payload=messageDraft.payload;
-  const detail=document.createElement('p');detail.textContent=`${payload.bankName||'理財調度銀行'}\n${payload.accountName} · ${payload.recipient}\n${payload.account}\nNT${payload.amount.toLocaleString('en-US')}`;detail.style.whiteSpace='pre-line';
-  const send=document.createElement('button');send.className='lime-action';send.textContent='傳送收款資料';send.disabled=busy;send.onclick=()=>choose(messageDraft.id,true);
-  const cancel=document.createElement('button');cancel.className='text-button';cancel.textContent='返回通話';cancel.disabled=busy;cancel.onclick=()=>{messageDraft=null;screen('conversation');controls();};
-  card.append(detail,send,cancel);content.append(card);return;
+  const detail=document.createElement('p');detail.textContent=payload?`${payload.bankName||'理財調度銀行'}\n${payload.accountName} · ${payload.recipient}\n${payload.account}\nNT${payload.amount.toLocaleString('en-US')}`:messageDraft.text;detail.style.whiteSpace='pre-line';
+  const send=document.createElement('button');send.className='lime-action';send.append(detail);send.setAttribute('aria-label','點擊訊息送給林美華');send.disabled=busy&&!messageDraft.send;send.onclick=()=>{send.disabled=true;if(messageDraft.send)messageDraft.send();else choose(messageDraft.id,true);};
+  const cancel=document.createElement('button');cancel.className='text-button';cancel.textContent='取消';cancel.disabled=busy;cancel.onclick=()=>{messageDraft=null;renderLime();};
+  card.append(send);if(!messageDraft.send)card.append(cancel);content.append(card);return;
  }
  if(!state){content.innerHTML='<p class="empty-label">尚無聯絡人</p>';return;}
  if(node?.nodeType==='app_action'&&node.action==='send_friend_request'){
@@ -713,8 +722,8 @@ $('mazuThrow').onclick=async()=>{
 async function showMazu(event){
  if(mazuAnimation)await mazuAnimation;
  $('mazuBankLabel').classList.remove('hidden');
- screen('mazu');$('mazuStatus').textContent=event.autoStart?'正在請示……':'按下擲筊，請示是否匯款';$('mazuThrow').disabled=!!event.autoStart;
- if(!event.autoStart)await new Promise(resolve=>{mazuBankStart=resolve;});
+ screen('mazu');$('mazuStatus').textContent='按下擲筊，請示是否匯款';$('mazuThrow').disabled=false;
+ await new Promise(resolve=>{mazuBankStart=resolve;});
  mazuAnimation=(async()=>{
   for(const [index,toss] of event.tosses.entries()){
    $('mazuStatus').textContent=index?'笑筊，再請示一次……':'正在請示……';
@@ -737,10 +746,10 @@ async function processEvents(events=[]){
   if(event.type==='sms_payment'||event.type==='lime_payment'){
    await waitForPlayerApp(event.type==='sms_payment'?'messages':'lime');
   }
-  if(event.type==='sms_payment'){
+  if(event.type==='sms_payment'||event.type==='lime_payment'){
    await new Promise(resolve=>{
-    messageDraft={channel:'messages',payload:event.payload,send:()=>{messageDraft=null;resolve();}};
-    renderMessages();
+    messageDraft={channel:event.type==='sms_payment'?'messages':'lime',payload:event.payload,send:()=>{messageDraft=null;resolve();}};
+    if(currentScreen==='lime')renderLime();else renderMessages();
    });
   }
   if(event.presentation){eventPresentation=event.presentation;syncClock();}
@@ -848,11 +857,11 @@ function renderMessages(){
  if(draft){
   const card=document.createElement('article');card.className='sent-message';
   const title=document.createElement('strong');title.textContent='草稿 · 傳送給林美華';
-  const text=document.createElement('p');text.textContent=messageText({type:'payment_card',...draft.payload});text.style.whiteSpace='pre-line';
-  const send=document.createElement('button');send.className='message-send';send.textContent='傳送';send.disabled=busy&&!draft.send;
+  const text=document.createElement('p');text.textContent=draft.payload?messageText({type:'payment_card',...draft.payload}):draft.text;text.style.whiteSpace='pre-line';
+  const send=document.createElement('button');send.className='message-send';send.append(text);send.setAttribute('aria-label','點擊訊息送給林美華');send.disabled=busy&&!draft.send;
   send.onclick=()=>{send.disabled=true;if(draft.send)draft.send();else choose(draft.id,true);};
-  const cancel=document.createElement('button');cancel.className='text-button';cancel.textContent='返回通話';cancel.disabled=busy;cancel.onclick=()=>{messageDraft=null;screen('conversation');controls();};
-  card.append(title,text,send);if(!draft.send)card.append(cancel);$('messageList').append(card);
+  const cancel=document.createElement('button');cancel.className='text-button';cancel.textContent='取消';cancel.disabled=busy;cancel.onclick=()=>{messageDraft=null;renderMessages();};
+  card.append(title,send);if(!draft.send)card.append(cancel);$('messageList').append(card);
  }
  for(const message of messages){
   const item=document.createElement('article');item.className=message.role==='player'?'sent-message':'received-message';
@@ -1074,4 +1083,10 @@ if(sessionStorage.getItem('scam-restart-home')==='1'){
  setDesktopPage(0);
  screen('home');
 }
+
+function prepareOpening(){
+ openingSession=api('/api/session',{}).then(data=>{openingState=data;syncClock();return data;}).catch(error=>{openingSession=null;throw error;});
+ return openingSession;
+}
+prepareOpening().catch(()=>{});
 </script></body></html>
