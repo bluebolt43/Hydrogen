@@ -294,7 +294,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  <section id="shop" class="screen native-screen" aria-label="瞎子商城 App"><nav class="navbar"></nav><h1>瞎子商城</h1><div class="empty-state"><svg><use href="#i-shop"/></svg><p>尚無商品</p></div></section>
  <section id="police" class="screen police-screen" aria-label="110 模擬來電">
   <div class="incoming-person"><span class="incoming-label">來電</span><h1>110</h1><p id="policeStatus">行動電話</p></div>
-  <div class="incoming-actions"><div id="policeControls" class="call-actions"><button id="policeAnswer" class="round-action answer" aria-label="接通警方來電"><svg><use href="#i-phone"/></svg><span>接通</span></button></div></div><p id="audioError" class="fine" role="status"></p>
+  <div class="incoming-actions"><div id="policeControls" class="call-actions"><button id="policeAnswer" class="round-action answer" aria-label="接通警方來電"><svg><use href="#i-phone"/></svg><span>接通</span></button><button id="policeDecline" class="round-action red" aria-label="掛掉警方來電"><svg><use href="#i-phone"/></svg><span>掛掉</span></button></div></div><p id="audioError" class="fine" role="status"></p>
  </section>
  <section id="news" class="screen native-screen news-feed" aria-label="虎蘭新聞 App"><nav class="navbar"><span class="news-brand"><span class="news-logo" aria-hidden="true"><svg><use href="#i-hulan"/></svg></span>虎蘭新聞</span></nav><h1>最新消息</h1><button id="newsCard" class="news-card hidden"><div class="news-visual" role="img" aria-label="陌生來電與金錢風險示意圖"><span class="visual-grid" aria-hidden="true"></span><div class="visual-phone" aria-hidden="true"><span></span><svg><use href="#i-phone"/></svg><i></i><i></i></div><div class="visual-signal" aria-hidden="true"><svg><use href="#i-verified"/></svg><b>!</b></div><span class="visual-caption">親友來電・身分查證</span></div><div class="news-card-copy"><span class="section-label">社會</span><h2 id="feedTitle"></h2><span class="news-meta">虎蘭新聞 · 社會焦點 <span aria-hidden="true">↗</span></span></div></button><div id="starterNews"></div></section>
  <section id="newsArticle" class="screen newspaper" aria-label="新聞內文"><nav class="navbar"><button class="back-button" data-open="news" aria-label="返回新聞列表"><svg><use href="#i-back"/></svg></button><strong class="news-brand"><span class="news-logo" aria-hidden="true"><svg><use href="#i-hulan"/></svg></span>虎蘭新聞</strong><span></span></nav><article id="article"><span class="news-kicker">社會　<span>事件後續</span></span><h1 id="newsTitle"></h1><p id="newsByline" class="byline">虎蘭新聞社會中心</p><div id="articleFunArt" class="fun-news-art hidden" aria-hidden="true"></div><div class="news-visual" role="img" aria-label="陌生來電與金錢風險示意圖"><span class="visual-grid" aria-hidden="true"></span><div class="visual-phone" aria-hidden="true"><span></span><svg><use href="#i-phone"/></svg><i></i><i></i></div><div class="visual-signal" aria-hidden="true"><svg><use href="#i-verified"/></svg><b>!</b></div><span class="visual-caption">親友來電・身分查證</span></div><div id="newsBody"></div><aside><h3 id="lessonTitle"></h3><p id="lesson"></p></aside><footer id="newsSources" class="news-sources hidden"></footer></article></section>
@@ -804,12 +804,12 @@ function renderBank(){
  row.append(icon,label,amount);row.onclick=()=>screen('bankDetail');$('transaction').append(row);
  $('transactionTime').textContent=`${creditedAt.getMonth()+1}/${creditedAt.getDate()} ${timeFormat.format(creditedAt)}`;
 }
-function choosePolice(){
- if(!policeActive||policeChoice)return;policeChoice='answer';ring.pause();ring.currentTime=0;
- $('policeControls').classList.add('hidden');$('policeStatus').textContent='已接通';
- const effect=fbiEffect;effect.muted=muted;
+function choosePolice(choice='answer'){
+ if(!policeActive||policeChoice)return;policeChoice=choice;ring.pause();ring.currentTime=0;
+ $('policeControls').classList.add('hidden');$('policeStatus').textContent=choice==='decline'?'已掛斷':'已接通';
+ const effect=choice==='decline'?approachEffect:fbiEffect;effect.currentTime=0;effect.muted=muted;
  effect.onended=finishPolice;effect.onerror=()=>{ $('audioError').textContent='音效無法播放';finishPolice(); };
-  policeEffectTimer=setTimeout(finishPolice,4000);
+  policeEffectTimer=setTimeout(finishPolice,choice==='decline'?3000:4000);
  effect.play().catch(()=>{ $('audioError').textContent='音效無法播放';finishPolice(); });
 }
 async function finishPolice(){
@@ -894,7 +894,8 @@ $('recentsButton').onclick=()=>{
  }
  screen('recents');
 };$('callPill').onclick=()=>screen('conversation');
-$('policeAnswer').onclick=choosePolice;
+$('policeAnswer').onclick=()=>choosePolice('answer');
+$('policeDecline').onclick=()=>choosePolice('decline');
 $('sound').onclick=toggleSound;$('settingsSound').onclick=toggleSound;
 $('balancePrivacy').onclick=()=>{balanceHidden=!balanceHidden;$('balancePrivacy').setAttribute('aria-pressed',String(balanceHidden));$('balancePrivacy').setAttribute('aria-label',balanceHidden?'顯示餘額':'隱藏餘額');renderBank();};
 $('newsCard').onclick=()=>{selectedArticle=newsData;screen('newsArticle');};
