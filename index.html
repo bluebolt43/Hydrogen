@@ -656,7 +656,7 @@ function renderLime(){
  $('limeStatus').textContent=displayed()?.blockedContacts?.includes('林美華')?'無法傳送':'林美華';
  const chat=document.createElement('div');chat.className='lime-chat';
  for(const message of displayed()?.messages??[]){const bubble=document.createElement('div');bubble.className='lime-bubble '+(message.role==='player'?'player':message.role==='system'?'system':'');if(message.type==='payment_card')bubble.innerHTML=`<strong>${message.bankName||'收款資料'}</strong><p>戶名：${message.accountName}<br>收款人：${message.recipient}<br>帳號：${message.account}<br>金額：NT${message.amount.toLocaleString('en-US')}</p>`;else bubble.textContent=message.text;chat.append(bubble);}
- if(!busy&&node?.prompt){const bubble=document.createElement('div');bubble.className='lime-bubble';bubble.textContent=node.prompt;chat.append(bubble);}
+ if(!busy&&node?.prompt&&displayed()?.messages?.at(-1)?.text!==node.prompt){const bubble=document.createElement('div');bubble.className='lime-bubble';bubble.textContent=node.prompt;chat.append(bubble);}
  content.append(chat);
  if(!busy&&node?.nodeType==='dialogue'){
   const choices=document.createElement('div');choices.className='lime-choices';for(const option of state.options){const button=document.createElement('button');button.textContent=option.text;button.disabled=busy;button.onclick=()=>choose(option.id);choices.append(button);}content.append(choices);
@@ -748,13 +748,14 @@ async function playPhoneLines(lines){
    await new Promise(resolve=>{phoneDraft={text:line.text,resolve};controls();});
    await new Promise(resolve=>setTimeout(resolve,1200));
   }else{
+   if($('transcript').textContent===line.text)continue;
    caption(line.text);
    await new Promise(resolve=>setTimeout(resolve,Math.max(1500,Math.min(4000,line.text.length*100))));
   }
  }
 }
 
-async function presentMessages(target,previous,waitForPlayer=false){
+async function presentMessages(target,previous,waitForPlayer=false,notifyIncoming=true){
  if(!target)return;
  const shown=structuredClone(target);
  for(const key of ['messages','smsMessages'])shown[key]=structuredClone(previous?.[key]||[]);
@@ -772,7 +773,7 @@ async function presentMessages(target,previous,waitForPlayer=false){
     if(text!==null&&last?._revealing){last.text+='\n'+text;}
     else shown[key].push(text===null?{...message}:{...message,text,_revealing:true});
     if(currentScreen===app){if(app==='lime')renderLime();else renderMessages();}
-    else if(message.role==='npc')notify(app,app==='lime'?'LIME':'簡訊','林美華',text);
+    else if(message.role==='npc'&&notifyIncoming)notify(app,app==='lime'?'LIME':'簡訊','林美華',text);
     if(message.role!=='player')await new Promise(resolve=>setTimeout(resolve,Math.max(1500,Math.min(4000,(text||'').length*100))));
    }
    if(shown[key].at(-1))delete shown[key].at(-1)._revealing;
@@ -793,7 +794,7 @@ async function processEvents(events=[]){
     if(currentScreen==='lime')renderLime();else renderMessages();
    });
   }
-  if(event.presentation){await presentMessages(event.presentation,displayed(),event.type==='lime_lines');syncClock();}
+  if(event.presentation){await presentMessages(event.presentation,displayed(),event.type==='lime_lines',event.type!=='funds_received');syncClock();}
   if(event.type==='wait'){await new Promise(resolve=>setTimeout(resolve,event.durationMs));}
   else if(event.type==='lime_lines'){}
   else if(['phone_lines','call_end'].includes(event.type)){
@@ -910,7 +911,7 @@ function renderMessages(){
   const text=document.createElement('p');text.textContent=messageText(message);text.style.whiteSpace='pre-line';item.append(title,text);$('messageList').append(item);
  }
  if(!busy&&state?.result==='ongoing'&&state.node?.app==='messages'&&state.node.nodeType==='dialogue'){
-  if(state.node.prompt&&messages.at(-1)?.text!==state.node.prompt){const prompt=document.createElement('article');prompt.className='received-message';prompt.textContent=state.node.prompt;$('messageList').append(prompt);}
+  if(state.node.prompt&&displayed()?.smsMessages?.at(-1)?.text!==state.node.prompt){const prompt=document.createElement('article');prompt.className='received-message';prompt.textContent=state.node.prompt;$('messageList').append(prompt);}
   const options=document.createElement('div');options.className='lime-choices';
   for(const option of state.options){const button=document.createElement('button');button.textContent=option.text;button.disabled=busy;button.onclick=()=>choose(option.id);options.append(button);}
   $('messageList').append(options);
