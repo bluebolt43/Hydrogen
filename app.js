@@ -21,7 +21,7 @@ let selectedArticle=null,endingNews=null,limeStep=0;
 let notificationTarget=null,notificationTimer,newsData=null,newsReady=false,balanceHidden=false,creditedAt=null,accountFrozen=false;
 let transition=0,animations=[],dialAttempt=0,deferNodeRender=false;
 const recentApps=new Map();let beforeRecents='home';
-const music=new Audio(OFFLINE_AUDIO["/music-night.wav"]);music.preload='none';music.volume=.45;
+const music=new Audio(OFFLINE_AUDIO["/nature-ocean-wind.wav"]);music.preload='none';music.volume=.45;
 let callAudioActive=false,resumeMusicAfterCall=false;
 function pauseMusicForCall(){
  if(!callAudioActive)resumeMusicAfterCall=!music.paused;
@@ -574,10 +574,10 @@ function setBrightness(value){
 $('brightness').oninput=()=>setBrightness($('brightness').value);
 try{setBrightness(localStorage.getItem('scam-brightness')||100);}catch{}
 
-const tracks=[{title:'夜色慢行',src:OFFLINE_AUDIO["/music-night.wav"]},{title:'晨光散步',src:OFFLINE_AUDIO["/music-morning.wav"]}];let musicTrack=0;
+const tracks=[{title:'海浪＋微風',src:OFFLINE_AUDIO["/nature-ocean-wind.wav"]},{title:'雨聲',src:OFFLINE_AUDIO["/nature-rain.wav"]},{title:'溪流',src:OFFLINE_AUDIO["/nature-stream.wav"]},{title:'鳥鳴',src:OFFLINE_AUDIO["/nature-birds.wav"]}];let musicTrack=0,repeatOne=false;
 const musicTime=seconds=>`${Math.floor(seconds/60)}:${String(Math.floor(seconds%60)).padStart(2,'0')}`;
 function updateMusic(){
- for(const id of ['musicPlay','musicPrevious','musicNext'])$(id).disabled=callAudioActive;
+ for(const id of ['musicPlay','musicPrevious','musicNext','musicRepeat'])$(id).disabled=callAudioActive;
  document.querySelectorAll('[data-track]').forEach(b=>b.disabled=callAudioActive);
  const playing=!music.paused;$('musicPlay').textContent=playing?'Ⅱ':'▶';$('musicPlay').setAttribute('aria-label',playing?'暫停音樂':'播放音樂');
  $('music').classList.toggle('playing',playing);$('musicSeek').value=music.currentTime;$('musicElapsed').textContent=musicTime(music.currentTime);
@@ -587,6 +587,7 @@ function playMusic(){if(callAudioActive)return;music.muted=muted;$('musicError')
 function selectTrack(index){musicTrack=(index+tracks.length)%tracks.length;music.src=tracks[musicTrack].src;$('musicTitle').textContent=tracks[musicTrack].title;document.querySelectorAll('[data-track]').forEach(b=>b.setAttribute('aria-current',String(Number(b.dataset.track)===musicTrack)));playMusic();}
 $('musicPlay').onclick=()=>music.paused?playMusic():music.pause();
 $('musicPrevious').onclick=()=>selectTrack(musicTrack-1);$('musicNext').onclick=()=>selectTrack(musicTrack+1);
+$('musicRepeat').onclick=()=>{repeatOne=!repeatOne;music.loop=repeatOne;$('musicRepeat').setAttribute('aria-pressed',String(repeatOne));$('musicRepeat').setAttribute('aria-label',repeatOne?'關閉單曲循環':'開啟單曲循環');};
 $('musicSeek').oninput=()=>{if(Number.isFinite(music.duration))music.currentTime=Number($('musicSeek').value);updateMusic();};
 document.querySelectorAll('[data-track]').forEach(b=>b.onclick=()=>selectTrack(Number(b.dataset.track)));
 for(const event of ['play','pause','timeupdate','loadedmetadata'])music.addEventListener(event,updateMusic);

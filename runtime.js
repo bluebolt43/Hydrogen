@@ -1,5 +1,5 @@
 
-const OFFLINE_AUDIO={"/dial.wav":"./assets/dial.wav","/ring.wav":"./assets/ring.wav","/deposit.wav":"./assets/deposit.wav","/police-approach.wav":"./assets/police-approach.wav","/music-night.wav":"./assets/music-night.wav","/music-morning.wav":"./assets/music-morning.wav","/fbi-open-up-sfx.mp3":"./assets/fbi-open-up-sfx.mp3"},OFFLINE_IMAGES={"/penguin-iceberg.png":"./assets/penguin-iceberg.png","/pigeon-packet.png":"./assets/pigeon-packet.png"};
+const OFFLINE_AUDIO={"/dial.wav":"./assets/dial.wav","/ring.wav":"./assets/ring.wav","/deposit.wav":"./assets/deposit.wav","/police-approach.wav":"./assets/police-approach.wav","/nature-ocean-wind.wav":"./assets/nature-ocean-wind.wav","/nature-rain.wav":"./assets/nature-rain.wav","/nature-stream.wav":"./assets/nature-stream.wav","/nature-birds.wav":"./assets/nature-birds.wav","/fbi-open-up-sfx.mp3":"./assets/fbi-open-up-sfx.mp3"},OFFLINE_IMAGES={"/penguin-iceberg.png":"./assets/penguin-iceberg.png","/pigeon-packet.png":"./assets/pigeon-packet.png"};
 function randomInt(max){const limit=Math.floor(4294967296/max)*max;const value=new Uint32Array(1);do{crypto.getRandomValues(value);}while(value[0]>=limit);return value[0]%max;}
 
 function loadDialogueTable(){return OFFLINE_TABLE;}
