@@ -224,7 +224,7 @@ function bossLayout(progress=bossProgress,name=bossLayoutName){
  for(const object of layout.objects){
   if(object.action==='endless'){
    const unlocked=progress.cleared.includes(8);
-   object.visible={...object.visible,lock:!unlocked,button:unlocked};
+   object.visible={...object.visible,lock:!unlocked,button:false};
    continue;
   }
   if(!object.stage)continue;
@@ -238,7 +238,7 @@ let menuLayout=SystemLayout.validate(mainMenuLayout);const menuCanvas=document.g
 const reducedMenuMotion=matchMedia('(prefers-reduced-motion: reduce)');
 let menuUnlockAnimation=null,menuSelectionFlash=null;
 function menuImage(src){if(!menuImages.has(src)){const image=new Image();menuImages.set(src,image);image.onload=drawMenu;image.onerror=()=>{error.textContent='缺少素材：'+src;error.hidden=false;};image.src=new URL('../'+src,mainURL).href;}const image=menuImages.get(src);return image.complete&&image.naturalWidth?image:null;}
-function drawMenu(){const rect=menuCanvas.getBoundingClientRect();if(!rect.width||!rect.height)return;const ratio=Math.max(3,devicePixelRatio||1),ctx=menuCanvas.getContext('2d');const pixelWidth=Math.max(1,Math.round(rect.width*ratio)),pixelHeight=Math.max(1,Math.round(rect.height*ratio));if(menuCanvas.width!==pixelWidth)menuCanvas.width=pixelWidth;if(menuCanvas.height!==pixelHeight)menuCanvas.height=pixelHeight;ctx.setTransform(menuCanvas.width/menuLayout.canvas.width,0,0,menuCanvas.height/menuLayout.canvas.height,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const d=JSON.parse(JSON.stringify(menuLayout));if(menuMode==='pirate')for(const o of d.objects){if(o.type==='frame'&&o.stage&&!reducedMenuMotion.matches)o.bossSway=Math.sin(performance.now()*Math.PI/4800+o.stage*.45);if(o.action==='endless'&&!SystemLayout.visibility(o).lock)o.maskAlpha=reducedMenuMotion.matches?.5:.25*(1+Math.sin(performance.now()*Math.PI/10000));}for(const o of d.objects)if(o.src==='res/img/system-marker-sound.png'&&!readSettings().sound)o.src='res/img/system-marker-muted.png';if(menuUnlockAnimation){const next=d.objects.find(o=>menuUnlockAnimation.stage==='endless'?o.action==='endless':o.stage===menuUnlockAnimation.stage);if(next){next.lockFadeProgress=menuUnlockAnimation.lockFade;next.bossRevealProgress=next.bossDimmed?0:menuUnlockAnimation.bossReveal;next.lockShake=menuUnlockAnimation.shake;}}if(menuAnimation)d.objects=[];SystemLayout.draw(ctx,d,menuImage);drawTitleLights(ctx,d);if(menuSelectionFlash){const selected=d.objects.find(o=>o.type==='frame'&&o.stage===menuSelectionFlash.stage);if(selected){ctx.save();ctx.beginPath();ctx.roundRect(selected.x,selected.y,selected.width,selected.height,Math.min(selected.edgeWidth*3,selected.width/5,selected.height/5));ctx.fillStyle=`rgba(255,255,255,${menuSelectionFlash.alpha*.45})`;ctx.fill();ctx.strokeStyle=`rgba(255,245,185,${menuSelectionFlash.alpha})`;ctx.lineWidth=4;ctx.stroke();ctx.restore();}}const host=document.getElementById('menu-animation'),transform='scale('+rect.width/360+')';if(host.style.transform!==transform)host.style.transform=transform;}
+function drawMenu(){const rect=menuCanvas.getBoundingClientRect();if(!rect.width||!rect.height)return;const ratio=Math.max(3,devicePixelRatio||1),ctx=menuCanvas.getContext('2d');const pixelWidth=Math.max(1,Math.round(rect.width*ratio)),pixelHeight=Math.max(1,Math.round(rect.height*ratio));if(menuCanvas.width!==pixelWidth)menuCanvas.width=pixelWidth;if(menuCanvas.height!==pixelHeight)menuCanvas.height=pixelHeight;ctx.setTransform(menuCanvas.width/menuLayout.canvas.width,0,0,menuCanvas.height/menuLayout.canvas.height,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';const d=JSON.parse(JSON.stringify(menuLayout));if(menuMode==='pirate')for(const o of d.objects){if(o.type==='frame'&&o.stage&&!reducedMenuMotion.matches)o.bossSway=Math.sin(performance.now()*Math.PI/4800+o.stage*.45);if(o.action==='endless'&&!SystemLayout.visibility(o).lock)o.maskAlpha=reducedMenuMotion.matches?.5:.25*(1+Math.sin(performance.now()*Math.PI/10000));}for(const o of d.objects)if(o.src==='res/img/system-marker-sound.png'&&!readSettings().sound)o.src='res/img/system-marker-muted.png';if(menuUnlockAnimation){const next=d.objects.find(o=>menuUnlockAnimation.stage==='endless'?o.action==='endless':o.stage===menuUnlockAnimation.stage);if(next){next.lockFadeProgress=menuUnlockAnimation.lockFade;next.bossRevealProgress=next.bossDimmed?0:menuUnlockAnimation.bossReveal;next.lockShake=menuUnlockAnimation.shake;}}if(menuAnimation)d.objects=[];SystemLayout.draw(ctx,d,menuImage);drawTitleLights(ctx,d);if(menuSelectionFlash){const selected=d.objects.find(o=>o.type==='frame'&&(menuSelectionFlash.themeId?o.themeId===menuSelectionFlash.themeId:o.stage===menuSelectionFlash.stage));if(selected){ctx.save();ctx.beginPath();ctx.roundRect(selected.x,selected.y,selected.width,selected.height,Math.min(selected.edgeWidth*3,selected.width/5,selected.height/5));ctx.fillStyle=`rgba(255,255,255,${menuSelectionFlash.alpha*.45})`;ctx.fill();ctx.strokeStyle=`rgba(255,245,185,${menuSelectionFlash.alpha})`;ctx.lineWidth=4;ctx.stroke();ctx.restore();}}const host=document.getElementById('menu-animation'),transform='scale('+rect.width/360+')';if(host.style.transform!==transform)host.style.transform=transform;}
 // Lamp sockets in the 1536 x 1024 title artwork; all share one light mask.
 const titleLightArtSize=[1536,1024];
 const titleLightPositions=[
@@ -297,7 +297,7 @@ for(const o of menuLayout.objects){
  if(o.type!=='frame'&&!isSound&&!isBack&&!isScroll)continue;
  const button=document.createElement('button');button.type='button';button.className='menu-hit';positionMenuControl(button,o);
  button.setAttribute('aria-label',isPirate?'Pirate，開始遊戲':isBossStage?`第 ${o.stage} 關，觀看開場並開始遊戲`:isEndless?'Endless Mode，開始遊戲':isSound?'切換聲音':'尚未開放');
- if(isPirate){button.dataset.theme='pirate';button.onclick=()=>switchMenu('pirate');}
+ if(isPirate){button.dataset.theme='pirate';button.onclick=()=>switchMenu('pirate','pirate');}
  else if(isBossStage){button.dataset.stage=String(o.stage);button.onclick=()=>startBossStage(o.stage);}
  else if(isEndless){button.dataset.mode='endless';button.onclick=()=>mainScreen.showGame();}
  else if(isBack){button.setAttribute('aria-label','返回首頁');button.onclick=()=>switchMenu('main');}
@@ -318,11 +318,12 @@ function tickBossMenu(now){
 }
 requestAnimationFrame(tickBossMenu);
 
-async function switchMenu(mode){
+async function switchMenu(mode,themeId=null){
  if(transitioning||mode===menuMode||current)return;
  const next=mode==='main'?SystemLayout.validate(mainMenuLayout):bossLayout();
  transitioning=true;document.getElementById('menu-actions').inert=true;
  try{
+  if(themeId)await flashMenuCard({themeId});
   const paths=new Set();function collect(v){if(typeof v==='string'&&v.startsWith('res/img/'))paths.add(v);else if(v&&typeof v==='object')Object.values(v).forEach(collect);}collect([menuLayout,next]);paths.add('res/img/system-marker-muted.png');
   await Promise.all([...paths].map(async src=>{menuImage(src);await menuImages.get(src).decode();}));
   const host=document.getElementById('menu-animation');host.hidden=false;
@@ -450,12 +451,12 @@ async function leaveBossStage(gameView){
  }catch(e){error.textContent=e.message;error.hidden=false;await fadeSceneBlack(0);}
  finally{screen.inert=false;menu.inert=false;transitioning=false;settingsButton.hidden=false;settingsPosition();}
 }
-function flashBossStage(stage){
+function flashMenuCard(selection){
  const duration=1000,started=performance.now();
  return new Promise(resolve=>{
   function frame(now){
    const elapsed=Math.min(duration,now-started);
-   menuSelectionFlash=elapsed<duration?{stage,alpha:Math.sin(elapsed*Math.PI/500)**2}:null;
+   menuSelectionFlash=elapsed<duration?{...selection,alpha:Math.sin(elapsed*Math.PI/500)**2}:null;
    drawMenu();
    if(elapsed<duration)requestAnimationFrame(frame);else resolve();
   }
@@ -466,7 +467,7 @@ async function startBossStage(stage){
  if(transitioning||current||settingsOpen)return;
  transitioning=true;menu.inert=true;screen.inert=true;settingsButton.hidden=true;
  try{
-  await flashBossStage(stage);
+  await flashMenuCard({stage});
   await fadeSceneBlack(1);
   await playBossStory(stage,'start');
   await fadeSceneBlack(1);

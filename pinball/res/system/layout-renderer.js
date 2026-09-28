@@ -159,7 +159,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
    ctx.strokeText(text,x+markerSize/2,baseline);ctx.fillText(text,x+markerSize/2,baseline);ctx.restore();
   }
  }
- if(visible.title){const image=getImage(o.title?.src||'res/img/card-title.png');if(image){const width=o.title?.width??o.width*.8,height=width*image.naturalHeight/image.naturalWidth;const x=o.x+(o.width-width)/2,y=o.y+(o.title?.yOffset??-height/2);ctx.drawImage(image,x,y,width,height);
+ if(visible.title&&!(o.action==='endless'&&visible.lock)){const image=getImage(o.title?.src||'res/img/card-title.png');if(image){const width=o.title?.width??o.width*.8,height=width*image.naturalHeight/image.naturalWidth;const x=o.x+(o.width-width)/2,y=o.y+(o.title?.yOffset??-height/2);ctx.drawImage(image,x,y,width,height);
    const text=o.title?.text??'';if(text&&o.title?.showText!==false)titleText(ctx,text,x+width/2,y+height*.43+(o.title?.textY??0),height*.48,width*.78,o.title?.arc??0);
 }}
  if(visible.lock){
