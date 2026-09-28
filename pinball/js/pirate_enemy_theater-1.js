@@ -141,6 +141,9 @@ async function choose(index,round=index+1){
  try{
   const asset=catalog[index].states[0];await Promise.all([asset.src,...backgroundSources(catalog[index])].map(preload));await warnAndClose();
   typeIndex=index;stateIndex=0;level=round;maxHp=level+2;hp=maxHp;defeated=false;
+  isNight=['pirate-gunship','rock-shell-beast'].includes(catalog[index].id);
+  $('day').hidden=isNight;$('night').hidden=!isNight;stage.classList.toggle('night',isNight);
+  daynight.textContent=isNight?'換成白天':'換成夜晚';
   stage.classList.remove('defeated');delete stage.dataset.combat;spinner.style.transform='rotateY(0deg)';spinner.style.visibility='';
   enemy.src=asset.src;picker.value=String(index);sync();renderHealth();await enterEnemy();
  }catch(e){picker.value=String(typeIndex);message.textContent='敵人圖片載入失敗。';}finally{lock(false);}
