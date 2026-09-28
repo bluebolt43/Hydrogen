@@ -26,10 +26,16 @@ function hasSeen(chapter){try{return localStorage.getItem(seenKey(chapter))==='1
 function markSeen(chapter){try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
+function requestPlayback(){
+ playing=false;++playId;cancelAnimationFrame(raf);raf=0;stopSounds();
+ if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
+ skipButton.hidden=true;nextButton.hidden=true;error.hidden=true;
+ document.querySelector('#begin').hidden=false;
+}
 function playSound(sound,volume){
  if(!sound)return;
  const id=playId;
- const warn=()=>{if(id===playId&&(playing||previewMode))showError('提醒：部分音效無法播放，劇情將繼續播放。');};
+ const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
 function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
@@ -74,15 +80,31 @@ function tick(now){
  }
  raf=requestAnimationFrame(tick);
 }
-function play(chapter=activeChapter){
+async function play(chapter=activeChapter){
  if(previewMode)return false;
  if(chapter!==`ch${chapterNumber}-${chapterPart}`||!chapters[chapter])return false;
  const missing=images.find(image=>!image.complete||!image.naturalWidth);
  if(missing){showError(`圖片尚未載入：${missing.getAttribute('src')}`);return false;}
- ++playId;
+ const id=++playId;
  cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;nextButton.hidden=true;awaitingNext=false;if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  activeChapter=chapter;const [offset,stop]=chapters[chapter];playbackEnd=stop;
- error.hidden=true;playing=true;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
+ error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
+ document.querySelector('#begin').hidden=true;
+ // Authorize every ending's media before starting the single animation clock.
+ // A tap retries these same elements; rejected or stalled media shows only Play.
+ if(chapterPart==='end'){
+  let timeout;
+  try{
+   await Promise.race([
+    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
+    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
+   ]);
+  }catch{if(id===playId)requestPlayback();return false;}
+  finally{clearTimeout(timeout);}
+  if(id!==playId)return false;
+  stopSounds();
+ }
+ playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
