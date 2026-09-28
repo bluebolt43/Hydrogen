@@ -10,6 +10,11 @@ html[data-embedded] header,html[data-embedded] footer{display:none}html[data-emb
 #debugPanel[hidden]{display:none}.debug-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}.debug-heading strong{font-size:18px}.debug-hint{font-size:12px;color:#b6c9da;line-height:1.5}.debug-actions{margin-bottom:12px}
 #physicsControls fieldset{margin:0 0 14px;padding:10px;border:1px solid #526a80;border-radius:6px}#physicsControls legend{color:#ffd78e}.physics-label{display:flex;justify-content:space-between;gap:8px;font-size:13px}.physics-label output{font-variant-numeric:tabular-nums;color:#ffd78e}#physicsControls input{display:block;width:100%;margin:8px 0 14px;accent-color:#edba64;touch-action:pan-y}#targetDebug{font-size:14px;border-top:1px solid #526a80;padding-top:12px}#targetDebug .target-debug-heading{margin:0;padding:0;font-weight:600}#targetDebugButtons{padding:0;margin:8px 0!important;justify-content:flex-start!important}#targetDebugButtons button{font-size:12px;padding:6px 8px}.debug-probe{display:block;font-size:13px;margin-top:14px}
 @media(max-width:650px){#debugPanel{flex-basis: min(260px,55vw);margin-right:4px;padding:8px}#physicsControls fieldset{padding:6px}.physics-label{font-size:12px}}
+#tableTutorial{position:fixed;inset:0;z-index:1000;overflow:hidden;touch-action:none}
+#tutorialSpotlight{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#tutorialPanel{position:absolute;left:50%;transform:translateX(-50%);width:min(310px,calc(100% - 32px));padding:14px;background:#30251e;border:2px solid #b89051;border-radius:12px;color:#fff0cc;box-shadow:0 5px 22px #0008}
+#tutorialPanel h2{margin:8px 0;font-size:20px}#tutorialPanel p{font-size:14px;line-height:1.5;margin:10px 0 14px}#tutorialPanel div{display:flex;justify-content:space-between;gap:12px}#tutorialPanel button{min-height:42px}#tutorialPrevious:disabled{opacity:.4}#tutorialExit{display:block;width:100%;margin:14px auto 0;font-size:13px;background:#2c4157;border:1px solid #70859c}
+#tutorialPanel.compact{padding:10px}#tutorialPanel.compact h2{margin:6px 0}#tutorialPanel.compact p{font-size:13px;line-height:1.45;margin:8px 0 10px}#tutorialPanel.compact button{min-height:36px}#tutorialPanel.compact #tutorialExit{min-height:28px;padding:4px;margin-top:8px}
 </style>
 <header><strong>新版 Layout 試玩</strong><span>分數 <b id="score">0</b> · 球 <b id="ballNumber">1</b>/3 · <b id="ballTime">00:00.0</b></span><button id="restart">重新開始 R</button><button id="settings">設定</button><button id="debugToggle" aria-controls="debugPanel" aria-expanded="false">除錯</button><label><input id="upper" type="checkbox" checked>顯示上層</label><label><input id="probe" type="checkbox">點擊放球測試</label><label><input id="artToggle" type="checkbox" checked>美術圖層</label><label><input id="geometryToggle" type="checkbox" checked>布局線</label><span id="notice">按住空白鍵，再放開發射</span></header>
 <main><aside id="debugPanel" aria-label="除錯視窗" hidden><div class="debug-heading"><strong>除錯</strong><button id="debugClose" aria-label="關閉除錯視窗">關閉</button></div><p class="debug-hint">拖曳即時套用；重新整理會還原，不會覆寫 board.conf。</p><div class="debug-actions"><button id="physicsReset">還原預設</button></div><div id="physicsControls"></div><section id="targetDebug"><div class="target-debug-heading">Target 除錯</div><div id="targetDebugButtons" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px"></div><div id="targetDebugStatus" aria-live="polite"></div><small>每次補齊一組 target；滿級後測試加分。會影響本局分數，重新開始可重置。</small></section><label class="debug-probe"><input id="debugProbe" type="checkbox"> 點擊球桌放球測試</label></aside><div id="tableViewport"><canvas id="table" width="374" height="481"></canvas></div></main>
@@ -730,7 +735,7 @@ function createGame(core){
 }
 const bumperFiles=/\/(bumper-barrel|bumper-skull|lighthouse)-lv[123]\.png$/;
 const lanternFiles=/\/lantern-(off|on)\.png$/;
-function inferArtState(o){return {...(o.bind&&bumperFiles.test(o.src)?{state:'level'}:{}),...(o.bind&&lanternFiles.test(o.src)?{state:'rollover'}:{}),...(['left-return','right-return'].includes(o.bind)?{state:'return-gate'}:{})};}
+function inferArtState(o){if(o.state==='guide-arrow')return {};return {...(o.bind&&bumperFiles.test(o.src)?{state:'level'}:{}),...(o.bind&&lanternFiles.test(o.src)?{state:'rollover'}:{}),...(['left-return','right-return'].includes(o.bind)?{state:'return-gate'}:{})};}
 const attractFish=/\/(school|fish-\d+)-[1-7]\.png$/;
 function attractGroup(o){
  if(o.state==='kraken-eye'||o.state==='kraken-body')return 'octopus';
@@ -773,6 +778,15 @@ function attractLight(game,o){
 }
 
 function artState(o,game,renderer,flashImage){
+   if(game&&o.state==='guide-arrow'){
+    const goal=o.bind?.startsWith('guide:')?o.bind.slice(6):null;
+    if(goal==='vortex'&&game.vortexActive||goal==='enemy'&&game.enemyActive||goal==='center-post'&&game.centerPostRaised)return null;
+    if(['ball','barrel','kraken','airdrop'].includes(goal)&&!game.enemyActive)return null;
+    if(goal==='kraken'&&game.krakenAttackAt!==null||goal==='airdrop'&&game.airdropActive)return null;
+    if(goal==='multiball'&&game.balls.filter(b=>b.state!=='drained').length+game.freeBallQueue>=3)return null;
+    if(game.rolloverHits.has(o.bind)||game.airdropHits.has(o.bind))return null;
+    const kicker=game.g.rescue_kickers?.find(k=>k.id===o.bind);if(kicker&&game.kickbackHits[kicker.side])return null;
+   }
    if(game&&o.state==='return-gate'&&!game.gates.some(g=>g.id===o.bind&&g.closed&&!g.unlocked))return null;
    const attract=attractLight(game,o);
    const postImage=o.bind==='test-post-center'&&/\/campus-(off|on)\.png$/.test(o.src);
@@ -916,6 +930,7 @@ class Renderer{
    const ready=(image,x,y)=>image.complete&&image.naturalWidth&&x+sw<=image.naturalWidth+.01&&y+sh<=image.naturalHeight+.01;
    if(!ready(baseImage,o.crop[0],o.crop[1])&&!ready(img,sx,sy))continue;
    ctx.save();ctx.globalAlpha*=o.opacity*smokeAlpha*targetAlpha;
+   if(o.state==='guide-arrow'){const time=game?game.time:performance.now()/1000;ctx.globalAlpha*=.3+.7*(.5+.5*Math.cos(time*Math.PI*3));}
    const f=game&&game.flippers.find(f=>f.id===o.bind);
    if(f){ctx.translate(...f.pivot);ctx.rotate(f.angle-f.rest);ctx.translate(-f.pivot[0],-f.pivot[1]);}
    const vortexAge=game&&o.bind&&o.state==='vortex'&&game.vortexActive?Math.max(0,game.time-(game.vortexActivatedAt??game.time)):null;
@@ -1025,6 +1040,7 @@ class LayoutTheater{
 if(typeof module!=='undefined'&&module.exports)module.exports=LayoutTheater;else root.LayoutTheater=LayoutTheater;
 })(typeof window!=='undefined'?window:globalThis);
 </script><script>'use strict';
+const tutorialMode=new URLSearchParams(location.search).get('tutorial')==='1';
 const requestedBossStage=Number(new URLSearchParams(location.search).get('bossStage'));
 const bossStage=Number.isInteger(requestedBossStage)&&requestedBossStage>=1&&requestedBossStage<=8?requestedBossStage:0;
 const G=PIRATE_GEOMETRY,P=PiratePhysics,game=new P.Game(G),canvas=document.getElementById('table'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
@@ -1366,7 +1382,7 @@ const postDebug=document.createElement('button');postDebug.textContent='Center p
 const eyeDebug=document.createElement('button');eyeDebug.textContent='章魚眼睛 +1 / 5';eyeDebug.onclick=()=>{game.collectKrakenEye();notice(`章魚眼睛 ${game.krakenCount}/5`);draw();};$('targetDebugButtons').append(eyeDebug);
 function bind(id,set){const b=$(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);set(true);e.preventDefault()};b.onpointerup=()=>set(false);b.onpointercancel=()=>set(false)}
 bind('left',v=>game.input.left=v);bind('right',v=>game.input.right=v);bind('launch',launch);
-function key(e,on){if(leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();if([' ','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if(k===' '&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
+function key(e,on){if(tutorialMode||leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();if([' ','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if(k===' '&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
 addEventListener('keydown',e=>{if(!gameOverOverlay)key(e,true)});addEventListener('keyup',e=>{if(!gameOverOverlay)key(e,false)});
 addEventListener('blur',()=>{clearTouchControls();game.input.left=game.input.right=game.input.launch=false;if(!window.AppControls&&!game.paused)openSettings()});
 canvas.onpointerdown=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*view[2]+view[0],y=(e.clientY-r.top)/r.height*view[3]+view[1];if(topHit(backArt,x,y)){requestLeaveGame();return;}if(topHit(settingsArt,x,y)){openSettings();return;}if(topHit(soundArt,x,y)){soundEnabled=!soundEnabled;localStorage.setItem('pinball-sound',soundEnabled?'on':'off');syncSound();notice(soundEnabled?'音效開啟':'音效關閉');draw();return;}if(!$('probe').checked){
@@ -1383,4 +1399,64 @@ canvas.onpointerup=e=>endTouch(e);
 canvas.onpointercancel=e=>endTouch(e,true);
 canvas.onlostpointercapture=e=>endTouch(e,true);
 requestAnimationFrame(frame);
+
+function startTableTutorial(){
+ game.paused=true;clearTouchControls();soundBank.setPaused(true);
+ const overlay=document.createElement('div');overlay.id='tableTutorial';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','tutorialTitle');
+ overlay.innerHTML='<svg id="tutorialSpotlight" aria-hidden="true"></svg><section id="tutorialPanel"><small id="tutorialCount"></small><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><div><button id="tutorialPrevious">上一步</button><button id="tutorialNext">下一步</button></div><button id="tutorialExit">返回關卡選擇</button></section>';
+ document.body.append(overlay);
+ let step=0;
+ function artBounds(a,padding=5){return [a.x-a.width/2-padding,a.y-a.height/2-padding,a.width+padding*2,a.height+padding*2];}
+ function objectBounds(o,padding=9){const points=o.points||[o.center],xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return [Math.min(...xs)-padding,Math.min(...ys)-padding,Math.max(...xs)-Math.min(...xs)+padding*2,Math.max(...ys)-Math.min(...ys)+padding*2];}
+ function targets(action){const rule=G.gameplay.target_rules.find(r=>r.action===action);return artLayers.filter(a=>rule.objects.some(id=>a.bind?.startsWith(id+'-'))).map(a=>artBounds(a));}
+ function flipper(side){const f=game.flippers.find(f=>f.side===side)||game.flippers[side==='left'?0:1],tip=P.add(f.pivot,[Math.cos(f.rest)*f.length,Math.sin(f.rest)*f.length]);return objectBounds({points:[f.pivot,tip]},12);}
+ function holes(attack){return G.lower.filter(o=>G.gameplay.hole_attacks[o.id]===attack).map(o=>objectBounds(o,15));}
+ const steps=[
+  ['發球台',()=>launchMode==='drag'?'操作：在右側發球台向下拖曳蓄力，放開發球。電腦可按住空白鍵，放開發射。':'操作：按住右側發球台蓄力，放開發球。電腦可使用空白鍵。',()=>{const p=G.plunger;return [[p.left-5,p.rest_y-32,p.right-p.left+10,Math.min(view[1]+view[3],p.base_y+15)-(p.rest_y-32)]];}],
+  ['左 flipper',()=> '操作：點按球台左半部，揮動左 flipper 把球打回球台。電腦可使用 ← 或 Z。',()=>[flipper('left')]],
+  ['右 flipper',()=> '操作：點按球台右半部，揮動右 flipper 把球打回球台。電腦可使用 → 或 C。',()=>[flipper('right')]],
+  ['水渦啟動條件',()=> '條件：命中左上方三顆珍珠 target。效果：啟動中央水渦；啟動後再次集齊，可獲得備用球 +1。',()=>targets('vortex')],
+  ['Multi-ball 條件',()=> '條件：左右救球彈簧各觸發一次。效果：追加一顆球並重置收集狀態；場上最多三顆，滿額改為備用球 +1。',()=>G.rescue_kickers.map(o=>objectBounds(o,13))],
+  ['Center post 條件',()=> '條件：球通過高亮的三條下方 rollover。效果：中央保護柱升起，阻擋五次碰撞後降下，再次收集可重新啟動。',()=>[...G.lower.filter(o=>o.kind==='rollover').map(o=>objectBounds(o,10)),objectBounds(G.lower.find(o=>o.id==='test-post-center'),12)]],
+  ['敵人出現條件',()=> '條件：命中三顆通緝令 target，召喚敵人。敵人在場時再次集齊，獲得備用球 +1。Boss 關卡會直接安排對應敵人出場。',()=>targets('enemy')],
+  ['砲彈攻擊',()=> '條件：敵人在場時，把球打進右上方任一高亮洞口。效果：發動砲彈攻擊敵人。',()=>holes('ball')],
+  ['木桶攻擊',()=> '條件：敵人在場時，把球打進左上方高亮洞口。效果：發動木桶攻擊敵人。',()=>holes('barrel')],
+  ['章魚攻擊',()=> '條件：球從左側上層通道經過五次，集滿五顆眼睛。效果：章魚攻擊，之後重新收集。',()=>artLayers.filter(a=>a.state==='kraken-body').map(a=>artBounds(a))],
+  ['空投攻擊',()=> '條件：敵人在場時，球通過上方三條 rollover，全部集齊。效果：發動空投攻擊，三條收集狀態重置。',()=>G.lower.filter(o=>o.kind==='airdrop-rollover').map(o=>objectBounds(o,10))],
+  ['返回鈕',()=> '操作：點右上角返回箭頭，可選擇繼續遊戲或離開，回到關卡選擇頁。',()=>[[backArt.x-backArt.width/2-4,backArt.y+topOffset()-backArt.height/2-4,backArt.width+8,backArt.height+8]]]
+ ];
+ function position(){
+  const r=canvas.getBoundingClientRect(),root=overlay.getBoundingClientRect(),scale=r.width/view[2];
+  const rects=steps[step][2]().map(([x,y,w,h])=>{const left=Math.max(view[0],x),top=Math.max(view[1],y),right=Math.min(view[0]+view[2],x+w),bottom=Math.min(view[1]+view[3],y+h);return {x:r.left-root.left+(left-view[0])*scale,y:r.top-root.top+(top-view[1])*scale,w:(right-left)*scale,h:(bottom-top)*scale};});
+  // Merge overlapping highlights until their combined bounds no longer overlap.
+  let merged=true;while(merged){merged=false;for(let i=0;i<rects.length&&!merged;i++)for(let j=i+1;j<rects.length;j++){
+   const a=rects[i],b=rects[j];if(a.x<=b.x+b.w&&a.x+a.w>=b.x&&a.y<=b.y+b.h&&a.y+a.h>=b.y){
+    const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);rects[i]={x,y,w:Math.max(a.x+a.w,b.x+b.w)-x,h:Math.max(a.y+a.h,b.y+b.h)-y};rects.splice(j,1);merged=true;break;
+   }
+  }}
+  const svg=$('tutorialSpotlight');svg.setAttribute('viewBox',`0 0 ${root.width} ${root.height}`);
+  const holes=rects.map(q=>`<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" rx="7" fill="black"/>`).join('');
+  const outlines=rects.map(q=>`<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" rx="7" fill="none" stroke="#ffe29b" stroke-width="2"/>`).join('');
+  svg.innerHTML=`<defs><mask id="tutorialMask"><rect width="100%" height="100%" fill="white"/>${holes}</mask></defs><rect width="100%" height="100%" fill="black" opacity=".82" mask="url(#tutorialMask)"/>${outlines}`;
+  const panel=$('tutorialPanel');panel.classList.remove('compact');const minY=Math.min(...rects.map(q=>q.y)),maxY=Math.max(...rects.map(q=>q.y+q.h));
+  if(Math.max(minY,root.height-maxY)<panel.offsetHeight+32)panel.classList.add('compact');
+  const height=panel.offsetHeight;
+  const top=minY>=height+24?Math.max(16,Math.min(minY-height-20,root.height*.25)):Math.min(root.height-height-16,maxY+20);
+  panel.style.top=Math.max(16,top)+'px';
+ }
+ function render(){
+  $('tutorialCount').textContent=(step+1)+' / '+steps.length;
+  $('tutorialTitle').textContent=steps[step][0];$('tutorialText').textContent=steps[step][1]();
+  $('tutorialPrevious').disabled=step===0;$('tutorialNext').textContent=step===steps.length-1?'完成':'下一步';position();
+ }
+ function exit(){if(window.AppControls?.exitGame)window.AppControls.exitGame();else location.href=new URL('res/main.html',document.baseURI).href;}
+ $('tutorialPrevious').onclick=()=>{if(step>0){step--;render();}};
+ $('tutorialNext').onclick=()=>{if(step<steps.length-1){step++;render();}else{window.dispatchEvent(new CustomEvent('pinball:tutorial-complete'));exit();}};
+ $('tutorialExit').onclick=exit;
+ overlay.onkeydown=e=>{if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button')].filter(b=>!b.disabled),first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}};
+ new ResizeObserver(position).observe(canvas);
+ artRenderer.image(backArt.src).addEventListener('load',position,{once:true});
+ render();$('tutorialNext').focus();
+}
+if(tutorialMode)startTableTutorial();
 </script></html>

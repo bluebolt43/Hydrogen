@@ -299,7 +299,7 @@ function createGame(core){
 }
 const bumperFiles=/\/(bumper-barrel|bumper-skull|lighthouse)-lv[123]\.png$/;
 const lanternFiles=/\/lantern-(off|on)\.png$/;
-function inferArtState(o){return {...(o.bind&&bumperFiles.test(o.src)?{state:'level'}:{}),...(o.bind&&lanternFiles.test(o.src)?{state:'rollover'}:{}),...(['left-return','right-return'].includes(o.bind)?{state:'return-gate'}:{})};}
+function inferArtState(o){if(o.state==='guide-arrow')return {};return {...(o.bind&&bumperFiles.test(o.src)?{state:'level'}:{}),...(o.bind&&lanternFiles.test(o.src)?{state:'rollover'}:{}),...(['left-return','right-return'].includes(o.bind)?{state:'return-gate'}:{})};}
 const attractFish=/\/(school|fish-\d+)-[1-7]\.png$/;
 function attractGroup(o){
  if(o.state==='kraken-eye'||o.state==='kraken-body')return 'octopus';
@@ -342,6 +342,15 @@ function attractLight(game,o){
 }
 
 function artState(o,game,renderer,flashImage){
+   if(game&&o.state==='guide-arrow'){
+    const goal=o.bind?.startsWith('guide:')?o.bind.slice(6):null;
+    if(goal==='vortex'&&game.vortexActive||goal==='enemy'&&game.enemyActive||goal==='center-post'&&game.centerPostRaised)return null;
+    if(['ball','barrel','kraken','airdrop'].includes(goal)&&!game.enemyActive)return null;
+    if(goal==='kraken'&&game.krakenAttackAt!==null||goal==='airdrop'&&game.airdropActive)return null;
+    if(goal==='multiball'&&game.balls.filter(b=>b.state!=='drained').length+game.freeBallQueue>=3)return null;
+    if(game.rolloverHits.has(o.bind)||game.airdropHits.has(o.bind))return null;
+    const kicker=game.g.rescue_kickers?.find(k=>k.id===o.bind);if(kicker&&game.kickbackHits[kicker.side])return null;
+   }
    if(game&&o.state==='return-gate'&&!game.gates.some(g=>g.id===o.bind&&g.closed&&!g.unlocked))return null;
    const attract=attractLight(game,o);
    const postImage=o.bind==='test-post-center'&&/\/campus-(off|on)\.png$/.test(o.src);
