@@ -13,13 +13,15 @@
 <div id="scene-transition" aria-hidden="true" hidden></div>
 <button id="open-settings" type="button" aria-label="開啟設定"><img src="img/system-marker-settings.png" alt=""></button>
 <section id="app-settings" aria-labelledby="settings-title" hidden>
-<button id="close-settings" type="button" aria-label="返回遊戲"><img src="img/system-marker-back.png" alt=""></button>
+<button id="close-settings" type="button" aria-label="返回"><img src="img/system-marker-back.png" alt=""></button>
 <h1 id="settings-title">設定</h1>
 <label class="setting-row" for="sound-setting">聲音<input id="sound-setting" type="checkbox"></label>
 <div class="setting-row"><label for="volume-setting">音量</label><input id="volume-setting" type="range" min="0" max="100" step="1" value="100"><output id="volume-value" for="volume-setting">100%</output></div>
 <label class="setting-row" for="launch-setting">發射模式<select id="launch-setting"><option value="hold">按住</option><option value="drag">拖曳</option></select></label>
+<div id="clear-records-section" hidden>
 <button id="clear-game-records" type="button" style="padding:10px 16px;background:#57312c;color:#fff0cc;border:1px solid #c38b70;border-radius:6px;cursor:pointer">清除遊戲紀錄</button>
 <p style="font-size:13px">清除排行榜、關卡進度及劇情已讀紀錄。</p>
+</div>
 <p id="save-status" role="status"></p>
 </section>
 <p id="load-error" role="alert" hidden></p>

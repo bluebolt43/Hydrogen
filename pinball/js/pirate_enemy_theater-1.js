@@ -2,7 +2,7 @@
 'use strict';
 const embedded=new URLSearchParams(location.search).has('embed');
 const storyVictory=new URLSearchParams(location.search).has('story-victory');
-if(embedded){const style=document.createElement('style');style.textContent='html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:transparent}main{width:100%;height:100%;max-width:none}main> :not(.stage){display:none}.stage{width:100%;height:100%;aspect-ratio:auto;box-shadow:none}.health-hud{top:6px}.heart{width:2.8cqw;height:2.8cqw}';document.head.append(style);}
+if(embedded){const style=document.createElement('style');style.textContent='html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:transparent}main{width:100%;height:100%;max-width:none}main> :not(.stage){display:none}.stage{width:100%;height:100%;aspect-ratio:auto;box-shadow:none}.health-hud{top:11px}.heart{width:2.8cqw;height:2.8cqw}';document.head.append(style);}
 
 const catalog=JSON.parse(document.getElementById('catalog').textContent),$=id=>document.getElementById(id),stage=$('stage'),spinner=$('spinner'),enemy=$('enemy'),picker=$('enemy-type'),next=$('next-state'),daynight=$('daynight'),message=$('status'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let typeIndex=0,stateIndex=0,isNight=false,isBusy=false,level=1,maxHp=3,hp=3,defeated=false;

@@ -46,7 +46,7 @@ function createGame(core){
  mapEvent(type,data){
   if(type==='launch')this.ball.launchGuard=true;
   if(['capture','plunger-ready','drain'].includes(type))this.ball.launchGuard=false;
-  if(type==='free-ball-launch')this.sharkFlashAt=this.time;
+  if(type==='free-ball-launch'||type==='release'&&this.sockets.some(s=>s.id===data.id&&s.mechanic==='shark-inlet'))this.sharkFlashAt=this.time;
   if(type==='flag-hit'){this.flagHitAt??=new Map();this.flagHitAt.set(data.id,this.time);}
   if(type==='release'){this.holeReleasedAt??=new Map();this.holeReleasedAt.set(data.id,this.time);}
  }
@@ -171,12 +171,16 @@ function createGame(core){
  triggerKickback(side,direction,speed=this.config.kickbackSpeed){
   if(!this.kickbacks[side])return;
   const triggerPosition=[...this.ball.p];
-  if(side==='right'){
+  {
    const kicker=this.g.rescue_kickers?.find(k=>k.side===side),point=kicker?.launch_point||kicker?.aim;
    if(point){
     const rescueStart=[...this.ball.p];
     this.ball.p=[...point];this.ball.relocatedFrom=[...point];this.ball.regionPrevious=null;this.ball.trail=[];
     for(const gate of this.gates)if(gate.pendingBall===this.ball){gate.pending=false;gate.pendingBall=null;}
+    // Relocation can start beyond the gate plane, so a geometric crossing
+    // alone is insufficient. Close this rescue's gate once the ball clears it.
+    const returnGate=this.gates.find(g=>g.side===side&&!g.unlocked&&!g.closed);
+    if(returnGate){returnGate.pending=true;returnGate.pendingBall=this.ball;}
     // Rescue relocation crosses the return flap even though later sensors start
     // at relocatedFrom. Apply that crossing before discarding the old position.
     this.updateGates(rescueStart,this.ball.layer);
@@ -443,17 +447,8 @@ function showWarning(doc){
  const finished=animation.finished.catch(()=>{}).finally(cleanup);
  return {finished,cancel(){animation.cancel();cleanup();},pause(){animation.pause();},play(){animation.play();}};
 }
-function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='點擊回到開始'){
- const {mask,cleanup}=screenOverlay(doc);mask.className='pirate-game-over';mask.setAttribute('role','dialog');mask.setAttribute('aria-modal','true');mask.setAttribute('aria-label','Game Over 分數排行榜');
- mask.innerHTML=`<section style="margin:0;padding:20px;box-sizing:border-box;max-height:95%;overflow:auto;width:min(92vw,480px);color:#ff3038;text-align:center;font:bold 18px monospace;line-height:1.5">
- <h1 style="margin:0;font-size:clamp(32px,8vw,56px)">GAME OVER</h1><p style="margin:8px 0">SCORE <span data-score></span></p><hr style="border:0;border-top:2px solid currentColor"><h2 style="font-size:20px;margin:12px 0">HIGH SCORES</h2><ol style="list-style:none;padding:0;margin:0" data-ranks></ol><button style="margin-top:20px;background:#190a0a;color:#ff3038;border:1px solid currentColor;padding:10px 24px;font:inherit;cursor:pointer"></button></section>`;
- mask.querySelector('button').textContent=buttonLabel;
- mask.querySelector('[data-score]').textContent=String(score).padStart(12,'0');
- rows.forEach((entry,i)=>{const row=doc.createElement('li');row.style.cssText='display:flex;justify-content:space-between;gap:12px;padding:2px 6px';if(entry.id===currentId)row.style.background='#ff303833';row.textContent=String(i+1).padStart(2,'0')+'   '+String(entry.score).padStart(12,'0')+(entry.id===currentId?' ◀':'');mask.querySelector('[data-ranks]').append(row);});
- let closed=false;const close=()=>{if(closed)return;closed=true;cleanup();onClose();};
- mask.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(e.target.closest('button'))close();});
- mask.addEventListener('keydown',e=>e.stopPropagation());
- doc.body.append(mask);mask.querySelector('button').focus();return {cancel(){closed=true;cleanup();}};
+function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='重新開始'){
+ return doc.defaultView.GameOverDialog.show(doc,score,rows,currentId,onClose,buttonLabel);
 }
 const sounds={
  metal:{src:'res/audio/electronic-impact.wav',volume:1,interval:70,voices:4},

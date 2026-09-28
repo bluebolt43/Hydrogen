@@ -42,17 +42,13 @@ let soundEnabled=localStorage.getItem('pinball-sound')!=='off';
 function syncSound(){soundBank.setEnabled(soundEnabled);if(soundArt===legacySoundArt&&soundArt)soundArt.src='res/img/top-sound-'+(soundEnabled?'on':'off')+'.png';document.querySelectorAll('audio,video').forEach(a=>a.muted=!soundEnabled);}
 syncSound();
 const settings=document.createElement('dialog');settings.style.cssText='background:#30251e;color:#fff0cc;border:2px solid #b89051;border-radius:12px;padding:24px';
-settings.innerHTML='<h2>設定</h2>'+[['artToggle','美術圖層'],['geometryToggle','布局線'],['upper','顯示上層']].map(([id,label])=>`<p><label><input type="checkbox" data-setting="${id}"> ${label}</label></p>`).join('')+'<p><label>發射模式 <select id="launchMode"><option value="hold">按住蓄力</option><option value="drag">向下拖曳</option></select></label></p><button id="testImpactSound">測試碰撞音效</button><button id="closeSettings">關閉</button><button id="mobileRestart">重新開始</button><p><button id="clearGameRecords">清除遊戲紀錄</button></p><small>清除排行榜、關卡進度及劇情已讀紀錄。</small><p id="clearRecordsStatus" role="status"></p>';
+settings.innerHTML='<h2>設定</h2>'+[['artToggle','美術圖層'],['geometryToggle','布局線'],['upper','顯示上層']].map(([id,label])=>`<p><label><input type="checkbox" data-setting="${id}"> ${label}</label></p>`).join('')+'<p><label>發射模式 <select id="launchMode"><option value="hold">按住蓄力</option><option value="drag">向下拖曳</option></select></label></p><button id="testImpactSound">測試碰撞音效</button><button id="closeSettings">關閉</button><button id="mobileRestart">重新開始</button>';
 document.body.append(settings);$('launchMode').value=launchMode;$('launchMode').onchange=()=>{clearTouchControls();launchMode=$('launchMode').value;localStorage.setItem('pinball-launch-mode',launchMode);};let settingsWasPaused=false;
 settings.onchange=e=>{const id=e.target.dataset.setting;if(id){$(id).checked=e.target.checked;draw();}};
-$('clearGameRecords').onclick=()=>{if(!confirm('確定清除排行榜、關卡進度及劇情已讀紀錄？目前遊戲將結束，音效與操作設定會保留。'))return;
-  try{const keys=Object.keys(localStorage).filter(key=>key==='pinball-high-scores-v1'||key==='pinball-pirate-progress-v1'||key.startsWith('pinball-pirate-story-seen-v1:'));for(const key of keys)localStorage.removeItem(key);location.reload();}
-  catch{$('clearRecordsStatus').textContent='清除失敗，請再試一次。';}
-};
 $('closeSettings').onclick=()=>settings.close();$('testImpactSound').onclick=()=>{soundEnabled=true;localStorage.setItem('pinball-sound','on');syncSound();soundBank.unlock();soundBank.setPaused(false);soundBank.play('metal');};$('mobileRestart').onclick=()=>{settings.close();reset();};settings.onclose=()=>{game.paused=settingsWasPaused;};
 function openSettings(){if(window.AppControls){window.AppControls.openSettings();return;}if(settings.open)return;clearTouchControls();settingsWasPaused=game.paused;game.paused=true;launchStartedAt=null;game.input.launch=game.input.left=game.input.right=false;settings.querySelectorAll('[data-setting]').forEach(e=>e.checked=$(e.dataset.setting).checked);settings.showModal();}
 const leaveDialog=document.createElement('dialog');leaveDialog.id='leaveGameDialog';leaveDialog.style.cssText='background:#30251e;color:#fff0cc;border:2px solid #b89051;border-radius:12px;padding:24px';
-leaveDialog.innerHTML='<h2>離開遊戲？</h2><p>離開將結束目前這一局。</p><button id="continueGame">繼續遊戲</button> <button id="leaveGame">離開遊戲</button>';document.body.append(leaveDialog);
+leaveDialog.innerHTML='<h2>離開球台？</h2><button id="continueGame">繼續遊玩</button> <button id="leaveGame">離開球台</button>';document.body.append(leaveDialog);
 let leaveWasPaused=false;
 function requestLeaveGame(){if(leaveDialog.open)return;clearTouchControls();leaveWasPaused=game.paused;game.paused=true;game.input.left=game.input.right=game.input.launch=false;launchStartedAt=null;leaveDialog.showModal();$('continueGame').focus();}
 leaveDialog.onclose=()=>{game.paused=leaveWasPaused;};
@@ -128,9 +124,9 @@ let gameOverOverlay=null;
 function endGame(){
  if(gameOverOverlay)return;clearTouchControls();launchStartedAt=null;game.paused=true;soundBank.stop();
  let rows=[];try{const saved=JSON.parse(localStorage.getItem('pinball-high-scores-v1')||'[]');if(Array.isArray(saved))rows=saved.filter(r=>r&&Number.isSafeInteger(r.score)&&r.score>=0).slice(0,10);}catch{}
- const id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);rows.push({id,score:game.score});rows.sort((a,b)=>b.score-a.score);rows=rows.slice(0,10);
+ const id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);rows.push({id,score:game.score,endedAt:new Date().toISOString()});rows.sort((a,b)=>b.score-a.score);rows=rows.slice(0,10);
  try{localStorage.setItem('pinball-high-scores-v1',JSON.stringify(rows));}catch{}
- gameOverOverlay=PirateMap.showGameOver(document,game.score,rows,id,()=>{gameOverOverlay=null;if(bossStage)window.dispatchEvent(new CustomEvent('pinball:boss-exit',{detail:{stage:bossStage}}));else reset();},bossStage?'回到 Boss 選擇':'點擊回到開始');
+ gameOverOverlay=PirateMap.showGameOver(document,game.score,rows,id,()=>{gameOverOverlay=null;if(bossStage)window.dispatchEvent(new CustomEvent('pinball:boss-exit',{detail:{stage:bossStage}}));else reset();},bossStage?'離開球台':'重新開始');
 }
 game.onEvent=e=>{updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='vortex-reclaimed')showFloatingReward(e.position||game.ball.p,'+1',true,.25);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;volleyballShakeUntil=0;}if(e.type==='ball-saved')notice('BALL SAVE · 保球成功，不扣命');if(e.type==='ball-save-ready'){launchStartedAt=null;notice('保球補發：請重新發球');}if(e.type==='sound')soundBank.play(e.name);if((e.type==='release'&&e.id!=='tavern-drop')||e.type==='vortex-ejected'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='vortex-captured')notice('水渦中心扣球');if(e.type==='vortex-ejected')notice('水渦彈出球');if(e.type==='vortex-reclaimed')notice('水渦回收球');if(e.type==='vortex-returned'){launchStartedAt=null;notice('球已回到發球道，不扣球數');}if(e.type==='airdrop-rollover')notice(`空投收集 ${e.count}/3`);if(e.type==='pirate-airdrop-requested'){notice('海盜空投已觸發 · 三條已重置');window.dispatchEvent(new CustomEvent('pinball:pirate-airdrop',{detail:e}));}if(e.type==='pirate-airdrop-ended')notice('空投事件結束');if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice('敵人登場準備');window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice((e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':'水渦')+'獎勵：備用球 +1');if(e.type==='vortex-activated')notice('水渦已啟動');if(e.type==='target-bonus')notice('三連完成 · 額外 +150（合計 300）');if(e.type==='bumper-upgraded')notice('Bumper 升至第 '+e.level+' 級');if(e.type==='center-post-up')notice('Center post 已升起');if(e.type==='multiball-awarded')notice('Multiball！獲得額外球');if(e.type==='free-ball-launch')notice('Multiball 額外球已發射');if(e.type==='kickback-lane')notice(e.side==='left'?'左側彈簧已觸發':'右側彈簧已觸發');if(e.type==='capture'){if(['shape-45','shape-71'].includes(e.id))volleyballShakeUntil=game.time+.75;notice('進洞 +250');}if(e.type==='release')notice('出球');if(e.type==='drain')notice('失球');if(e.type==='ready')notice('按住空白鍵發射');if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to!=='lower'?'進入上層':'回到下層');if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?'單顆 target 命中':'三連 target 完成');};
 function startBoss(){
@@ -364,7 +360,7 @@ requestAnimationFrame(frame);
 function startTableTutorial(){
  game.paused=true;clearTouchControls();soundBank.setPaused(true);
  const overlay=document.createElement('div');overlay.id='tableTutorial';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','tutorialTitle');
- overlay.innerHTML='<svg id="tutorialSpotlight" aria-hidden="true"></svg><section id="tutorialPanel"><small id="tutorialCount"></small><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><div><button id="tutorialPrevious">上一步</button><button id="tutorialNext">下一步</button></div><button id="tutorialExit">返回關卡選擇</button></section>';
+ overlay.innerHTML='<svg id="tutorialSpotlight" aria-hidden="true"></svg><section id="tutorialPanel"><small id="tutorialCount"></small><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><div><button id="tutorialPrevious">上一步</button><button id="tutorialNext">下一步</button></div><button id="tutorialExit">離開球台</button></section>';
  document.body.append(overlay);
  let step=0;
  function artBounds(a,padding=5){return [a.x-a.width/2-padding,a.y-a.height/2-padding,a.width+padding*2,a.height+padding*2];}
@@ -379,13 +375,14 @@ function startTableTutorial(){
   ['水渦啟動條件',()=> '條件：命中左上方三顆珍珠 target。效果：啟動中央水渦；啟動後再次集齊，可獲得備用球 +1。',()=>targets('vortex')],
   ['Multi-ball 條件',()=> '條件：左右救球彈簧各觸發一次。效果：追加一顆球並重置收集狀態；場上最多三顆，滿額改為備用球 +1。',()=>G.rescue_kickers.map(o=>objectBounds(o,13))],
   ['Center post 條件',()=> '條件：球通過高亮的三條下方 rollover。效果：中央保護柱升起，阻擋五次碰撞後降下，再次收集可重新啟動。',()=>[...G.lower.filter(o=>o.kind==='rollover').map(o=>objectBounds(o,10)),objectBounds(G.lower.find(o=>o.id==='test-post-center'),12)]],
-  ['敵人出現條件',()=> '條件：命中三顆通緝令 target，召喚敵人。敵人在場時再次集齊，獲得備用球 +1。Boss 關卡會直接安排對應敵人出場。',()=>targets('enemy')],
+  ['敵人出現條件',()=> '條件：命中三顆通緝令 target，召喚敵人。敵人在場時再次集齊，獲得備用球 +1。',()=>targets('enemy')],
   ['砲彈攻擊',()=> '條件：敵人在場時，把球打進右上方任一高亮洞口。效果：發動砲彈攻擊敵人。',()=>holes('ball')],
   ['木桶攻擊',()=> '條件：敵人在場時，把球打進左上方高亮洞口。效果：發動木桶攻擊敵人。',()=>holes('barrel')],
   ['章魚攻擊',()=> '條件：球從左側上層通道經過五次，集滿五顆眼睛。效果：章魚攻擊，之後重新收集。',()=>artLayers.filter(a=>a.state==='kraken-body').map(a=>artBounds(a))],
   ['空投攻擊',()=> '條件：敵人在場時，球通過上方三條 rollover，全部集齊。效果：發動空投攻擊，三條收集狀態重置。',()=>G.lower.filter(o=>o.kind==='airdrop-rollover').map(o=>objectBounds(o,10))],
-  ['返回鈕',()=> '操作：點右上角返回箭頭，可選擇繼續遊戲或離開，回到關卡選擇頁。',()=>[[backArt.x-backArt.width/2-4,backArt.y+topOffset()-backArt.height/2-4,backArt.width+8,backArt.height+8]]]
+  ['離開球台',()=> '操作：點右上角返回箭頭，可選擇繼續遊玩或離開球台，返回關卡選單。',()=>[[backArt.x-backArt.width/2-4,backArt.y+topOffset()-backArt.height/2-4,backArt.width+8,backArt.height+8]]]
  ];
+ if(new URLSearchParams(location.search).get('tutorialGuide')!=='full')steps.splice(5);
  function position(){
   const r=canvas.getBoundingClientRect(),root=overlay.getBoundingClientRect(),scale=r.width/view[2];
   const rects=steps[step][2]().map(([x,y,w,h])=>{const left=Math.max(view[0],x),top=Math.max(view[1],y),right=Math.min(view[0]+view[2],x+w),bottom=Math.min(view[1]+view[3],y+h);return {x:r.left-root.left+(left-view[0])*scale,y:r.top-root.top+(top-view[1])*scale,w:(right-left)*scale,h:(bottom-top)*scale};});
