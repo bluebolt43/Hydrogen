@@ -52,7 +52,7 @@ function createGame(core){
  }
  onCapture(id){const attack=this.g.gameplay?.hole_attacks?.[id];if(['ball','barrel'].includes(attack))this.emit('hole-attack-requested',{id,attack});}
  beforeStep(dt){if(this.theaterFrozen||this.enemyIntroPending)return false;if(this.freezeRemaining>0){this.freezeRemaining=Math.max(0,this.freezeRemaining-dt);if(!this.freezeRemaining)this.emit('enemy-freeze-ended');return false;}return true;}
- tickRules(){this.updateTargetGroups();if(this.krakenAttackAt!==null&&this.time-this.krakenAttackAt>=3.18)this.finishKraken(this.krakenSequence);}
+ tickRules(){if(this.vortexActive&&this.vortexActivatedAt!==null&&this.time-this.vortexActivatedAt>=30){this.vortexActive=false;this.emit('vortex-expired');}this.updateTargetGroups();if(this.krakenAttackAt!==null&&this.time-this.krakenAttackAt>=3.18)this.finishKraken(this.krakenSequence);}
  afterBallStep(previous,layer,dt){if(this.ball.launchGuard&&this.ball.v[1]>=0&&this.ball.p[1]>this.launchGateExitY+this.config.ballRadius)this.ball.launchGuard=false;this.rolloverSensors(previous,layer);this.airdropSensors(previous,layer);this.flagSensors(previous,layer);this.fishSensorCrossings(previous,layer);this.krakenSensors(previous,layer);this.sensors(dt);this.vortexRecovery(dt,layer===this.ball.layer?previous:null);}
  afterSubstep(){this.raiseCenterPost();this.spawnFreeBall();}
  handleBallState(dt){if(!['vortex-return','vortex-held'].includes(this.ball.state))return false;this.vortexRecovery(dt);return true;}

@@ -48,8 +48,11 @@ class Renderer{
    if(o.state==='guide-arrow'){const time=game?game.time:performance.now()/1000;ctx.globalAlpha*=.3+.7*(.5+.5*Math.cos(time*Math.PI*3));}
    const f=game&&game.flippers.find(f=>f.id===o.bind);
    if(f){ctx.translate(...f.pivot);ctx.rotate(f.angle-f.rest);ctx.translate(-f.pivot[0],-f.pivot[1]);}
-   const vortexAge=game&&o.bind&&o.state==='vortex'&&game.vortexActive?Math.max(0,game.time-(game.vortexActivatedAt??game.time)):null;
-   if(game&&o.bind&&o.state==='vortex'){const fade=vortexAge===null?0:Math.min(1,vortexAge/.8);ctx.globalAlpha*=.5+.5*fade*fade*(3-2*fade);}
+   const vortexAge=game&&o.bind&&o.state==='vortex'&&game.vortexActivatedAt!=null?Math.max(0,game.time-game.vortexActivatedAt):null;
+   if(game&&o.bind&&o.state==='vortex'){
+    const fade=vortexAge===null?0:game.vortexActive?Math.min(1,vortexAge/.8):Math.max(0,1-(vortexAge-30)/.8);
+    ctx.globalAlpha*=.5+.5*fade*fade*(3-2*fade);
+   }
    let x=o.x,y=o.y;
    if(game&&o.state==='plunger'&&o.bind==='plunger'){
     const p=game.g.plunger,age=game.time-game.plungerReleasedAt;
@@ -69,7 +72,12 @@ class Renderer{
      sway=Math.sin(age*Math.PI*5)*.1*envelope;
     }
    }
-   ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway+(vortexAge===null?0:vortexAge*Math.PI/3));ctx.scale(o.flipX?-1:1,o.flipY?-1:1);
+   if(vortexAge!==null){
+    // The vortex core is not necessarily the sprite rectangle's midpoint.
+    const center=game.g.lower.find(shape=>shape.id===o.bind)?.center||[x,y];
+    ctx.translate(...center);ctx.rotate(Math.min(vortexAge,30)*Math.PI/3);ctx.translate(-center[0],-center[1]);
+   }
+   ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway);ctx.scale(o.flipX?-1:1,o.flipY?-1:1);
    // Keep the default image underneath every state/frame overlay.
    if(ready(baseImage,o.crop[0],o.crop[1]))ctx.drawImage(baseImage,o.crop[0],o.crop[1],sw,sh,-o.width/2,-o.height/2,o.width,o.height);
    if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))ctx.drawImage(img,sx,sy,sw,sh,-o.width/2,-o.height/2,o.width,o.height);

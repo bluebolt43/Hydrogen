@@ -10,8 +10,8 @@ function renderVictory(){
 window.addEventListener('message',event=>{
  if(event.source!==victoryTheater.contentWindow||event.data?.channel!=='pinball-theater')return;
  if(event.data.type==='ready'){victoryReady=true;if(!victory.hidden)renderVictory();}
- if(event.data.type==='sound'&&event.data.name==='explosion'&&!victory.hidden){explosion.currentTime=0;explosion.volume=.9;explosion.play().catch(()=>{});}
- if(event.data.type==='sound'&&event.data.name==='snare'&&!victory.hidden){snare.currentTime=0;snare.volume=.85;snare.play().catch(()=>{});}
+ if(event.data.type==='sound'&&event.data.name==='explosion'&&!victory.hidden){playSound(explosion,.9);}
+ if(event.data.type==='sound'&&event.data.name==='snare'&&!victory.hidden){playSound(snare,.85);}
  if(event.data.type==='error'){document.querySelector('#error').textContent='劇場演出載入失敗，請重播。';document.querySelector('#error').hidden=false;}
 });
 function render(){victory.hidden=false;renderVictory();}

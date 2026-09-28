@@ -6,25 +6,11 @@ const chapterPart=document.body.dataset.storyPart;
 let activeChapter=`ch${chapterNumber}-${chapterPart}`;
 let playbackEnd=chapters[activeChapter][1],start=0,raf=0,playId=0,lastElapsed=chapters[activeChapter][0];
 let exploded=false,ch5BlastSound=-1,ch7VictoryPlayed=false;
+let playing=false,ambienceStarted=false;
 const gulls=document.querySelector('#gulls'),waves=document.querySelector('#waves'),explosion=document.querySelector('#explosion');
 const snare=document.querySelector('#snare'),ch7Music=document.querySelector('#ch7-music'),ch7Victory=document.querySelector('#ch7-victory');
 const ch8Music=document.querySelector('#ch8-music');
-let ch8MusicUrl='';
-// Fully load Ogg so its offset and duration also work on servers without Range support.
-const ch8MusicReady=ch8Music&&!previewMode?(async()=>{
- let source=ch8Music.dataset.src;
- if(location.protocol!=='file:'){
-  const response=await fetch(source);
-  if(!response.ok)throw new Error(`Ending music: ${response.status}`);
-  ch8MusicUrl=URL.createObjectURL(await response.blob());source=ch8MusicUrl;
- }
- await new Promise((resolve,reject)=>{
-  ch8Music.addEventListener('loadedmetadata',resolve,{once:true});
-  ch8Music.addEventListener('error',reject,{once:true});
-  ch8Music.src=source;
- });
-})():null;
-if(ch8MusicReady)ch8MusicReady.catch(()=>{});
+if(ch8Music&&!previewMode)ch8Music.src=ch8Music.dataset.src;
 const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
@@ -40,6 +26,12 @@ function hasSeen(chapter){try{return localStorage.getItem(seenKey(chapter))==='1
 function markSeen(chapter){try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
+function playSound(sound,volume){
+ if(!sound)return;
+ const id=playId;
+ const warn=()=>{if(id===playId&&(playing||previewMode))showError('提醒：部分音效無法播放，劇情將繼續播放。');};
+ try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
+}
 function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
@@ -47,7 +39,7 @@ function completeStory(skipped=false){
  window.dispatchEvent(new CustomEvent('story:complete',{detail:{chapter:activeChapter,...(skipped?{skipped:true}:{})}}));
 }
 function finishStory(skipped=false){
- stopSounds();raf=0;skipButton.hidden=true;draw(playbackEnd-.01);
+ playing=false;stopSounds();raf=0;skipButton.hidden=true;draw(playbackEnd-.01);
  if(!skipped)markSeen(activeChapter);
  if(activeChapter.endsWith('-end')){
   awaitingNext=true;nextButton.hidden=false;
@@ -55,65 +47,55 @@ function finishStory(skipped=false){
  }else completeStory(skipped);
 }
 function playEffects(elapsed){
+ if(!previewMode&&!ambienceStarted&&elapsed>=timing.birds&&activeChapter!=='ch7-start'&&activeChapter!=='ch8-end'){
+  ambienceStarted=true;playSound(waves,.6);
+ }
  if(activeChapter==='ch7-end'&&!ch7VictoryPlayed&&elapsed>=ch7EndStart+10200){
-  ch7VictoryPlayed=true;ch7Victory.currentTime=0;ch7Victory.volume=.85;ch7Victory.play().catch(()=>{});
+  ch7VictoryPlayed=true;playSound(ch7Victory,.85);
  }
  if([5,6,7,8].includes(chapterNumber)&&activeChapter.endsWith('-end')){
   const blastStart=chapters[activeChapter][0],index=Math.floor((elapsed-blastStart-1000)/800);
-  if(index>=0&&index<3&&index>ch5BlastSound){ch5BlastSound=index;explosion.currentTime=0;explosion.volume=chapterNumber===8?1:.85;explosion.play().catch(()=>{});}
+  if(index>=0&&index<3&&index>ch5BlastSound){ch5BlastSound=index;playSound(explosion,chapterNumber===8?1:.85);}
  }
  if(chapterNumber===2&&!exploded&&elapsed>=scene5Start+3000&&elapsed<stage2EndStart){
-  exploded=true;explosion.currentTime=0;explosion.volume=.85;explosion.play().catch(()=>showError('爆破音效無法播放，請按重播再試一次。'));
+  exploded=true;playSound(explosion,.85);
  }
 }
 function tick(now){
- const elapsed=activeChapter==='ch8-end'&&ch8Music
-  ? (ch8Music.ended?Math.max(ch8End+ch8Music.currentTime*1000,now-start):ch8End+ch8Music.currentTime*1000)
-  :activeChapter==='ch7-start'&&!ch7PreviewThird
-  ? (ch7Music.ended?Math.max(ch7Start+ch7Music.currentTime*1000,now-start):ch7Start+ch7Music.currentTime*1000):now-start;
+ const elapsed=now-start;
  draw(elapsed);
  playEffects(elapsed);
  gulls.volume=.7*clamp(elapsed/350,0,1)*clamp((timing.birds-elapsed)/600,0,1);
  waves.volume=(activeChapter==='ch7-start'?0:.6)*clamp((elapsed-timing.birds)/900,0,1)*clamp((playbackEnd-elapsed)/1500,0,1);
  if(elapsed>=timing.birds)gulls.pause();
- if(elapsed>=playbackEnd&&(activeChapter!=='ch8-end'||!ch8Music||ch8Music.ended)){
+ if(elapsed>=playbackEnd){
   finishStory();
   return;
  }
  raf=requestAnimationFrame(tick);
 }
-async function play(chapter=activeChapter){
+function play(chapter=activeChapter){
  if(previewMode)return false;
  if(chapter!==`ch${chapterNumber}-${chapterPart}`||!chapters[chapter])return false;
  const missing=images.find(image=>!image.complete||!image.naturalWidth);
  if(missing){showError(`圖片尚未載入：${missing.getAttribute('src')}`);return false;}
- const id=++playId;
+ ++playId;
  cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;nextButton.hidden=true;awaitingNext=false;if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  activeChapter=chapter;const [offset,stop]=chapters[chapter];playbackEnd=stop;
- error.hidden=true;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
+ error.hidden=true;playing=true;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  if(typeof resetChapter==='function')resetChapter();
- for(const sound of sounds){sound.currentTime=0;sound.volume=0;}
+ for(const sound of sounds)sound.volume=0;
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- const useMusic=chapter==='ch7-start'&&!ch7PreviewThird;
- const useEndingMusic=chapter==='ch8-end'&&ch8Music;
- if(useEndingMusic){
-  try{await ch8MusicReady;}catch{
-   if(id!==playId)return;
-   showError('結尾配樂載入失敗，請確認音訊檔案後再按播放。');document.querySelector('#begin').hidden=false;return false;
-  }
-  if(id!==playId)return;
-  ch8Music.currentTime=0;ch8Music.volume=1;
-  playbackEnd=Math.max(stop,offset+ch8Music.duration*1000);
- }
- if(ch7Music)ch7Music.volume=useMusic?.8:0;
- const toPlay=useEndingMusic?[ch8Music,explosion]:useMusic?[ch7Music]:[gulls,waves,explosion,...(chapter==='ch4-end'?[snare]:[]),...(chapter==='ch7-end'?[ch7Victory]:[])];
- const results=await Promise.allSettled(toPlay.map(sound=>sound.play()));
- if(id!==playId)return;
- for(const sound of [explosion,ch7Victory,snare].filter(Boolean)){sound.pause();sound.currentTime=0;}
- if(results.some(result=>result.status==='rejected')){stopSounds();showError('音效無法播放，請確認音效檔案完整後再按播放。');document.querySelector('#begin').hidden=false;return false;}
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);raf=requestAnimationFrame(tick);return true;
+ // The animation clock starts immediately; audio never gates or extends it.
+ start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ raf=requestAnimationFrame(tick);
+ if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
+ else if(chapter==='ch8-end')playSound(ch8Music,1);
+ else if(offset<timing.birds)playSound(gulls,.7);
+ playEffects(offset);
+ return true;
 }
 skipButton.addEventListener('click',()=>{
  if(skipButton.hidden||!hasSeen(activeChapter))return;
@@ -126,7 +108,6 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-window.addEventListener('pagehide',event=>{if(ch8MusicUrl&&!event.persisted)URL.revokeObjectURL(ch8MusicUrl);});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
 Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
