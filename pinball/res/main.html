@@ -4,58 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pinball · 主題選擇</title>
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080e14}
-body{display:grid;place-items:center}
-/* 360 × 640 design size; match play's 600 px width cap.
-   On smaller screens, available width/height takes priority over the baseline. */
-#main-frame{position:relative;width:clamp(360px,56.25vh,600px);width:clamp(360px,56.25dvh,600px);max-width:min(100vw,56.25vh);max-width:min(100vw,56.25dvh);aspect-ratio:9/16;overflow:hidden}
-#screen{display:block;width:100%;height:100%;outline:none}#load-error{position:absolute;inset:35% 8% auto;color:white;background:#812c2c;padding:16px;z-index:50}
-#screen[hidden],#theme-menu[hidden]{display:none}
-#theme-menu{position:absolute;inset:0;container-type:inline-size;display:flex;flex-direction:column;justify-content:center;padding:10%;color:#f3e6ce;font-family:system-ui,sans-serif;background:radial-gradient(ellipse at 20% 0,#254653 0,transparent 65%),linear-gradient(160deg,#132934,#09141e 75%)}
-#theme-menu::before{content:"";position:absolute;inset:3%;border:1px solid #b9955538;pointer-events:none}
-.menu-heading{margin:0 0 10%;position:relative}
-.menu-eyebrow{margin:0 0 8px;color:#caa466;font-size:3cqw;letter-spacing:.35em}
-.menu-heading h1{margin:0;font-size:8cqw;font-weight:600;letter-spacing:.08em}
-.theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4cqw}
-.theme-button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3cqw;min-width:0;aspect-ratio:3/4;border:1px solid #52616a;border-radius:3px;background:#162731;color:#e8dcc6;font:inherit;padding:5cqw 2cqw;overflow:hidden}
-.theme-button strong{font-size:4.8cqw;font-weight:500;letter-spacing:.03em}
-.theme-number{position:absolute;top:3cqw;left:3cqw;color:#9eafb5;font-size:2.6cqw;letter-spacing:.12em}
-.theme-symbol{display:grid;place-items:center;width:15cqw;height:15cqw;border:1px solid #71818a44;border-radius:50%;color:#647982;font-size:6cqw;font-weight:300}
-.theme-button:disabled{background:#11212ab3;border-color:#48586366;color:#7e9098;cursor:default}
-.theme-button[data-theme="pirate"]{background:radial-gradient(ellipse at 50% 25%,#44504a,#273538 65%,#1c292e);border-color:#caa466;box-shadow:inset 0 0 24px #caa46612;cursor:pointer}
-.theme-button[data-theme="pirate"] .theme-number{color:#d6b47c}
-.theme-button img{width:90%;height:17cqw;object-fit:contain;filter:drop-shadow(0 5px 4px #0008);pointer-events:none}
-.theme-action{color:#d8b77a;font-size:2.8cqw;letter-spacing:.1em}
-.theme-button:not(:disabled):hover{border-color:#f5d59d;background-color:#394442;box-shadow:0 0 20px #caa46622}
-.theme-button:focus-visible{outline:3px solid #ffe1a8;outline-offset:4px}
-.theme-button:not(:disabled):active{transform:translateY(1px)}
-
-[hidden]{display:none!important}
-#open-settings{position:absolute;right:5%;top:3%;z-index:20;width:44px;height:44px;border:0;background:transparent;padding:4px;cursor:pointer}
-#open-settings img{width:100%;height:100%;object-fit:contain}
-#open-settings:focus-visible{outline:2px solid #ffe1a8;outline-offset:2px}
-#app-settings{position:absolute;inset:0;z-index:40;background:linear-gradient(160deg,#203b47,#09141e);color:#f3e6ce;padding:14% 10%;font-family:system-ui,sans-serif;overflow:auto}
-#app-settings h1{font-size:28px;margin:0 0 16%}
-.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0;padding-bottom:20px;border-bottom:1px solid #b9955544}
-#app-settings select{max-width:65%;padding:9px;background:#172b35;color:#f3e6ce;border:1px solid #b99555}
-#app-settings input{width:22px;height:22px;accent-color:#caa466}
-#app-settings input[type=range]{width:auto;height:auto;flex:1;min-width:70px}
-#volume-value{min-width:3.5em;text-align:right}
-#close-settings{position:absolute;left:5%;top:3%;width:44px;height:44px;padding:0;background:transparent;border:0;cursor:pointer}
-#close-settings img{width:100%;height:100%;object-fit:contain}
-#close-settings:focus-visible{outline:2px solid #ffe1a8;outline-offset:2px}
-#save-status{font-size:14px;color:#d8b77a}#save-status:empty{display:none}
-#theme-menu{display:block;padding:0;background:#080e14}#theme-menu::before{display:none}
-#menu-art,#menu-actions{position:absolute;inset:0;width:100%;height:100%}
-.menu-hit{position:absolute;border:0;background:transparent;padding:0;cursor:pointer;color:transparent}
-.menu-hit:focus-visible{outline:2px solid #ffe1a8;outline-offset:2px;border-radius:8px}
-.menu-hit:disabled{cursor:default}.menu-hit:active:not(:disabled){background:#0002}
-#open-settings.layout-settings{padding:0}#open-settings.layout-settings img{visibility:hidden}
-#menu-animation{position:absolute;left:0;top:0;width:360px;height:640px;transform-origin:top left;perspective:1000px;pointer-events:none}
-#scene-transition{position:absolute;inset:0;z-index:30;background:#000;opacity:0;pointer-events:auto}
-</style>
+<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 <main id="main-frame" aria-label="彈珠台主畫面">
@@ -75,9 +24,9 @@ body{display:grid;place-items:center}
 </section>
 <p id="load-error" role="alert" hidden></p>
 </main>
-<script src="system/layout-renderer.js"></script>
-<script src="system/menu-music.js"></script>
-<script src="system/menu-transition.js"></script>
-<script src="main.bundle.js"></script>
+<script src="js/system/layout-renderer.js"></script>
+<script src="js/system/menu-music.js"></script>
+<script src="js/system/menu-transition.js"></script>
+<script src="js/main.bundle.js"></script>
 </body>
 </html>

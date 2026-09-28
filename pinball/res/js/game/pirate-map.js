@@ -265,6 +265,11 @@ function createGame(core){
  }
  vortexRecovery(dt,previous=null){
   const b=this.ball;
+  const centerFor=well=>this.g.lower.find(o=>o.mechanic==='vortex-center'&&o.layer===well.layer&&len(sub(o.center,well.center))<=well.radius);
+  const inCenter=(well,swept)=>{
+   const hole=centerFor(well),center=hole?.center||well.center,radius=hole?.radius??well.radius*(swept ? .05 : .2);
+   return len(sub(swept&&previous?nearest(center,previous,b.p).p:b.p,center))<=radius;
+  };
   if(b.state==='vortex-held'){
    b.vortexHeld.remaining-=dt;if(b.vortexHeld.remaining>1e-9)return;
    // Web data: gravity well kicker 509, speed 45, scatter 5%, angle 1.256637.
@@ -276,8 +281,8 @@ function createGame(core){
   }
   if(this.config.vortexMode==='eject'&&b.state==='playing'){
    if(!this.vortexActive||this.time<(b.vortexImmuneUntil||0))return;
-   const well=this.g.lower.find(o=>o.mechanic==='gravity-well'&&o.layer===b.layer&&!this.balls.some(other=>other!==b&&other.state==='vortex-held'&&other.vortexHeld?.id===o.id)&&len(sub(previous?nearest(o.center,previous,b.p).p:b.p,o.center))<=o.radius*.05);
-   if(!well)return;b.p=[...well.center];b.v=[0,0];b.state='vortex-held';b.vortexHeld={id:well.id,remaining:1.5};b.vortexDwell=0;
+   const well=this.g.lower.find(o=>o.mechanic==='gravity-well'&&o.layer===b.layer&&!this.balls.some(other=>other!==b&&other.state==='vortex-held'&&other.vortexHeld?.id===o.id)&&inCenter(o,true));
+   if(!well)return;b.p=[...(centerFor(well)?.center||well.center)];b.v=[0,0];b.state='vortex-held';b.vortexHeld={id:well.id,remaining:1.5};b.vortexDwell=0;
    this.emit('vortex-captured',{id:well.id,position:[...b.p]});return;
   }
   if(b.state==='vortex-return'){
@@ -289,7 +294,7 @@ function createGame(core){
    const gate=this.gates.find(g=>g.id==='shooter-return');if(gate){gate.closed=false;gate.pending=false;gate.pendingBall=null;}
    this.emit('vortex-returned');return;
   }
-  const well=this.vortexActive&&b.state==='playing'&&this.g.lower.find(o=>o.kind==='field'&&o.mechanic==='gravity-well'&&o.layer===b.layer&&len(sub(b.p,o.center))<=o.radius*.2);
+  const well=this.vortexActive&&b.state==='playing'&&this.g.lower.find(o=>o.kind==='field'&&o.mechanic==='gravity-well'&&o.layer===b.layer&&inCenter(o,false));
   if(!well){b.vortexDwell=0;return;}
   b.vortexDwell=(b.vortexDwell||0)+dt;
   if(b.vortexDwell>=1){b.state='vortex-return';b.v=[0,0];b.vortexFade=.25;this.emit('vortex-reclaimed',{id:well.id,position:[...b.p]});}
@@ -301,7 +306,9 @@ const bumperFiles=/\/(bumper-barrel|bumper-skull|lighthouse)-lv[123]\.png$/;
 const lanternFiles=/\/lantern-(off|on)\.png$/;
 function inferArtState(o){if(o.state==='guide-arrow')return {};return {...(o.bind&&bumperFiles.test(o.src)?{state:'level'}:{}),...(o.bind&&lanternFiles.test(o.src)?{state:'rollover'}:{}),...(['left-return','right-return'].includes(o.bind)?{state:'return-gate'}:{})};}
 const attractFish=/\/(school|fish-\d+)-[1-7]\.png$/;
+const missionFish=/\/fish-5-[45]\.png$/;
 function attractGroup(o){
+ if(missionFish.test(o.src))return 'mission-fish';
  if(o.state==='kraken-eye'||o.state==='kraken-body')return 'octopus';
  if(o.state==='multiball-launch'&&/\/shark-(off|on)\.png$/.test(o.src))return 'shark';
  if(lanternFiles.test(o.src))return o.bind?.startsWith('airdrop-rollover-')?'small-lantern':'large-lantern';
@@ -309,7 +316,7 @@ function attractGroup(o){
  if(bumperFiles.test(o.src))return 'bumper';
  return null;
 }
-const attractGroups=['octopus','shark','large-lantern','small-lantern','fish','bumper'];
+const attractGroups=['octopus','shark','large-lantern','small-lantern','fish','mission-fish','bumper'];
 function attractLight(game,o){
  if(!game||game.ball.state!=='ready'||game.input?.launch||game.launchAiming||game.charge>0||game.paused||(game.preserveTableOnDrain&&game.hasLaunchedOnce))return null;
  const group=attractGroup(o);if(!group)return null;
@@ -342,6 +349,16 @@ function attractLight(game,o){
 }
 
 function artState(o,game,renderer,flashImage){
+   if(game&&missionFish.test(o.src)){
+    const off=o.src.replace(/-[45]\.png$/,'-5.png'),on=off.replace('-5.png','-4.png');
+    renderer.image(off);renderer.image(on);
+    // The original layout image selects the location's role, not its lit state.
+    const attack=o.src.endsWith('/fish-5-4.png');
+    const active=!game.enemyIntroPending&&(attack?!!game.enemyActive:!game.enemyActive);
+    const attract=attractLight(game,o);
+    const lit=attract!==null?attract:active&&game.time%3<.6;
+    return {src:lit?on:off,baseSrc:off,frame:0};
+   }
    if(game&&o.state==='guide-arrow'){
     const goal=o.bind?.startsWith('guide:')?o.bind.slice(6):null;
     if(goal==='vortex'&&game.vortexActive||goal==='enemy'&&game.enemyActive||goal==='center-post'&&game.centerPostRaised)return null;
