@@ -290,7 +290,7 @@ function buildMenuActions(){document.getElementById('menu-actions').replaceChild
 settingsObject=menuLayout.objects.find(o=>o.src==='res/img/system-marker-settings.png');
 for(const o of menuLayout.objects){
  if(o===settingsObject)continue;
- const isPirate=o.type==='frame'&&o.themeId==='pirate'&&!systemProject.themes.pirate.locked,isSound=o.src==='res/img/system-marker-sound.png';
+ const isPirate=menuMode==='main'&&o.type==='frame'&&o.themeId==='pirate'&&!systemProject.themes.pirate.locked,isSound=o.src==='res/img/system-marker-sound.png';
  const isBossStage=menuMode==='pirate'&&o.type==='frame'&&Number.isInteger(o.stage)&&!SystemLayout.visibility(o).lock;
  const isEndless=menuMode==='pirate'&&o.type==='frame'&&o.action==='endless'&&!SystemLayout.visibility(o).lock;
  const isTutorial=menuMode==='pirate'&&o.type==='frame'&&o.action==='tutorial';
@@ -298,10 +298,10 @@ for(const o of menuLayout.objects){
  if(o.type!=='frame'&&!isSound&&!isBack&&!isScroll)continue;
  const button=document.createElement('button');button.type='button';button.className='menu-hit';positionMenuControl(button,o);
  button.setAttribute('aria-label',isPirate?'Pirate，開始遊戲':isBossStage?`第 ${o.stage} 關，觀看開場並開始遊戲`:isEndless?'Endless Mode，開始遊戲':isSound?'切換聲音':'尚未開放');
- if(isPirate){button.dataset.theme='pirate';button.onclick=()=>switchMenu('pirate','pirate');}
+ if(isTutorial){button.dataset.action='tutorial';button.setAttribute('aria-label','球台教學');button.onclick=startTutorial;}
+ else if(isPirate){button.dataset.theme='pirate';button.onclick=()=>switchMenu('pirate','pirate');}
  else if(isBossStage){button.dataset.stage=String(o.stage);button.onclick=()=>startBossStage(o.stage);}
  else if(isEndless){button.dataset.mode='endless';button.onclick=()=>mainScreen.showGame();}
- else if(isTutorial){button.setAttribute('aria-label','球台教學');button.onclick=startTutorial;}
  else if(isBack){button.setAttribute('aria-label','返回首頁');button.onclick=()=>switchMenu('main');}
  else if(isScroll){button.setAttribute('aria-label','球台教學');button.onclick=startTutorial;}
  else if(isSound){button.id='menu-sound';button.onclick=()=>{const values=readSettings();soundInput.checked=!values.sound;volumeInput.value=Math.round(values.volume*100);launchInput.value=values.launchMode;saveSettings();drawMenu();};}
