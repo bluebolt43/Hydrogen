@@ -15,7 +15,14 @@ class LayoutTheater{
    if(['complete','error'].includes(e.data.type)&&e.data.id===this.generation+':reset:0')this.curtainClosing=false;
    if(e.data.type==='complete'&&e.data.id?.startsWith(this.generation+':')&&e.data.defeated&&this.game){
     this.game.enemyActive=false;
-    if(this.bossStage){this.bossDefeated=true;this.game.paused=true;this.soundBank?.stop();window.dispatchEvent(new CustomEvent('pinball:boss-defeated',{detail:{stage:this.bossStage}}));}
+    if(this.bossStage&&!this.bossDefeated){
+     const maxHp=e.data.maxHp;
+     if(!Number.isFinite(maxHp)||maxHp<=0)return;
+     this.bossDefeated=true;
+     this.game.scoreHit('boss-clear:'+this.bossStage,maxHp*1500,0);
+     this.game.paused=true;this.soundBank?.stop();
+     window.dispatchEvent(new CustomEvent('pinball:boss-defeated',{detail:{stage:this.bossStage}}));
+    }
    }
    if(['complete','error'].includes(e.data.type)&&e.data.id?.startsWith(this.generation+':airdrop:'))this.game?.finishAirdrop(Number(e.data.id.split(':')[2]));
    if(['complete','error'].includes(e.data.type)&&e.data.id?.startsWith(this.generation+':kraken:'))this.game?.finishKraken(Number(e.data.id.split(':')[2]));

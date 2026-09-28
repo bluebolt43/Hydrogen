@@ -233,10 +233,12 @@ function draw(){
 }
 function drawBall(b){if(b.state==='drained')return;ctx.save();if(b.state==='vortex-return')ctx.globalAlpha*=b.vortexFade/.25;if(topBallImage.complete&&topBallImage.naturalWidth)ctx.drawImage(topBallImage,b.p[0]-G.ball_radius,b.p[1]-G.ball_radius,G.ball_radius*2,G.ball_radius*2);else{circle(b.p,G.ball_radius,'#e7eff5','#4c6677');circle([b.p[0]-1,b.p[1]-1],.9,'white')}ctx.restore()}
 function drawBallOutlines(){
- ctx.save();ctx.setLineDash([1.7,1.2]);ctx.lineWidth=.5;ctx.strokeStyle='#ffffff';ctx.shadowBlur=0;
+ ctx.save();ctx.globalCompositeOperation='source-over';ctx.setLineDash([1.7,1.2]);ctx.lineWidth=.5;ctx.strokeStyle='#ffffff';ctx.shadowBlur=0;
  for(const b of game.balls){
   if(b.state==='drained')continue;
-  ctx.globalAlpha=.35*(b.state==='vortex-return'?Math.max(0,b.vortexFade/.25):1);
+  // The right upper route deliberately hides the PNG under its artwork.
+  // Keep its location readable with an opaque outline above every art plane.
+  ctx.globalAlpha=(b.layer==='right_upper'?1:.35)*(b.state==='vortex-return'?Math.max(0,b.vortexFade/.25):1);
   ctx.beginPath();ctx.arc(b.p[0],b.p[1],5.0,0,Math.PI*2);ctx.stroke();
  }
  ctx.restore();
@@ -332,7 +334,7 @@ for(const rule of G.gameplay?.target_rules||[]){
   const group=game.targetGroups.find(g=>g.id===rule.id);if(!group)return;
   // Allow repeated debug clicks, including while paused, without advancing game time.
   if(group.complete){group.resetAt=game.time;game.updateTargetGroups();}
-  for(const id of group.targets){if(group.hits.has(id))continue;game.cooldowns.delete(id);game.scoreHit(id,50);}
+  for(const id of group.targets){if(group.hits.has(id))continue;game.cooldowns.delete(id);game.scoreHit(id,500);}
   notice('除錯：'+button.textContent);draw();
  };
  $('targetDebugButtons').append(button);

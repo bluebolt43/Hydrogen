@@ -318,8 +318,8 @@ class CoreGame {
    {b.v=basicCollision(b.v,best.n,elasticity,smoothness,threshold,boost);
     this.collisionEffect(e,approach);
     // TBumper::Fire disables its booster until the 0.1-second timer expires.
-    if(e.kind==='bumper'&&approach>threshold){this.bumperHitUntil.set(e.id,this.time+c.bumperCooldown);this.scoreHit(e.id,100*this.bumperLevel(e.id),c.bumperCooldown);}
-    if(active||e.kind==='target')this.scoreHit(e.id,50);
+    if(e.kind==='bumper'&&approach>threshold){this.bumperHitUntil.set(e.id,this.time+c.bumperCooldown);this.scoreHit(e.id,500*this.bumperLevel(e.id),c.bumperCooldown);}
+    if(active||e.kind==='rebound'||e.kind==='target')this.scoreHit(e.id,500);
     if(e.kind==='flipper'&&boost>10)this.emit('flipper-hit',{id:e.id});
    }
    // pb::collide consumes distance / POST-collision speed; clamp at the next ray.
@@ -478,23 +478,21 @@ function createGame(core){
  }
  recordTarget(id){const group=this.targetGroups.find(g=>g.targets.includes(id));if(!group||group.complete||group.hits.has(id))return;
   group.hits.add(id);this.targetHitAt.set(id,this.time);this.targetHits.add(id);this.emit('target-hit',{id,group:group.id,count:group.hits.size});
-  if(group.hits.size===group.targets.length){group.complete=true;group.resetAt=this.time+.6;group.completions++;this.emit('target-group-complete',{id:group.id});this.completeTargetRule(group);if(group.id==='left-arc'&&this.lighthouseLevel<3){this.lighthouseLevel++;this.emit('bumper-upgraded',{id:'lighthouse',level:this.lighthouseLevel});}if(group.id==='left-bank'&&this.beerLevel<3){this.beerLevel++;this.emit('bumper-upgraded',{id:'tavern-beer',level:this.beerLevel});}}
+  if(group.hits.size===group.targets.length){group.complete=true;group.resetAt=this.time+.6;group.completions++;this.scoreHit('target-group:'+group.id,1500);this.emit('target-group-complete',{id:group.id});this.completeTargetRule(group);if(group.id==='left-arc'&&this.lighthouseLevel<3){this.lighthouseLevel++;this.emit('bumper-upgraded',{id:'lighthouse',level:this.lighthouseLevel});}if(group.id==='left-bank'&&this.beerLevel<3){this.beerLevel++;this.emit('bumper-upgraded',{id:'tavern-beer',level:this.beerLevel});}}
  }
  completeTargetRule(group){
   const rules=this.g.gameplay,rule=rules?.target_rules?.find(r=>r.id===group.id);if(!rule)return;
-  let bonus=false;
   if(rule.action==='upgrade'){
    const key=rule.bumper_group,level=this.bumperLevels[key]||1;
-   if(level<3){this.bumperLevels[key]=level+1;this.emit('bumper-upgraded',{id:key,level:level+1});}else bonus=true;
+   if(level<3){this.bumperLevels[key]=level+1;this.emit('bumper-upgraded',{id:key,level:level+1});}
   }else if(rule.action==='vortex'){
-   if(this.vortexActive){bonus=true;this.awardExtraLife('vortex');}else{this.vortexActive=true;this.vortexActivatedAt=this.time;this.emit('vortex-activated');}
+   if(this.vortexActive){this.awardExtraLife('vortex');}else{this.vortexActive=true;this.vortexActivatedAt=this.time;this.emit('vortex-activated');}
   }else if(rule.action==='enemy'){
    if(this.enemyActive){this.awardExtraLife('boss-target');return;}
    this.enemyActive=true;
    this.freezeRemaining=rules.enemy_freeze_seconds??.6;
    this.emit('enemy-spawn-requested',{group:group.id,freezeSeconds:this.freezeRemaining});
   }
-  if(bonus){const points=rules.repeat_bonus??150;this.score+=points;this.emit('target-bonus',{group:group.id,points,position:[...this.ball.p]});}
  }
  bumperLevel(id){
   for(const [group,ids]of Object.entries(this.g.gameplay?.bumper_groups||{}))if(ids.includes(id))return this.bumperLevels[group]||1;
@@ -588,7 +586,8 @@ function createGame(core){
  }
  rolloverSensors(previous,previousLayer){const b=this.ball;if(previousLayer!=='lower'||b.layer!=='lower'||b.state!=='playing')return;
   for(const lane of this.g.lower.filter(o=>o.kind==='rollover')){const y=lane.center[1],a=previous[1]-y,z=b.p[1]-y;if(!((a<0&&z>=0)||(a>0&&z<=0)))continue;
-   const x=previous[0]+(b.p[0]-previous[0])*(-a)/(z-a);if(x<lane.points[0][0]||x>lane.points[1][0]||this.rolloverHits.has(lane.id))continue;
+   const x=previous[0]+(b.p[0]-previous[0])*(-a)/(z-a);if(x<lane.points[0][0]||x>lane.points[1][0])continue;
+   if(this.rolloverHits.has(lane.id))continue;
    this.rolloverHits.add(lane.id);this.emit('rollover',{id:lane.id,count:this.rolloverHits.size});
   }
  }
@@ -622,7 +621,7 @@ function createGame(core){
    if(!((from<0&&to>=0)||(from>0&&to<=0)))continue;
    const q=mix(previous,b.p,from/(from-to)),along=dot(sub(q,a),axis)/length2;
    if(along<0||along>1)continue;
-   this.fishSensorHitAt.set(sensor.id,this.time);this.emit('fish-sensor-hit',{id:sensor.id});
+   this.scoreHit(sensor.id,1000);this.fishSensorHitAt.set(sensor.id,this.time);this.emit('fish-sensor-hit',{id:sensor.id});
   }
  }
  krakenSensors(previous,previousLayer){const b=this.ball;if(b.state!=='playing'||b.layer!==previousLayer||b.layer==='lower'||this.krakenAttackAt!==null)return;
@@ -637,7 +636,7 @@ function createGame(core){
   for(const flag of this.g.lower.filter(o=>o.kind==='flag'&&o.layer===b.layer)){const [a,z]=flag.points,axis=sub(z,a),from=cross(axis,sub(previous,a)),to=cross(axis,sub(b.p,a));
    if(!((from<0&&to>=0)||(from>0&&to<=0)))continue;const q=mix(previous,b.p,from/(from-to)),along=dot(sub(q,a),axis)/dot(axis,axis);
    if(along<0||along>1||(this.cooldowns.get(flag.id)||0)>this.time)continue;
-   this.scoreHit(flag.id,50);this.emit('flag-hit',{id:flag.id});
+   this.scoreHit(flag.id,500);this.emit('flag-hit',{id:flag.id});
   }
  }
  raiseCenterPost(){if(this.centerPostRaised||this.rolloverHits.size!==3)return;const post=this.g.lower.find(o=>o.id==='test-post-center');
@@ -677,7 +676,7 @@ function createGame(core){
    if(!this.vortexActive||this.time<(b.vortexImmuneUntil||0))return;
    const well=this.g.lower.find(o=>o.mechanic==='gravity-well'&&o.layer===b.layer&&!this.balls.some(other=>other!==b&&other.state==='vortex-held'&&other.vortexHeld?.id===o.id)&&inCenter(o,true));
    if(!well)return;b.p=[...(centerFor(well)?.center||well.center)];b.v=[0,0];b.state='vortex-held';b.vortexHeld={id:well.id,remaining:1.5};b.vortexDwell=0;
-   this.emit('vortex-captured',{id:well.id,position:[...b.p]});return;
+   this.scoreHit('vortex:'+well.id,10000);this.emit('vortex-captured',{id:well.id,position:[...b.p]});return;
   }
   if(b.state==='vortex-return'){
    b.vortexFade=Math.max(0,b.vortexFade-dt);if(b.vortexFade>0)return;
@@ -691,7 +690,7 @@ function createGame(core){
   const well=this.vortexActive&&b.state==='playing'&&this.g.lower.find(o=>o.kind==='field'&&o.mechanic==='gravity-well'&&o.layer===b.layer&&inCenter(o,false));
   if(!well){b.vortexDwell=0;return;}
   b.vortexDwell=(b.vortexDwell||0)+dt;
-  if(b.vortexDwell>=1){b.state='vortex-return';b.v=[0,0];b.vortexFade=.25;this.emit('vortex-reclaimed',{id:well.id,position:[...b.p]});}
+  if(b.vortexDwell>=1){b.state='vortex-return';b.v=[0,0];b.vortexFade=.25;this.scoreHit('vortex:'+well.id,10000);this.emit('vortex-reclaimed',{id:well.id,position:[...b.p]});}
  }
 
  };

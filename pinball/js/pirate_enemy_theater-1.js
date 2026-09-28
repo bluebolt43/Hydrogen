@@ -284,7 +284,7 @@ if(embedded){
    if(command==='airdrop'&&enemyPresent&&!defeated)await attack('pirates');
    if(command==='kraken'&&enemyPresent&&!defeated)await attack('kraken');
    if((command==='ball'||command==='barrel')&&enemyPresent&&!defeated)await attack(command);
-   parent.postMessage({channel:'pinball-theater',type:'complete',id,defeated:enemyPresent&&defeated},'*');
+   parent.postMessage({channel:'pinball-theater',type:'complete',id,defeated:enemyPresent&&defeated,maxHp},'*');
   }).catch(error=>parent.postMessage({channel:'pinball-theater',type:'error',id,message:String(error)},'*'));
  });
  ready.then(()=>parent.postMessage({channel:'pinball-theater',type:'ready'},'*'));
