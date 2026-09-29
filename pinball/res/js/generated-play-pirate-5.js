@@ -4,8 +4,11 @@ const requestedBossStage=Number(new URLSearchParams(location.search).get('bossSt
 const bossStage=Number.isInteger(requestedBossStage)&&requestedBossStage>=1&&requestedBossStage<=8?requestedBossStage:0;
 const G=PIRATE_GEOMETRY,P=PiratePhysics,game=new P.Game(G),canvas=document.getElementById('table'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
 game.preserveTableOnDrain=!!bossStage;
+game.scoringEnabled=!bossStage;
 window.layoutGame=game;
-const theater=new LayoutTheater();theater.bossStage=bossStage;window.layoutTheater=theater;
+const theater=new LayoutTheater();theater.bossStage=bossStage;theater.tutorialPreview=false;window.layoutTheater=theater;
+let firstPlayGuide=null;
+let firstPlayGuidePending=tutorialMode||bossStage===1&&new URLSearchParams(location.search).get('firstPlayTutorial')==='1'&&localStorage.getItem('pinball-pirate-first-play-tutorial-v1')!=='1';
 const touchControls=new Map();let launchMode=localStorage.getItem('pinball-launch-mode')||'hold',launchDrag=null;
 const artRenderer=new PinballArt.Renderer();let artLayers=[],artWarning='';
 try{artLayers=PinballArt.validate(G.artLayers||[]);
@@ -123,19 +126,20 @@ const formatBallTime=seconds=>{
 let gameOverOverlay=null;
 function endGame(){
  if(gameOverOverlay)return;clearTouchControls();launchStartedAt=null;game.paused=true;soundBank.stop();
+ if(bossStage){window.dispatchEvent(new CustomEvent('pinball:boss-exit',{detail:{stage:bossStage}}));return;}
  let rows=[];try{const saved=JSON.parse(localStorage.getItem('pinball-high-scores-v1')||'[]');if(Array.isArray(saved))rows=saved.filter(r=>r&&Number.isSafeInteger(r.score)&&r.score>=0).slice(0,10);}catch{}
  const id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);rows.push({id,score:game.score,endedAt:new Date().toISOString()});rows.sort((a,b)=>b.score-a.score);rows=rows.slice(0,10);
  try{localStorage.setItem('pinball-high-scores-v1',JSON.stringify(rows));}catch{}
  gameOverOverlay=PirateMap.showGameOver(document,game.score,rows,id,()=>{gameOverOverlay=null;if(bossStage)window.dispatchEvent(new CustomEvent('pinball:boss-exit',{detail:{stage:bossStage}}));else reset();},bossStage?'離開球台':'重新開始');
 }
-game.onEvent=e=>{updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='vortex-reclaimed')showFloatingReward(e.position||game.ball.p,'+1',true,.25);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;volleyballShakeUntil=0;}if(e.type==='ball-saved')notice('BALL SAVE · 保球成功，不扣命');if(e.type==='ball-save-ready'){launchStartedAt=null;notice('保球補發：請重新發球');}if(e.type==='sound')soundBank.play(e.name);if((e.type==='release'&&e.id!=='tavern-drop')||e.type==='vortex-ejected'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='vortex-captured')notice('水渦中心扣球');if(e.type==='vortex-ejected')notice('水渦彈出球');if(e.type==='vortex-reclaimed')notice('水渦回收球');if(e.type==='vortex-returned'){launchStartedAt=null;notice('球已回到發球道，不扣球數');}if(e.type==='airdrop-rollover')notice(`空投收集 ${e.count}/3`);if(e.type==='pirate-airdrop-requested'){notice('海盜空投已觸發 · 三條已重置');window.dispatchEvent(new CustomEvent('pinball:pirate-airdrop',{detail:e}));}if(e.type==='pirate-airdrop-ended')notice('空投事件結束');if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice('敵人登場準備');window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice((e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':'水渦')+'獎勵：備用球 +1');if(e.type==='vortex-activated')notice('水渦已啟動');if(e.type==='target-bonus')notice('三連完成 · 額外 +150（合計 300）');if(e.type==='bumper-upgraded')notice('Bumper 升至第 '+e.level+' 級');if(e.type==='center-post-up')notice('Center post 已升起');if(e.type==='multiball-awarded')notice('Multiball！獲得額外球');if(e.type==='free-ball-launch')notice('Multiball 額外球已發射');if(e.type==='kickback-lane')notice(e.side==='left'?'左側彈簧已觸發':'右側彈簧已觸發');if(e.type==='capture'){if(['shape-45','shape-71'].includes(e.id))volleyballShakeUntil=game.time+.75;notice('進洞 +250');}if(e.type==='release')notice('出球');if(e.type==='drain')notice('失球');if(e.type==='ready')notice('按住空白鍵發射');if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to!=='lower'?'進入上層':'回到下層');if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?'單顆 target 命中':'三連 target 完成');};
+game.onEvent=e=>{firstPlayGuide?.onEvent(e);updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='vortex-reclaimed')showFloatingReward(e.position||game.ball.p,'+1',true,.25);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;volleyballShakeUntil=0;}if(e.type==='ball-saved')notice('BALL SAVE · 保球成功，不扣命');if(e.type==='ball-save-ready'){launchStartedAt=null;notice('保球補發：請重新發球');}if(e.type==='sound')soundBank.play(e.name);if((e.type==='release'&&e.id!=='tavern-drop')||e.type==='vortex-ejected'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='vortex-captured')notice('水渦中心扣球');if(e.type==='vortex-ejected')notice('水渦彈出球');if(e.type==='vortex-reclaimed')notice('水渦回收球');if(e.type==='vortex-returned'){launchStartedAt=null;notice('球已回到發球道，不扣球數');}if(e.type==='airdrop-rollover')notice(`空投收集 ${e.count}/3`);if(e.type==='pirate-airdrop-requested'){notice('海盜空投已觸發 · 三條已重置');window.dispatchEvent(new CustomEvent('pinball:pirate-airdrop',{detail:e}));}if(e.type==='pirate-airdrop-ended')notice('空投事件結束');if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice('敵人登場準備');window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice((e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':'水渦')+'獎勵：備用球 +1');if(e.type==='vortex-activated')notice('水渦已啟動');if(e.type==='target-bonus')notice('三連完成 · 額外 +150（合計 300）');if(e.type==='bumper-upgraded')notice('Bumper 升至第 '+e.level+' 級');if(e.type==='center-post-up')notice('Center post 已升起');if(e.type==='multiball-awarded')notice('Multiball！獲得額外球');if(e.type==='free-ball-launch')notice('Multiball 額外球已發射');if(e.type==='kickback-lane')notice(e.side==='left'?'左側彈簧已觸發':'右側彈簧已觸發');if(e.type==='capture'){if(['shape-45','shape-71'].includes(e.id))volleyballShakeUntil=game.time+.75;notice('進洞 +250');}if(e.type==='release')notice('出球');if(e.type==='drain')notice('失球');if(e.type==='ready')notice('按住空白鍵發射');if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to!=='lower'?'進入上層':'回到下層');if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?'單顆 target 命中':'三連 target 完成');};
 function startBoss(){
  if(!Number.isInteger(bossStage)||bossStage<1||bossStage>8)return;
  game.enemyActive=true;game.enemyIntroPending=true;
  theater.onEvent({type:'enemy-spawn-requested',eventId:bossStage});
  notice('敵人登場準備');
 }
-if(bossStage)startBoss();
+if(bossStage&&!tutorialMode)startBoss();
 function path(points,fill,stroke,width=1,closed=false){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));if(closed)ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}}
 function circle(p,r,fill,stroke){ctx.beginPath();ctx.arc(...p,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=.65;ctx.stroke()}}
 function object(o,upper=false){
@@ -177,7 +181,7 @@ function draw(){
  artWithBalls('upper');
  art('foreground');
  if($('artToggle').checked){ctx.save();ctx.translate(0,topOffset());for(const plane of PinballArt.planes)artRenderer.draw(ctx,[...topItems],plane,game);ctx.restore();}
- if(theater.customScore){ctx.save();ctx.translate(topArt.x,topArt.y+topOffset());ctx.rotate(topArt.angle*Math.PI/180);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffe6a3';ctx.shadowColor='#201209';ctx.shadowBlur=4;ctx.font='bold 15px monospace';ctx.fillText(String(game.score).padStart(12,'0'),0,0,topArt.width*.48);
+ if(theater.customScore){ctx.save();ctx.translate(topArt.x,topArt.y+topOffset());ctx.rotate(topArt.angle*Math.PI/180);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffe6a3';ctx.shadowColor='#201209';ctx.shadowBlur=4;ctx.font='bold 15px monospace';if(bossStage)theater.drawAttackMessage(ctx,topArt.width*(118/370-.5),topArt.height*(54/124-.5),topArt.width*134/370,topArt.height*18/124,game.time);else ctx.fillText(String(game.score).padStart(12,'0'),0,0,topArt.width*.48);
   const reserve=reservePreview|| (game.gameOver?0:Math.max(0,Math.min(99,4-game.ballNumber-(game.lifeLaunched?1:0)+(game.extraLives||0))));
   const counterX=topArt.width*(.159-.5),counterY=topArt.height*.014,counterW=topArt.width*.16,counterH=topArt.width*.047;
   ctx.shadowBlur=0;
@@ -224,7 +228,7 @@ function draw(){
  setText('mechanics',`空投：${game.airdropHits.size}/3 · Center post：${game.centerPostRaised?'升起':'未升起'}（${game.rolloverHits.size}/3） · Multiball 彈簧：左 ${game.kickbackHits.left?'✓':'○'}／右 ${game.kickbackHits.right?'✓':'○'} · 場上 ${game.balls.filter(b=>b.state!=='drained').length} 球 · 獎勵 ${game.multiballAwards} 次`);
  const power=game.ball.state==='ready'?game.charge:game.plungerReleaseCharge;$('launchPower').value=power;setText('launchPercent',`${(power*G.plunger.charge_seconds).toFixed(3)} 秒 · ${(power*100).toFixed(1)}%`);
  setText('targetDebugStatus',['left','middle','upper'].map((key,i)=>['左上','中間','上層'][i]+' Lv.'+(game.bumperLevels[key]||1)).join(' · '));
- setText('score',game.score);setText('ballNumber',game.ballNumber);setText('ballTime',formatBallTime(ballStartedAt===null?ballElapsed:game.time-ballStartedAt));
+ setText('score',bossStage?'DEFEAT BOSS':game.score);setText('ballNumber',game.ballNumber);setText('ballTime',formatBallTime(ballStartedAt===null?ballElapsed:game.time-ballStartedAt));
  if(artWarning)setText('notice',artWarning);else if(theater.curtainClosing)setText('notice','布幕閉合中，請稍候');else if(game.freezeRemaining>0)setText('notice',`敵人登場 · 凍結 ${game.freezeRemaining.toFixed(1)} 秒`);else if(game.paused)setText('notice','已暫停');else if(game.time>noticeUntil&&game.ball.state==='ready')setText('notice','按住空白鍵，再放開發射');
 }
 function drawBall(b){if(b.state==='drained')return;ctx.save();if(b.state==='vortex-return')ctx.globalAlpha*=b.vortexFade/.25;if(topBallImage.complete&&topBallImage.naturalWidth)ctx.drawImage(topBallImage,b.p[0]-G.ball_radius,b.p[1]-G.ball_radius,G.ball_radius*2,G.ball_radius*2);else{circle(b.p,G.ball_radius,'#e7eff5','#4c6677');circle([b.p[0]-1,b.p[1]-1],.9,'white')}ctx.restore()}
@@ -240,7 +244,7 @@ function drawBallOutlines(){
  ctx.restore();
 }
 let lastDrawAt=0;
-function frame(now){const dt=Math.min(.05,(now-previous)/1000);previous=now;theater.update(leaveDialog.open?0:dt,game);soundBank.setPaused(game.paused&&!settings.open);if(!game.paused&&!game.theaterFrozen){accumulator+=dt;while(accumulator>=game.config.step){game.step();accumulator-=game.config.step;if(game.theaterFrozen){accumulator=0;break;}}}else accumulator=0;syncLaunchCharge(now);if(!game.paused&&!game.theaterFrozen||screenDimStarted!==null||now-lastDrawAt>=100){draw();lastDrawAt=now;}requestAnimationFrame(frame)}
+function frame(now){const dt=Math.min(.05,(now-previous)/1000);previous=now;firstPlayGuide?.tick?.(dt);if(firstPlayGuidePending&&!game.paused&&!game.enemyIntroPending&&!theater.curtainClosing&&!game.theaterFrozen){firstPlayGuidePending=false;startTableTutorial();}theater.update(leaveDialog.open?0:dt,game);soundBank.setPaused(game.paused&&!settings.open);if(!game.paused&&!game.theaterFrozen&&!firstPlayGuide?.demoFrozen){accumulator+=dt;while(accumulator>=game.config.step){game.step();accumulator-=game.config.step;if(game.theaterFrozen||game.paused){accumulator=0;break;}}}else accumulator=0;syncLaunchCharge(now);if(!game.paused&&!game.theaterFrozen||screenDimStarted!==null||now-lastDrawAt>=100){draw();lastDrawAt=now;}requestAnimationFrame(frame)}
 let launchStartedAt=null;
 function syncLaunchCharge(now=performance.now()){
  if(launchDrag)return;
@@ -262,7 +266,7 @@ function suspendGame(){
 }
 function resumeGame(){if(suspendedGameState===null)return;game.paused=suspendedGameState;suspendedGameState=null;soundBank.setPaused(game.paused);}
 function applyAppSettings(values){soundEnabled=values.sound;launchMode=values.launchMode; $('launchMode').value=launchMode;syncSound();}
-function reset(){gameOverOverlay?.cancel();gameOverOverlay=null;clearTouchControls();launchStartedAt=null;game.reset();accumulator=0;if(bossStage)startBoss();else notice('按住空白鍵發射')}
+function reset(){gameOverOverlay?.cancel();gameOverOverlay=null;clearTouchControls();launchStartedAt=null;game.reset();accumulator=0;if(bossStage&&!tutorialMode)startBoss();else notice('按住空白鍵發射')}
 $('settings').onclick=openSettings;$('restart').onclick=reset;$('nudge').onclick=()=>game.nudge();
 function setupPhysicsDebug(){
  const panel=$('debugPanel');if(!panel)return;
@@ -339,7 +343,7 @@ const postDebug=document.createElement('button');postDebug.textContent='Center p
 const eyeDebug=document.createElement('button');eyeDebug.textContent='章魚眼睛 +1 / 5';eyeDebug.onclick=()=>{game.collectKrakenEye();notice(`章魚眼睛 ${game.krakenCount}/5`);draw();};$('targetDebugButtons').append(eyeDebug);
 function bind(id,set){const b=$(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);set(true);e.preventDefault()};b.onpointerup=()=>set(false);b.onpointercancel=()=>set(false)}
 bind('left',v=>game.input.left=v);bind('right',v=>game.input.right=v);bind('launch',launch);
-function key(e,on){if(tutorialMode||leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();if([' ','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if(k===' '&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
+function key(e,on){if(tutorialMode||leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();const control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':k===' '?'launch':null;if(firstPlayGuide&&!firstPlayGuide.allowed(control)){e.preventDefault();return;}if(!on&&control&&firstPlayGuide)firstPlayGuide.used(control);if([' ','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if(k===' '&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
 addEventListener('keydown',e=>{if(!gameOverOverlay)key(e,true)});addEventListener('keyup',e=>{if(!gameOverOverlay)key(e,false)});
 addEventListener('blur',()=>{clearTouchControls();game.input.left=game.input.right=game.input.launch=false;if(!window.AppControls&&!game.paused)openSettings()});
 canvas.onpointerdown=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*view[2]+view[0],y=(e.clientY-r.top)/r.height*view[3]+view[1];if(topHit(backArt,x,y)){requestLeaveGame();return;}if(topHit(settingsArt,x,y)){openSettings();return;}if(topHit(soundArt,x,y)){soundEnabled=!soundEnabled;localStorage.setItem('pinball-sound',soundEnabled?'on':'off');syncSound();notice(soundEnabled?'音效開啟':'音效關閉');draw();return;}if(!$('probe').checked){
@@ -358,62 +362,85 @@ canvas.onlostpointercapture=e=>endTouch(e,true);
 requestAnimationFrame(frame);
 
 function startTableTutorial(){
- game.paused=true;clearTouchControls();soundBank.setPaused(true);
- const overlay=document.createElement('div');overlay.id='tableTutorial';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-labelledby','tutorialTitle');
- overlay.innerHTML='<svg id="tutorialSpotlight" aria-hidden="true"></svg><section id="tutorialPanel"><small id="tutorialCount"></small><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><div><button id="tutorialPrevious">上一步</button><button id="tutorialNext">下一步</button></div><button id="tutorialExit">離開球台</button></section>';
+ if(tutorialMode)game.paused=true;
+ clearTouchControls();
+ const overlay=document.createElement('div');overlay.id='tableTutorial';overlay.style.pointerEvents='none';
+ overlay.innerHTML='<svg id="tutorialSpotlight" aria-hidden="true"></svg><section id="tutorialPanel"><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><p id="tutorialHint" hidden>點擊進入下一步</p></section>';
  document.body.append(overlay);
- let step=0;
- function artBounds(a,padding=5){return [a.x-a.width/2-padding,a.y-a.height/2-padding,a.width+padding*2,a.height+padding*2];}
- function objectBounds(o,padding=9){const points=o.points||[o.center],xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return [Math.min(...xs)-padding,Math.min(...ys)-padding,Math.max(...xs)-Math.min(...xs)+padding*2,Math.max(...ys)-Math.min(...ys)+padding*2];}
- function targets(action){const rule=G.gameplay.target_rules.find(r=>r.action===action);return artLayers.filter(a=>rule.objects.some(id=>a.bind?.startsWith(id+'-'))).map(a=>artBounds(a));}
- function flipper(side){const f=game.flippers.find(f=>f.side===side)||game.flippers[side==='left'?0:1],tip=P.add(f.pivot,[Math.cos(f.rest)*f.length,Math.sin(f.rest)*f.length]);return objectBounds({points:[f.pivot,tip]},12);}
- function holes(attack){return G.lower.filter(o=>G.gameplay.hole_attacks[o.id]===attack).map(o=>objectBounds(o,15));}
+ let step=0,waiting=false,pointer=null,heldKey=null,heartOnly=false,narrationReady=tutorialMode,demo=null,demoElapsed=0;
+ function bounds(o,padding=12){if(!o)return null;const points=o.points||[o.center],xs=points.map(p=>p[0]),ys=points.map(p=>p[1]);return [Math.min(...xs)-padding,Math.min(...ys)-padding,Math.max(...xs)-Math.min(...xs)+padding*2,Math.max(...ys)-Math.min(...ys)+padding*2];}
+ function flipper(side){const f=game.flippers.find(f=>f.side===side)||game.flippers[side==='left'?0:1];return bounds({points:[f.pivot,P.add(f.pivot,[Math.cos(f.rest)*f.length,Math.sin(f.rest)*f.length])]});}
+ function artBounds(a){return [a.x-a.width/2-5,a.y-a.height/2-5,a.width+10,a.height+10];}
+ function holes(attack){return G.lower.filter(o=>G.gameplay.hole_attacks[o.id]===attack).map(o=>bounds(o,15));}
  const steps=[
-  ['發球台',()=>launchMode==='drag'?'操作：在右側發球台向下拖曳蓄力，放開發球。電腦可按住空白鍵，放開發射。':'操作：按住右側發球台蓄力，放開發球。電腦可使用空白鍵。',()=>{const p=G.plunger;return [[p.left-5,p.rest_y-32,p.right-p.left+10,Math.min(view[1]+view[3],p.base_y+15)-(p.rest_y-32)]];}],
-  ['左 flipper',()=> '操作：點按球台左半部，揮動左 flipper 把球打回球台。電腦可使用 ← 或 Z。',()=>[flipper('left')]],
-  ['右 flipper',()=> '操作：點按球台右半部，揮動右 flipper 把球打回球台。電腦可使用 → 或 C。',()=>[flipper('right')]],
-  ['水渦啟動條件',()=> '條件：命中左上方三顆珍珠 target。效果：啟動中央水渦；啟動後再次集齊，可獲得備用球 +1。',()=>targets('vortex')],
-  ['Multi-ball 條件',()=> '條件：左右救球彈簧各觸發一次。效果：追加一顆球並重置收集狀態；場上最多三顆，滿額改為備用球 +1。',()=>G.rescue_kickers.map(o=>objectBounds(o,13))],
-  ['Center post 條件',()=> '條件：球通過高亮的三條下方 rollover。效果：中央保護柱升起，阻擋五次碰撞後降下，再次收集可重新啟動。',()=>[...G.lower.filter(o=>o.kind==='rollover').map(o=>objectBounds(o,10)),objectBounds(G.lower.find(o=>o.id==='test-post-center'),12)]],
-  ['敵人出現條件',()=> '條件：命中三顆通緝令 target，召喚敵人。敵人在場時再次集齊，獲得備用球 +1。',()=>targets('enemy')],
-  ['砲彈攻擊',()=> '條件：敵人在場時，把球打進右上方任一高亮洞口。效果：發動砲彈攻擊敵人。',()=>holes('ball')],
-  ['木桶攻擊',()=> '條件：敵人在場時，把球打進左上方高亮洞口。效果：發動木桶攻擊敵人。',()=>holes('barrel')],
-  ['章魚攻擊',()=> '條件：球從左側上層通道經過五次，集滿五顆眼睛。效果：章魚攻擊，之後重新收集。',()=>artLayers.filter(a=>a.state==='kraken-body').map(a=>artBounds(a))],
-  ['空投攻擊',()=> '條件：敵人在場時，球通過上方三條 rollover，全部集齊。效果：發動空投攻擊，三條收集狀態重置。',()=>G.lower.filter(o=>o.kind==='airdrop-rollover').map(o=>objectBounds(o,10))],
-  ['離開球台',()=> '操作：點右上角返回箭頭，可選擇繼續遊玩或離開球台，返回關卡選單。',()=>[[backArt.x-backArt.width/2-4,backArt.y+topOffset()-backArt.height/2-4,backArt.width+8,backArt.height+8]]]
+  ['左 flipper','點按螢幕左半邊，揮動左擋板。',()=>[flipper('left')]],
+  ['右 flipper','點按螢幕右半邊，揮動右擋板。',()=>[flipper('right')]],
+  ['發球道',launchMode==='drag'?'在高亮區域向下拖曳，放開發球。':'按住高亮區域蓄力，放開發球。',()=>{const p=G.plunger;return [[p.left-5,p.rest_y-32,p.right-p.left+10,Math.min(view[1]+view[3],p.base_y+15)-(p.rest_y-32)]];}],
+  ['Boss 血量','每顆愛心代表 1 點血量。',()=>[]],
+  ['砲彈攻擊 −1','球進入這區，扣除1顆心。',()=>holes('ball')],
+  ['炸藥攻擊 −2','球進入這區，扣除2顆心。',()=>holes('barrel')],
+  ['三燈攻擊 −3','亮滿三盞燈，扣除3顆心。',()=>artLayers.filter(a=>a.bind?.startsWith('airdrop-rollover-')).map(artBounds)],
+  ['章魚攻擊 −4','經過這區五次，扣除4顆心。',()=>artLayers.filter(a=>a.state==='kraken-body').map(artBounds)]
  ];
- if(new URLSearchParams(location.search).get('tutorialGuide')!=='full')steps.splice(5);
- function position(){
-  const r=canvas.getBoundingClientRect(),root=overlay.getBoundingClientRect(),scale=r.width/view[2];
-  const rects=steps[step][2]().map(([x,y,w,h])=>{const left=Math.max(view[0],x),top=Math.max(view[1],y),right=Math.min(view[0]+view[2],x+w),bottom=Math.min(view[1]+view[3],y+h);return {x:r.left-root.left+(left-view[0])*scale,y:r.top-root.top+(top-view[1])*scale,w:(right-left)*scale,h:(bottom-top)*scale};});
-  // Merge overlapping highlights until their combined bounds no longer overlap.
-  let merged=true;while(merged){merged=false;for(let i=0;i<rects.length&&!merged;i++)for(let j=i+1;j<rects.length;j++){
-   const a=rects[i],b=rects[j];if(a.x<=b.x+b.w&&a.x+a.w>=b.x&&a.y<=b.y+b.h&&a.y+a.h>=b.y){
-    const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);rects[i]={x,y,w:Math.max(a.x+a.w,b.x+b.w)-x,h:Math.max(a.y+a.h,b.y+b.h)-y};rects.splice(j,1);merged=true;break;
-   }
-  }}
-  const svg=$('tutorialSpotlight');svg.setAttribute('viewBox',`0 0 ${root.width} ${root.height}`);
-  const holes=rects.map(q=>`<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" rx="7" fill="black"/>`).join('');
-  const outlines=rects.map(q=>`<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" rx="7" fill="none" stroke="#ffe29b" stroke-width="2"/>`).join('');
-  svg.innerHTML=`<defs><mask id="tutorialMask"><rect width="100%" height="100%" fill="white"/>${holes}</mask></defs><rect width="100%" height="100%" fill="black" opacity=".82" mask="url(#tutorialMask)"/>${outlines}`;
-  const panel=$('tutorialPanel');panel.classList.remove('compact');const minY=Math.min(...rects.map(q=>q.y)),maxY=Math.max(...rects.map(q=>q.y+q.h));
-  if(Math.max(minY,root.height-maxY)<panel.offsetHeight+32)panel.classList.add('compact');
-  const height=panel.offsetHeight;
-  const top=minY>=height+24?Math.max(16,Math.min(minY-height-20,root.height*.25)):Math.min(root.height-height-16,maxY+20);
-  panel.style.top=Math.max(16,top)+'px';
+ function targets(action){const ids=G.gameplay.target_rules.find(r=>r.action===action)?.objects||[];return artLayers.filter(a=>ids.some(id=>a.bind===id||a.bind?.startsWith(id+'-'))).map(artBounds);}
+ if(tutorialMode)steps.splice(3,5,
+  ['Boss 出現條件','命中這些目標，召喚 Boss。',()=>targets('enemy')],
+  ['砲彈攻擊 −1','球進入這區，扣除1顆心。',()=>holes('ball')],
+  ['炸藥攻擊 −2','球進入這區，扣除2顆心。',()=>holes('barrel')],
+  ['三燈攻擊 −3','亮滿三盞燈，扣除3顆心。',()=>artLayers.filter(a=>a.bind?.startsWith('airdrop-rollover-')).map(artBounds)],
+  ['章魚攻擊 −4','經過這區五次，扣除4顆心。',()=>artLayers.filter(a=>a.state==='kraken-body').map(artBounds)],
+  ['水渦','命中這區，啟動水渦。',()=>demo==='vortex'?artLayers.filter(a=>a.state==='vortex').map(artBounds):targets('vortex')],
+  ['Center post','亮滿底下三條魚，升起中央保護柱。',()=>artLayers.filter(a=>a.state==='center-post'||a.state==='rollover'&&/\/fish-3-[345]\.png$/.test(a.src)&&G.lower.some(o=>o.kind==='rollover'&&o.id===a.bind)).map(artBounds)]
+ );
+ function hitTargets(action){const rule=G.gameplay.target_rules.find(r=>r.action===action),group=game.targetGroups.find(g=>g.id===rule?.id);for(const id of group?.targets||[]){game.cooldowns.delete(id);game.scoreHit(id,500);}}
+ function demoDone(){if(!demo)return;demo=null;firstPlayGuide.demoFrozen=false;game.paused=true;theater.update(0,game);if(step===steps.length-1){finish();return;}step++;render();}
+ function playDemo(){
+  demo=['enemy','ball','barrel','airdrop','kraken','vortex','post'][step-3];demoElapsed=0;game.hasLaunchedOnce=true;clearTouchControls();firstPlayGuide.demoFrozen=true;game.paused=false;theater.update(0,game);render();
+  if(demo==='enemy')hitTargets('enemy');
+  else if(demo==='ball'||demo==='barrel')game.emit('hole-attack-requested',{attack:demo,eventId:step});
+  else if(demo==='airdrop'){
+   // Cross the actual three sensors to collect the lamps and launch the normal attack.
+   for(const lane of G.lower.filter(o=>o.kind==='airdrop-rollover')){const a=lane.points[0],z=lane.points[1],mid=P.mix(a,z,.5),normal=P.unit([-(z[1]-a[1]),z[0]-a[0]]);const before=P.add(mid,P.mul(normal,-2));game.ball.state='playing';game.ball.layer=lane.layer;game.ball.p=P.add(mid,P.mul(normal,2));game.airdropSensors(before,lane.layer);}
+   game.ball.state='ready';game.ball.p=[G.plunger.x,G.plunger.rest_y-game.config.ballRadius];
+  }else if(demo==='kraken')for(let n=0;n<5;n++)game.collectKrakenEye();
+  else if(demo==='vortex'){
+   hitTargets('vortex');const well=G.lower.find(o=>o.mechanic==='gravity-well'),center=G.lower.find(o=>o.mechanic==='vortex-center'&&o.layer===well.layer);game.setBall(center?.center||well.center,[0,0],well.layer);
+  }else if(demo==='post'){
+   game.ball.state='ready';game.ball.p=[G.plunger.x,G.plunger.rest_y-game.config.ballRadius];for(const lane of G.lower.filter(o=>o.kind==='rollover'))game.rolloverHits.add(lane.id);game.raiseCenterPost();
+  }
  }
- function render(){
-  $('tutorialCount').textContent=(step+1)+' / '+steps.length;
-  $('tutorialTitle').textContent=steps[step][0];$('tutorialText').textContent=steps[step][1]();
-  $('tutorialPrevious').disabled=step===0;$('tutorialNext').textContent=step===steps.length-1?'完成':'下一步';position();
+
+ function rects(){const r=canvas.getBoundingClientRect(),root=overlay.getBoundingClientRect(),scale=r.width/view[2];
+  if(step===3&&!tutorialMode){const t=theater.frame.getBoundingClientRect(),b=theater.tutorialBounds;if(!b)return [];return [b.hearts].filter(Boolean).map(q=>({x:t.left-root.left+q.x*t.width-3,y:t.top-root.top+q.y*t.height-3,w:q.w*t.width+6,h:q.h*t.height+6}));}
+  const result=steps[step][2]().filter(Boolean).map(([x,y,w,h])=>({x:r.left-root.left+(x-view[0])*scale,y:r.top-root.top+(y-view[1])*scale,w:w*scale,h:h*scale}));
+  let merge=true;while(merge){merge=false;for(let i=0;i<result.length&&!merge;i++)for(let j=i+1;j<result.length;j++){const a=result[i],b=result[j];if(a.x<=b.x+b.w&&a.x+a.w>=b.x&&a.y<=b.y+b.h&&a.y+a.h>=b.y){const x=Math.min(a.x,b.x),y=Math.min(a.y,b.y);result[i]={x,y,w:Math.max(a.x+a.w,b.x+b.w)-x,h:Math.max(a.y+a.h,b.y+b.h)-y};result.splice(j,1);merge=true;break;}}}return result;
  }
- function exit(){if(window.AppControls?.exitGame)window.AppControls.exitGame();else location.href=new URL('res/main.html',document.baseURI).href;}
- $('tutorialPrevious').onclick=()=>{if(step>0){step--;render();}};
- $('tutorialNext').onclick=()=>{if(step<steps.length-1){step++;render();}else{window.dispatchEvent(new CustomEvent('pinball:tutorial-complete'));exit();}};
- $('tutorialExit').onclick=exit;
- overlay.onkeydown=e=>{if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button')].filter(b=>!b.disabled),first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}};
- new ResizeObserver(position).observe(canvas);
- artRenderer.image(backArt.src).addEventListener('load',position,{once:true});
- render();$('tutorialNext').focus();
+ function position(){if(waiting)return;const root=overlay.getBoundingClientRect(),rs=rects(),svg=$('tutorialSpotlight');svg.setAttribute('viewBox',`0 0 ${root.width} ${root.height}`);svg.innerHTML=`<defs><mask id="tutorialMask"><rect width="100%" height="100%" fill="white"/>${rs.map(q=>`<rect x="${q.x}" y="${q.y}" width="${q.w}" height="${q.h}" rx="7" fill="black"/>`).join('')}</mask></defs><rect width="100%" height="100%" fill="black" opacity=".75" mask="url(#tutorialMask)"/>`;
+  const panel=$('tutorialPanel');const minY=rs.length?Math.min(...rs.map(q=>q.y)):root.height;const maxY=rs.length?Math.max(...rs.map(q=>q.y+q.h)):0;const h=panel.offsetHeight;panel.style.top=Math.max(12,Math.min(root.height-h-12,minY>=h+24?minY-h-16:maxY+16))+'px';
+ }
+ function render(){overlay.hidden=waiting||tutorialMode&&['enemy','ball','barrel','airdrop','kraken'].includes(demo);overlay.dataset.demo=demo||'';overlay.dataset.step=String(step+1);overlay.dataset.heartOnly=String(heartOnly);$('tutorialTitle').hidden=step>=4;$('tutorialHint').hidden=!!demo||!tutorialMode&&step<3;$('tutorialTitle').textContent=step===3&&heartOnly?'Boss 血量':steps[step][0];$('tutorialText').textContent=step===3&&heartOnly?'每顆愛心代表 1 點血量。':steps[step][1];position();}
+ function used(control){if(waiting||step>1||control!==['left','right'][step])return;step++;render();}
+ function allowed(control){return waiting||step<3&&control===['left','right','launch'][step];}
+ function stop(e){e.preventDefault();e.stopImmediatePropagation();}
+ function down(e){if(tutorialMode&&demo){stop(e);return;}if(waiting)return;if(tutorialMode||step>=3){stop(e);if((step<3||narrationReady)&&pointer===null){pointer={id:e.pointerId,control:'next'};canvas.setPointerCapture(e.pointerId);}return;}const r=overlay.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const inside=x>=0&&x<=r.width&&y>=0&&y<=r.height;const hit=inside&&(step===0?x<r.width/2:step===1?x>=r.width/2:rects().some(q=>x>=q.x&&x<=q.x+q.w&&y>=q.y&&y<=q.y+q.h));if(pointer!==null||!hit){stop(e);return;}
+  stop(e);if(game.paused||game.theaterFrozen||game.enemyIntroPending)return;const control=['left','right','launch'][step];pointer={id:e.pointerId,control};canvas.setPointerCapture(e.pointerId);soundBank.unlock();if(control==='launch'){if(launchMode==='drag'){launchDrag={pointerId:e.pointerId,y:e.clientY};game.launchAiming=true;}else launch(true);}else game.input[control]=true;
+ }
+ function move(e){if(!pointer||pointer.id!==e.pointerId)return;stop(e);if(launchDrag){game.charge=Math.max(0,Math.min(1,(e.clientY-launchDrag.y)/100));game.chargeElapsed=game.charge;game.ball.p[1]=G.plunger.rest_y-G.ball_radius+G.plunger.stroke*game.charge;}}
+ function up(e){if(!pointer||pointer.id!==e.pointerId)return;stop(e);const control=pointer.control;pointer=null;if(control==='next'){if(e.type==='pointerup'){if(tutorialMode&&step>=3){playDemo();}else if(step<steps.length-1){step++;if(step===3&&!tutorialMode){heartOnly=true;narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});}render();}else finish();}return;}if(control==='launch'){if(launchDrag){const charge=game.charge;launchDrag=null;game.launchAiming=false;if(e.type==='pointerup')game.launch(charge);}else if(e.type==='pointerup')launch(false);else clearTouchControls();}else{game.input[control]=false;if(e.type==='pointerup')used(control);}}
+ // Capture keyboard input so a held key cannot advance a step without pressing it.
+ function keyboard(e){if(tutorialMode){stop(e);return;}if(waiting)return;const k=e.key.toLowerCase(),control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':k===' '?'launch':null;stop(e);if(!allowed(control)||game.paused||game.theaterFrozen)return;if(e.type==='keydown'){if(e.repeat||heldKey)return;heldKey={k,control};if(control==='launch')launch(true);else game.input[control]=true;}else if(heldKey?.k===k){heldKey=null;if(control==='launch')launch(false);else{game.input[control]=false;used(control);}}}
+ const listeners=[['pointerdown',down],['pointermove',move],['pointerup',up],['pointercancel',up],['keydown',keyboard],['keyup',keyboard]];for(const [name,fn]of listeners)addEventListener(name,fn,{capture:true});
+ const observer=new ResizeObserver(position);observer.observe(canvas);
+ firstPlayGuide={allowed,used,demoFrozen:false,onEvent(e){if(tutorialMode){if(demo==='vortex'&&['vortex-ejected','vortex-returned'].includes(e.type))demoDone();return;}if(e.type==='launch'&&step===2){waiting=true;render();}else if(waiting&&['rollover','airdrop-rollover'].includes(e.type)){waiting=false;step=3;heartOnly=true;game.paused=true;clearTouchControls();theater.update(0,game);narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});render();}}};
+ function finish(){if(!tutorialMode)localStorage.setItem('pinball-pirate-first-play-tutorial-v1','1');firstPlayGuide=null;theater.onTutorialBounds=null;theater.onCommandComplete=null;observer.disconnect();for(const [name,fn]of listeners)removeEventListener(name,fn,{capture:true});overlay.remove();canvas.tabIndex=0;canvas.focus();clearTouchControls();if(tutorialMode){if(window.AppControls?.exitGame)window.AppControls.exitGame();else location.href=new URL('res/main.html',document.baseURI).href;return;}game.paused=false;theater.update(0,game);window.dispatchEvent(new CustomEvent('pinball:tutorial-complete'));}
+ function theaterBounds(){if(step!==3||waiting)return;narrationReady=true;render();}
+ theater.onTutorialBounds=theaterBounds;
+ if(tutorialMode){
+  theater.onCommandComplete=e=>{if(demo&&e.id?.split(':')[1]===demo){if(e.type==='complete')demoDone();else{game.paused=true;notice('教學示範載入失敗');}}};
+  firstPlayGuide.tick=dt=>{if(!demo)return;game.time+=dt;demoElapsed+=dt;if(demo==='vortex')game.vortexRecovery(dt);else if(demo==='post'&&game.centerPostRaised&&demoElapsed>=2)demoDone();};
+ }
+
+
+
+ render();
 }
-if(tutorialMode)startTableTutorial();

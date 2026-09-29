@@ -9,6 +9,7 @@ html[data-embedded] header,html[data-embedded] footer{display:none}html[data-emb
 @media(max-width:650px){#debugPanel{flex-basis: min(260px,55vw);margin-right:4px;padding:8px}#physicsControls fieldset{padding:6px}.physics-label{font-size:12px}}
 #tableTutorial{position:fixed;inset:0;z-index:1000;overflow:hidden;touch-action:none}
 #tutorialSpotlight{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-#tutorialPanel{position:absolute;left:50%;transform:translateX(-50%);width:min(310px,calc(100% - 32px));padding:14px;background:#30251e;border:2px solid #b89051;border-radius:12px;color:#fff0cc;box-shadow:0 5px 22px #0008}
-#tutorialPanel h2{margin:8px 0;font-size:20px}#tutorialPanel p{font-size:14px;line-height:1.5;margin:10px 0 14px}#tutorialPanel div{display:flex;justify-content:space-between;gap:12px}#tutorialPanel button{min-height:42px}#tutorialPrevious:disabled{opacity:.4}#tutorialExit{display:block;width:100%;margin:14px auto 0;font-size:13px;background:#2c4157;border:1px solid #70859c}
-#tutorialPanel.compact{padding:10px}#tutorialPanel.compact h2{margin:6px 0}#tutorialPanel.compact p{font-size:13px;line-height:1.45;margin:8px 0 10px}#tutorialPanel.compact button{min-height:36px}#tutorialPanel.compact #tutorialExit{min-height:28px;padding:4px;margin-top:8px}
+#tutorialPanel{position:absolute;left:50%;transform:translateX(-50%);width:min(310px,calc(100% - 32px));padding:0;color:#fff4d0;text-align:center;pointer-events:none;text-shadow:0 2px 3px #000,1px 0 2px #000,-1px 0 2px #000}
+#tutorialPanel h2{margin:0 0 5px;font-size:18px}#tutorialPanel p{font-size:15px;line-height:1.45;margin:0}
+
+#tutorialPanel #tutorialHint{margin-top:10px;color:#ffe29b}

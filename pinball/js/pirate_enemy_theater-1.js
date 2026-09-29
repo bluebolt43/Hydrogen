@@ -2,7 +2,7 @@
 'use strict';
 const embedded=new URLSearchParams(location.search).has('embed');
 const storyVictory=new URLSearchParams(location.search).has('story-victory');
-if(embedded){const style=document.createElement('style');style.textContent='html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:transparent}main{width:100%;height:100%;max-width:none}main> :not(.stage){display:none}.stage{width:100%;height:100%;aspect-ratio:auto;box-shadow:none}.health-hud{top:11px}.heart{width:2.8cqw;height:2.8cqw}';document.head.append(style);}
+if(embedded){const style=document.createElement('style');style.textContent='html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:transparent}main{width:100%;height:100%;max-width:none}main> :not(.stage){display:none}.stage{width:100%;height:100%;aspect-ratio:auto;box-shadow:none}.heart{width:2.8cqw;height:2.8cqw}';document.head.append(style);}
 
 const catalog=JSON.parse(document.getElementById('catalog').textContent),$=id=>document.getElementById(id),stage=$('stage'),spinner=$('spinner'),enemy=$('enemy'),picker=$('enemy-type'),next=$('next-state'),daynight=$('daynight'),message=$('status'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
 let typeIndex=0,stateIndex=0,isNight=false,isBusy=false,level=1,maxHp=3,hp=3,defeated=false;
@@ -12,14 +12,26 @@ function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',t
 const damage={ball:1,barrel:2,pirates:3,kraken:4};
 const cache=new Map();function preload(src){if(!cache.has(src)){const im=new Image();im.src=src;cache.set(src,im.decode().then(()=>im).catch(e=>{cache.delete(src);throw e;}));}return cache.get(src);}
 function lock(v){isBusy=v;picker.disabled=next.disabled=daynight.disabled=v;$('height').disabled=v;document.querySelectorAll('[data-attack]').forEach(b=>b.disabled=v||defeated);$('next-level').disabled=v||!defeated;}
-function backgroundSources(type){return type.id==='kraken'?['res/img/stage7-3.png','res/img/stage7-3.png']:['res/img/pirate-stage-background-day-tall-v1.png','res/img/pirate-stage-background-night-tall-v1.png'];}
-function sync(){const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){const image=$(id),src=backgroundSources(type)[i];if(image.getAttribute('src')!==src)image.src=src;}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;}
+function backgroundSources(type){const src=type.id==='kraken'?'res/img/stage7-3.png':type.id==='sea-serpent'?'res/img/stage6-1.png':null;return src?[src,src]:['res/img/pirate-stage-background-day-tall-v1.png','res/img/pirate-stage-background-night-tall-v1.png'];}
+function sync(){const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){const image=$(id),src=backgroundSources(type)[i];if(image.getAttribute('src')!==src)image.src=src;}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;positionHealth();}
 function animate(el,from,to,duration){if(!duration){el.style.transform=to;return Promise.resolve();}const animation=el.animate([{transform:from},{transform:to}],{duration,easing:'linear',fill:'forwards'});return animation.finished.then(()=>{el.style.transform=to;animation.cancel();});}
 function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=maximum*67?1:0;}
+let healthPositionFrame=0;
+function positionHealth(){
+ if(healthPositionFrame)return;
+ healthPositionFrame=requestAnimationFrame(()=>{
+  healthPositionFrame=0;const hud=$('health-hud');if(hud.hidden)return;
+  const bounds=stage.getBoundingClientRect(),boss=document.querySelector('.enemy-anchor').getBoundingClientRect();
+  hud.style.top=Math.max(5,boss.top-bounds.top-hud.getBoundingClientRect().height-5)+'px';
+ });
+}
+new ResizeObserver(positionHealth).observe(stage);
+new ResizeObserver(positionHealth).observe($('hearts'));
 function renderHealth(previous=hp){
  $('health-hud').setAttribute('aria-label',`第 ${level} 關，敵人血量 ${hp}，最大血量 ${maxHp}`);
  $('hearts').innerHTML=Array.from({length:reduced.matches?hp:previous},(_,i)=>`<svg class="heart ${i>=hp?'lost':''}" viewBox="0 0 32 32"><path fill="#513329" stroke="#ead8ad" stroke-width="1.3" d="M16 29 3 16 1 10 3 4 9 2 16 7 23 2 29 4 31 10 29 16Z"/><g class="heart-fill"><path fill="#a33131" d="M16 29 3 16 1 10 3 4 9 2 16 7 23 2 29 4 31 10 29 16Z"/><path fill="#de6250" d="M15 25 5 15 3 10 5 5 9 4 16 9 23 4 27 6 28 11 25 16Z"/><path fill="#f58c6a" d="m5 9 2-3 3 0 4 4-4-1-3 4Z"/></g></svg>`).join('');
- $('hearts').querySelectorAll('.lost').forEach(heart=>heart.addEventListener('animationend',()=>heart.remove(),{once:true}));
+ positionHealth();
+ return Promise.all([...$('hearts').querySelectorAll('.lost')].map(async heart=>{await Promise.all(heart.getAnimations().map(animation=>animation.finished.catch(()=>{})));heart.remove();}));
 }
 async function flip(to){
  const asset=catalog[typeIndex].states[to];await preload(asset.src);
@@ -90,7 +102,7 @@ async function playStoryVictory(){
 async function resolveDamage(kind){
  const remaining=Math.max(0,hp-damage[kind]),to=healthState(remaining,maxHp);
  if(remaining>0&&to!==stateIndex)await preload(catalog[typeIndex].states[to].src);
- const previous=hp;hp=remaining;renderHealth(previous);
+ const previous=hp;hp=remaining;const heartLoss=renderHealth(previous);
  if(hp===0){
   defeated=true;stage.classList.add('defeated');stage.dataset.combat='sinking';message.textContent='敵人下沉…';
   const rect=spinner.getBoundingClientRect(),stageRect=stage.getBoundingClientRect();
@@ -112,6 +124,7 @@ async function resolveDamage(kind){
   if(to!==stateIndex)await flip(to);
   message.textContent=`命中，扣 ${previous-hp} 心！剩餘 ${hp} / ${maxHp}。`;
  }
+ await heartLoss;
 }
 let curtainsClosed=true;
 async function curtains(close){
@@ -133,13 +146,13 @@ async function warnAndClose(){
  stage.dataset.combat='closing';await curtains(true);
 }
 async function enterEnemy(){
- spinner.style.transform='rotateY(0deg)';spinner.style.visibility='visible';$('health-hud').hidden=false;
+ spinner.style.transform='rotateY(0deg)';spinner.style.visibility='visible';$('health-hud').hidden=false;positionHealth();
  stage.dataset.combat='opening';await curtains(false);delete stage.dataset.combat;message.textContent=enemy.alt;
 }
-async function choose(index,round=index+1){
+async function choose(index,round=index+1,skipWarning=false){
  if(isBusy)return;lock(true);
  try{
-  const asset=catalog[index].states[0];await Promise.all([asset.src,...backgroundSources(catalog[index])].map(preload));await warnAndClose();
+  const asset=catalog[index].states[0];await Promise.all([asset.src,...backgroundSources(catalog[index])].map(preload));if(!skipWarning)await warnAndClose();
   typeIndex=index;stateIndex=0;level=round;maxHp=level+2;hp=maxHp;defeated=false;
   isNight=['pirate-gunship','rock-shell-beast'].includes(catalog[index].id);
   $('day').hidden=isNight;$('night').hidden=!isNight;stage.classList.toggle('night',isNight);
@@ -265,6 +278,11 @@ if(embedded){
  addEventListener('message',e=>{
   if(e.source!==parent||e.data?.channel!=='pinball-theater')return;
   const {command,id}=e.data;
+  if(command==='tutorial-bounds'){
+   const s=stage.getBoundingClientRect();
+   const rect=el=>{const r=el.getBoundingClientRect();return {x:(r.left-s.left)/s.width,y:(r.top-s.top)/s.height,w:r.width/s.width,h:r.height/s.height};};
+   parent.postMessage({channel:'pinball-theater',type:'tutorial-bounds',bounds:{boss:rect(enemy),hearts:rect($('health-hud'))}},'*');return;
+  }
   if(command==='warning-complete')return;
   if(command==='reset'){
    commands=curtains(true).then(()=>{
@@ -280,7 +298,7 @@ if(embedded){
   if(command==='pause'){paused=e.data.paused;stage.classList.toggle('still',paused);if(paused){for(const a of document.getAnimations())if(a.playState==='running'){held.add(a);a.pause();}}else{for(const a of held)if(a.playState==='paused')a.play();held.clear();}return;}
   commands=commands.then(async()=>{await ready;
    if(command==='story-victory'&&storyVictory)await playStoryVictory();
-   if(command==='enemy'&&(!enemyPresent||defeated)){ if(e.data.mode==='boss'&&Number.isInteger(e.data.stage)&&e.data.stage>=1&&e.data.stage<=catalog.length)await choose(e.data.stage-1,e.data.stage);else if(e.data.mode==='free'){const choices=catalog.map((_,i)=>i).filter(i=>!enemyPresent||i!==typeIndex);await choose(choices[Math.floor(Math.random()*choices.length)]);}else if(defeated)await nextLevel();else await choose(typeIndex,level);enemyPresent=true;}
+   if(command==='enemy'&&(!enemyPresent||defeated)){ if(e.data.mode==='boss'&&Number.isInteger(e.data.stage)&&e.data.stage>=1&&e.data.stage<=catalog.length)await choose(e.data.stage-1,e.data.stage,e.data.skipWarning===true);else if(e.data.mode==='free'){const choices=catalog.map((_,i)=>i).filter(i=>!enemyPresent||i!==typeIndex);await choose(choices[Math.floor(Math.random()*choices.length)]);}else if(defeated)await nextLevel();else await choose(typeIndex,level);enemyPresent=true;}
    if(command==='airdrop'&&enemyPresent&&!defeated)await attack('pirates');
    if(command==='kraken'&&enemyPresent&&!defeated)await attack('kraken');
    if((command==='ball'||command==='barrel')&&enemyPresent&&!defeated)await attack(command);

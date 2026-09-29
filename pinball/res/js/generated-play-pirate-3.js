@@ -2,7 +2,7 @@
 (function(root){
 'use strict';
 const defaultMap=()=>typeof module!=='undefined'&&module.exports?require('./pirate-map.js'):root.PirateMap;
-const planes=['background','lower','upper','foreground'];
+const planes=['background','lower','upper','top','foreground'];
 function validate(items,map=defaultMap()){
  if(!Array.isArray(items)||items.length>500)throw Error('圖片圖層最多 500 個');
  const ids=new Set();
@@ -50,7 +50,7 @@ class Renderer{
    if(f){ctx.translate(...f.pivot);ctx.rotate(f.angle-f.rest);ctx.translate(-f.pivot[0],-f.pivot[1]);}
    const vortexAge=game&&o.bind&&o.state==='vortex'&&game.vortexActivatedAt!=null?Math.max(0,game.time-game.vortexActivatedAt):null;
    if(game&&o.bind&&o.state==='vortex'){
-    const fade=vortexAge===null?0:game.vortexActive?Math.min(1,vortexAge/.8):Math.max(0,1-(vortexAge-30)/.8);
+    const fade=vortexAge===null?0:game.vortexActive?Math.min(1,vortexAge/.8):Math.max(0,1-(vortexAge-15)/.8);
     ctx.globalAlpha*=.5+.5*fade*fade*(3-2*fade);
    }
    let x=o.x,y=o.y;
@@ -75,7 +75,7 @@ class Renderer{
    if(vortexAge!==null){
     // The vortex core is not necessarily the sprite rectangle's midpoint.
     const center=game.g.lower.find(shape=>shape.id===o.bind)?.center||[x,y];
-    ctx.translate(...center);ctx.rotate(Math.min(vortexAge,30)*Math.PI/3);ctx.translate(-center[0],-center[1]);
+    ctx.translate(...center);ctx.rotate(Math.min(vortexAge,15)*Math.PI/3);ctx.translate(-center[0],-center[1]);
    }
    ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway);ctx.scale(o.flipX?-1:1,o.flipY?-1:1);
    // Keep the default image underneath every state/frame overlay.

@@ -6,7 +6,7 @@
 function createGame(core){
  const {CoreGame,Grid,EPS,clamp,add,sub,mul,dot,cross,len,unit,mix,nearest,inside,basicCollision}=core;
  return class PirateGame extends CoreGame {
- dynamicEdges(){const p=this.g.plunger;return [...(this.ball.layer==='lower'?[{id:'plunger',kind:'plunger',a:[p.left,p.rest_y],b:[p.right,p.rest_y]}]:[]),...this.gates.filter(g=>!g.unlocked&&g.layer===this.ball.layer&&(g.closed||g.mechanic==='directional_flap')).map(g=>({a:g.points[0],b:g.points[1],id:g.id,kind:'gate',n:g.mechanic==='directional_flap'?g.n:undefined})),...this.directionalEdges(),...(this.ball.layer==='lower'?(this.g.rescue_kickers||[]).map(k=>({id:k.id,kind:'rescue-kicker',a:k.points[0],b:k.points[1],side:k.side,aim:k.aim,direction:k.direction,speed:this.config.kickbackSpeed})):[])];}
+ dynamicEdges(){const p=this.g.plunger;return [...(this.ball.layer==='lower'?[{id:'plunger',kind:'plunger',faceOnly:true,a:[p.left,p.rest_y],b:[p.right,p.rest_y]}]:[]),...this.gates.filter(g=>!g.unlocked&&g.layer===this.ball.layer&&(g.closed||g.mechanic==='directional_flap')).map(g=>({a:g.points[0],b:g.points[1],id:g.id,kind:'gate',n:g.mechanic==='directional_flap'?g.n:undefined})),...this.directionalEdges(),...(this.ball.layer==='lower'?(this.g.rescue_kickers||[]).map(k=>({id:k.id,kind:'rescue-kicker',a:k.points[0],b:k.points[1],side:k.side,aim:k.aim,direction:k.direction,speed:this.config.kickbackSpeed})):[])];}
  portalHit(p,d){
   let best=null;const b=this.ball,r=this.config.ballRadius;
   for(const t of this.transitions){const entering=b.layer==='lower',leaving=b.layer===t.layer;if(!entering&&!leaving||entering&&t.mode==='exit')continue;
@@ -52,7 +52,7 @@ function createGame(core){
  }
  onCapture(id){const attack=this.g.gameplay?.hole_attacks?.[id];if(['ball','barrel'].includes(attack))this.emit('hole-attack-requested',{id,attack});}
  beforeStep(dt){if(this.theaterFrozen||this.enemyIntroPending)return false;if(this.freezeRemaining>0){this.freezeRemaining=Math.max(0,this.freezeRemaining-dt);if(!this.freezeRemaining)this.emit('enemy-freeze-ended');return false;}return true;}
- tickRules(){if(this.vortexActive&&this.vortexActivatedAt!==null&&this.time-this.vortexActivatedAt>=30){this.vortexActive=false;this.emit('vortex-expired');}this.updateTargetGroups();if(this.krakenAttackAt!==null&&this.time-this.krakenAttackAt>=3.18)this.finishKraken(this.krakenSequence);}
+ tickRules(){if(this.vortexActive&&this.vortexActivatedAt!==null&&this.time-this.vortexActivatedAt>=15){this.vortexActive=false;this.emit('vortex-expired');}this.updateTargetGroups();if(this.krakenAttackAt!==null&&this.time-this.krakenAttackAt>=3.18)this.finishKraken(this.krakenSequence);}
  afterBallStep(previous,layer,dt){if(this.ball.launchGuard&&this.ball.v[1]>=0&&this.ball.p[1]>this.launchGateExitY+this.config.ballRadius)this.ball.launchGuard=false;this.rolloverSensors(previous,layer);this.airdropSensors(previous,layer);this.flagSensors(previous,layer);this.fishSensorCrossings(previous,layer);this.krakenSensors(previous,layer);this.sensors(dt);this.vortexRecovery(dt,layer===this.ball.layer?previous:null);}
  afterSubstep(){this.raiseCenterPost();this.spawnFreeBall();}
  handleBallState(dt){if(!['vortex-return','vortex-held'].includes(this.ball.state))return false;this.vortexRecovery(dt);return true;}
@@ -179,8 +179,8 @@ function createGame(core){
     for(const gate of this.gates)if(gate.pendingBall===this.ball){gate.pending=false;gate.pendingBall=null;}
     // Relocation can start beyond the gate plane, so a geometric crossing
     // alone is insufficient. Close this rescue's gate once the ball clears it.
-    const returnGate=this.gates.find(g=>g.side===side&&!g.unlocked&&!g.closed);
-    if(returnGate){returnGate.pending=true;returnGate.pendingBall=this.ball;}
+    const returnGate=this.gates.find(g=>g.side===side&&!g.closed);
+    if(returnGate){returnGate.unlocked=false;returnGate.pending=true;returnGate.pendingBall=this.ball;}
     // Rescue relocation crosses the return flap even though later sensors start
     // at relocatedFrom. Apply that crossing before discarding the old position.
     this.updateGates(rescueStart,this.ball.layer);

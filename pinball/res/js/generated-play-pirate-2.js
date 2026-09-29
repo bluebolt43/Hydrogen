@@ -525,7 +525,7 @@ class CoreGame {
  get trail(){return this.ball.trail||(this.ball.trail=[]);}
  set trail(value){this.ball.trail=value;}
  emit(type,data={}){this.mapEvent(type,data);const e={type,time:this.time,...data};this.events.push(e);if(this.events.length>200)this.events.shift();if(this.onEvent)this.onEvent(e);}
- scoreHit(id,points,cooldown=.12){if((this.cooldowns.get(id)||0)>this.time)return;this.cooldowns.set(id,this.time+cooldown);this.score+=points;this.emit('score',{id,points,position:[...this.ball.p]});this.recordTarget(id);}
+ scoreHit(id,points,cooldown=.12){if((this.cooldowns.get(id)||0)>this.time)return;this.cooldowns.set(id,this.time+cooldown);if(this.scoringEnabled!==false){this.score+=points;this.emit('score',{id,points,position:[...this.ball.p]});}this.recordTarget(id);}
  reset(){this.score=0;this.extraLives=0;this.ballNumber=1;this.hasLaunchedOnce=false;this.gameOver=false;this.time=0;this.events=[];this.cooldowns.clear();this.input.left=this.input.right=this.input.launch=false;this.charge=0;this.paused=false;this.newBall();this.emit('new-game');}
  newBall(preserveTable=false){this.lifeLaunched=false;this.ball={p:[this.g.plunger.x,this.g.plunger.rest_y-this.config.ballRadius],v:[0,0],layer:'lower',z:0,state:'ready',immunity:0,saverAvailable:true};this.balls=[this.ball];if(!preserveTable)this.resetMapBall();this.plungerReleasedAt=-10;this.plungerReleaseCharge=0;this.charge=0;this.chargeElapsed=0;this.nudges=0;this.drainTimer=0;this.lastPortal=-10;this.trail=[];if(preserveTable){for(const gate of this.gates){gate.pending=false;gate.pendingBall=null;if(gate.id==='shooter-return')gate.closed=false;}}else{this.resetGates();this.resetTargets();for(const f of this.flippers){f.angle=f.rest;f.omega=0;f.cadet=null;}}}
  limitSpeed(){const speed=len(this.ball.v),cap=Math.min(this.ball.speedLimit||this.config.maxSpeed,this.config.maxSpeed);if(speed>cap)this.ball.v=mul(this.ball.v,cap/speed);}
@@ -553,10 +553,14 @@ class CoreGame {
     // complete ball has crossed, so it cannot close through a straddling ball.
     if(e.retractUp&&(b.v[1]<0||b.p[1]>e.c[1]))continue;
     if(e.n&&(dot(d,e.n)>=-EPS||dot(sub(b.p,e.a),e.n)<r-.08))continue;
-    const h=e.c?circleHit(b.p,d,e.c,r+e.r):segmentHit(b.p,d,e.a,e.b,r+(e.thickness||0)/2);
+   const h=e.c?circleHit(b.p,d,e.c,r+e.r):segmentHit(b.p,d,e.a,e.b,r+(e.thickness||0)/2);
+    // A lane's launch face must not catch balls on its rounded end caps
+    // through the adjacent divider. Check the impact, not the frame start.
+    if(h&&e.faceOnly){const q=h.position||add(b.p,mul(d,h.t)),axis=sub(e.b,e.a),along=dot(sub(q,e.a),axis);if(along<0||along>dot(axis,axis))continue;}
     if(h&&(!best||h.t<best.t))best={...h,e};
    }
-   if(b.layer==='lower')for(const f of this.flippers){
+   for(const f of this.flippers){
+    if(b.layer!==(f.layer||'lower'))continue;
     if(!f.cadet)f.cadet=new CadetFlipper(f,this.config);
     const h=f.cadet.find(b.p,b.v,(this.collisionTime??this.time)+dt-remaining,remaining);
     if(h&&(!best||h.t<best.t))best={...h,e:{id:f.id,kind:'flipper',f}};
@@ -657,7 +661,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.Pira
 function createGame(core){
  const {CoreGame,Grid,EPS,clamp,add,sub,mul,dot,cross,len,unit,mix,nearest,inside,basicCollision}=core;
  return class PirateGame extends CoreGame {
- dynamicEdges(){const p=this.g.plunger;return [...(this.ball.layer==='lower'?[{id:'plunger',kind:'plunger',a:[p.left,p.rest_y],b:[p.right,p.rest_y]}]:[]),...this.gates.filter(g=>!g.unlocked&&g.layer===this.ball.layer&&(g.closed||g.mechanic==='directional_flap')).map(g=>({a:g.points[0],b:g.points[1],id:g.id,kind:'gate',n:g.mechanic==='directional_flap'?g.n:undefined})),...this.directionalEdges(),...(this.ball.layer==='lower'?(this.g.rescue_kickers||[]).map(k=>({id:k.id,kind:'rescue-kicker',a:k.points[0],b:k.points[1],side:k.side,aim:k.aim,direction:k.direction,speed:this.config.kickbackSpeed})):[])];}
+ dynamicEdges(){const p=this.g.plunger;return [...(this.ball.layer==='lower'?[{id:'plunger',kind:'plunger',faceOnly:true,a:[p.left,p.rest_y],b:[p.right,p.rest_y]}]:[]),...this.gates.filter(g=>!g.unlocked&&g.layer===this.ball.layer&&(g.closed||g.mechanic==='directional_flap')).map(g=>({a:g.points[0],b:g.points[1],id:g.id,kind:'gate',n:g.mechanic==='directional_flap'?g.n:undefined})),...this.directionalEdges(),...(this.ball.layer==='lower'?(this.g.rescue_kickers||[]).map(k=>({id:k.id,kind:'rescue-kicker',a:k.points[0],b:k.points[1],side:k.side,aim:k.aim,direction:k.direction,speed:this.config.kickbackSpeed})):[])];}
  portalHit(p,d){
   let best=null;const b=this.ball,r=this.config.ballRadius;
   for(const t of this.transitions){const entering=b.layer==='lower',leaving=b.layer===t.layer;if(!entering&&!leaving||entering&&t.mode==='exit')continue;
@@ -703,7 +707,7 @@ function createGame(core){
  }
  onCapture(id){const attack=this.g.gameplay?.hole_attacks?.[id];if(['ball','barrel'].includes(attack))this.emit('hole-attack-requested',{id,attack});}
  beforeStep(dt){if(this.theaterFrozen||this.enemyIntroPending)return false;if(this.freezeRemaining>0){this.freezeRemaining=Math.max(0,this.freezeRemaining-dt);if(!this.freezeRemaining)this.emit('enemy-freeze-ended');return false;}return true;}
- tickRules(){if(this.vortexActive&&this.vortexActivatedAt!==null&&this.time-this.vortexActivatedAt>=30){this.vortexActive=false;this.emit('vortex-expired');}this.updateTargetGroups();if(this.krakenAttackAt!==null&&this.time-this.krakenAttackAt>=3.18)this.finishKraken(this.krakenSequence);}
+ tickRules(){if(this.vortexActive&&this.vortexActivatedAt!==null&&this.time-this.vortexActivatedAt>=15){this.vortexActive=false;this.emit('vortex-expired');}this.updateTargetGroups();if(this.krakenAttackAt!==null&&this.time-this.krakenAttackAt>=3.18)this.finishKraken(this.krakenSequence);}
  afterBallStep(previous,layer,dt){if(this.ball.launchGuard&&this.ball.v[1]>=0&&this.ball.p[1]>this.launchGateExitY+this.config.ballRadius)this.ball.launchGuard=false;this.rolloverSensors(previous,layer);this.airdropSensors(previous,layer);this.flagSensors(previous,layer);this.fishSensorCrossings(previous,layer);this.krakenSensors(previous,layer);this.sensors(dt);this.vortexRecovery(dt,layer===this.ball.layer?previous:null);}
  afterSubstep(){this.raiseCenterPost();this.spawnFreeBall();}
  handleBallState(dt){if(!['vortex-return','vortex-held'].includes(this.ball.state))return false;this.vortexRecovery(dt);return true;}
@@ -830,8 +834,8 @@ function createGame(core){
     for(const gate of this.gates)if(gate.pendingBall===this.ball){gate.pending=false;gate.pendingBall=null;}
     // Relocation can start beyond the gate plane, so a geometric crossing
     // alone is insufficient. Close this rescue's gate once the ball clears it.
-    const returnGate=this.gates.find(g=>g.side===side&&!g.unlocked&&!g.closed);
-    if(returnGate){returnGate.pending=true;returnGate.pendingBall=this.ball;}
+    const returnGate=this.gates.find(g=>g.side===side&&!g.closed);
+    if(returnGate){returnGate.unlocked=false;returnGate.pending=true;returnGate.pendingBall=this.ball;}
     // Rescue relocation crosses the return flap even though later sensors start
     // at relocatedFrom. Apply that crossing before discarding the old position.
     this.updateGates(rescueStart,this.ball.layer);
