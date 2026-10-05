@@ -1,0 +1,4701 @@
+{
+  "theme": "pirate",
+  "artLayers": [
+    {
+      "id": "art-mu9wpmdd-gyfbr",
+      "src": "res/img/water-background.png",
+      "x": 180,
+      "y": 260,
+      "width": 360,
+      "height": 540,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        418,
+        627
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mua06n2v-a077t",
+      "src": "res/img/fish-1-5.png",
+      "x": 316,
+      "y": 88,
+      "width": 12,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        10
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "1",
+        "off": "res/img/fish-1-5.png",
+        "on": "res/img/fish-1-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "shape-6"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 1.2
+        }
+      }
+    },
+    {
+      "id": "art-mua07e09-ya1mz",
+      "src": "res/img/fish-1-5.png",
+      "x": 305,
+      "y": 70,
+      "width": 12,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        10
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "1",
+        "off": "res/img/fish-1-5.png",
+        "on": "res/img/fish-1-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "shape-21"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 1.2
+        }
+      }
+    },
+    {
+      "id": "art-mua07d3z-27tlu",
+      "src": "res/img/fish-1-5.png",
+      "x": 290,
+      "y": 53,
+      "width": 12,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        10
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "1",
+        "off": "res/img/fish-1-5.png",
+        "on": "res/img/fish-1-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "shape-33"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 1.2
+        }
+      }
+    },
+    {
+      "id": "art-mua073hn-ej4fu",
+      "src": "res/img/fish-1-5.png",
+      "x": 272,
+      "y": 37,
+      "width": 12,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        10
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "1",
+        "off": "res/img/fish-1-5.png",
+        "on": "res/img/fish-1-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "shape-34"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 1.2
+        }
+      }
+    },
+    {
+      "id": "art-mua0746d-l06pu",
+      "src": "res/img/fish-1-5.png",
+      "x": 250,
+      "y": 21,
+      "width": 12,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        10
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "1",
+        "off": "res/img/fish-1-5.png",
+        "on": "res/img/fish-1-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "shape-44"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 1.2
+        }
+      }
+    },
+    {
+      "id": "art-mu9xzgcq-ccp4e",
+      "src": "res/img/fish-2-5.png",
+      "x": 248,
+      "y": 320,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-86"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0os16-au7iq",
+      "src": "res/img/fish-2-5.png",
+      "x": 243,
+      "y": 335,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-86"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0osr8-thd0n",
+      "src": "res/img/fish-2-5.png",
+      "x": 238,
+      "y": 350,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-86"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0ot5n-aszu1",
+      "src": "res/img/fish-2-5.png",
+      "x": 233,
+      "y": 365,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-86"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0qzvc-w25g0",
+      "src": "res/img/fish-2-5.png",
+      "x": 135,
+      "y": 365,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-85"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0s985-uv5s6",
+      "src": "res/img/fish-2-5.png",
+      "x": 130,
+      "y": 350,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-85"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0sfsu-r7wk1",
+      "src": "res/img/fish-2-5.png",
+      "x": 125,
+      "y": 335,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-85"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mua0sryb-o67oj",
+      "src": "res/img/fish-2-5.png",
+      "x": 120,
+      "y": 320,
+      "width": 15,
+      "height": 8,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        16,
+        8
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "indicator": {
+        "group": "2",
+        "off": "res/img/fish-2-5.png",
+        "on": "res/img/fish-2-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-85"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mu9y3r2w-lx5d9",
+      "src": "res/img/school-5.png",
+      "x": 112,
+      "y": 123,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        30,
+        30
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "3",
+        "off": "res/img/school-5.png",
+        "on": "res/img/school-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-94"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mu9y4648-ndsni",
+      "src": "res/img/school-5.png",
+      "x": 94,
+      "y": 108,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        30,
+        30
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "3",
+        "off": "res/img/school-5.png",
+        "on": "res/img/school-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-94"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mu9y303x-2gs3l",
+      "src": "res/img/school-5.png",
+      "x": 76,
+      "y": 93,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        30,
+        30
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "3",
+        "off": "res/img/school-5.png",
+        "on": "res/img/school-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-94"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mu9y6cod-ag07w",
+      "src": "res/img/fish-3-5.png",
+      "x": 62,
+      "y": 345,
+      "width": 20,
+      "height": 12,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        13
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": false,
+      "indicator": {
+        "group": "4",
+        "off": "res/img/fish-3-5.png",
+        "on": "res/img/fish-3-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "shape-13"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9y6d9z-3l9tc",
+      "src": "res/img/fish-3-5.png",
+      "x": 85,
+      "y": 345,
+      "width": 20,
+      "height": 12,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        13
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": false,
+      "indicator": {
+        "group": "4",
+        "off": "res/img/fish-3-5.png",
+        "on": "res/img/fish-3-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "shape-9"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9y5zia-y4vim",
+      "src": "res/img/fish-3-5.png",
+      "x": 285,
+      "y": 345,
+      "width": 20,
+      "height": 12,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        13
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "4",
+        "off": "res/img/fish-3-5.png",
+        "on": "res/img/fish-3-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "shape-1"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zbidp-1hks7",
+      "src": "res/img/fish-3-5.png",
+      "x": 37,
+      "y": 345,
+      "width": 20,
+      "height": 12,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        13
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": false,
+      "kickbackSide": "left",
+      "indicator": {
+        "group": "4",
+        "off": "res/img/fish-3-5.png",
+        "on": "res/img/fish-3-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "kickback",
+          "source": "shape-3"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zar2y-emm5t",
+      "src": "res/img/fish-3-5.png",
+      "x": 308,
+      "y": 345,
+      "width": 20,
+      "height": 12,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        13
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "kickbackSide": "right",
+      "indicator": {
+        "group": "4",
+        "off": "res/img/fish-3-5.png",
+        "on": "res/img/fish-3-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "kickback",
+          "source": "right-rescue-kicker"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zcsxy-1kc87",
+      "src": "res/img/fish-6-5.png",
+      "x": 233,
+      "y": 190,
+      "width": 15,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        15,
+        11
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "5",
+        "off": "res/img/fish-6-5.png",
+        "on": "res/img/fish-6-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-93"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mu9zciyf-fn9ot",
+      "src": "res/img/fish-6-5.png",
+      "x": 250,
+      "y": 166,
+      "width": 15,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        15,
+        11
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "5",
+        "off": "res/img/fish-6-5.png",
+        "on": "res/img/fish-6-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-93"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mu9y264y-gfz04",
+      "src": "res/img/fish-6-5.png",
+      "x": 267,
+      "y": 142,
+      "width": 15,
+      "height": 10,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        15,
+        11
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "5",
+        "off": "res/img/fish-6-5.png",
+        "on": "res/img/fish-6-3.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "shape-93"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 2
+        }
+      }
+    },
+    {
+      "id": "art-mukzet5b-n4n5k",
+      "src": "res/img/fish-5-4.png",
+      "x": 169,
+      "y": 71,
+      "width": 13,
+      "height": 11,
+      "angle": 89.80657912350054,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        12
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "6",
+        "off": "res/img/fish-5-5.png",
+        "on": "res/img/fish-5-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-mukzfh17-2oyp2",
+      "src": "res/img/fish-5-4.png",
+      "x": 213,
+      "y": 76,
+      "width": 13,
+      "height": 11,
+      "angle": 134.55626023810922,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        12
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipY": true,
+      "indicator": {
+        "group": "6",
+        "off": "res/img/fish-5-5.png",
+        "on": "res/img/fish-5-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-mukzfk4b-weyv6",
+      "src": "res/img/fish-5-4.png",
+      "x": 90,
+      "y": 50,
+      "width": 13,
+      "height": 11,
+      "angle": 222.05534284974755,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        12
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipY": true,
+      "indicator": {
+        "group": "6",
+        "off": "res/img/fish-5-5.png",
+        "on": "res/img/fish-5-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-mukzfhp7-7qbm7",
+      "src": "res/img/fish-5-4.png",
+      "x": 141,
+      "y": 217,
+      "width": 13,
+      "height": 11,
+      "angle": 58.84831489073519,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        12
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "6",
+        "off": "res/img/fish-5-5.png",
+        "on": "res/img/fish-5-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-mul0tff8-3fg6r",
+      "src": "res/img/fish-5-4.png",
+      "x": 253,
+      "y": 216,
+      "width": 13,
+      "height": 11,
+      "angle": 138.9867595749666,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        12
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipY": true,
+      "indicator": {
+        "group": "6",
+        "off": "res/img/fish-5-5.png",
+        "on": "res/img/fish-5-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-mukzh8ys-2mrn8",
+      "src": "res/img/fish-5-5.png",
+      "x": 185,
+      "y": 191,
+      "width": 13,
+      "height": 11,
+      "angle": 63.3805691695262,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        13,
+        12
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "6",
+        "off": "res/img/fish-5-5.png",
+        "on": "res/img/fish-5-4.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-mu9x2wp9-zv9kl",
+      "src": "res/img/lower-boundry-right_v3.png",
+      "x": 274,
+      "y": 178,
+      "width": 179,
+      "height": 318,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        180,
+        318
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "balls-lower",
+      "src": "",
+      "needsAsset": true,
+      "state": "ball-layer",
+      "plane": "lower",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "frames": 1,
+      "frameAxis": "x",
+      "bind": ""
+    },
+    {
+      "id": "art-mua6mc4f-xks6y",
+      "src": "res/img/lower-boundry-right_v3_mask.png",
+      "x": 274,
+      "y": 178,
+      "width": 179,
+      "height": 318,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        180,
+        318
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "hidden": false
+    },
+    {
+      "id": "art-mu9xl411-8mccq",
+      "src": "res/img/target-wood.png",
+      "x": 18,
+      "y": 70,
+      "width": 18,
+      "height": 18,
+      "angle": 50,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-57-1"
+    },
+    {
+      "id": "art-mu9xl3n9-dr7ab",
+      "src": "res/img/target-wood.png",
+      "x": 17,
+      "y": 19,
+      "width": 18,
+      "height": 18,
+      "angle": 40,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-56-1"
+    },
+    {
+      "id": "art-mu9xkoc9-tqsvc",
+      "src": "res/img/target-wood.png",
+      "x": 76,
+      "y": 15,
+      "width": 18,
+      "height": 18,
+      "angle": 40,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-58-1"
+    },
+    {
+      "id": "art-mu9xl4fa-znupd",
+      "src": "res/img/target-wood.png",
+      "x": 256,
+      "y": 97,
+      "width": 18,
+      "height": 18,
+      "angle": 60,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-118-3"
+    },
+    {
+      "id": "art-mu9xl6kd-6zklq",
+      "src": "res/img/target-wood.png",
+      "x": 263,
+      "y": 110,
+      "width": 18,
+      "height": 18,
+      "angle": 60,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-118-2"
+    },
+    {
+      "id": "art-mu9xl7d9-3ibs7",
+      "src": "res/img/target-wood.png",
+      "x": 271,
+      "y": 122,
+      "width": 18,
+      "height": 18,
+      "angle": 60,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-118-1"
+    },
+    {
+      "id": "art-mu9xla9h-uvbc1",
+      "src": "res/img/target-wood.png",
+      "x": 90,
+      "y": 256,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-126-3"
+    },
+    {
+      "id": "art-mu9xlaol-fk9h6",
+      "src": "res/img/target-wood.png",
+      "x": 90,
+      "y": 240,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-126-2"
+    },
+    {
+      "id": "art-mu9xlb19-ria8o",
+      "src": "res/img/target-wood.png",
+      "x": 90,
+      "y": 225,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-126-1"
+    },
+    {
+      "id": "art-mu9wqwsh-1fjdy",
+      "src": "res/img/outfit-v2.png",
+      "x": 180,
+      "y": 230,
+      "width": 360,
+      "height": 480,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        360,
+        481
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "hidden": false
+    },
+    {
+      "id": "art-mu9wxkuk-1to2l",
+      "src": "res/img/lower-boundry-bottom.png",
+      "x": 171,
+      "y": 360,
+      "width": 275,
+      "height": 140,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        372,
+        189
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9wtvc3-1whoy",
+      "src": "res/img/lower--wood-cover.png",
+      "x": 182,
+      "y": 360,
+      "width": 345,
+      "height": 243,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        346,
+        243
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9wzcyh-y1zd8",
+      "src": "res/img/plunger-rod.png",
+      "x": 331,
+      "y": 443,
+      "width": 30,
+      "height": 91,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        31,
+        91
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "plunger",
+      "bind": "plunger",
+      "layoutBind": "launch-area",
+      "layoutAnchor": [
+        331.27272727272725,
+        401.3522727272728
+      ]
+    },
+    {
+      "id": "art-mu9x0s4w-wtjn5",
+      "src": "res/img/plunger-collar.png",
+      "x": 332,
+      "y": 435,
+      "width": 50,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        51,
+        38
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "layoutBind": "launch-area",
+      "layoutAnchor": [
+        331.27272727272725,
+        401.3522727272728
+      ]
+    },
+    {
+      "id": "art-mu9x5cyq-vmslv",
+      "src": "res/img/lower-boundry-left-top.png",
+      "x": 116,
+      "y": 59,
+      "width": 65,
+      "height": 60,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        66,
+        60
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9x6geh-jqoes",
+      "src": "res/img/lower-boundry-left.png",
+      "x": 94,
+      "y": 194,
+      "width": 123,
+      "height": 207,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        124,
+        207
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9xaohv-vpds0",
+      "src": "res/img/bumper-triangle-right.png",
+      "x": 259,
+      "y": 350,
+      "width": 50,
+      "height": 101,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        50,
+        98
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9xapir-fscsn",
+      "src": "res/img/bumper-triangle-left.png",
+      "x": 113,
+      "y": 350,
+      "width": 47,
+      "height": 98,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        48,
+        98
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9xh31k-r4vuq",
+      "src": "res/img/center-boundry.png",
+      "x": 181,
+      "y": 156,
+      "width": 40,
+      "height": 32,
+      "angle": 21.069743716609693,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        40,
+        32
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9xqbv3-p4x31",
+      "src": "res/img/targets-flag.png",
+      "x": 85,
+      "y": 182,
+      "width": 18,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        19
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "shape-120"
+    },
+    {
+      "id": "art-mu9xqp1z-62qfp",
+      "src": "res/img/targets-flag.png",
+      "x": 268,
+      "y": 204,
+      "width": 18,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        19
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "shape-119"
+    },
+    {
+      "id": "art-muavzf0d-yavis",
+      "src": "res/img/bar_rollover-lanes-mask.png",
+      "x": 172,
+      "y": 20,
+      "width": 139,
+      "height": 93,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        140,
+        93
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9xx3j0-tickc",
+      "src": "res/img/pearl-off.png",
+      "x": 114,
+      "y": 78,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-70-1"
+    },
+    {
+      "id": "art-mu9xxcfx-r1tqg",
+      "src": "res/img/pearl-off.png",
+      "x": 126,
+      "y": 69,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-70-2"
+    },
+    {
+      "id": "art-mu9xxcpv-jmoi2",
+      "src": "res/img/pearl-off.png",
+      "x": 137,
+      "y": 60,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        18
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-70-3"
+    },
+    {
+      "id": "art-mu9z1wvg-01j61",
+      "src": "res/img/target-want.png",
+      "x": 183,
+      "y": 172,
+      "width": 18,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        20
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-65-1"
+    },
+    {
+      "id": "art-mu9z243m-kqkoa",
+      "src": "res/img/target-want.png",
+      "x": 168,
+      "y": 166,
+      "width": 18,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        20
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-63-1"
+    },
+    {
+      "id": "art-mu9z24ez-ka5i0",
+      "src": "res/img/target-want.png",
+      "x": 160,
+      "y": 188,
+      "width": 18,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        19,
+        20
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "shape-68-1"
+    },
+    {
+      "id": "art-mu9xctja-ph895",
+      "src": "res/img/flippers-left.png",
+      "x": 149,
+      "y": 430,
+      "width": 56,
+      "height": 30,
+      "angle": 32.62271192928009,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        57,
+        30
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "shape-40"
+    },
+    {
+      "id": "art-mu9xe89f-740l5",
+      "src": "res/img/flippers-right.png",
+      "x": 225,
+      "y": 432,
+      "width": 58,
+      "height": 29,
+      "angle": -33.15081992469038,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        58,
+        29
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "shape-42"
+    },
+    {
+      "id": "art-mu9xg5na-k3thm",
+      "src": "res/img/whirlpool.png",
+      "x": 182,
+      "y": 278,
+      "width": 120,
+      "height": 120,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        120,
+        120
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "vortex",
+      "bind": "shape-55"
+    },
+    {
+      "id": "art-mu9xisug-lyt57",
+      "src": "res/img/bar_rollover.png",
+      "x": 172,
+      "y": 20,
+      "width": 139,
+      "height": 93,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        140,
+        93
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9xi2st-9qr60",
+      "src": "res/img/handprint-volleyball-v2.png",
+      "x": 243,
+      "y": 42,
+      "width": 25,
+      "height": 25,
+      "angle": 10,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        101,
+        101
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": "shape-45"
+        },
+        "extraTriggers": [
+          {
+            "kind": "hole-capture",
+            "source": "shape-71"
+          }
+        ]
+      }
+    },
+    {
+      "id": "art-mu9xslbf-vfpo2",
+      "src": "res/img/campus-off.png",
+      "x": 185,
+      "y": 449,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        30,
+        30
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "center-post",
+      "bind": "shape-153"
+    },
+    {
+      "id": "art-mu9z0qm7-mo4zw",
+      "src": "res/img/bumper-barrel-lv1.png",
+      "x": 180,
+      "y": 144,
+      "width": 18,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        19
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "7",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/bumper-barrel-lv1.png",
+        "lv2": "res/img/bumper-barrel-lv2.png",
+        "lv3": "res/img/bumper-barrel-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-125"
+        }
+      }
+    },
+    {
+      "id": "art-mu9z1egr-wrwpa",
+      "src": "res/img/bumper-barrel-lv1.png",
+      "x": 150,
+      "y": 111,
+      "width": 18,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        19
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "7",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/bumper-barrel-lv1.png",
+        "lv2": "res/img/bumper-barrel-lv2.png",
+        "lv3": "res/img/bumper-barrel-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-124"
+        }
+      }
+    },
+    {
+      "id": "art-mu9z1f2a-wd8pz",
+      "src": "res/img/bumper-barrel-lv1.png",
+      "x": 203,
+      "y": 100,
+      "width": 18,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        19
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "7",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/bumper-barrel-lv1.png",
+        "lv2": "res/img/bumper-barrel-lv2.png",
+        "lv3": "res/img/bumper-barrel-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-47"
+        }
+      }
+    },
+    {
+      "id": "art-mu9z3urq-5mhy9",
+      "src": "res/img/lighthouse-lv1.png",
+      "x": 40,
+      "y": 21,
+      "width": 45,
+      "height": 74,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        45,
+        75
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "8",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/lighthouse-lv1.png",
+        "lv2": "res/img/lighthouse-lv2.png",
+        "lv3": "res/img/lighthouse-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-27"
+        }
+      }
+    },
+    {
+      "id": "art-mu9z5yp3-bh7l3",
+      "src": "res/img/lantern-off.png",
+      "x": 150,
+      "y": 38,
+      "width": 10,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        55,
+        106
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "9",
+        "off": "res/img/lantern-off.png",
+        "on": "res/img/lantern-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "shape-143"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9z6o4g-hodx1",
+      "src": "res/img/lantern-off.png",
+      "x": 170,
+      "y": 38,
+      "width": 10,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        55,
+        106
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "9",
+        "off": "res/img/lantern-off.png",
+        "on": "res/img/lantern-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "shape-147"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9z6oiy-ndiew",
+      "src": "res/img/lantern-off.png",
+      "x": 191,
+      "y": 38,
+      "width": 10,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        55,
+        106
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "9",
+        "off": "res/img/lantern-off.png",
+        "on": "res/img/lantern-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "shape-148"
+        },
+        "behavior": {
+          "mode": "keep"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zdnil-yfdvm",
+      "src": "res/img/top.png",
+      "x": 180,
+      "y": -157,
+      "width": 370,
+      "height": 123,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        370,
+        124
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9zhe2m-2kytn",
+      "src": "res/img/explosion-smoke-v2.png",
+      "x": 96,
+      "y": 57,
+      "width": 50,
+      "height": 50,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        378,
+        378
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "",
+        "on": "res/img/explosion-smoke-v2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "hole-release",
+          "source": "shape-31"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "fade": {
+          "enabled": true,
+          "inSeconds": 0.12,
+          "outSeconds": 0.48
+        }
+      }
+    },
+    {
+      "id": "art-mu9zhwhz-mpbyr",
+      "src": "res/img/explosion-smoke-v2.png",
+      "x": 230,
+      "y": 55,
+      "width": 50,
+      "height": 50,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        378,
+        378
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "hidden": false,
+      "indicator": {
+        "off": "",
+        "on": "res/img/explosion-smoke-v2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "hole-release",
+          "source": "shape-71"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "fade": {
+          "enabled": true,
+          "inSeconds": 0.12,
+          "outSeconds": 0.48
+        }
+      }
+    },
+    {
+      "id": "art-mu9ziyko-ooe87",
+      "src": "res/img/upper_background.png",
+      "x": 90,
+      "y": 229,
+      "width": 168,
+      "height": 235,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        168,
+        236
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9zjxns-jx9yx",
+      "src": "res/img/upper_edge.png",
+      "x": 85,
+      "y": 240,
+      "width": 165,
+      "height": 230,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        165,
+        231
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-muavs1vq-pzr67",
+      "src": "res/img/ship_ruin.png",
+      "x": 120,
+      "y": 155,
+      "width": 70,
+      "height": 70,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        70,
+        70
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "balls-upper",
+      "src": "",
+      "needsAsset": true,
+      "state": "ball-layer",
+      "plane": "upper",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "frames": 1,
+      "frameAxis": "x",
+      "bind": ""
+    },
+    {
+      "id": "art-mu9zigue-hoi39",
+      "src": "res/img/explosion-smoke-v2.png",
+      "x": 139,
+      "y": 167,
+      "width": 50,
+      "height": 50,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        378,
+        378
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "",
+        "on": "res/img/explosion-smoke-v2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "hole-release",
+          "source": "shape-53"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "fade": {
+          "enabled": true,
+          "inSeconds": 0.12,
+          "outSeconds": 0.48
+        }
+      }
+    },
+    {
+      "id": "art-mu9zpoc6-x8fml",
+      "src": "res/img/bumper-skull-lv1.png",
+      "x": 51,
+      "y": 274,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        19
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "10",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/bumper-skull-lv1.png",
+        "lv2": "res/img/bumper-skull-lv2.png",
+        "lv3": "res/img/bumper-skull-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-151"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zqykt-qrqqk",
+      "src": "res/img/bumper-skull-lv1.png",
+      "x": 35,
+      "y": 243,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        19
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "10",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/bumper-skull-lv1.png",
+        "lv2": "res/img/bumper-skull-lv2.png",
+        "lv3": "res/img/bumper-skull-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-150"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zqzfx-okuvc",
+      "src": "res/img/bumper-skull-lv1.png",
+      "x": 75,
+      "y": 253,
+      "width": 18,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        18,
+        19
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "group": "10",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/img/bumper-skull-lv1.png",
+        "lv2": "res/img/bumper-skull-lv2.png",
+        "lv3": "res/img/bumper-skull-lv3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "shape-149"
+        }
+      }
+    },
+    {
+      "id": "art-mu9zuzjg-bt6xt",
+      "src": "res/img/explosion-smoke-v2.png",
+      "x": 242,
+      "y": 46,
+      "width": 50,
+      "height": 50,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        378,
+        378
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "hidden": false,
+      "indicator": {
+        "off": "",
+        "on": "res/img/explosion-smoke-v2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "hole-release",
+          "source": "shape-45"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "fade": {
+          "enabled": true,
+          "inSeconds": 0.12,
+          "outSeconds": 0.48
+        }
+      }
+    },
+    {
+      "id": "art-mu9x7xu4-a8lrj",
+      "src": "res/img/shark-off.png",
+      "x": 286,
+      "y": 244,
+      "width": 120,
+      "height": 120,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        120,
+        120
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "11",
+        "off": "res/img/shark-off.png",
+        "on": "res/img/shark-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "multiball"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        },
+        "screenMask": true
+      }
+    },
+    {
+      "id": "art-mua0d9ht-yic42",
+      "src": "res/img/taco-off.png",
+      "x": 56,
+      "y": 145,
+      "width": 110,
+      "height": 142,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        110,
+        143
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "12",
+        "off": "res/img/taco-off.png",
+        "on": "res/img/taco-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count-complete",
+          "source": "shape-5"
+        },
+        "behavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        },
+        "screenMask": true
+      }
+    },
+    {
+      "id": "art-mua0j20z-7tyo6",
+      "src": "res/img/eye-lv1.png",
+      "x": 15,
+      "y": 85,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        44,
+        43
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "12",
+        "off": "res/img/eye-lv1.png",
+        "on": "res/img/eye-lv2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "shape-5",
+          "threshold": 1
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "complete": "res/img/eye-lv3.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        }
+      }
+    },
+    {
+      "id": "art-mua0jtrb-2i4dt",
+      "src": "res/img/eye-lv1.png",
+      "x": 15,
+      "y": 102,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        44,
+        43
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "12",
+        "off": "res/img/eye-lv1.png",
+        "on": "res/img/eye-lv2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "shape-5",
+          "threshold": 2
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "complete": "res/img/eye-lv3.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        }
+      }
+    },
+    {
+      "id": "art-mua0ku46-i2ci9",
+      "src": "res/img/eye-lv1.png",
+      "x": 15,
+      "y": 119,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        44,
+        43
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "12",
+        "off": "res/img/eye-lv1.png",
+        "on": "res/img/eye-lv2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "shape-5",
+          "threshold": 3
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        },
+        "complete": "res/img/eye-lv3.png"
+      }
+    },
+    {
+      "id": "art-mua0lcqo-0j7an",
+      "src": "res/img/eye-lv1.png",
+      "x": 15,
+      "y": 136,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        44,
+        43
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "12",
+        "off": "res/img/eye-lv1.png",
+        "on": "res/img/eye-lv2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "shape-5",
+          "threshold": 4
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "complete": "res/img/eye-lv3.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        }
+      }
+    },
+    {
+      "id": "art-mua0mtek-8mpn4",
+      "src": "res/img/eye-lv1.png",
+      "x": 15,
+      "y": 153,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        44,
+        43
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "12",
+        "off": "res/img/eye-lv1.png",
+        "on": "res/img/eye-lv2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "shape-5",
+          "threshold": 5
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "complete": "res/img/eye-lv3.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 11
+        }
+      }
+    },
+    {
+      "id": "art-mua0v9tw-0i5tg",
+      "src": "res/img/lantern-off.png",
+      "x": 340,
+      "y": 32,
+      "width": 55,
+      "height": 105,
+      "angle": -33.06724547336438,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        55,
+        106
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "13",
+        "off": "res/img/lantern-off.png",
+        "on": "res/img/lantern-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "trigger": {
+          "kind": "default"
+        }
+      }
+    },
+    {
+      "id": "art-muh0o3gt-e7gkj",
+      "src": "res/img/lower-boundry-bottom.png",
+      "x": 43,
+      "y": 376,
+      "width": 15,
+      "height": 44,
+      "angle": -45,
+      "opacity": 1,
+      "crop": [
+        46,
+        36,
+        15,
+        45
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "left-return"
+    },
+    {
+      "id": "art-muh0ss3n-davev",
+      "src": "res/img/lower-boundry-bottom.png",
+      "x": 303,
+      "y": 387,
+      "width": 15,
+      "height": 44,
+      "angle": 45,
+      "opacity": 1,
+      "crop": [
+        46,
+        36,
+        15,
+        45
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "right-return"
+    },
+    {
+      "id": "art-muh1106s-5vygc",
+      "src": "res/img/lower-boundry-bottom.png",
+      "x": 83,
+      "y": 119,
+      "width": 10,
+      "height": 68,
+      "angle": -49.14194127405142,
+      "opacity": 1,
+      "crop": [
+        353,
+        36,
+        12,
+        78
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "shape-104"
+    },
+    {
+      "id": "art-mukrcu16-urtnq",
+      "src": "res/img/system-marker-sound.png",
+      "x": 269,
+      "y": -156,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        49,
+        48
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mukrdbgh-76zwe",
+      "src": "res/img/system-marker-back.png",
+      "x": 332,
+      "y": -155,
+      "width": 31,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        49,
+        46
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-mukrdxbc-zx3xe",
+      "src": "res/img/system-marker-settings.png",
+      "x": 301,
+      "y": -155,
+      "width": 31,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        49,
+        46
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-muleduls-4arh6",
+      "src": "res/img/bottle-off.png",
+      "x": 277,
+      "y": 265,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        79,
+        79
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "shape-15"
+    }
+  ],
+  "gameplay": {
+    "ball_saver_seconds": 5
+  },
+  "screenLayout": {
+    "width": 360,
+    "height": 640,
+    "theaterHeight": 170.5,
+    "playfieldHeight": 469.5,
+    "top": -170.5,
+    "bottom": 469.5
+  },
+  "format": "pinball-layout-editor",
+  "version": 6,
+  "canvas": {
+    "width": 360,
+    "height": 469.5,
+    "upperLimit": 469.5
+  },
+  "objects": [
+    {
+      "id": "shape-2",
+      "type": "line",
+      "x1": 270,
+      "y1": 225,
+      "x2": 320,
+      "y2": 170
+    },
+    {
+      "id": "shape-4",
+      "type": "arc",
+      "x1": 100,
+      "y1": 180,
+      "qx": 70,
+      "qy": 145,
+      "x2": 55,
+      "y2": 100
+    },
+    {
+      "id": "shape-14",
+      "type": "arc",
+      "x1": 250,
+      "y1": 60,
+      "qx": 325,
+      "qy": 125,
+      "x2": 250,
+      "y2": 205
+    },
+    {
+      "id": "shape-27",
+      "type": "circle",
+      "cx": 40,
+      "cy": 45,
+      "r": 6.5
+    },
+    {
+      "id": "shape-30",
+      "type": "ublock",
+      "x": 106.5686264038086,
+      "y": 64.37254333496094,
+      "angle": 135.661
+    },
+    {
+      "id": "shape-31",
+      "type": "hole",
+      "x": 105,
+      "y": 64,
+      "angle": 0,
+      "attack": "lv2"
+    },
+    {
+      "id": "shape-35",
+      "type": "line",
+      "x1": 140,
+      "y1": 35,
+      "x2": 140,
+      "y2": 50
+    },
+    {
+      "id": "shape-36",
+      "type": "line",
+      "x1": 140,
+      "y1": 50,
+      "x2": 105,
+      "y2": 85
+    },
+    {
+      "id": "shape-37",
+      "type": "line",
+      "x1": 90,
+      "y1": 80,
+      "x2": 90,
+      "y2": 65
+    },
+    {
+      "id": "shape-38",
+      "type": "line",
+      "x1": 95,
+      "y1": 85,
+      "x2": 105,
+      "y2": 85
+    },
+    {
+      "id": "shape-41",
+      "type": "line",
+      "x1": 130,
+      "y1": 30,
+      "x2": 105,
+      "y2": 50
+    },
+    {
+      "id": "shape-43",
+      "type": "line",
+      "x1": 90,
+      "y1": 80,
+      "x2": 95,
+      "y2": 85
+    },
+    {
+      "id": "shape-45",
+      "type": "hole",
+      "x": 245,
+      "y": 44,
+      "angle": 0,
+      "attack": "lv1"
+    },
+    {
+      "id": "shape-47",
+      "type": "circle",
+      "cx": 203.22238159179688,
+      "cy": 102.81334686279297,
+      "r": 6.3
+    },
+    {
+      "id": "shape-50",
+      "type": "arc",
+      "x1": 270,
+      "y1": 225,
+      "qx": 330,
+      "qy": 145,
+      "x2": 285.54901123046875,
+      "y2": 65.20588302612305
+    },
+    {
+      "id": "shape-52",
+      "type": "hole",
+      "release_point": [
+        265,
+        259.19488525390625
+      ],
+      "mechanic": "shark-inlet",
+      "x": 309.4375305175781,
+      "y": 259.19488525390625,
+      "angle": 0,
+      "releaseMode": "fixed",
+      "releaseAngle": 200
+    },
+    {
+      "id": "shape-53",
+      "type": "hole",
+      "x": 126.5,
+      "y": 179.5,
+      "angle": 0,
+      "releaseMode": "fixed",
+      "releaseAngle": -45
+    },
+    {
+      "id": "shape-59",
+      "type": "ublock",
+      "layer": "lower",
+      "x": 227.686279296875,
+      "y": 56.43136978149414,
+      "angle": 35.191
+    },
+    {
+      "id": "shape-60",
+      "type": "line",
+      "layer": "lower",
+      "x1": 140,
+      "y1": 35,
+      "x2": 135,
+      "y2": 30
+    },
+    {
+      "id": "shape-64",
+      "type": "line",
+      "layer": "lower",
+      "x1": 200,
+      "y1": 35,
+      "x2": 215,
+      "y2": 25
+    },
+    {
+      "id": "shape-66",
+      "type": "line",
+      "layer": "lower",
+      "x1": 200,
+      "y1": 35,
+      "x2": 200,
+      "y2": 50
+    },
+    {
+      "id": "shape-67",
+      "type": "line",
+      "x1": 200,
+      "y1": 50.313724517822266,
+      "x2": 213.25,
+      "y2": 59.953
+    },
+    {
+      "id": "shape-69",
+      "type": "arc",
+      "x1": 230.25,
+      "y1": 70.953125,
+      "qx": 280,
+      "qy": 100,
+      "x2": 280,
+      "y2": 155
+    },
+    {
+      "id": "shape-70",
+      "type": "targets",
+      "x": 125,
+      "y": 68,
+      "angle": -45.375,
+      "targetGroup": {
+        "id": "group-shape-70",
+        "members": [
+          "shape-70"
+        ],
+        "action": "blackHole",
+        "hole": "shape-55"
+      }
+    },
+    {
+      "id": "shape-71",
+      "type": "hole",
+      "x": 225,
+      "y": 60,
+      "angle": 0,
+      "attack": "lv1"
+    },
+    {
+      "id": "shape-75",
+      "type": "line",
+      "layer": "lower",
+      "x1": 170,
+      "y1": 160,
+      "x2": 190,
+      "y2": 170
+    },
+    {
+      "id": "shape-79",
+      "type": "line",
+      "layer": "lower",
+      "x1": 250,
+      "y1": 60,
+      "x2": 235,
+      "y2": 45
+    },
+    {
+      "id": "shape-80",
+      "type": "arc",
+      "x1": 235,
+      "y1": 45,
+      "qx": 240,
+      "qy": 20,
+      "x2": 285,
+      "y2": 65
+    },
+    {
+      "id": "shape-89",
+      "type": "arc",
+      "x1": 60,
+      "y1": 100,
+      "qx": 75,
+      "qy": 125,
+      "x2": 135,
+      "y2": 155
+    },
+    {
+      "id": "shape-90",
+      "type": "line",
+      "x1": 105,
+      "y1": 180,
+      "x2": 135,
+      "y2": 160
+    },
+    {
+      "id": "shape-97",
+      "type": "line",
+      "x1": 118.239,
+      "y1": 193.539,
+      "x2": 150,
+      "y2": 185
+    },
+    {
+      "id": "shape-98",
+      "type": "line",
+      "x1": 150,
+      "y1": 185,
+      "x2": 160,
+      "y2": 200
+    },
+    {
+      "id": "shape-99",
+      "type": "line",
+      "x1": 118.333,
+      "y1": 194.136,
+      "x2": 123.182,
+      "y2": 209.894
+    },
+    {
+      "id": "shape-102",
+      "type": "line",
+      "x1": 135,
+      "y1": 155,
+      "x2": 135,
+      "y2": 160
+    },
+    {
+      "id": "shape-105",
+      "type": "line",
+      "x1": 50,
+      "y1": 150,
+      "x2": 80,
+      "y2": 200
+    },
+    {
+      "id": "shape-106",
+      "type": "line",
+      "x1": 85,
+      "y1": 265,
+      "x2": 80,
+      "y2": 200
+    },
+    {
+      "id": "shape-108",
+      "type": "line",
+      "x1": 75,
+      "y1": 275,
+      "x2": 85,
+      "y2": 265
+    },
+    {
+      "id": "shape-109",
+      "type": "line",
+      "x1": 75,
+      "y1": 275,
+      "x2": 60,
+      "y2": 275
+    },
+    {
+      "id": "shape-110",
+      "type": "line",
+      "x1": 60,
+      "y1": 275,
+      "x2": 55,
+      "y2": 285
+    },
+    {
+      "id": "shape-111",
+      "type": "line",
+      "x1": 50,
+      "y1": 280,
+      "x2": 50,
+      "y2": 150
+    },
+    {
+      "id": "shape-113",
+      "type": "line",
+      "x1": 50,
+      "y1": 280,
+      "x2": 55,
+      "y2": 285
+    },
+    {
+      "id": "shape-118",
+      "type": "targets",
+      "x": 262.25315856933594,
+      "y": 108.68043518066406,
+      "angle": 243.351,
+      "targetGroup": {
+        "id": "group-shape-118",
+        "members": [
+          "shape-118"
+        ],
+        "action": "upgrade",
+        "bumpers": [
+          "shape-47",
+          "shape-124",
+          "shape-125"
+        ]
+      }
+    },
+    {
+      "id": "shape-119",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 260,
+      "y1": 200,
+      "x2": 275,
+      "y2": 215
+    },
+    {
+      "id": "shape-120",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 75,
+      "y1": 190,
+      "x2": 95,
+      "y2": 180
+    },
+    {
+      "id": "shape-122",
+      "type": "arc",
+      "x1": 55,
+      "y1": 100,
+      "qx": 57.156864166259766,
+      "qy": 96.53921508789062,
+      "x2": 60,
+      "y2": 100
+    },
+    {
+      "id": "shape-123",
+      "type": "arc",
+      "x1": 130,
+      "y1": 30,
+      "qx": 132.45098114013672,
+      "qy": 27.245098114013672,
+      "x2": 135,
+      "y2": 30
+    },
+    {
+      "id": "shape-124",
+      "type": "circle",
+      "cx": 150.41387939453125,
+      "cy": 113.93035125732422,
+      "r": 6.3
+    },
+    {
+      "id": "shape-125",
+      "type": "circle",
+      "cx": 180.1231231689453,
+      "cy": 144.70339965820312,
+      "r": 6.3
+    },
+    {
+      "id": "shape-126",
+      "type": "targets",
+      "x": 87,
+      "y": 241,
+      "angle": 85.124,
+      "targetGroup": {
+        "id": "group-shape-126",
+        "members": [
+          "shape-126"
+        ],
+        "action": "upgrade",
+        "bumpers": [
+          "shape-149",
+          "shape-150",
+          "shape-151"
+        ],
+        "repeatExtraBall": true
+      }
+    },
+    {
+      "id": "shape-17",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 345,
+      "y1": 210,
+      "x2": 320,
+      "y2": 229,
+      "direction": 1
+    },
+    {
+      "id": "shape-18",
+      "type": "line",
+      "layer": "upper",
+      "x1": 225.4,
+      "y1": 27.642,
+      "x2": 300,
+      "y2": 195
+    },
+    {
+      "id": "shape-19",
+      "type": "line",
+      "layer": "upper",
+      "x1": 245.2284013671875,
+      "y1": 33.79219647216797,
+      "x2": 320,
+      "y2": 190
+    },
+    {
+      "id": "shape-32",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 50,
+      "y1": 150,
+      "x2": 26,
+      "y2": 119,
+      "direction": 1
+    },
+    {
+      "id": "shape-56",
+      "type": "target",
+      "layer": "lower",
+      "x": 20,
+      "y": 20,
+      "angle": 127.993
+    },
+    {
+      "id": "shape-57",
+      "type": "target",
+      "layer": "lower",
+      "x": 20,
+      "y": 68,
+      "angle": 52.19,
+      "targetGroup": {
+        "id": "group-shape-57",
+        "action": "upgrade",
+        "members": [
+          "shape-57",
+          "shape-56",
+          "shape-58"
+        ],
+        "bumpers": [
+          "shape-27"
+        ]
+      }
+    },
+    {
+      "id": "shape-58",
+      "type": "target",
+      "layer": "lower",
+      "x": 75,
+      "y": 15,
+      "angle": 221.993
+    },
+    {
+      "id": "shape-11",
+      "type": "line",
+      "layer": "lower",
+      "x1": 100,
+      "y1": 180,
+      "x2": 105,
+      "y2": 180
+    },
+    {
+      "id": "shape-40",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 147.5,
+      "y": 433.8229064941406,
+      "angle": 40
+    },
+    {
+      "id": "shape-42",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 223.83331298828125,
+      "y": 433.8229064941406,
+      "angle": 138.991
+    },
+    {
+      "id": "shape-8",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 295,
+      "y1": 370,
+      "x2": 295,
+      "y2": 320,
+      "thickness": 5
+    },
+    {
+      "id": "shape-20",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 295,
+      "y1": 370,
+      "x2": 238.121,
+      "y2": 416.175,
+      "thickness": 5
+    },
+    {
+      "id": "shape-24",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 73.1622543334961,
+      "y1": 320.3798828125,
+      "x2": 73.1622543334961,
+      "y2": 345.3798828125,
+      "thickness": 5
+    },
+    {
+      "id": "shape-26",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 50,
+      "y1": 320,
+      "x2": 50,
+      "y2": 355,
+      "thickness": 5
+    },
+    {
+      "id": "shape-29",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 132.34088134765625,
+      "y1": 415,
+      "x2": 50,
+      "y2": 355,
+      "thickness": 5
+    },
+    {
+      "id": "right-rescue-kicker",
+      "type": "line",
+      "layer": "lower",
+      "mechanic": "rescue-kicker",
+      "side": "right",
+      "aim": [
+        308.7012634277344,
+        366.73
+      ],
+      "launch_point": [
+        308.7012634277344,
+        366.73
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 295,
+      "y1": 405,
+      "x2": 320,
+      "y2": 405
+    },
+    {
+      "id": "shape-3",
+      "type": "line",
+      "layer": "lower",
+      "mechanic": "rescue-kicker",
+      "side": "left",
+      "aim": [
+        36.84383333333335,
+        352
+      ],
+      "launch_point": [
+        40,
+        370
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 25,
+      "y1": 390,
+      "x2": 50,
+      "y2": 390
+    },
+    {
+      "id": "shape-7",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 271.727,
+      "y1": 224.008,
+      "x2": 305,
+      "y2": 240,
+      "direction": 1
+    },
+    {
+      "id": "shape-63",
+      "type": "target",
+      "layer": "lower",
+      "x": 171.31915283203125,
+      "y": 166.11703491210938,
+      "angle": 27.767
+    },
+    {
+      "id": "shape-65",
+      "type": "target",
+      "layer": "lower",
+      "x": 184.1170196533203,
+      "y": 172.574462890625,
+      "angle": 25.964,
+      "targetGroup": {
+        "id": "group-shape-65",
+        "action": "boss",
+        "members": [
+          "shape-65",
+          "shape-68",
+          "shape-63"
+        ],
+        "repeatExtraBall": true
+      }
+    },
+    {
+      "id": "shape-68",
+      "type": "target",
+      "layer": "lower",
+      "x": 158.6808624267578,
+      "y": 190.10638427734375,
+      "angle": 230.803
+    },
+    {
+      "id": "shape-82",
+      "type": "line",
+      "layer": "lower",
+      "x1": 180,
+      "y1": 145,
+      "x2": 170,
+      "y2": 160
+    },
+    {
+      "id": "shape-83",
+      "type": "line",
+      "layer": "lower",
+      "x1": 190,
+      "y1": 170,
+      "x2": 185,
+      "y2": 150
+    },
+    {
+      "id": "shape-87",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 160,
+      "y1": 35,
+      "x2": 160,
+      "y2": 45,
+      "thickness": 5
+    },
+    {
+      "id": "shape-88",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 180,
+      "y1": 35,
+      "x2": 180,
+      "y2": 45,
+      "thickness": 5
+    },
+    {
+      "id": "launch-area",
+      "type": "plunger",
+      "layer": "lower",
+      "x": 331.27272727272725,
+      "y": 401.3522727272728,
+      "angle": 0
+    },
+    {
+      "id": "shape-5",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 30,
+      "y1": 155,
+      "x2": 50,
+      "y2": 155,
+      "attack": "lv4",
+      "attackCount": 5
+    },
+    {
+      "id": "shape-6",
+      "type": "sensor",
+      "layer": "lower",
+      "x1": 330,
+      "y1": 90,
+      "x2": 310,
+      "y2": 100
+    },
+    {
+      "id": "shape-21",
+      "type": "sensor",
+      "layer": "lower",
+      "x1": 320,
+      "y1": 70,
+      "x2": 300,
+      "y2": 80
+    },
+    {
+      "id": "shape-33",
+      "type": "sensor",
+      "layer": "lower",
+      "x1": 308,
+      "y1": 53,
+      "x2": 290,
+      "y2": 65
+    },
+    {
+      "id": "shape-34",
+      "type": "sensor",
+      "layer": "lower",
+      "x1": 287,
+      "y1": 32,
+      "x2": 270,
+      "y2": 50
+    },
+    {
+      "id": "shape-44",
+      "type": "sensor",
+      "layer": "lower",
+      "x1": 265,
+      "y1": 16,
+      "x2": 250,
+      "y2": 35
+    },
+    {
+      "id": "shape-48",
+      "type": "oneway",
+      "collisionMode": "launch-only",
+      "layer": "lower",
+      "x1": 124,
+      "y1": 3,
+      "x2": 133,
+      "y2": 30,
+      "direction": -1
+    },
+    {
+      "id": "shape-54",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 225,
+      "y1": -1,
+      "x2": 215,
+      "y2": 25,
+      "direction": 1
+    },
+    {
+      "id": "left-return",
+      "type": "oneway",
+      "layer": "lower",
+      "mechanic": "rescue-return",
+      "side": "left",
+      "x1": 27.29,
+      "y1": 365,
+      "x2": 50,
+      "y2": 390,
+      "direction": -1
+    },
+    {
+      "id": "right-return",
+      "type": "oneway",
+      "layer": "lower",
+      "mechanic": "rescue-return",
+      "side": "right",
+      "x1": 295,
+      "y1": 405,
+      "x2": 320,
+      "y2": 380,
+      "direction": -1
+    },
+    {
+      "id": "shape-55",
+      "type": "blockhole",
+      "layer": "lower",
+      "x": 185,
+      "y": 280,
+      "angle": 0,
+      "attractionRadius": 61.00819617067858
+    },
+    {
+      "id": "shape-77",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 280,
+      "y1": 280,
+      "x2": 295,
+      "y2": 270,
+      "thickness": 5
+    },
+    {
+      "id": "shape-84",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 295,
+      "y1": 270,
+      "x2": 295,
+      "y2": 290,
+      "thickness": 5
+    },
+    {
+      "id": "shape-91",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 280,
+      "y1": 280,
+      "x2": 295,
+      "y2": 290,
+      "thickness": 5
+    },
+    {
+      "id": "shape-15",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 275,
+      "y1": 240,
+      "x2": 275,
+      "y2": 275
+    },
+    {
+      "id": "shape-25",
+      "type": "line",
+      "layer": "lower",
+      "x1": 320,
+      "y1": 170,
+      "x2": 320,
+      "y2": 120
+    },
+    {
+      "id": "shape-22",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 180,
+      "y1": -4,
+      "qx": 313,
+      "qy": 0,
+      "x2": 343,
+      "y2": 136
+    },
+    {
+      "id": "shape-23",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 89,
+      "y1": 26,
+      "qx": 125,
+      "qy": -2,
+      "x2": 180,
+      "y2": -4
+    },
+    {
+      "id": "shape-39",
+      "type": "line",
+      "layer": "lower",
+      "x1": 343,
+      "y1": 135,
+      "x2": 343,
+      "y2": 465
+    },
+    {
+      "id": "shape-61",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 320,
+      "y1": 120,
+      "qx": 295,
+      "qy": 56,
+      "x2": 246,
+      "y2": 35
+    },
+    {
+      "id": "shape-62",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 226,
+      "y1": 28,
+      "qx": 221,
+      "qy": 26,
+      "x2": 215,
+      "y2": 25
+    },
+    {
+      "id": "shape-72",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 246,
+      "y1": 35,
+      "x2": 226,
+      "y2": 28,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "lower",
+      "toLayer": "upper",
+      "bidirectional": true
+    },
+    {
+      "id": "shape-73",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 89,
+      "y1": 26,
+      "qx": 67,
+      "qy": -9,
+      "x2": 25,
+      "y2": 10
+    },
+    {
+      "id": "shape-74",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 25,
+      "y1": 10,
+      "qx": 1,
+      "qy": 28,
+      "x2": 10,
+      "y2": 60
+    },
+    {
+      "id": "shape-76",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 10,
+      "y1": 60,
+      "qx": 16,
+      "qy": 75,
+      "x2": 27,
+      "y2": 81
+    },
+    {
+      "id": "shape-81",
+      "type": "line",
+      "layer": "lower",
+      "x1": 27,
+      "y1": 81,
+      "x2": 27,
+      "y2": 442
+    },
+    {
+      "id": "shape-85",
+      "type": "line",
+      "layer": "lower",
+      "x1": 102,
+      "y1": 315,
+      "x2": 127,
+      "y2": 378,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-86",
+      "type": "line",
+      "layer": "lower",
+      "x1": 268,
+      "y1": 317,
+      "x2": 244,
+      "y2": 377,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-92",
+      "type": "line",
+      "layer": "lower",
+      "x1": 295,
+      "y1": 266,
+      "x2": 278,
+      "y2": 277,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-93",
+      "type": "line",
+      "layer": "lower",
+      "x1": 250,
+      "y1": 203,
+      "x2": 283,
+      "y2": 150,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-94",
+      "type": "line",
+      "layer": "lower",
+      "x1": 60,
+      "y1": 102,
+      "x2": 109,
+      "y2": 142,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-95",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 123,
+      "y1": 207,
+      "x2": 158,
+      "y2": 198,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "lower",
+      "toLayer": "upper",
+      "bidirectional": true
+    },
+    {
+      "id": "shape-101",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 299,
+      "y1": 193,
+      "x2": 317,
+      "y2": 184,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "shape-103",
+      "type": "line",
+      "layer": "upper",
+      "x1": 160,
+      "y1": 200,
+      "x2": 149,
+      "y2": 184
+    },
+    {
+      "id": "shape-104",
+      "type": "line",
+      "layer": "upper",
+      "x1": 123,
+      "y1": 210,
+      "x2": 119,
+      "y2": 194
+    },
+    {
+      "id": "shape-107",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 149,
+      "y1": 184,
+      "qx": 113,
+      "qy": 125,
+      "x2": 66,
+      "y2": 126
+    },
+    {
+      "id": "shape-112",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 66,
+      "y1": 126,
+      "qx": 30,
+      "qy": 130,
+      "x2": 25,
+      "y2": 166
+    },
+    {
+      "id": "shape-114",
+      "type": "line",
+      "layer": "upper",
+      "x1": 25,
+      "y1": 166,
+      "x2": 25,
+      "y2": 264
+    },
+    {
+      "id": "shape-115",
+      "type": "line",
+      "layer": "upper",
+      "x1": 25,
+      "y1": 223,
+      "x2": 32,
+      "y2": 230
+    },
+    {
+      "id": "shape-117",
+      "type": "line",
+      "layer": "upper",
+      "x1": 32,
+      "y1": 230,
+      "x2": 34,
+      "y2": 242
+    },
+    {
+      "id": "shape-121",
+      "type": "line",
+      "layer": "upper",
+      "x1": 34,
+      "y1": 246,
+      "x2": 31,
+      "y2": 258
+    },
+    {
+      "id": "shape-127",
+      "type": "line",
+      "layer": "upper",
+      "x1": 31,
+      "y1": 258,
+      "x2": 25,
+      "y2": 263
+    },
+    {
+      "id": "shape-128",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 25,
+      "y1": 264,
+      "qx": 25,
+      "qy": 287,
+      "x2": 40,
+      "y2": 292
+    },
+    {
+      "id": "shape-129",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 40,
+      "y1": 292,
+      "qx": 54,
+      "qy": 301,
+      "x2": 52,
+      "y2": 316
+    },
+    {
+      "id": "shape-130",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 52,
+      "y1": 316,
+      "qx": 50,
+      "qy": 335,
+      "x2": 62,
+      "y2": 336
+    },
+    {
+      "id": "shape-131",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 62,
+      "y1": 336,
+      "qx": 73,
+      "qy": 333,
+      "x2": 71,
+      "y2": 319
+    },
+    {
+      "id": "shape-132",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 71,
+      "y1": 320,
+      "qx": 70,
+      "qy": 297,
+      "x2": 80,
+      "y2": 291
+    },
+    {
+      "id": "shape-133",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 80,
+      "y1": 291,
+      "qx": 86,
+      "qy": 286,
+      "x2": 85,
+      "y2": 258
+    },
+    {
+      "id": "shape-134",
+      "type": "line",
+      "layer": "upper",
+      "x1": 85,
+      "y1": 258,
+      "x2": 85,
+      "y2": 209
+    },
+    {
+      "id": "shape-135",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 119,
+      "y1": 194,
+      "qx": 103,
+      "qy": 152,
+      "x2": 67,
+      "y2": 146
+    },
+    {
+      "id": "shape-136",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 67,
+      "y1": 146,
+      "qx": 45,
+      "qy": 150,
+      "x2": 50,
+      "y2": 171
+    },
+    {
+      "id": "shape-137",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 50,
+      "y1": 171,
+      "qx": 52,
+      "qy": 179,
+      "x2": 65,
+      "y2": 183
+    },
+    {
+      "id": "shape-138",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 65,
+      "y1": 183,
+      "qx": 82,
+      "qy": 190,
+      "x2": 85,
+      "y2": 209
+    },
+    {
+      "id": "shape-140",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 62,
+      "y1": 210,
+      "x2": 62,
+      "y2": 222,
+      "thickness": 5
+    },
+    {
+      "id": "shape-141",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 41,
+      "y1": 204,
+      "x2": 41,
+      "y2": 216,
+      "thickness": 5
+    },
+    {
+      "id": "shape-142",
+      "type": "line",
+      "layer": "upper",
+      "x1": 85,
+      "y1": 233,
+      "x2": 77,
+      "y2": 240
+    },
+    {
+      "id": "shape-144",
+      "type": "line",
+      "layer": "upper",
+      "x1": 77,
+      "y1": 240,
+      "x2": 75,
+      "y2": 249
+    },
+    {
+      "id": "shape-145",
+      "type": "line",
+      "layer": "upper",
+      "x1": 85,
+      "y1": 273,
+      "x2": 77,
+      "y2": 268
+    },
+    {
+      "id": "shape-146",
+      "type": "line",
+      "layer": "upper",
+      "x1": 77,
+      "y1": 268,
+      "x2": 75,
+      "y2": 259
+    },
+    {
+      "id": "shape-149",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 74,
+      "cy": 254,
+      "r": 5.403
+    },
+    {
+      "id": "shape-150",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 35,
+      "cy": 243,
+      "r": 5.403
+    },
+    {
+      "id": "shape-151",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 50,
+      "cy": 272,
+      "r": 5.403
+    },
+    {
+      "id": "shape-152",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 62,
+      "cy": 329,
+      "r": 6.817,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "shape-153",
+      "type": "centerPost",
+      "layer": "lower",
+      "x": 185,
+      "y": 451,
+      "angle": 0,
+      "radius": 10,
+      "triggerRollovers": [
+        "shape-1",
+        "shape-9",
+        "shape-13"
+      ],
+      "hitCount": 5
+    },
+    {
+      "id": "shape-1",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 275,
+      "y1": 342,
+      "x2": 295,
+      "y2": 342,
+      "rolloverGroup": {
+        "id": "rollovers-shape-1",
+        "members": [
+          "shape-1",
+          "shape-9",
+          "shape-13"
+        ],
+        "attack": "none",
+        "attackCount": 1
+      }
+    },
+    {
+      "id": "shape-9",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 75,
+      "y1": 341,
+      "x2": 93,
+      "y2": 341
+    },
+    {
+      "id": "shape-13",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 52,
+      "y1": 341,
+      "x2": 70,
+      "y2": 341
+    },
+    {
+      "id": "shape-143",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 139,
+      "y1": 44,
+      "x2": 158,
+      "y2": 44
+    },
+    {
+      "id": "shape-147",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 162,
+      "y1": 44,
+      "x2": 181,
+      "y2": 44
+    },
+    {
+      "id": "shape-148",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 182,
+      "y1": 44,
+      "x2": 201,
+      "y2": 44,
+      "attack": "lv3",
+      "rolloverGroup": {
+        "id": "rollovers-shape-148",
+        "members": [
+          "shape-148",
+          "shape-147",
+          "shape-143"
+        ],
+        "attack": "lv3",
+        "attackCount": 1
+      }
+    },
+    {
+      "id": "shape-16",
+      "type": "line",
+      "layer": "lower",
+      "x1": 320,
+      "y1": 229,
+      "x2": 305,
+      "y2": 240
+    },
+    {
+      "id": "shape-28",
+      "type": "line",
+      "layer": "lower",
+      "x1": 305,
+      "y1": 240,
+      "x2": 320,
+      "y2": 247
+    },
+    {
+      "id": "shape-49",
+      "type": "line",
+      "layer": "lower",
+      "x1": 320,
+      "y1": 229,
+      "x2": 320,
+      "y2": 464
+    },
+    {
+      "id": "shape-158",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 49,
+      "y1": 392,
+      "x2": 109,
+      "y2": 436,
+      "thickness": 5
+    },
+    {
+      "id": "shape-159",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 109,
+      "y1": 437,
+      "x2": 109,
+      "y2": 460,
+      "thickness": 5
+    },
+    {
+      "id": "shape-160",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 49,
+      "y1": 394,
+      "x2": 41,
+      "y2": 429,
+      "thickness": 5
+    },
+    {
+      "id": "shape-161",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 40,
+      "y1": 429,
+      "x2": 34,
+      "y2": 429,
+      "thickness": 5
+    },
+    {
+      "id": "shape-162",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 34,
+      "y1": 429,
+      "x2": 26,
+      "y2": 393,
+      "thickness": 5
+    },
+    {
+      "id": "shape-164",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 297,
+      "y1": 407,
+      "x2": 315,
+      "y2": 423,
+      "thickness": 5
+    },
+    {
+      "id": "shape-165",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 296,
+      "y1": 408,
+      "x2": 262,
+      "y2": 436,
+      "thickness": 5
+    },
+    {
+      "id": "shape-166",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 262,
+      "y1": 436,
+      "x2": 262,
+      "y2": 461,
+      "thickness": 5
+    },
+    {
+      "id": "shape-167",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 316,
+      "y1": 424,
+      "x2": 321,
+      "y2": 408,
+      "thickness": 5
+    },
+    {
+      "id": "shape-172",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 272,
+      "cy": 315,
+      "r": 4.472,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-173",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 124,
+      "cy": 380,
+      "r": 4.472,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-174",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 98,
+      "cy": 315,
+      "r": 4.472,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-175",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 246,
+      "cy": 380,
+      "r": 4.472,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-176",
+      "type": "line",
+      "layer": "lower",
+      "x1": 94,
+      "y1": 318,
+      "x2": 94,
+      "y2": 362
+    },
+    {
+      "id": "shape-178",
+      "type": "line",
+      "layer": "lower",
+      "x1": 97,
+      "y1": 367,
+      "x2": 123,
+      "y2": 384
+    },
+    {
+      "id": "shape-179",
+      "type": "line",
+      "layer": "lower",
+      "x1": 94,
+      "y1": 362,
+      "x2": 97,
+      "y2": 367
+    },
+    {
+      "id": "shape-181",
+      "type": "line",
+      "layer": "lower",
+      "x1": 276,
+      "y1": 316,
+      "x2": 276,
+      "y2": 363
+    },
+    {
+      "id": "shape-183",
+      "type": "line",
+      "layer": "lower",
+      "x1": 273,
+      "y1": 368,
+      "x2": 249,
+      "y2": 384
+    },
+    {
+      "id": "shape-184",
+      "type": "line",
+      "layer": "lower",
+      "x1": 276,
+      "y1": 363,
+      "x2": 273,
+      "y2": 368
+    }
+  ],
+  "lockedLayout": [],
+  "upperLayout": [],
+  "topLayout": [],
+  "templates": {
+    "ublock": {
+      "label": "ㄇ形阻擋物",
+      "width": 25,
+      "height": 23,
+      "source": "工具預設：24 × 22，厚度 3，開口朝下。",
+      "markup": "<path d=\"M-12 11V-11H12V11H9V-8H-9V11Z\" fill=\"#455e6b\"/>"
+    },
+    "hole": {
+      "label": "Hole",
+      "width": 12,
+      "height": 12,
+      "source": "現有 capture 半徑 5.5。",
+      "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><circle r=\"3.4\" stroke-dasharray=\"1 1\"/>"
+    },
+    "targets": {
+      "label": "三連 target",
+      "width": 43,
+      "height": 3.000000000000014,
+      "source": "現有 island-target-1～3，保留原尺寸與間距。",
+      "markup": "<polygon points=\"-21.0000,0.6000 -21.0000,-0.6000 -20.9991,-0.6273 -20.9963,-0.6545 -20.9916,-0.6814 -20.9852,-0.7079 -20.9769,-0.7340 -20.9669,-0.7594 -20.9552,-0.7840 -20.9418,-0.8078 -20.9268,-0.8307 -20.9103,-0.8524 -20.8923,-0.8730 -20.8730,-0.8923 -20.8524,-0.9103 -20.8307,-0.9268 -20.8078,-0.9418 -20.7840,-0.9552 -20.7594,-0.9669 -20.7340,-0.9769 -20.7079,-0.9852 -20.6814,-0.9916 -20.6545,-0.9963 -20.6273,-0.9991 -20.6000,-1.0000 -9.4000,-1.0000 -9.3727,-0.9991 -9.3455,-0.9963 -9.3186,-0.9916 -9.2921,-0.9852 -9.2660,-0.9769 -9.2406,-0.9669 -9.2160,-0.9552 -9.1922,-0.9418 -9.1693,-0.9268 -9.1476,-0.9103 -9.1270,-0.8923 -9.1077,-0.8730 -9.0897,-0.8524 -9.0732,-0.8307 -9.0582,-0.8078 -9.0448,-0.7840 -9.0331,-0.7594 -9.0231,-0.7340 -9.0148,-0.7079 -9.0084,-0.6814 -9.0037,-0.6545 -9.0009,-0.6273 -9.0000,-0.6000 -9.0000,0.6000 -9.0009,0.6273 -9.0037,0.6545 -9.0084,0.6814 -9.0148,0.7079 -9.0231,0.7340 -9.0331,0.7594 -9.0448,0.7840 -9.0582,0.8078 -9.0732,0.8307 -9.0897,0.8524 -9.1077,0.8730 -9.1270,0.8923 -9.1476,0.9103 -9.1693,0.9268 -9.1922,0.9418 -9.2160,0.9552 -9.2406,0.9669 -9.2660,0.9769 -9.2921,0.9852 -9.3186,0.9916 -9.3455,0.9963 -9.3727,0.9991 -9.4000,1.0000 -20.6000,1.0000 -20.6273,0.9991 -20.6545,0.9963 -20.6814,0.9916 -20.7079,0.9852 -20.7340,0.9769 -20.7594,0.9669 -20.7840,0.9552 -20.8078,0.9418 -20.8307,0.9268 -20.8524,0.9103 -20.8730,0.8923 -20.8923,0.8730 -20.9103,0.8524 -20.9268,0.8307 -20.9418,0.8078 -20.9552,0.7840 -20.9669,0.7594 -20.9769,0.7340 -20.9852,0.7079 -20.9916,0.6814 -20.9963,0.6545 -20.9991,0.6273 -21.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"9.0000,0.6000 9.0000,-0.6000 9.0009,-0.6273 9.0037,-0.6545 9.0084,-0.6814 9.0148,-0.7079 9.0231,-0.7340 9.0331,-0.7594 9.0448,-0.7840 9.0582,-0.8078 9.0732,-0.8307 9.0897,-0.8524 9.1077,-0.8730 9.1270,-0.8923 9.1476,-0.9103 9.1693,-0.9268 9.1922,-0.9418 9.2160,-0.9552 9.2406,-0.9669 9.2660,-0.9769 9.2921,-0.9852 9.3186,-0.9916 9.3455,-0.9963 9.3727,-0.9991 9.4000,-1.0000 20.6000,-1.0000 20.6273,-0.9991 20.6545,-0.9963 20.6814,-0.9916 20.7079,-0.9852 20.7340,-0.9769 20.7594,-0.9669 20.7840,-0.9552 20.8078,-0.9418 20.8307,-0.9268 20.8524,-0.9103 20.8730,-0.8923 20.8923,-0.8730 20.9103,-0.8524 20.9268,-0.8307 20.9418,-0.8078 20.9552,-0.7840 20.9669,-0.7594 20.9769,-0.7340 20.9852,-0.7079 20.9916,-0.6814 20.9963,-0.6545 20.9991,-0.6273 21.0000,-0.6000 21.0000,0.6000 20.9991,0.6273 20.9963,0.6545 20.9916,0.6814 20.9852,0.7079 20.9769,0.7340 20.9669,0.7594 20.9552,0.7840 20.9418,0.8078 20.9268,0.8307 20.9103,0.8524 20.8923,0.8730 20.8730,0.8923 20.8524,0.9103 20.8307,0.9268 20.8078,0.9418 20.7840,0.9552 20.7594,0.9669 20.7340,0.9769 20.7079,0.9852 20.6814,0.9916 20.6545,0.9963 20.6273,0.9991 20.6000,1.0000 9.4000,1.0000 9.3727,0.9991 9.3455,0.9963 9.3186,0.9916 9.2921,0.9852 9.2660,0.9769 9.2406,0.9669 9.2160,0.9552 9.1922,0.9418 9.1693,0.9268 9.1476,0.9103 9.1270,0.8923 9.1077,0.8730 9.0897,0.8524 9.0732,0.8307 9.0582,0.8078 9.0448,0.7840 9.0331,0.7594 9.0231,0.7340 9.0148,0.7079 9.0084,0.6814 9.0037,0.6545 9.0009,0.6273 9.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "flag": {
+      "label": "旗幟線",
+      "width": 14,
+      "height": 2,
+      "source": "固定長度 14；可拖曳旋轉控制點或輸入角度。穿越感應線，不阻擋球。",
+      "markup": "<line x1=\"-7\" y1=\"0\" x2=\"7\" y2=\"0\" fill=\"none\" stroke=\"#e6a5ea\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>"
+    },
+    "target": {
+      "label": "單顆 target",
+      "width": 13,
+      "height": 3,
+      "source": "三連 target 的單顆元件，保留原尺寸。",
+      "markup": "<polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "flipper": {
+      "label": "Flipper",
+      "width": 50.72938359896286,
+      "height": 14.061202228069305,
+      "source": "現有 space-355 軸距與頭尾半徑。",
+      "markup": "<path d=\"M-18.33409068544678 -6.530601114034653 L20.805223887761155 -4.059467911720276 A4.059467911720276 4.059467911720276 0 0 1 20.805223887761155 4.059467911720276 L-18.33409068544678 6.530601114034653 A6.530601114034653 6.530601114034653 0 0 1 -18.33409068544678 -6.530601114034653 Z\" fill=\"#355b73\"/><circle cx=\"-18.33409068544678\" cy=\"0\" r=\"1.8\" fill=\"#79cafa\"/>"
+    },
+    "plunger": {
+      "label": "發球區",
+      "width": 20,
+      "height": 8,
+      "source": "固定大小；上緣中心為推球點，發球方向向上。",
+      "markup": "<rect x=\"-10\" y=\"-4\" width=\"20\" height=\"8\" fill=\"#b78a43\"/><path d=\"M0 3V-3M-2 -1L0 -3L2 -1\" fill=\"none\"/>"
+    },
+    "blockhole": {
+      "label": "Blockhole（水渦中心）",
+      "width": 12,
+      "height": 12,
+      "source": "水渦專用捕球中心，不走一般 Hole 的進洞流程。",
+      "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><path d=\"M-4 0a4 4 0 1 1 4 4a2.5 2.5 0 1 1 2.5-2.5a1 1 0 1 1-1-1\" fill=\"none\"/>"
+    },
+    "centerPost": {
+      "label": "Center post",
+      "width": 10,
+      "height": 10,
+      "source": "可調半徑的升降救球柱；指定 Rollover 線集滿後升起，依設定碰撞次數收回。",
+      "markup": "<circle r=\"5\" fill=\"#263945\"/><circle r=\"3.3\" fill=\"none\"/><path d=\"M-2 0H2M0 -2V2\"/>"
+    }
+  }
+}

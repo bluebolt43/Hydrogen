@@ -13,6 +13,7 @@
 <div id="screen" tabindex="0" hidden></div>
 <div id="scene-transition" aria-hidden="true" hidden></div>
 <button id="open-settings" type="button" aria-label="開啟設定"><img src="img/system-marker-settings.png" alt=""></button>
+<section id="unlock-dialog" role="dialog" aria-modal="true" aria-label="Unlock Table" hidden><canvas id="unlock-art" aria-hidden="true"></canvas><div id="unlock-actions"></div><p id="unlock-status" role="status"></p></section>
 <section id="app-settings" aria-labelledby="settings-title" hidden>
 <button id="close-settings" type="button" aria-label="返回"><img src="img/system-marker-back.png" alt=""></button>
 <h1 id="settings-title">設定</h1>
@@ -23,11 +24,17 @@
 <button id="clear-game-records" type="button" style="padding:10px 16px;background:#57312c;color:#fff0cc;border:1px solid #c38b70;border-radius:6px;cursor:pointer">清除遊戲紀錄</button>
 <p style="font-size:13px">清除排行榜、關卡進度及劇情已讀紀錄。</p>
 </div>
+<section id="purchase-debug" aria-labelledby="purchase-debug-title">
+<h2 id="purchase-debug-title">除錯</h2>
+<button id="clear-purchases" type="button">清除模擬購買紀錄</button>
+<p>重設付費球台的購買狀態，方便重新測試解鎖流程。</p>
+<p id="purchase-debug-status" role="status"></p>
+</section>
 <p id="save-status" role="status"></p>
 </section>
 <p id="load-error" role="alert" hidden></p>
 </main>
-<script src="js/system/layout-renderer.js"></script>
+<script src="js/system/layout-renderer.js"></script><script src="js/system/unlock-renderer.js"></script>
 <script src="js/system/menu-music.js"></script>
 <script src="js/system/menu-transition.js"></script>
 <script src="js/main.bundle.js"></script>

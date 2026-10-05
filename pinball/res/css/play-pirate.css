@@ -5,11 +5,13 @@ html[data-embedded] header,html[data-embedded] footer{display:none}html[data-emb
 #tableViewport{flex:1;min-width:0;min-height:0;display:flex;justify-content:center;align-items:flex-start}
 #debugPanel{flex:0 0 310px;min-width:0;overflow:auto;background:#1c2b3a;border:1px solid #526a80;border-radius:8px;margin-right:10px;padding:12px;text-align:left;scrollbar-gutter:stable}
 #debugPanel[hidden]{display:none}.debug-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}.debug-heading strong{font-size:18px}.debug-hint{font-size:12px;color:#b6c9da;line-height:1.5}.debug-actions{margin-bottom:12px}
-#physicsControls fieldset{margin:0 0 14px;padding:10px;border:1px solid #526a80;border-radius:6px}#physicsControls legend{color:#ffd78e}.physics-label{display:flex;justify-content:space-between;gap:8px;font-size:13px}.physics-label output{font-variant-numeric:tabular-nums;color:#ffd78e}#physicsControls input{display:block;width:100%;margin:8px 0 14px;accent-color:#edba64;touch-action:pan-y}#targetDebug{font-size:14px;border-top:1px solid #526a80;padding-top:12px}#targetDebug .target-debug-heading{margin:0;padding:0;font-weight:600}#targetDebugButtons{padding:0;margin:8px 0!important;justify-content:flex-start!important}#targetDebugButtons button{font-size:12px;padding:6px 8px}.debug-probe{display:block;font-size:13px;margin-top:14px}
-@media(max-width:650px){#debugPanel{flex-basis: min(260px,55vw);margin-right:4px;padding:8px}#physicsControls fieldset{padding:6px}.physics-label{font-size:12px}}
+.physics-label{display:flex;justify-content:space-between;gap:8px;font-size:13px}.physics-label output{font-variant-numeric:tabular-nums;color:#ffd78e}#physicsControls input{display:block;width:100%;margin:8px 0 14px;accent-color:#edba64;touch-action:pan-y}#targetDebug{font-size:14px;border-top:1px solid #526a80;padding-top:12px}#targetDebug .target-debug-heading{margin:0;padding:0;font-weight:600}#targetDebugButtons{padding:0;margin:8px 0!important;justify-content:flex-start!important}#targetDebugButtons button{font-size:12px;padding:6px 8px}.debug-probe{display:block;font-size:13px;margin-top:14px}
+@media(max-width:650px){#debugPanel{flex-basis: min(260px,55vw);margin-right:4px;padding:8px}.physics-label{font-size:12px}}
 #tableTutorial{position:fixed;inset:0;z-index:1000;overflow:hidden;touch-action:none}
 #tutorialSpotlight{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 #tutorialPanel{position:absolute;left:50%;transform:translateX(-50%);width:min(310px,calc(100% - 32px));padding:0;color:#fff4d0;text-align:center;pointer-events:none;text-shadow:0 2px 3px #000,1px 0 2px #000,-1px 0 2px #000}
 #tutorialPanel h2{margin:0 0 5px;font-size:18px}#tutorialPanel p{font-size:15px;line-height:1.45;margin:0}
 
 #tutorialPanel #tutorialHint{margin-top:10px;color:#ffe29b}
+
+#physicsControls details{margin:0 0 10px;padding:10px;border:1px solid #526a80;border-radius:6px}#physicsControls summary{color:#ffd78e;cursor:pointer}#physicsControls details[open]>summary{margin-bottom:12px}

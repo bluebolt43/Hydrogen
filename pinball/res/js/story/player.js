@@ -21,9 +21,10 @@ const nextButton=document.createElement('button');
 nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
-const seenKey=chapter=>`pinball-pirate-story-seen-v1:${chapter}`;
-function hasSeen(chapter){try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
-function markSeen(chapter){try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
+const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
+const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
+function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
+function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
 function requestPlayback(){

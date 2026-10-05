@@ -1,0 +1,28 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><base href="../"><meta name="viewport" content="width=device-width,initial-scale=1"><title>目前布局試玩</title>
+<script src="res/js/game/embed-init.js"></script>
+<link rel="stylesheet" href="res/css/play-pirate.css">
+<header><strong>目前布局試玩</strong><span>分數 <b id="score">0</b> · 球 <b id="ballNumber">1</b>/3 · <b id="ballTime">00:00.0</b></span><button id="restart">重新開始 R</button><button id="settings">設定</button><button id="debugToggle" aria-controls="debugPanel" aria-expanded="false">除錯</button><label><input id="upper" type="checkbox" checked>顯示中／上層</label><label><input id="probe" type="checkbox">點擊放球測試</label><label>放球層級 <select id="probeLayer"><option value="top">上層</option><option value="tavern">中層</option><option value="lower" selected>下層</option></select></label><label><input id="artToggle" type="checkbox" checked>美術圖層</label><label><input id="geometryToggle" type="checkbox" checked>布局線</label><span id="notice">按住空白鍵，再放開發射</span></header>
+<main><aside id="debugPanel" aria-label="除錯視窗" hidden><div class="debug-heading"><strong>除錯</strong><button id="debugClose" aria-label="關閉除錯視窗">關閉</button></div><p class="debug-hint">拖曳即時套用；重新整理會還原，不會覆寫 board.conf。</p><div class="debug-actions"><button id="physicsReset">還原預設</button></div><div id="physicsControls"></div><section id="targetDebug"><div class="target-debug-heading">事件除錯</div><div id="targetDebugButtons" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px"></div><div id="targetDebugStatus" aria-live="polite"></div><small>測試 Lv1～Lv4 攻擊、Center post、Enemy event、Bumper upgrade 與黑洞啟動。重新開始可重置。</small></section><label class="debug-probe"><input id="debugProbe" type="checkbox"> 點擊球桌放球測試</label></aside><div id="tableViewport"><canvas id="table" width="374" height="481"></canvas></div></main>
+<footer><div style="margin-bottom:6px">發球力道（按住時間） <progress id="launchPower" max="1" value="0"></progress> <span id="launchPercent">0%</span></div><div id="mechanics" aria-live="polite"></div><div class="buttons"><button id="left">左擋板</button><button id="launch">按住發射</button><button id="right">右擋板</button><button id="nudge">推台 X</button></div><small>← / Z：左擋板　→ / C：右擋板　空白鍵：蓄力發射　R：重來<br>使用編輯器傳入的目前布局與美術。</small><details><summary>引擎授權</summary><pre>MIT License
+
+Copyright (c) 2020-2021 Andrey Muzychenko
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</pre></details></footer>
+<script src="res/js/generated-play-steampunk-1.js"></script><script src="res/js/generated-play-steampunk-2.js"></script><script src="res/js/generated-play-steampunk-3.js"></script><script src="res/js/generated-play-steampunk-4.js"></script><script src="res/js/generated-play-steampunk-5.js"></script></html>

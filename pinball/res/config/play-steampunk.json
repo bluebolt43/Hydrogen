@@ -1,0 +1,2042 @@
+{
+  "theme": "steampunk",
+  "artLayers": [
+    {
+      "id": "art-launch-hs-GameItem95-970-rod",
+      "src": "res/img/plunger-rod.png",
+      "x": 310,
+      "y": 428,
+      "width": 30,
+      "height": 91,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        31,
+        91
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "plunger",
+      "bind": "plunger",
+      "layoutBind": "hs-GameItem95-970",
+      "layoutAnchor": [
+        309.896,
+        386.688
+      ]
+    },
+    {
+      "id": "art-launch-hs-GameItem95-970-collar",
+      "src": "res/img/plunger-collar.png",
+      "x": 311,
+      "y": 420,
+      "width": 50,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        51,
+        38
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "layoutBind": "hs-GameItem95-970",
+      "layoutAnchor": [
+        309.896,
+        386.688
+      ]
+    }
+  ],
+  "gameplay": {},
+  "screenLayout": {
+    "width": 360,
+    "height": 640,
+    "theaterHeight": 170.5,
+    "playfieldHeight": 469.5,
+    "top": -170.5,
+    "bottom": 469.5
+  },
+  "format": "pinball-layout-editor",
+  "version": 6,
+  "canvas": {
+    "width": 360,
+    "height": 469.5,
+    "upperLimit": 469.5
+  },
+  "objects": [
+    {
+      "id": "hs-GameItem161-10",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 289.116,
+      "y1": 89.239,
+      "qx": 285.253,
+      "qy": 76.957,
+      "x2": 274.163,
+      "y2": 70.749
+    },
+    {
+      "id": "hs-GameItem1677-15",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 110.794,
+      "y1": 441.35,
+      "qx": 113.075,
+      "qy": 441.922,
+      "x2": 113.085,
+      "y2": 439.242
+    },
+    {
+      "id": "hs-GameItem1677-19",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 116.125,
+      "y1": 434.417,
+      "qx": 119.703,
+      "qy": 433.479,
+      "x2": 118.217,
+      "y2": 430.924
+    },
+    {
+      "id": "hs-GameItem1677-20",
+      "type": "line",
+      "layer": "lower",
+      "x1": 118.217,
+      "y1": 430.924,
+      "x2": 103.757,
+      "y2": 420.648
+    },
+    {
+      "id": "hs-GameItem1677-28",
+      "type": "line",
+      "layer": "lower",
+      "x1": 103.757,
+      "y1": 420.651,
+      "x2": 85.166,
+      "y2": 407.636
+    },
+    {
+      "id": "hs-GameItem1677-29",
+      "type": "line",
+      "layer": "lower",
+      "x1": 85.166,
+      "y1": 407.636,
+      "x2": 78.221,
+      "y2": 402.707
+    },
+    {
+      "id": "hs-GameItem1677-30",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 78.221,
+      "y1": 402.707,
+      "qx": 68.226,
+      "qy": 397.834,
+      "x2": 65.32900000000001,
+      "y2": 386.609
+    },
+    {
+      "id": "hs-GameItem1677-31",
+      "type": "line",
+      "layer": "lower",
+      "x1": 65.32900000000001,
+      "y1": 386.609,
+      "x2": 65.326,
+      "y2": 338.098
+    },
+    {
+      "id": "hs-GameItem1677-33",
+      "type": "line",
+      "layer": "lower",
+      "x1": 62,
+      "y1": 337,
+      "x2": 61.949,
+      "y2": 412.059
+    },
+    {
+      "id": "hs-GameItem1677-34",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 61.949,
+      "y1": 412.059,
+      "qx": 63.667,
+      "qy": 413.966,
+      "x2": 66.783,
+      "y2": 413.295
+    },
+    {
+      "id": "hs-GameItem1677-35",
+      "type": "line",
+      "layer": "lower",
+      "x1": 66.783,
+      "y1": 413.295,
+      "x2": 69.537,
+      "y2": 413.685
+    },
+    {
+      "id": "hs-GameItem1677-36",
+      "type": "line",
+      "layer": "lower",
+      "x1": 69.537,
+      "y1": 413.685,
+      "x2": 74.261,
+      "y2": 415.467
+    },
+    {
+      "id": "hs-GameItem1677-37",
+      "type": "line",
+      "layer": "lower",
+      "x1": 74.261,
+      "y1": 415.467,
+      "x2": 110.794,
+      "y2": 441.35
+    },
+    {
+      "id": "hs-GameItem1678-38",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 222.637,
+      "y1": 431.043,
+      "qx": 221.525,
+      "qy": 433.5,
+      "x2": 224.845,
+      "y2": 434.325
+    },
+    {
+      "id": "hs-GameItem1678-41",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 227.517,
+      "y1": 437.954,
+      "qx": 227.572,
+      "qy": 442.336,
+      "x2": 230.775,
+      "y2": 440.942
+    },
+    {
+      "id": "hs-GameItem1678-45",
+      "type": "line",
+      "layer": "lower",
+      "x1": 230,
+      "y1": 441,
+      "x2": 274,
+      "y2": 410
+    },
+    {
+      "id": "hs-GameItem1678-47",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 273.295,
+      "y1": 411.194,
+      "qx": 277.802,
+      "qy": 406.604,
+      "x2": 278.013,
+      "y2": 400.047
+    },
+    {
+      "id": "hs-GameItem1678-55",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 276,
+      "y1": 380,
+      "qx": 276,
+      "qy": 394,
+      "x2": 269,
+      "y2": 399
+    },
+    {
+      "id": "hs-GameItem1678-65",
+      "type": "line",
+      "layer": "lower",
+      "x1": 269,
+      "y1": 399,
+      "x2": 222.637,
+      "y2": 431.043
+    },
+    {
+      "id": "hs-GameItem1685-104",
+      "type": "line",
+      "layer": "lower",
+      "x1": 81.936,
+      "y1": 380.066,
+      "x2": 84.583,
+      "y2": 385.508
+    },
+    {
+      "id": "hs-GameItem1685-105",
+      "type": "line",
+      "layer": "lower",
+      "x1": 84.583,
+      "y1": 385.508,
+      "x2": 104.831,
+      "y2": 400.004
+    },
+    {
+      "id": "hs-GameItem1685-106",
+      "type": "line",
+      "layer": "lower",
+      "x1": 104.831,
+      "y1": 400.004,
+      "x2": 113,
+      "y2": 393
+    },
+    {
+      "id": "hs-GameItem1685-110",
+      "type": "line",
+      "layer": "lower",
+      "x1": 81.727,
+      "y1": 336.776,
+      "x2": 81.936,
+      "y2": 380.066
+    },
+    {
+      "id": "hs-GameItem1686-114",
+      "type": "line",
+      "layer": "lower",
+      "x1": 228,
+      "y1": 393,
+      "x2": 236.305,
+      "y2": 399.903
+    },
+    {
+      "id": "hs-GameItem1686-115",
+      "type": "line",
+      "layer": "lower",
+      "x1": 236.305,
+      "y1": 399.903,
+      "x2": 256.79499999999996,
+      "y2": 385.373
+    },
+    {
+      "id": "hs-GameItem1686-116",
+      "type": "line",
+      "layer": "lower",
+      "x1": 256.79499999999996,
+      "y1": 385.373,
+      "x2": 259.127,
+      "y2": 380.793
+    },
+    {
+      "id": "hs-GameItem1686-117",
+      "type": "line",
+      "layer": "lower",
+      "x1": 259.127,
+      "y1": 380.793,
+      "x2": 259.255,
+      "y2": 336.68100000000004
+    },
+    {
+      "id": "hs-GameItem45-147",
+      "type": "line",
+      "layer": "lower",
+      "x1": 296.055,
+      "y1": 326.534,
+      "x2": 297,
+      "y2": 470
+    },
+    {
+      "id": "hs-GameItem46-159",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 296,
+      "y1": 327,
+      "qx": 287,
+      "qy": 295,
+      "x2": 265,
+      "y2": 278
+    },
+    {
+      "id": "hs-GameItem47-162",
+      "type": "line",
+      "layer": "lower",
+      "x1": 262.369,
+      "y1": 0.6839999999999975,
+      "x2": 282,
+      "y2": 1
+    },
+    {
+      "id": "hs-GameItem47-168",
+      "type": "line",
+      "layer": "lower",
+      "x1": 322,
+      "y1": 62,
+      "x2": 314.652,
+      "y2": 100.809
+    },
+    {
+      "id": "hs-GameItem47-169",
+      "type": "line",
+      "layer": "lower",
+      "x1": 314.652,
+      "y1": 100.809,
+      "x2": 284.405,
+      "y2": 203.59199999999998
+    },
+    {
+      "id": "hs-GameItem47-174",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 321.502,
+      "y1": 38.900000000000006,
+      "qx": 316,
+      "qy": 6,
+      "x2": 281,
+      "y2": 1
+    },
+    {
+      "id": "hs-GameItem49-184",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 123,
+      "y1": 26,
+      "qx": 87.529,
+      "qy": 38.559,
+      "x2": 70.623,
+      "y2": 59.798
+    },
+    {
+      "id": "hs-GameItem49-186",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 70,
+      "y1": 60,
+      "qx": 71,
+      "qy": 118,
+      "x2": 82.926,
+      "y2": 151.756
+    },
+    {
+      "id": "hs-GameItem49-187",
+      "type": "line",
+      "layer": "lower",
+      "x1": 82.926,
+      "y1": 151.756,
+      "x2": 100.782,
+      "y2": 218.333
+    },
+    {
+      "id": "hs-GameItem52-219",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 239.83,
+      "y1": 122.867,
+      "qx": 248.746,
+      "qy": 93.301,
+      "x2": 254,
+      "y2": 55
+    },
+    {
+      "id": "hs-GameItem53-232",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 254.24900000000002,
+      "y1": 54.771,
+      "qx": 254.97000000000003,
+      "qy": 47.221999999999994,
+      "x2": 262.117,
+      "y2": 44.915000000000006
+    },
+    {
+      "id": "hs-GameItem53-233",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 262.117,
+      "y1": 44.915000000000006,
+      "qx": 267.329,
+      "qy": 44.681,
+      "x2": 272.415,
+      "y2": 46.412000000000006
+    },
+    {
+      "id": "hs-GameItem53-234",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 272.415,
+      "y1": 46.412000000000006,
+      "qx": 287.128,
+      "qy": 53.283,
+      "x2": 297.766,
+      "y2": 65.467
+    },
+    {
+      "id": "hs-GameItem53-235",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 297.766,
+      "y1": 65.467,
+      "qx": 299.698,
+      "qy": 62.474000000000004,
+      "x2": 299.748,
+      "y2": 58.840999999999994
+    },
+    {
+      "id": "hs-GameItem53-236",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 299.748,
+      "y1": 58.840999999999994,
+      "qx": 299.55,
+      "qy": 50.974000000000004,
+      "x2": 297.349,
+      "y2": 43.458
+    },
+    {
+      "id": "hs-GameItem53-237",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 297.349,
+      "y1": 43.458,
+      "qx": 288.196,
+      "qy": 29.373000000000005,
+      "x2": 253,
+      "y2": 26
+    },
+    {
+      "id": "hs-GameItem54-239",
+      "type": "line",
+      "layer": "lower",
+      "x1": 322,
+      "y1": 0,
+      "x2": 322,
+      "y2": 468.5
+    },
+    {
+      "id": "hs-GameItem56-251",
+      "type": "line",
+      "layer": "upper",
+      "x1": 22,
+      "y1": 182,
+      "x2": 21,
+      "y2": 214
+    },
+    {
+      "id": "hs-GameItem56-256",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 22,
+      "y1": 182,
+      "qx": 30,
+      "qy": 175,
+      "x2": 41,
+      "y2": 183
+    },
+    {
+      "id": "hs-GameItem748-300",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 49.093,
+      "y1": 126.69800000000001,
+      "qx": 41,
+      "qy": 97,
+      "x2": 44,
+      "y2": 57
+    },
+    {
+      "id": "hs-GameItem748-303",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 44,
+      "y1": 56,
+      "qx": 45,
+      "qy": 41,
+      "x2": 55.624,
+      "y2": 25.726
+    },
+    {
+      "id": "hs-GameItem748-304",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 55.624,
+      "y1": 25.726,
+      "qx": 72,
+      "qy": 3,
+      "x2": 120,
+      "y2": 1
+    },
+    {
+      "id": "hs-GameItem751-321",
+      "type": "line",
+      "layer": "lower",
+      "x1": 45,
+      "y1": 470,
+      "x2": 45.51,
+      "y2": 333.221
+    },
+    {
+      "id": "hs-GameItem751-322",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 45.51,
+      "y1": 333.221,
+      "qx": 48.574,
+      "qy": 309.47,
+      "x2": 70,
+      "y2": 292
+    },
+    {
+      "id": "hs-GameItem752-329",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 277,
+      "y1": 257,
+      "qx": 313,
+      "qy": 289,
+      "x2": 321,
+      "y2": 351
+    },
+    {
+      "id": "hs-GameItem752-330",
+      "type": "line",
+      "layer": "lower",
+      "x1": 321,
+      "y1": 351,
+      "x2": 321,
+      "y2": 467
+    },
+    {
+      "id": "hs-GameItem756-337",
+      "type": "line",
+      "layer": "lower",
+      "x1": 284.405,
+      "y1": 203.59199999999998,
+      "x2": 292.331,
+      "y2": 206.834
+    },
+    {
+      "id": "hs-GameItem756-338",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 292.331,
+      "y1": 206.834,
+      "qx": 297.234,
+      "qy": 210.511,
+      "x2": 295.417,
+      "y2": 216.465
+    },
+    {
+      "id": "hs-GameItem756-339",
+      "type": "line",
+      "layer": "lower",
+      "x1": 295.417,
+      "y1": 216.465,
+      "x2": 277,
+      "y2": 256
+    },
+    {
+      "id": "hs-GameItem794-415",
+      "type": "line",
+      "layer": "lower",
+      "x1": 74,
+      "y1": 235,
+      "x2": 70,
+      "y2": 292
+    },
+    {
+      "id": "hs-GameItem866-477",
+      "type": "line",
+      "layer": "upper",
+      "x1": 295.362,
+      "y1": 75.602,
+      "x2": 301,
+      "y2": 58
+    },
+    {
+      "id": "hs-GameItem866-481",
+      "type": "line",
+      "layer": "upper",
+      "x1": 323,
+      "y1": 60,
+      "x2": 318.634,
+      "y2": 81.816
+    },
+    {
+      "id": "hs-GameItem91-483",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 272.549,
+      "y1": 73.62899999999999,
+      "qx": 273.637,
+      "qy": 95.463,
+      "x2": 268.651,
+      "y2": 116.751
+    },
+    {
+      "id": "hs-GameItem91-484",
+      "type": "line",
+      "layer": "lower",
+      "x1": 268.651,
+      "y1": 116.751,
+      "x2": 262.464,
+      "y2": 148.066
+    },
+    {
+      "id": "hs-GameItem936-523",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 65.326,
+      "y1": 338.101,
+      "qx": 65.126,
+      "qy": 334.001,
+      "x2": 62.083,
+      "y2": 336.31600000000003
+    },
+    {
+      "id": "hs-GameItem963-530",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 339,
+      "y1": 179,
+      "qx": 330,
+      "qy": 172,
+      "x2": 322.104,
+      "y2": 179.062
+    },
+    {
+      "id": "hs-GameItem966-567",
+      "type": "line",
+      "layer": "lower",
+      "x1": 275.752,
+      "y1": 337.525,
+      "x2": 275.7,
+      "y2": 380.56
+    },
+    {
+      "id": "hs-GameItem966-569",
+      "type": "line",
+      "layer": "lower",
+      "x1": 278,
+      "y1": 401,
+      "x2": 277.509,
+      "y2": 337.61699999999996
+    },
+    {
+      "id": "hs-GameItem966-570",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 277.509,
+      "y1": 337.61699999999996,
+      "qx": 276.653,
+      "qy": 335.717,
+      "x2": 275.752,
+      "y2": 337.525
+    },
+    {
+      "id": "hs-GameItem0-595",
+      "type": "line",
+      "layer": "upper",
+      "x1": 323.376,
+      "y1": 59.995000000000005,
+      "x2": 323,
+      "y2": 28
+    },
+    {
+      "id": "hs-GameItem0-597",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 323,
+      "y1": 29,
+      "qx": 315,
+      "qy": -7,
+      "x2": 272,
+      "y2": -8
+    },
+    {
+      "id": "hs-GameItem0-601",
+      "type": "line",
+      "layer": "upper",
+      "x1": 234,
+      "y1": 15,
+      "x2": 276,
+      "y2": 14
+    },
+    {
+      "id": "hs-GameItem0-602",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 276,
+      "y1": 14,
+      "qx": 297,
+      "qy": 18,
+      "x2": 300,
+      "y2": 36
+    },
+    {
+      "id": "hs-GameItem0-605",
+      "type": "line",
+      "layer": "upper",
+      "x1": 300,
+      "y1": 35,
+      "x2": 301.073,
+      "y2": 57.363
+    },
+    {
+      "id": "hs-GameItem1-612",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 117.944,
+      "y1": 28.305000000000007,
+      "qx": 124.007,
+      "qy": 13.971000000000004,
+      "x2": 141,
+      "y2": 13
+    },
+    {
+      "id": "hs-GameItem1-614",
+      "type": "line",
+      "layer": "upper",
+      "x1": 140,
+      "y1": 13,
+      "x2": 167,
+      "y2": 13
+    },
+    {
+      "id": "hs-GameItem1-618",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 131.618,
+      "y1": -7.640999999999991,
+      "qx": 126.245,
+      "qy": -6.917000000000002,
+      "x2": 121.214,
+      "y2": -4.911000000000001
+    },
+    {
+      "id": "hs-GameItem1-619",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 121.214,
+      "y1": -4.911000000000001,
+      "qx": 90,
+      "qy": 4,
+      "x2": 82,
+      "y2": 54
+    },
+    {
+      "id": "hs-GameItem135-688",
+      "type": "line",
+      "layer": "upper",
+      "x1": 169.292,
+      "y1": 97.19,
+      "x2": 165.295,
+      "y2": 108.843
+    },
+    {
+      "id": "hs-GameItem1730-714",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 118.401,
+      "y1": 157.142,
+      "qx": 108.442,
+      "qy": 149.608,
+      "x2": 100,
+      "y2": 141
+    },
+    {
+      "id": "hs-GameItem1730-715",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 99.365,
+      "y1": 141.09,
+      "qx": 93.541,
+      "qy": 133.663,
+      "x2": 89.488,
+      "y2": 125.143
+    },
+    {
+      "id": "hs-GameItem1730-716",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 89.488,
+      "y1": 125.143,
+      "qx": 74.98,
+      "qy": 90.993,
+      "x2": 82,
+      "y2": 53
+    },
+    {
+      "id": "hs-GameItem175-732",
+      "type": "line",
+      "layer": "upper",
+      "x1": 340,
+      "y1": 210,
+      "x2": 340,
+      "y2": 179
+    },
+    {
+      "id": "hs-GameItem175-734",
+      "type": "line",
+      "layer": "upper",
+      "x1": 322,
+      "y1": 179,
+      "x2": 322,
+      "y2": 211
+    },
+    {
+      "id": "hs-GameItem2-736",
+      "type": "line",
+      "layer": "upper",
+      "x1": 123,
+      "y1": 122,
+      "x2": 110.922,
+      "y2": 100.785
+    },
+    {
+      "id": "hs-GameItem2-737",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 110.922,
+      "y1": 100.785,
+      "qx": 104.512,
+      "qy": 79.72,
+      "x2": 107.008,
+      "y2": 57.82299999999999
+    },
+    {
+      "id": "hs-GameItem2-741",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 81.88,
+      "y1": 53.334999999999994,
+      "qx": 76.374,
+      "qy": 81.762,
+      "x2": 83.344,
+      "y2": 109.904
+    },
+    {
+      "id": "hs-GameItem2-742",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 83.344,
+      "y1": 109.904,
+      "qx": 89,
+      "qy": 128,
+      "x2": 100,
+      "y2": 141
+    },
+    {
+      "id": "hs-GameItem499-941",
+      "type": "hole",
+      "layer": "upper",
+      "x": 331.042,
+      "y": 183.774,
+      "angle": 0
+    },
+    {
+      "id": "hs-GameItem93-942",
+      "type": "hole",
+      "layer": "upper",
+      "x": 30.04,
+      "y": 186.954,
+      "angle": 0
+    },
+    {
+      "id": "hs-GameItem94-943",
+      "type": "hole",
+      "layer": "lower",
+      "x": 266.276,
+      "y": 57.467,
+      "angle": 0,
+      "attack": "lv1"
+    },
+    {
+      "id": "hs-GameItem34-944",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 172.183,
+      "cy": 50.900999999999996,
+      "r": 13.803
+    },
+    {
+      "id": "hs-GameItem35-945",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 228.967,
+      "cy": 73.632,
+      "r": 13.803
+    },
+    {
+      "id": "hs-GameItem36-946",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 181.335,
+      "cy": 111.598,
+      "r": 13.803
+    },
+    {
+      "id": "hs-GameItem628-967",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 286.135,
+      "y1": 95.981,
+      "x2": 311.493,
+      "y2": 103.254
+    },
+    {
+      "id": "hs-GameItem630-968",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 53.771,
+      "y1": 135.189,
+      "x2": 75,
+      "y2": 131
+    },
+    {
+      "id": "hs-GameItem637-969",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 242,
+      "y1": 119,
+      "x2": 264.099,
+      "y2": 125.00200000000001
+    },
+    {
+      "id": "hs-GameItem95-970",
+      "type": "plunger",
+      "layer": "lower",
+      "x": 309.896,
+      "y": 386.688,
+      "angle": 0
+    },
+    {
+      "id": "hs-GameItem1671-972",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 205.222,
+      "y": 449.985,
+      "angle": -211.5
+    },
+    {
+      "id": "hs-GameItem1675-973",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 135.755,
+      "y": 450.063,
+      "angle": 31.5
+    },
+    {
+      "id": "hs-GameItem957-974",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 281.871,
+      "y": 230.261,
+      "angle": 111
+    },
+    {
+      "id": "shape-26",
+      "type": "line",
+      "layer": "upper",
+      "x1": 40,
+      "y1": 214,
+      "x2": 39.924,
+      "y2": 182.451
+    },
+    {
+      "id": "shape-29",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 277,
+      "y1": 257,
+      "x2": 265,
+      "y2": 278,
+      "direction": 1
+    },
+    {
+      "id": "shape-52",
+      "type": "hole",
+      "layer": "upper",
+      "x": 310,
+      "y": 64,
+      "angle": 0,
+      "releaseMode": "cadet",
+      "releaseAngle": 90,
+      "attack": "lv4"
+    },
+    {
+      "id": "shape-53",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 322,
+      "y1": 190,
+      "x2": 338,
+      "y2": 190,
+      "direction": 1
+    },
+    {
+      "id": "shape-55",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 21,
+      "y1": 197,
+      "x2": 38,
+      "y2": 197,
+      "direction": 1
+    },
+    {
+      "id": "shape-89",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 168,
+      "y1": 15,
+      "qx": 172,
+      "qy": 57,
+      "x2": 169,
+      "y2": 97
+    },
+    {
+      "id": "shape-92",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 118,
+      "y1": 28,
+      "qx": 108,
+      "qy": 47,
+      "x2": 107,
+      "y2": 59
+    },
+    {
+      "id": "shape-96",
+      "type": "line",
+      "layer": "upper",
+      "x1": 132,
+      "y1": -8,
+      "x2": 272,
+      "y2": -8
+    },
+    {
+      "id": "shape-98",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 212,
+      "y1": -8,
+      "qx": 234,
+      "qy": -7,
+      "x2": 235,
+      "y2": 15
+    },
+    {
+      "id": "shape-99",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 164,
+      "y1": -8,
+      "qx": 185,
+      "qy": -7,
+      "x2": 186,
+      "y2": 15
+    },
+    {
+      "id": "shape-105",
+      "type": "line",
+      "layer": "upper",
+      "x1": 186,
+      "y1": 14,
+      "x2": 215,
+      "y2": 14
+    },
+    {
+      "id": "shape-2",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 120,
+      "y1": 120,
+      "x2": 95,
+      "y2": 135,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "lower",
+      "toLayer": "upper",
+      "bidirectional": true
+    },
+    {
+      "id": "shape-4",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 101,
+      "y1": 347,
+      "x2": 122,
+      "y2": 338,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "shape-5",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 220,
+      "y1": 336,
+      "x2": 240,
+      "y2": 341,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "shape-6",
+      "type": "line",
+      "layer": "lower",
+      "x1": 74,
+      "y1": 235,
+      "x2": 49,
+      "y2": 128
+    },
+    {
+      "id": "shape-13",
+      "type": "line",
+      "layer": "lower",
+      "x1": 166,
+      "y1": 132,
+      "x2": 209,
+      "y2": 155
+    },
+    {
+      "id": "shape-14",
+      "type": "line",
+      "layer": "lower",
+      "x1": 110,
+      "y1": 219,
+      "x2": 121,
+      "y2": 171
+    },
+    {
+      "id": "shape-15",
+      "type": "line",
+      "layer": "lower",
+      "x1": 118,
+      "y1": 106,
+      "x2": 117,
+      "y2": 55
+    },
+    {
+      "id": "shape-16",
+      "type": "line",
+      "layer": "lower",
+      "x1": 130,
+      "y1": 34,
+      "x2": 125,
+      "y2": 45,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-17",
+      "type": "line",
+      "layer": "lower",
+      "x1": 125,
+      "y1": 45,
+      "x2": 117,
+      "y2": 53,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-18",
+      "type": "line",
+      "layer": "lower",
+      "x1": 234,
+      "y1": 49,
+      "x2": 238,
+      "y2": 36,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-19",
+      "type": "line",
+      "layer": "lower",
+      "x1": 238,
+      "y1": 36,
+      "x2": 250,
+      "y2": 28,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-20",
+      "type": "line",
+      "layer": "lower",
+      "x1": 227,
+      "y1": 97,
+      "x2": 227,
+      "y2": 116,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-21",
+      "type": "line",
+      "layer": "lower",
+      "x1": 200,
+      "y1": 127,
+      "x2": 210,
+      "y2": 146,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-22",
+      "type": "line",
+      "layer": "lower",
+      "x1": 275,
+      "y1": 130,
+      "x2": 269,
+      "y2": 149,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-23",
+      "type": "line",
+      "layer": "lower",
+      "x1": 288,
+      "y1": 90,
+      "x2": 276,
+      "y2": 126,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-25",
+      "type": "line",
+      "layer": "lower",
+      "x1": 128,
+      "y1": -1,
+      "x2": 259,
+      "y2": -1,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-30",
+      "type": "line",
+      "layer": "lower",
+      "x1": 227,
+      "y1": 392,
+      "x2": 248,
+      "y2": 334,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-32",
+      "type": "line",
+      "layer": "lower",
+      "x1": 114,
+      "y1": 392,
+      "x2": 94,
+      "y2": 335,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-34",
+      "type": "line",
+      "layer": "lower",
+      "x1": 281,
+      "y1": 297,
+      "x2": 294,
+      "y2": 325,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "shape-36",
+      "type": "targets",
+      "layer": "lower",
+      "x": 77,
+      "y": 262,
+      "angle": -86.582,
+      "targetGroup": {
+        "id": "group-shape-36",
+        "members": [
+          "shape-36"
+        ],
+        "action": "blackHole",
+        "hole": "shape-170"
+      }
+    },
+    {
+      "id": "shape-118",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 230,
+      "cy": 94,
+      "r": 3.511,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-122",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 230,
+      "cy": 117,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-124",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 266,
+      "cy": 150,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-125",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 235,
+      "cy": 124,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-126",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 273,
+      "cy": 128,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-127",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 213,
+      "cy": 154,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-128",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 286,
+      "cy": 90,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-129",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 167,
+      "cy": 128,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-130",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 209,
+      "cy": 148,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-131",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 196,
+      "cy": 127,
+      "r": 3.511,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-132",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 120,
+      "cy": 108,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-133",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 109,
+      "cy": 224,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-134",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 105,
+      "cy": 217,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-135",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 124,
+      "cy": -3,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-136",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 262,
+      "cy": -3,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-137",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 236,
+      "cy": 54,
+      "r": 3.511,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-138",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 252,
+      "cy": 31,
+      "r": 3.511,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-139",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 112,
+      "cy": 51,
+      "r": 3.511,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-140",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 126,
+      "cy": 30,
+      "r": 3.511,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-143",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 88,
+      "cy": 336,
+      "r": 5.831,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-145",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 108,
+      "cy": 393,
+      "r": 5.831,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-146",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 233,
+      "cy": 393,
+      "r": 5.831,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-147",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 254,
+      "cy": 335,
+      "r": 5.831,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-149",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 117,
+      "cy": 165,
+      "r": 5.657,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-150",
+      "type": "centerPost",
+      "layer": "lower",
+      "x": 170,
+      "y": 468,
+      "angle": 0,
+      "triggerRollovers": [
+        "shape-42",
+        "shape-41"
+      ]
+    },
+    {
+      "id": "shape-167",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 275,
+      "cy": 74,
+      "r": 3,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "shape-170",
+      "type": "blockhole",
+      "layer": "lower",
+      "x": 170,
+      "y": 310,
+      "angle": 0,
+      "attack": "lv3",
+      "attractionRadius": 70
+    },
+    {
+      "id": "shape-171",
+      "type": "line",
+      "layer": "lower",
+      "mechanic": "rescue-kicker",
+      "side": "left",
+      "aim": [
+        51,
+        417
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 38.5,
+      "y1": 455,
+      "x2": 63.5,
+      "y2": 455
+    },
+    {
+      "id": "shape-172",
+      "type": "oneway",
+      "layer": "lower",
+      "mechanic": "rescue-return",
+      "side": "left",
+      "x1": 46,
+      "y1": 427,
+      "x2": 62.5,
+      "y2": 438.5,
+      "direction": -1
+    },
+    {
+      "id": "shape-173",
+      "type": "oneway",
+      "layer": "lower",
+      "mechanic": "rescue-return",
+      "side": "right",
+      "x1": 280,
+      "y1": 436,
+      "x2": 296,
+      "y2": 425,
+      "direction": -1
+    },
+    {
+      "id": "shape-174",
+      "type": "line",
+      "layer": "lower",
+      "mechanic": "rescue-kicker",
+      "side": "right",
+      "aim": [
+        288,
+        418
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 275.5,
+      "y1": 456,
+      "x2": 300.5,
+      "y2": 456
+    },
+    {
+      "id": "shape-232",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 322,
+      "y1": 208,
+      "x2": 322,
+      "y2": 191,
+      "attack": "lv2"
+    },
+    {
+      "id": "shape-234",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 40,
+      "y1": 213,
+      "x2": 40,
+      "y2": 197,
+      "attack": "lv2"
+    },
+    {
+      "id": "shape-235",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 319,
+      "y1": 76,
+      "x2": 298,
+      "y2": 70
+    },
+    {
+      "id": "shape-11",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 275,
+      "y1": 440,
+      "x2": 280,
+      "y2": 460,
+      "thickness": 5
+    },
+    {
+      "id": "shape-24",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 105,
+      "y1": 465,
+      "x2": 65,
+      "y2": 440,
+      "thickness": 5
+    },
+    {
+      "id": "shape-27",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 65,
+      "y1": 460,
+      "x2": 65,
+      "y2": 440,
+      "thickness": 5
+    },
+    {
+      "id": "shape-28",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 275,
+      "y1": 440,
+      "x2": 235,
+      "y2": 465,
+      "thickness": 5
+    },
+    {
+      "id": "shape-8",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "layer": "upper",
+      "x1": 177,
+      "y1": 15,
+      "qx": 192,
+      "qy": 200,
+      "x2": 39,
+      "y2": 205
+    },
+    {
+      "id": "shape-10",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "layer": "upper",
+      "x1": 225,
+      "y1": 15,
+      "qx": 196,
+      "qy": 212,
+      "x2": 322,
+      "y2": 199
+    },
+    {
+      "id": "shape-7",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "layer": "upper",
+      "x1": 331,
+      "y1": 210,
+      "qx": 333,
+      "qy": 256,
+      "x2": 280,
+      "y2": 275
+    },
+    {
+      "id": "shape-31",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "layer": "upper",
+      "x1": 31,
+      "y1": 214,
+      "qx": 28,
+      "qy": 264,
+      "x2": 64,
+      "y2": 283
+    },
+    {
+      "id": "shape-33",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "layer": "upper",
+      "x1": 64,
+      "y1": 283,
+      "qx": 98,
+      "qy": 297,
+      "x2": 111,
+      "y2": 340
+    },
+    {
+      "id": "shape-35",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "layer": "upper",
+      "x1": 279,
+      "y1": 275,
+      "qx": 243,
+      "qy": 297,
+      "x2": 231,
+      "y2": 335
+    },
+    {
+      "id": "shape-9",
+      "type": "targets",
+      "layer": "lower",
+      "x": 186,
+      "y": 147,
+      "angle": 28.062,
+      "targetGroup": {
+        "id": "group-shape-9",
+        "members": [
+          "shape-9"
+        ],
+        "action": "boss",
+        "repeatExtraBall": true
+      },
+      "spacing": 16.422
+    },
+    {
+      "id": "shape-37",
+      "type": "targets",
+      "layer": "lower",
+      "x": 122,
+      "y": 79,
+      "angle": 269.605,
+      "targetGroup": {
+        "id": "group-shape-37",
+        "members": [
+          "shape-37"
+        ],
+        "action": "upgrade",
+        "bumpers": [
+          "hs-GameItem34-944",
+          "hs-GameItem35-945",
+          "hs-GameItem36-946"
+        ],
+        "repeatExtraBall": true
+      },
+      "spacing": 17.506
+    },
+    {
+      "id": "shape-38",
+      "type": "targets",
+      "layer": "lower",
+      "x": 120,
+      "y": 196,
+      "angle": -77.508,
+      "targetGroup": {
+        "id": "group-shape-38",
+        "members": [
+          "shape-38"
+        ],
+        "action": "unblock",
+        "blockers": [
+          "shape-99",
+          "shape-98"
+        ],
+        "resetSensors": [
+          "shape-235"
+        ]
+      },
+      "spacing": 18.2
+    },
+    {
+      "id": "shape-40",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 297,
+      "y1": 75,
+      "x2": 318,
+      "y2": 81,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "shape-41",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 81,
+      "y1": 375,
+      "x2": 65,
+      "y2": 375
+    },
+    {
+      "id": "shape-42",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 259,
+      "y1": 374,
+      "x2": 275,
+      "y2": 374,
+      "rolloverGroup": {
+        "id": "rollovers-shape-42",
+        "members": [
+          "shape-42",
+          "shape-41"
+        ],
+        "attack": "none",
+        "attackCount": 1
+      }
+    },
+    {
+      "id": "shape-39",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "upper",
+      "x1": 139,
+      "y1": 1,
+      "x2": 167,
+      "y2": 1
+    },
+    {
+      "id": "shape-43",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "upper",
+      "x1": 189,
+      "y1": 4,
+      "x2": 216,
+      "y2": 4
+    },
+    {
+      "id": "shape-44",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "upper",
+      "x1": 236,
+      "y1": 4,
+      "x2": 278,
+      "y2": 3
+    },
+    {
+      "id": "shape-48",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "visualOnly": true,
+      "layer": "upper",
+      "x1": 39,
+      "y1": 205,
+      "qx": 32,
+      "qy": 207,
+      "x2": 31,
+      "y2": 213
+    },
+    {
+      "id": "shape-45",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "showAboveArt": true,
+      "visualOnly": true,
+      "layer": "upper",
+      "x1": 322,
+      "y1": 199,
+      "qx": 331,
+      "qy": 201,
+      "x2": 331,
+      "y2": 211
+    }
+  ],
+  "lockedLayout": [],
+  "upperLayout": [],
+  "topLayout": [],
+  "templates": {
+    "hole": {
+      "label": "Hole",
+      "width": 12,
+      "height": 12,
+      "source": "現有 capture 半徑 5.5。",
+      "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><circle r=\"3.4\" stroke-dasharray=\"1 1\"/>"
+    },
+    "flag": {
+      "label": "旗幟線",
+      "width": 14,
+      "height": 2,
+      "source": "固定長度 14；可拖曳旋轉控制點或輸入角度。穿越感應線，不阻擋球。",
+      "markup": "<line x1=\"-7\" y1=\"0\" x2=\"7\" y2=\"0\" fill=\"none\" stroke=\"#e6a5ea\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>"
+    },
+    "plunger": {
+      "label": "發球區",
+      "width": 20,
+      "height": 8,
+      "source": "固定大小；上緣中心為推球點，發球方向向上。",
+      "markup": "<rect x=\"-10\" y=\"-4\" width=\"20\" height=\"8\" fill=\"#b78a43\"/><path d=\"M0 3V-3M-2 -1L0 -3L2 -1\" fill=\"none\"/>"
+    },
+    "flipper": {
+      "label": "Flipper",
+      "width": 50.72938359896286,
+      "height": 14.061202228069305,
+      "source": "現有 space-355 軸距與頭尾半徑。",
+      "markup": "<path d=\"M-18.33409068544678 -6.530601114034653 L20.805223887761155 -4.059467911720276 A4.059467911720276 4.059467911720276 0 0 1 20.805223887761155 4.059467911720276 L-18.33409068544678 6.530601114034653 A6.530601114034653 6.530601114034653 0 0 1 -18.33409068544678 -6.530601114034653 Z\" fill=\"#355b73\"/><circle cx=\"-18.33409068544678\" cy=\"0\" r=\"1.8\" fill=\"#79cafa\"/>"
+    },
+    "targets": {
+      "label": "三連 target",
+      "width": 43,
+      "height": 3.000000000000014,
+      "source": "現有 island-target-1～3，保留原尺寸與間距。",
+      "markup": "<polygon points=\"-21.0000,0.6000 -21.0000,-0.6000 -20.9991,-0.6273 -20.9963,-0.6545 -20.9916,-0.6814 -20.9852,-0.7079 -20.9769,-0.7340 -20.9669,-0.7594 -20.9552,-0.7840 -20.9418,-0.8078 -20.9268,-0.8307 -20.9103,-0.8524 -20.8923,-0.8730 -20.8730,-0.8923 -20.8524,-0.9103 -20.8307,-0.9268 -20.8078,-0.9418 -20.7840,-0.9552 -20.7594,-0.9669 -20.7340,-0.9769 -20.7079,-0.9852 -20.6814,-0.9916 -20.6545,-0.9963 -20.6273,-0.9991 -20.6000,-1.0000 -9.4000,-1.0000 -9.3727,-0.9991 -9.3455,-0.9963 -9.3186,-0.9916 -9.2921,-0.9852 -9.2660,-0.9769 -9.2406,-0.9669 -9.2160,-0.9552 -9.1922,-0.9418 -9.1693,-0.9268 -9.1476,-0.9103 -9.1270,-0.8923 -9.1077,-0.8730 -9.0897,-0.8524 -9.0732,-0.8307 -9.0582,-0.8078 -9.0448,-0.7840 -9.0331,-0.7594 -9.0231,-0.7340 -9.0148,-0.7079 -9.0084,-0.6814 -9.0037,-0.6545 -9.0009,-0.6273 -9.0000,-0.6000 -9.0000,0.6000 -9.0009,0.6273 -9.0037,0.6545 -9.0084,0.6814 -9.0148,0.7079 -9.0231,0.7340 -9.0331,0.7594 -9.0448,0.7840 -9.0582,0.8078 -9.0732,0.8307 -9.0897,0.8524 -9.1077,0.8730 -9.1270,0.8923 -9.1476,0.9103 -9.1693,0.9268 -9.1922,0.9418 -9.2160,0.9552 -9.2406,0.9669 -9.2660,0.9769 -9.2921,0.9852 -9.3186,0.9916 -9.3455,0.9963 -9.3727,0.9991 -9.4000,1.0000 -20.6000,1.0000 -20.6273,0.9991 -20.6545,0.9963 -20.6814,0.9916 -20.7079,0.9852 -20.7340,0.9769 -20.7594,0.9669 -20.7840,0.9552 -20.8078,0.9418 -20.8307,0.9268 -20.8524,0.9103 -20.8730,0.8923 -20.8923,0.8730 -20.9103,0.8524 -20.9268,0.8307 -20.9418,0.8078 -20.9552,0.7840 -20.9669,0.7594 -20.9769,0.7340 -20.9852,0.7079 -20.9916,0.6814 -20.9963,0.6545 -20.9991,0.6273 -21.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"9.0000,0.6000 9.0000,-0.6000 9.0009,-0.6273 9.0037,-0.6545 9.0084,-0.6814 9.0148,-0.7079 9.0231,-0.7340 9.0331,-0.7594 9.0448,-0.7840 9.0582,-0.8078 9.0732,-0.8307 9.0897,-0.8524 9.1077,-0.8730 9.1270,-0.8923 9.1476,-0.9103 9.1693,-0.9268 9.1922,-0.9418 9.2160,-0.9552 9.2406,-0.9669 9.2660,-0.9769 9.2921,-0.9852 9.3186,-0.9916 9.3455,-0.9963 9.3727,-0.9991 9.4000,-1.0000 20.6000,-1.0000 20.6273,-0.9991 20.6545,-0.9963 20.6814,-0.9916 20.7079,-0.9852 20.7340,-0.9769 20.7594,-0.9669 20.7840,-0.9552 20.8078,-0.9418 20.8307,-0.9268 20.8524,-0.9103 20.8730,-0.8923 20.8923,-0.8730 20.9103,-0.8524 20.9268,-0.8307 20.9418,-0.8078 20.9552,-0.7840 20.9669,-0.7594 20.9769,-0.7340 20.9852,-0.7079 20.9916,-0.6814 20.9963,-0.6545 20.9991,-0.6273 21.0000,-0.6000 21.0000,0.6000 20.9991,0.6273 20.9963,0.6545 20.9916,0.6814 20.9852,0.7079 20.9769,0.7340 20.9669,0.7594 20.9552,0.7840 20.9418,0.8078 20.9268,0.8307 20.9103,0.8524 20.8923,0.8730 20.8730,0.8923 20.8524,0.9103 20.8307,0.9268 20.8078,0.9418 20.7840,0.9552 20.7594,0.9669 20.7340,0.9769 20.7079,0.9852 20.6814,0.9916 20.6545,0.9963 20.6273,0.9991 20.6000,1.0000 9.4000,1.0000 9.3727,0.9991 9.3455,0.9963 9.3186,0.9916 9.2921,0.9852 9.2660,0.9769 9.2406,0.9669 9.2160,0.9552 9.1922,0.9418 9.1693,0.9268 9.1476,0.9103 9.1270,0.8923 9.1077,0.8730 9.0897,0.8524 9.0732,0.8307 9.0582,0.8078 9.0448,0.7840 9.0331,0.7594 9.0231,0.7340 9.0148,0.7079 9.0084,0.6814 9.0037,0.6545 9.0009,0.6273 9.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "centerPost": {
+      "label": "Center post",
+      "width": 10,
+      "height": 10,
+      "source": "可調半徑的升降救球柱；指定 Rollover 線集滿後升起，依設定碰撞次數收回。",
+      "markup": "<circle r=\"5\" fill=\"#263945\"/><circle r=\"3.3\" fill=\"none\"/><path d=\"M-2 0H2M0 -2V2\"/>"
+    },
+    "blockhole": {
+      "label": "Blockhole（水渦中心）",
+      "width": 12,
+      "height": 12,
+      "source": "水渦專用捕球中心，不走一般 Hole 的進洞流程。",
+      "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><path d=\"M-4 0a4 4 0 1 1 4 4a2.5 2.5 0 1 1 2.5-2.5a1 1 0 1 1-1-1\" fill=\"none\"/>"
+    }
+  }
+}
