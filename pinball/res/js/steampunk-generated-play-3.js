@@ -292,7 +292,8 @@ function unlockArt(o,game){
   if(rule?.action==='upgrade')available=rule.bumpers.some(id=>game.bumperLevel(id)<3);
   if(rule?.action==='blackHole')available=!game.armedHoles.has(rule.hole);
   // Retain bind so the shared target renderer fades a hit target out.
-  return {...o,indicator:undefined,src:available?o.indicator.on:o.indicator.off};
+  const lit=available&&(!fighting||(game.time||0)%1<.5);
+  return {...o,indicator:undefined,src:lit?o.indicator.on:o.indicator.off};
  }
  if(o.src.endsWith('/steampunk-blocker.png')&&game.isBlockerDisabled(o.bind))return {...o,hidden:true};
  if(!o.src.endsWith('/steampunk-unlock-lights-0.png'))return o;

@@ -91,13 +91,13 @@ function paintVonPlan(panel,layout,t){
 }
 function paintRuinsGate(panel,layout,t){
  const timing=layout.timing;
- const progress=ease(t/timing.mistDuration),bg=panel.querySelector('.race-background'),camera=layout.camera,source=layout.background;
- // The exported camera is the destination crop, reached while the fog clears.
+ const progress=ease(t/timing.cameraDuration),bg=panel.querySelector('.race-background'),camera=layout.camera,source=layout.background;
+ // Camera movement finishes independently of the fog fade.
  const x=camera.x*progress,y=camera.y*progress;
  const width=source.width+(camera.width-source.width)*progress;
  const height=source.height+(camera.height-source.height)*progress;
  Object.assign(bg.style,{left:(-x/width*100)+'%',top:(-y/height*100)+'%',width:(source.width/width*100)+'%',height:(source.height/height*100)+'%'});
- panel.querySelector('.ruins-mist').style.opacity=1-ease(t/timing.mistDuration);
+ panel.querySelector('.ruins-mist').style.opacity=Math.pow(1-clamp(t/timing.mistDuration),3);
  panel.querySelector('.race-window').style.opacity=ease(t-timing.panel);
  const item=id=>panel.querySelector(`[data-race-id="${id}"]`);
  item('image-002').style.opacity=ease(t-timing.characters);

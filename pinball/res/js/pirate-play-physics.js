@@ -169,7 +169,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
    drawPixelCrop(ctx,image,lock.src,lock.crop,r.x,r.y,r.width,r.height);
    ctx.font='800 '+r.height*.19+'px Arial, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
    ctx.fillStyle='#fff8d9';ctx.strokeStyle='#111a23';ctx.lineWidth=Math.max(.5,r.height*.025);ctx.lineJoin='round';
-   const label=lock.label??'TERKUNCI',measured=ctx.measureText(label).width;if(measured>r.width*.8)ctx.font='800 '+(r.height*.19*r.width*.8/measured)+'px Arial, sans-serif';
+   const label=lock.label??'Locked',measured=ctx.measureText(label).width;if(measured>r.width*.8)ctx.font='800 '+(r.height*.19*r.width*.8/measured)+'px Arial, sans-serif';
    ctx.strokeText(label,r.x+r.width/2,r.y+r.height*.82);
    ctx.fillText(label,r.x+r.width/2,r.y+r.height*.82);ctx.restore();
   }

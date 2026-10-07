@@ -296,7 +296,7 @@
       "state": "static"
     },
     {
-      "id": "art-launch-hs-GameItem95-970-rod",
+      "id": "art-123",
       "src": "res/img/plunger-rod.png",
       "x": 310,
       "y": 428,
@@ -390,7 +390,7 @@
       "bind": "thickline-003"
     },
     {
-      "id": "art-launch-hs-GameItem95-970-collar",
+      "id": "art-124",
       "src": "res/img/plunger-collar.png",
       "x": 311,
       "y": 420,
@@ -909,7 +909,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-36-1",
+      "bind": "targets-001-1",
       "flipX": true,
       "indicator": {
         "group": "8",
@@ -943,7 +943,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-36-2",
+      "bind": "targets-001-2",
       "flipX": true,
       "indicator": {
         "group": "8",
@@ -977,7 +977,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-36-3",
+      "bind": "targets-001-3",
       "flipX": true,
       "indicator": {
         "group": "8",
@@ -1011,7 +1011,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-9-1"
+      "bind": "targets-002-1"
     },
     {
       "id": "art-033",
@@ -1032,7 +1032,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-9-2"
+      "bind": "targets-002-2"
     },
     {
       "id": "art-034",
@@ -1053,7 +1053,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-9-3"
+      "bind": "targets-002-3"
     },
     {
       "id": "art-035",
@@ -1074,7 +1074,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-37-1",
+      "bind": "targets-003-1",
       "flipX": true,
       "indicator": {
         "group": "9",
@@ -1108,7 +1108,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-37-2",
+      "bind": "targets-003-2",
       "flipX": true,
       "indicator": {
         "group": "9",
@@ -1142,7 +1142,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-37-3",
+      "bind": "targets-003-3",
       "flipX": true,
       "indicator": {
         "group": "9",
@@ -1176,7 +1176,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-38-1",
+      "bind": "targets-004-1",
       "flipX": true,
       "indicator": {
         "group": "10",
@@ -1210,7 +1210,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-38-2",
+      "bind": "targets-004-2",
       "flipX": true,
       "indicator": {
         "group": "10",
@@ -1244,7 +1244,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-38-3",
+      "bind": "targets-004-3",
       "flipX": true,
       "indicator": {
         "group": "10",
