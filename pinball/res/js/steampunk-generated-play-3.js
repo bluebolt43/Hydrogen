@@ -182,7 +182,7 @@ class Controller{
  reset(){this.pendingMultiball=false;this.phase='idle';this.active=false;this.index=this.winner=-1;this.releaseAt=-Infinity;this.frozen=false;this.game.bonusFrozen=false;this.cycleBoss=false;}
  open(){this.phase='open';this.active=true;this.openedAt=this.phaseAt=this.clock;this.index=this.winner=-1;this.cycleBoss=!!this.game.enemyActive;}
  close(){this.active=false;this.phase=this.winner>=0&&!this.cycleBoss?'settled':'idle';}
- event(type,data){if(type==='new-game'){this.multiplier=1;this.reset();}if(type==='ready')this.reset();if(data.id!==this.config.hole)return;if(type==='vortex-activated')this.open();if(type==='vortex-expired'||type==='vortex-deactivated')this.close();if(type==='release')this.releaseAt=this.clock;}
+ event(type,data){if(type==='new-game'){this.multiplier=1;this.reset();}if(type==='ready'&&!this.game.armedHoles?.has(this.config.hole))this.reset();if(data.id!==this.config.hole)return;if(type==='vortex-activated')this.open();if(type==='vortex-expired'||type==='vortex-deactivated')this.close();if(type==='release')this.releaseAt=this.clock;}
  capture(){if(!this.active)this.open();this.cycleBoss=!!this.game.enemyActive;this.phase=this.cycleBoss?'bossflash':'spin';this.phaseAt=this.clock;this.frozen=this.game.bonusFrozen=true;this.index=0;if(!this.cycleBoss){this.target=Math.floor((this.game.random||Math.random)()*12);this.steps=48+this.target;}}
  reward(){const g=this.game,r=this.config.rewards[this.winner];
   if(r.kind==='score')g.scoreHit('steampunk-bonus-reward',r.value,0);
