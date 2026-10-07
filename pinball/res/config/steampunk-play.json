@@ -33,8 +33,8 @@
       "crop": [
         0,
         0,
-        14,
-        14
+        361,
+        368
       ],
       "plane": "background",
       "frames": 1,
@@ -47,7 +47,7 @@
         "on": "res/img/steampunk-rollover-on.png",
         "trigger": {
           "kind": "rollover",
-          "source": "shape-41"
+          "source": "rollover-001"
         },
         "behavior": {
           "mode": "keep"
@@ -66,8 +66,8 @@
       "crop": [
         0,
         0,
-        14,
-        14
+        361,
+        368
       ],
       "plane": "background",
       "frames": 1,
@@ -80,7 +80,7 @@
         "on": "res/img/steampunk-rollover-on.png",
         "trigger": {
           "kind": "rollover",
-          "source": "shape-42"
+          "source": "rollover-002"
         },
         "behavior": {
           "mode": "keep"
@@ -212,7 +212,7 @@
         "on": "res/img/steampunk-sling-left-active.png",
         "trigger": {
           "kind": "rebound",
-          "source": "shape-32"
+          "source": "line-059"
         },
         "behavior": {
           "mode": "once",
@@ -246,7 +246,7 @@
         "on": "res/img/steampunk-sling-right-active.png",
         "trigger": {
           "kind": "rebound",
-          "source": "shape-30"
+          "source": "line-058"
         },
         "behavior": {
           "mode": "once",
@@ -297,7 +297,7 @@
     },
     {
       "id": "art-launch-hs-GameItem95-970-rod",
-      "src": "res/img/steampunk-plunger-rod.png",
+      "src": "res/img/plunger-rod.png",
       "x": 310,
       "y": 428,
       "width": 30,
@@ -307,7 +307,7 @@
       "crop": [
         0,
         0,
-        30,
+        31,
         91
       ],
       "plane": "lower",
@@ -315,7 +315,7 @@
       "frameAxis": "x",
       "state": "plunger",
       "bind": "plunger",
-      "layoutBind": "hs-GameItem95-970",
+      "layoutBind": "plunger-001",
       "layoutAnchor": [
         309.896,
         386.688
@@ -333,8 +333,8 @@
       "crop": [
         0,
         0,
-        14,
-        14
+        361,
+        368
       ],
       "plane": "lower",
       "frames": 1,
@@ -346,14 +346,14 @@
         "on": "res/img/steampunk-rollover-on.png",
         "trigger": {
           "kind": "kickback",
-          "source": "shape-171"
+          "source": "line-060"
         },
         "behavior": {
           "mode": "keep"
         },
         "group": "2"
       },
-      "bind": "shape-27"
+      "bind": "thickline-003"
     },
     {
       "id": "art-098",
@@ -367,8 +367,8 @@
       "crop": [
         0,
         0,
-        14,
-        14
+        361,
+        368
       ],
       "plane": "lower",
       "frames": 1,
@@ -380,18 +380,18 @@
         "on": "res/img/steampunk-rollover-on.png",
         "trigger": {
           "kind": "kickback",
-          "source": "shape-174"
+          "source": "line-061"
         },
         "behavior": {
           "mode": "keep"
         },
         "group": "2"
       },
-      "bind": "shape-27"
+      "bind": "thickline-003"
     },
     {
       "id": "art-launch-hs-GameItem95-970-collar",
-      "src": "res/img/steampunk-plunger-collar.png",
+      "src": "res/img/plunger-collar.png",
       "x": 311,
       "y": 420,
       "width": 50,
@@ -401,7 +401,7 @@
       "crop": [
         0,
         0,
-        50,
+        51,
         38
       ],
       "plane": "lower",
@@ -409,7 +409,7 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "",
-      "layoutBind": "hs-GameItem95-970",
+      "layoutBind": "plunger-001",
       "layoutAnchor": [
         309.896,
         386.688
@@ -443,7 +443,7 @@
         "lv3": "res/img/steampunk-bumper-furnace-level-3.png",
         "trigger": {
           "kind": "level",
-          "source": "hs-GameItem34-944"
+          "source": "circle-001"
         }
       }
     },
@@ -475,7 +475,7 @@
         "lv3": "res/img/steampunk-bumper-furnace-level-3.png",
         "trigger": {
           "kind": "level",
-          "source": "hs-GameItem35-945"
+          "source": "circle-002"
         }
       }
     },
@@ -507,7 +507,7 @@
         "lv3": "res/img/steampunk-bumper-furnace-level-3.png",
         "trigger": {
           "kind": "level",
-          "source": "hs-GameItem36-946"
+          "source": "circle-003"
         }
       }
     },
@@ -530,7 +530,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hs-GameItem1671-972"
+      "bind": "flipper-001"
     },
     {
       "id": "art-005",
@@ -551,7 +551,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hs-GameItem1675-973"
+      "bind": "flipper-002"
     },
     {
       "id": "art-006",
@@ -572,11 +572,11 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hs-GameItem957-974"
+      "bind": "flipper-003"
     },
     {
       "id": "art-085",
-      "src": "res/img/steampunk-steam-tower.png",
+      "src": "res/img/steampunk-steam-tower-off.png",
       "x": 30,
       "y": 193,
       "width": 34,
@@ -595,12 +595,12 @@
       "state": "static",
       "indicator": {
         "group": "1",
-        "off": "res/img/steampunk-steam-tower.png",
+        "off": "res/img/steampunk-steam-tower-off.png",
         "on": "res/img/steampunk-steam-tower-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "sensor",
-          "source": "shape-234"
+          "source": "sensor-002"
         },
         "behavior": {
           "mode": "burst",
@@ -611,7 +611,7 @@
         "extraTriggers": [
           {
             "kind": "hole-capture",
-            "source": "hs-GameItem93-942"
+            "source": "hole-002"
           }
         ]
       }
@@ -628,14 +628,14 @@
       "crop": [
         0,
         0,
-        16,
-        24
+        240,
+        360
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hs-GameItem628-967"
+      "bind": "flag-001"
     },
     {
       "id": "art-015",
@@ -649,14 +649,14 @@
       "crop": [
         0,
         0,
-        16,
-        24
+        240,
+        360
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hs-GameItem630-968"
+      "bind": "flag-002"
     },
     {
       "id": "art-016",
@@ -670,14 +670,14 @@
       "crop": [
         0,
         0,
-        16,
-        24
+        240,
+        360
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hs-GameItem637-969"
+      "bind": "flag-003"
     },
     {
       "id": "art-018",
@@ -705,7 +705,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-17"
+          "source": "line-051"
         }
       }
     },
@@ -735,7 +735,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-18"
+          "source": "line-052"
         }
       }
     },
@@ -765,7 +765,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-19"
+          "source": "line-053"
         }
       }
     },
@@ -795,7 +795,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-20"
+          "source": "line-054"
         }
       },
       "flipY": true
@@ -826,7 +826,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-21"
+          "source": "line-055"
         }
       }
     },
@@ -856,7 +856,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-23"
+          "source": "line-056"
         }
       }
     },
@@ -886,7 +886,7 @@
         "amplitude": 0.6,
         "trigger": {
           "kind": "rebound",
-          "source": "shape-25"
+          "source": "line-057"
         }
       }
     },
@@ -1338,7 +1338,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-27",
+      "bind": "thickline-003",
       "animation": {
         "enabled": false,
         "effect": "shake",
@@ -1369,7 +1369,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-11"
+      "bind": "thickline-001"
     },
     {
       "id": "art-080",
@@ -1415,7 +1415,7 @@
     },
     {
       "id": "art-084",
-      "src": "res/img/steampunk-crystal.png",
+      "src": "res/img/steampunk-crystal-off.png",
       "x": 308,
       "y": 66,
       "width": 32,
@@ -1434,7 +1434,7 @@
       "state": "static",
       "indicator": {
         "defaultState": "off",
-        "off": "res/img/steampunk-crystal.png",
+        "off": "res/img/steampunk-crystal-off.png",
         "on": "res/img/steampunk-crystal-on.png",
         "trigger": {
           "kind": "attack",
@@ -1460,10 +1460,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        31,
-        186,
-        61
+        2,
+        56,
+        359,
+        117
       ],
       "plane": "top",
       "frames": 1,
@@ -1477,7 +1477,7 @@
         "amplitude": 2.5,
         "trigger": {
           "kind": "sensor",
-          "source": "sensor-001"
+          "source": "sensor-004"
         }
       }
     },
@@ -1500,7 +1500,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-99"
+      "bind": "arc-046"
     },
     {
       "id": "art-078",
@@ -1521,7 +1521,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "shape-98"
+      "bind": "arc-045"
     },
     {
       "id": "art-089",
@@ -1529,14 +1529,14 @@
       "x": 242,
       "y": 18,
       "width": 80,
-      "height": 30,
+      "height": 29,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        14,
-        128,
-        48
+        4,
+        79,
+        716,
+        261
       ],
       "plane": "top",
       "frames": 1,
@@ -1551,13 +1551,13 @@
         "amplitude": 2.5,
         "trigger": {
           "kind": "sensor",
-          "source": "sensor-002"
+          "source": "sensor-005"
         }
       }
     },
     {
       "id": "art-092",
-      "src": "res/img/steampunk-steam-tower.png",
+      "src": "res/img/steampunk-steam-tower-off.png",
       "x": 331,
       "y": 184,
       "width": 34,
@@ -1576,12 +1576,12 @@
       "state": "static",
       "indicator": {
         "group": "1",
-        "off": "res/img/steampunk-steam-tower.png",
+        "off": "res/img/steampunk-steam-tower-off.png",
         "on": "res/img/steampunk-steam-tower-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "sensor",
-          "source": "shape-232"
+          "source": "sensor-001"
         },
         "behavior": {
           "mode": "burst",
@@ -1592,7 +1592,7 @@
         "extraTriggers": [
           {
             "kind": "hole-capture",
-            "source": "hs-GameItem499-941"
+            "source": "hole-001"
           }
         ]
       }
@@ -1609,8 +1609,8 @@
       "crop": [
         0,
         0,
-        72,
-        36
+        720,
+        360
       ],
       "plane": "upper",
       "frames": 1,
@@ -1624,7 +1624,7 @@
         "amplitude": 2.5,
         "trigger": {
           "kind": "hole-capture",
-          "source": "hs-GameItem94-943"
+          "source": "hole-003"
         }
       }
     },
@@ -1640,8 +1640,8 @@
       "crop": [
         0,
         0,
-        35,
-        51
+        361,
+        542
       ],
       "plane": "top",
       "frames": 1,
@@ -1786,7 +1786,7 @@
       "frameAxis": "x",
       "state": "plunger",
       "bind": "plunger",
-      "layoutBind": "hs-GameItem95-970",
+      "layoutBind": "plunger-001",
       "layoutAnchor": [
         309.896,
         386.688
@@ -1812,7 +1812,7 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "",
-      "layoutBind": "hs-GameItem95-970",
+      "layoutBind": "plunger-001",
       "layoutAnchor": [
         309.896,
         386.688
@@ -1986,7 +1986,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "center-post",
-      "bind": "shape-150"
+      "bind": "centerPost-001"
     },
     {
       "id": "art-115",
@@ -2180,7 +2180,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "group-shape-38",
+      "bind": "targetGroup-004",
       "indicator": {
         "group": "12",
         "defaultState": "off",
@@ -2213,7 +2213,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "group-shape-36",
+      "bind": "targetGroup-001",
       "indicator": {
         "group": "11",
         "defaultState": "off",
@@ -2232,7 +2232,7 @@
   ],
   "gameplay": {
     "steampunkBonus": {
-      "hole": "shape-170",
+      "hole": "blockhole-001",
       "artId": "art-122",
       "spinSeconds": 5,
       "winFlashSeconds": 1.28,
@@ -2490,8 +2490,8 @@
         ]
       },
       "multiballHoles": [
-        "hs-GameItem93-942",
-        "hs-GameItem499-941"
+        "hole-002",
+        "hole-001"
       ]
     }
   },
@@ -2512,7 +2512,7 @@
   },
   "objects": [
     {
-      "id": "hs-GameItem161-10",
+      "id": "arc-001",
       "type": "arc",
       "layer": "lower",
       "x1": 289.116,
@@ -2523,7 +2523,7 @@
       "y2": 70.749
     },
     {
-      "id": "hs-GameItem1677-15",
+      "id": "arc-002",
       "type": "arc",
       "layer": "lower",
       "x1": 110.794,
@@ -2534,7 +2534,7 @@
       "y2": 439.242
     },
     {
-      "id": "hs-GameItem1677-19",
+      "id": "arc-003",
       "type": "arc",
       "layer": "lower",
       "x1": 116.125,
@@ -2545,7 +2545,7 @@
       "y2": 430.924
     },
     {
-      "id": "hs-GameItem1677-20",
+      "id": "line-001",
       "type": "line",
       "layer": "lower",
       "x1": 118.217,
@@ -2554,7 +2554,7 @@
       "y2": 420.648
     },
     {
-      "id": "hs-GameItem1677-28",
+      "id": "line-002",
       "type": "line",
       "layer": "lower",
       "x1": 103.757,
@@ -2563,7 +2563,7 @@
       "y2": 407.636
     },
     {
-      "id": "hs-GameItem1677-29",
+      "id": "line-003",
       "type": "line",
       "layer": "lower",
       "x1": 85.166,
@@ -2572,7 +2572,7 @@
       "y2": 402.707
     },
     {
-      "id": "hs-GameItem1677-30",
+      "id": "arc-004",
       "type": "arc",
       "layer": "lower",
       "x1": 78.221,
@@ -2583,7 +2583,7 @@
       "y2": 386.609
     },
     {
-      "id": "hs-GameItem1677-31",
+      "id": "line-004",
       "type": "line",
       "layer": "lower",
       "x1": 65.32900000000001,
@@ -2592,7 +2592,7 @@
       "y2": 338.098
     },
     {
-      "id": "hs-GameItem1677-33",
+      "id": "line-005",
       "type": "line",
       "layer": "lower",
       "x1": 62,
@@ -2601,7 +2601,7 @@
       "y2": 412.059
     },
     {
-      "id": "hs-GameItem1677-34",
+      "id": "arc-005",
       "type": "arc",
       "layer": "lower",
       "x1": 61.949,
@@ -2612,7 +2612,7 @@
       "y2": 413.295
     },
     {
-      "id": "hs-GameItem1677-35",
+      "id": "line-006",
       "type": "line",
       "layer": "lower",
       "x1": 66.783,
@@ -2621,7 +2621,7 @@
       "y2": 413.685
     },
     {
-      "id": "hs-GameItem1677-36",
+      "id": "line-007",
       "type": "line",
       "layer": "lower",
       "x1": 69.537,
@@ -2630,7 +2630,7 @@
       "y2": 415.467
     },
     {
-      "id": "hs-GameItem1677-37",
+      "id": "line-008",
       "type": "line",
       "layer": "lower",
       "x1": 74.261,
@@ -2639,7 +2639,7 @@
       "y2": 441.35
     },
     {
-      "id": "hs-GameItem1678-38",
+      "id": "arc-006",
       "type": "arc",
       "layer": "lower",
       "x1": 222.637,
@@ -2650,7 +2650,7 @@
       "y2": 434.325
     },
     {
-      "id": "hs-GameItem1678-41",
+      "id": "arc-007",
       "type": "arc",
       "layer": "lower",
       "x1": 227.517,
@@ -2661,7 +2661,7 @@
       "y2": 440.942
     },
     {
-      "id": "hs-GameItem1678-45",
+      "id": "line-009",
       "type": "line",
       "layer": "lower",
       "x1": 230,
@@ -2670,7 +2670,7 @@
       "y2": 410
     },
     {
-      "id": "hs-GameItem1678-47",
+      "id": "arc-008",
       "type": "arc",
       "layer": "lower",
       "x1": 273.295,
@@ -2681,7 +2681,7 @@
       "y2": 400.047
     },
     {
-      "id": "hs-GameItem1678-55",
+      "id": "arc-009",
       "type": "arc",
       "layer": "lower",
       "x1": 276,
@@ -2692,7 +2692,7 @@
       "y2": 399
     },
     {
-      "id": "hs-GameItem1678-65",
+      "id": "line-010",
       "type": "line",
       "layer": "lower",
       "x1": 269,
@@ -2701,7 +2701,7 @@
       "y2": 431.043
     },
     {
-      "id": "hs-GameItem1685-104",
+      "id": "line-011",
       "type": "line",
       "layer": "lower",
       "x1": 81.936,
@@ -2710,7 +2710,7 @@
       "y2": 385.508
     },
     {
-      "id": "hs-GameItem1685-105",
+      "id": "line-012",
       "type": "line",
       "layer": "lower",
       "x1": 84.583,
@@ -2719,7 +2719,7 @@
       "y2": 400.004
     },
     {
-      "id": "hs-GameItem1685-106",
+      "id": "line-013",
       "type": "line",
       "layer": "lower",
       "x1": 104.831,
@@ -2728,7 +2728,7 @@
       "y2": 393
     },
     {
-      "id": "hs-GameItem1685-110",
+      "id": "line-014",
       "type": "line",
       "layer": "lower",
       "x1": 81.727,
@@ -2737,7 +2737,7 @@
       "y2": 380.066
     },
     {
-      "id": "hs-GameItem1686-114",
+      "id": "line-015",
       "type": "line",
       "layer": "lower",
       "x1": 228,
@@ -2746,7 +2746,7 @@
       "y2": 399.903
     },
     {
-      "id": "hs-GameItem1686-115",
+      "id": "line-016",
       "type": "line",
       "layer": "lower",
       "x1": 236.305,
@@ -2755,7 +2755,7 @@
       "y2": 385.373
     },
     {
-      "id": "hs-GameItem1686-116",
+      "id": "line-017",
       "type": "line",
       "layer": "lower",
       "x1": 256.79499999999996,
@@ -2764,7 +2764,7 @@
       "y2": 380.793
     },
     {
-      "id": "hs-GameItem1686-117",
+      "id": "line-018",
       "type": "line",
       "layer": "lower",
       "x1": 259.127,
@@ -2773,7 +2773,7 @@
       "y2": 336.68100000000004
     },
     {
-      "id": "hs-GameItem45-147",
+      "id": "line-019",
       "type": "line",
       "layer": "lower",
       "x1": 296.055,
@@ -2782,7 +2782,7 @@
       "y2": 470
     },
     {
-      "id": "hs-GameItem46-159",
+      "id": "arc-010",
       "type": "arc",
       "layer": "lower",
       "x1": 296,
@@ -2793,7 +2793,7 @@
       "y2": 278
     },
     {
-      "id": "hs-GameItem47-162",
+      "id": "line-020",
       "type": "line",
       "layer": "lower",
       "x1": 262.369,
@@ -2802,7 +2802,7 @@
       "y2": 1
     },
     {
-      "id": "hs-GameItem47-168",
+      "id": "line-021",
       "type": "line",
       "layer": "lower",
       "x1": 322,
@@ -2811,7 +2811,7 @@
       "y2": 100.809
     },
     {
-      "id": "hs-GameItem47-169",
+      "id": "line-022",
       "type": "line",
       "layer": "lower",
       "x1": 314.652,
@@ -2820,7 +2820,7 @@
       "y2": 203.59199999999998
     },
     {
-      "id": "hs-GameItem47-174",
+      "id": "arc-011",
       "type": "arc",
       "layer": "lower",
       "x1": 321.502,
@@ -2831,7 +2831,7 @@
       "y2": 1
     },
     {
-      "id": "hs-GameItem49-184",
+      "id": "arc-012",
       "type": "arc",
       "layer": "lower",
       "x1": 123,
@@ -2842,7 +2842,7 @@
       "y2": 59.798
     },
     {
-      "id": "hs-GameItem49-186",
+      "id": "arc-013",
       "type": "arc",
       "layer": "lower",
       "x1": 70,
@@ -2853,7 +2853,7 @@
       "y2": 151.756
     },
     {
-      "id": "hs-GameItem49-187",
+      "id": "line-023",
       "type": "line",
       "layer": "lower",
       "x1": 82.926,
@@ -2862,7 +2862,7 @@
       "y2": 218.333
     },
     {
-      "id": "hs-GameItem52-219",
+      "id": "arc-014",
       "type": "arc",
       "layer": "lower",
       "x1": 239.83,
@@ -2873,7 +2873,7 @@
       "y2": 55
     },
     {
-      "id": "hs-GameItem53-232",
+      "id": "arc-015",
       "type": "arc",
       "layer": "lower",
       "x1": 254.24900000000002,
@@ -2884,7 +2884,7 @@
       "y2": 44.915000000000006
     },
     {
-      "id": "hs-GameItem53-233",
+      "id": "arc-016",
       "type": "arc",
       "layer": "lower",
       "x1": 262.117,
@@ -2895,7 +2895,7 @@
       "y2": 46.412000000000006
     },
     {
-      "id": "hs-GameItem53-234",
+      "id": "arc-017",
       "type": "arc",
       "layer": "lower",
       "x1": 272.415,
@@ -2906,7 +2906,7 @@
       "y2": 65.467
     },
     {
-      "id": "hs-GameItem53-235",
+      "id": "arc-018",
       "type": "arc",
       "layer": "lower",
       "x1": 297.766,
@@ -2917,7 +2917,7 @@
       "y2": 58.840999999999994
     },
     {
-      "id": "hs-GameItem53-236",
+      "id": "arc-019",
       "type": "arc",
       "layer": "lower",
       "x1": 299.748,
@@ -2928,7 +2928,7 @@
       "y2": 43.458
     },
     {
-      "id": "hs-GameItem53-237",
+      "id": "arc-020",
       "type": "arc",
       "layer": "lower",
       "x1": 297.349,
@@ -2939,7 +2939,7 @@
       "y2": 26
     },
     {
-      "id": "hs-GameItem54-239",
+      "id": "line-024",
       "type": "line",
       "layer": "lower",
       "x1": 322,
@@ -2948,7 +2948,7 @@
       "y2": 468.5
     },
     {
-      "id": "hs-GameItem56-251",
+      "id": "line-025",
       "type": "line",
       "layer": "upper",
       "x1": 22,
@@ -2957,7 +2957,7 @@
       "y2": 214
     },
     {
-      "id": "hs-GameItem56-256",
+      "id": "arc-021",
       "type": "arc",
       "layer": "upper",
       "x1": 22,
@@ -2968,7 +2968,7 @@
       "y2": 183
     },
     {
-      "id": "hs-GameItem748-300",
+      "id": "arc-022",
       "type": "arc",
       "layer": "lower",
       "x1": 49.093,
@@ -2979,7 +2979,7 @@
       "y2": 57
     },
     {
-      "id": "hs-GameItem748-303",
+      "id": "arc-023",
       "type": "arc",
       "layer": "lower",
       "x1": 44,
@@ -2990,7 +2990,7 @@
       "y2": 25.726
     },
     {
-      "id": "hs-GameItem748-304",
+      "id": "arc-024",
       "type": "arc",
       "layer": "lower",
       "x1": 55.624,
@@ -3001,7 +3001,7 @@
       "y2": 1
     },
     {
-      "id": "hs-GameItem751-321",
+      "id": "line-026",
       "type": "line",
       "layer": "lower",
       "x1": 45,
@@ -3010,7 +3010,7 @@
       "y2": 333.221
     },
     {
-      "id": "hs-GameItem751-322",
+      "id": "arc-025",
       "type": "arc",
       "layer": "lower",
       "x1": 45.51,
@@ -3021,7 +3021,7 @@
       "y2": 292
     },
     {
-      "id": "hs-GameItem752-329",
+      "id": "arc-026",
       "type": "arc",
       "layer": "lower",
       "x1": 277,
@@ -3032,7 +3032,7 @@
       "y2": 351
     },
     {
-      "id": "hs-GameItem752-330",
+      "id": "line-027",
       "type": "line",
       "layer": "lower",
       "x1": 321,
@@ -3041,7 +3041,7 @@
       "y2": 467
     },
     {
-      "id": "hs-GameItem756-337",
+      "id": "line-028",
       "type": "line",
       "layer": "lower",
       "x1": 284.405,
@@ -3050,7 +3050,7 @@
       "y2": 206.834
     },
     {
-      "id": "hs-GameItem756-338",
+      "id": "arc-027",
       "type": "arc",
       "layer": "lower",
       "x1": 292.331,
@@ -3061,7 +3061,7 @@
       "y2": 216.465
     },
     {
-      "id": "hs-GameItem756-339",
+      "id": "line-029",
       "type": "line",
       "layer": "lower",
       "x1": 295.417,
@@ -3070,7 +3070,7 @@
       "y2": 256
     },
     {
-      "id": "hs-GameItem794-415",
+      "id": "line-030",
       "type": "line",
       "layer": "lower",
       "x1": 74,
@@ -3079,7 +3079,7 @@
       "y2": 292
     },
     {
-      "id": "hs-GameItem866-477",
+      "id": "line-031",
       "type": "line",
       "layer": "upper",
       "x1": 295.362,
@@ -3088,7 +3088,7 @@
       "y2": 58
     },
     {
-      "id": "hs-GameItem866-481",
+      "id": "line-032",
       "type": "line",
       "layer": "upper",
       "x1": 323,
@@ -3097,7 +3097,7 @@
       "y2": 81.816
     },
     {
-      "id": "hs-GameItem91-483",
+      "id": "arc-028",
       "type": "arc",
       "layer": "lower",
       "x1": 272.549,
@@ -3108,7 +3108,7 @@
       "y2": 116.751
     },
     {
-      "id": "hs-GameItem91-484",
+      "id": "line-033",
       "type": "line",
       "layer": "lower",
       "x1": 268.651,
@@ -3117,7 +3117,7 @@
       "y2": 148.066
     },
     {
-      "id": "hs-GameItem936-523",
+      "id": "arc-029",
       "type": "arc",
       "layer": "lower",
       "x1": 65.326,
@@ -3128,7 +3128,7 @@
       "y2": 336.31600000000003
     },
     {
-      "id": "hs-GameItem963-530",
+      "id": "arc-030",
       "type": "arc",
       "layer": "upper",
       "x1": 339,
@@ -3139,7 +3139,7 @@
       "y2": 179.062
     },
     {
-      "id": "hs-GameItem966-567",
+      "id": "line-034",
       "type": "line",
       "layer": "lower",
       "x1": 275.752,
@@ -3148,7 +3148,7 @@
       "y2": 380.56
     },
     {
-      "id": "hs-GameItem966-569",
+      "id": "line-035",
       "type": "line",
       "layer": "lower",
       "x1": 278,
@@ -3157,7 +3157,7 @@
       "y2": 337.61699999999996
     },
     {
-      "id": "hs-GameItem966-570",
+      "id": "arc-031",
       "type": "arc",
       "layer": "lower",
       "x1": 277.509,
@@ -3168,7 +3168,7 @@
       "y2": 337.525
     },
     {
-      "id": "hs-GameItem0-595",
+      "id": "line-036",
       "type": "line",
       "layer": "upper",
       "x1": 323.376,
@@ -3177,7 +3177,7 @@
       "y2": 28
     },
     {
-      "id": "hs-GameItem0-597",
+      "id": "arc-032",
       "type": "arc",
       "layer": "upper",
       "x1": 323,
@@ -3188,7 +3188,7 @@
       "y2": -8
     },
     {
-      "id": "hs-GameItem0-601",
+      "id": "line-037",
       "type": "line",
       "layer": "upper",
       "x1": 234,
@@ -3197,7 +3197,7 @@
       "y2": 14
     },
     {
-      "id": "hs-GameItem0-602",
+      "id": "arc-033",
       "type": "arc",
       "layer": "upper",
       "x1": 276,
@@ -3208,7 +3208,7 @@
       "y2": 36
     },
     {
-      "id": "hs-GameItem0-605",
+      "id": "line-038",
       "type": "line",
       "layer": "upper",
       "x1": 300,
@@ -3217,7 +3217,7 @@
       "y2": 57.363
     },
     {
-      "id": "hs-GameItem1-612",
+      "id": "arc-034",
       "type": "arc",
       "layer": "upper",
       "x1": 117.944,
@@ -3228,7 +3228,7 @@
       "y2": 13
     },
     {
-      "id": "hs-GameItem1-614",
+      "id": "line-039",
       "type": "line",
       "layer": "upper",
       "x1": 140,
@@ -3237,7 +3237,7 @@
       "y2": 13
     },
     {
-      "id": "hs-GameItem1-618",
+      "id": "arc-035",
       "type": "arc",
       "layer": "upper",
       "x1": 131.618,
@@ -3248,7 +3248,7 @@
       "y2": -4.911000000000001
     },
     {
-      "id": "hs-GameItem1-619",
+      "id": "arc-036",
       "type": "arc",
       "layer": "upper",
       "x1": 121.214,
@@ -3259,7 +3259,7 @@
       "y2": 54
     },
     {
-      "id": "hs-GameItem135-688",
+      "id": "line-040",
       "type": "line",
       "layer": "upper",
       "x1": 169.292,
@@ -3268,7 +3268,7 @@
       "y2": 108.843
     },
     {
-      "id": "hs-GameItem1730-714",
+      "id": "arc-037",
       "type": "arc",
       "layer": "lower",
       "x1": 118.401,
@@ -3279,7 +3279,7 @@
       "y2": 141
     },
     {
-      "id": "hs-GameItem1730-715",
+      "id": "arc-038",
       "type": "arc",
       "layer": "upper",
       "x1": 99.365,
@@ -3290,7 +3290,7 @@
       "y2": 125.143
     },
     {
-      "id": "hs-GameItem1730-716",
+      "id": "arc-039",
       "type": "arc",
       "layer": "upper",
       "x1": 89.488,
@@ -3301,7 +3301,7 @@
       "y2": 53
     },
     {
-      "id": "hs-GameItem175-732",
+      "id": "line-041",
       "type": "line",
       "layer": "upper",
       "x1": 340,
@@ -3310,7 +3310,7 @@
       "y2": 179
     },
     {
-      "id": "hs-GameItem175-734",
+      "id": "line-042",
       "type": "line",
       "layer": "upper",
       "x1": 322,
@@ -3319,7 +3319,7 @@
       "y2": 211
     },
     {
-      "id": "hs-GameItem2-736",
+      "id": "line-043",
       "type": "line",
       "layer": "upper",
       "x1": 123,
@@ -3328,7 +3328,7 @@
       "y2": 100.785
     },
     {
-      "id": "hs-GameItem2-737",
+      "id": "arc-040",
       "type": "arc",
       "layer": "upper",
       "x1": 110.922,
@@ -3339,7 +3339,7 @@
       "y2": 57.82299999999999
     },
     {
-      "id": "hs-GameItem2-741",
+      "id": "arc-041",
       "type": "arc",
       "layer": "lower",
       "x1": 81.88,
@@ -3350,7 +3350,7 @@
       "y2": 109.904
     },
     {
-      "id": "hs-GameItem2-742",
+      "id": "arc-042",
       "type": "arc",
       "layer": "lower",
       "x1": 83.344,
@@ -3361,7 +3361,7 @@
       "y2": 141
     },
     {
-      "id": "hs-GameItem499-941",
+      "id": "hole-001",
       "type": "hole",
       "layer": "upper",
       "x": 331.042,
@@ -3369,7 +3369,7 @@
       "angle": 0
     },
     {
-      "id": "hs-GameItem93-942",
+      "id": "hole-002",
       "type": "hole",
       "layer": "upper",
       "x": 30.04,
@@ -3377,7 +3377,7 @@
       "angle": 0
     },
     {
-      "id": "hs-GameItem94-943",
+      "id": "hole-003",
       "type": "hole",
       "layer": "lower",
       "x": 264.276,
@@ -3388,7 +3388,7 @@
       "attack": "lv1"
     },
     {
-      "id": "hs-GameItem34-944",
+      "id": "circle-001",
       "type": "circle",
       "layer": "lower",
       "cx": 172.183,
@@ -3396,7 +3396,7 @@
       "r": 13.803
     },
     {
-      "id": "hs-GameItem35-945",
+      "id": "circle-002",
       "type": "circle",
       "layer": "lower",
       "cx": 228.967,
@@ -3404,7 +3404,7 @@
       "r": 13.803
     },
     {
-      "id": "hs-GameItem36-946",
+      "id": "circle-003",
       "type": "circle",
       "layer": "lower",
       "cx": 181.335,
@@ -3412,7 +3412,7 @@
       "r": 13.803
     },
     {
-      "id": "hs-GameItem628-967",
+      "id": "flag-001",
       "type": "flag",
       "layer": "lower",
       "x1": 286.135,
@@ -3421,7 +3421,7 @@
       "y2": 103.254
     },
     {
-      "id": "hs-GameItem630-968",
+      "id": "flag-002",
       "type": "flag",
       "layer": "lower",
       "x1": 53.771,
@@ -3430,7 +3430,7 @@
       "y2": 131
     },
     {
-      "id": "hs-GameItem637-969",
+      "id": "flag-003",
       "type": "flag",
       "layer": "lower",
       "x1": 242,
@@ -3439,7 +3439,7 @@
       "y2": 125.00200000000001
     },
     {
-      "id": "hs-GameItem95-970",
+      "id": "plunger-001",
       "type": "plunger",
       "layer": "lower",
       "x": 309.896,
@@ -3447,7 +3447,7 @@
       "angle": 0
     },
     {
-      "id": "hs-GameItem1671-972",
+      "id": "flipper-001",
       "type": "flipper",
       "layer": "lower",
       "x": 205.222,
@@ -3455,7 +3455,7 @@
       "angle": -211.5
     },
     {
-      "id": "hs-GameItem1675-973",
+      "id": "flipper-002",
       "type": "flipper",
       "layer": "lower",
       "x": 135.755,
@@ -3463,7 +3463,7 @@
       "angle": 31.5
     },
     {
-      "id": "hs-GameItem957-974",
+      "id": "flipper-003",
       "type": "flipper",
       "layer": "lower",
       "x": 281.871,
@@ -3471,7 +3471,7 @@
       "angle": 111
     },
     {
-      "id": "shape-26",
+      "id": "line-044",
       "type": "line",
       "layer": "upper",
       "x1": 40,
@@ -3480,7 +3480,7 @@
       "y2": 182.451
     },
     {
-      "id": "shape-29",
+      "id": "oneway-001",
       "type": "oneway",
       "layer": "lower",
       "x1": 277,
@@ -3490,7 +3490,7 @@
       "direction": 1
     },
     {
-      "id": "shape-52",
+      "id": "hole-004",
       "type": "hole",
       "layer": "upper",
       "x": 310,
@@ -3501,7 +3501,7 @@
       "attack": "lv4"
     },
     {
-      "id": "shape-53",
+      "id": "oneway-002",
       "type": "oneway",
       "layer": "upper",
       "x1": 322,
@@ -3511,7 +3511,7 @@
       "direction": 1
     },
     {
-      "id": "shape-55",
+      "id": "oneway-003",
       "type": "oneway",
       "layer": "upper",
       "x1": 21,
@@ -3521,7 +3521,7 @@
       "direction": 1
     },
     {
-      "id": "shape-89",
+      "id": "arc-043",
       "type": "arc",
       "layer": "upper",
       "x1": 168,
@@ -3532,7 +3532,7 @@
       "y2": 97
     },
     {
-      "id": "shape-92",
+      "id": "arc-044",
       "type": "arc",
       "layer": "upper",
       "x1": 118,
@@ -3543,7 +3543,7 @@
       "y2": 59
     },
     {
-      "id": "shape-96",
+      "id": "line-045",
       "type": "line",
       "layer": "upper",
       "x1": 132,
@@ -3552,7 +3552,7 @@
       "y2": -8
     },
     {
-      "id": "shape-98",
+      "id": "arc-045",
       "type": "arc",
       "layer": "upper",
       "x1": 212,
@@ -3563,7 +3563,7 @@
       "y2": 15
     },
     {
-      "id": "shape-99",
+      "id": "arc-046",
       "type": "arc",
       "layer": "upper",
       "x1": 164,
@@ -3574,7 +3574,7 @@
       "y2": 15
     },
     {
-      "id": "shape-105",
+      "id": "line-046",
       "type": "line",
       "layer": "upper",
       "x1": 186,
@@ -3583,7 +3583,7 @@
       "y2": 14
     },
     {
-      "id": "shape-2",
+      "id": "oneway-004",
       "type": "oneway",
       "layer": "lower",
       "x1": 120,
@@ -3597,7 +3597,7 @@
       "bidirectional": true
     },
     {
-      "id": "shape-4",
+      "id": "oneway-005",
       "type": "oneway",
       "layer": "upper",
       "x1": 101,
@@ -3611,7 +3611,7 @@
       "bidirectional": false
     },
     {
-      "id": "shape-5",
+      "id": "oneway-006",
       "type": "oneway",
       "layer": "upper",
       "x1": 220,
@@ -3625,7 +3625,7 @@
       "bidirectional": false
     },
     {
-      "id": "shape-6",
+      "id": "line-047",
       "type": "line",
       "layer": "lower",
       "x1": 74,
@@ -3634,7 +3634,7 @@
       "y2": 128
     },
     {
-      "id": "shape-13",
+      "id": "line-048",
       "type": "line",
       "layer": "lower",
       "x1": 166,
@@ -3643,7 +3643,7 @@
       "y2": 155
     },
     {
-      "id": "shape-14",
+      "id": "line-049",
       "type": "line",
       "layer": "lower",
       "x1": 110,
@@ -3652,7 +3652,7 @@
       "y2": 171
     },
     {
-      "id": "shape-15",
+      "id": "line-050",
       "type": "line",
       "layer": "lower",
       "x1": 118,
@@ -3661,7 +3661,7 @@
       "y2": 55
     },
     {
-      "id": "shape-17",
+      "id": "line-051",
       "type": "line",
       "layer": "lower",
       "x1": 130,
@@ -3671,7 +3671,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-18",
+      "id": "line-052",
       "type": "line",
       "layer": "lower",
       "x1": 234,
@@ -3681,7 +3681,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-19",
+      "id": "line-053",
       "type": "line",
       "layer": "lower",
       "x1": 238,
@@ -3691,7 +3691,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-20",
+      "id": "line-054",
       "type": "line",
       "layer": "lower",
       "x1": 227,
@@ -3701,7 +3701,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-21",
+      "id": "line-055",
       "type": "line",
       "layer": "lower",
       "x1": 200,
@@ -3711,7 +3711,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-23",
+      "id": "line-056",
       "type": "line",
       "layer": "lower",
       "x1": 288,
@@ -3721,7 +3721,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-25",
+      "id": "line-057",
       "type": "line",
       "layer": "lower",
       "x1": 128,
@@ -3731,7 +3731,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-30",
+      "id": "line-058",
       "type": "line",
       "layer": "lower",
       "x1": 227,
@@ -3741,7 +3741,7 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-32",
+      "id": "line-059",
       "type": "line",
       "layer": "lower",
       "x1": 114,
@@ -3751,23 +3751,23 @@
       "mechanic": "active-rebound"
     },
     {
-      "id": "shape-36",
+      "id": "targets-001",
       "type": "targets",
       "layer": "lower",
       "x": 77,
       "y": 262,
       "angle": -86.582,
       "targetGroup": {
-        "id": "group-shape-36",
+        "id": "targetGroup-001",
         "members": [
-          "shape-36"
+          "targets-001"
         ],
         "action": "blackHole",
-        "hole": "shape-170"
+        "hole": "blockhole-001"
       }
     },
     {
-      "id": "shape-118",
+      "id": "circle-004",
       "type": "circle",
       "layer": "lower",
       "cx": 230,
@@ -3776,7 +3776,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-122",
+      "id": "circle-005",
       "type": "circle",
       "layer": "lower",
       "cx": 230,
@@ -3785,7 +3785,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-124",
+      "id": "circle-006",
       "type": "circle",
       "layer": "lower",
       "cx": 266,
@@ -3794,7 +3794,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-125",
+      "id": "circle-007",
       "type": "circle",
       "layer": "lower",
       "cx": 235,
@@ -3803,7 +3803,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-126",
+      "id": "circle-008",
       "type": "circle",
       "layer": "lower",
       "cx": 273,
@@ -3812,7 +3812,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-127",
+      "id": "circle-009",
       "type": "circle",
       "layer": "lower",
       "cx": 213,
@@ -3821,7 +3821,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-128",
+      "id": "circle-010",
       "type": "circle",
       "layer": "lower",
       "cx": 286,
@@ -3830,7 +3830,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-129",
+      "id": "circle-011",
       "type": "circle",
       "layer": "lower",
       "cx": 167,
@@ -3839,7 +3839,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-130",
+      "id": "circle-012",
       "type": "circle",
       "layer": "lower",
       "cx": 209,
@@ -3848,7 +3848,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-131",
+      "id": "circle-013",
       "type": "circle",
       "layer": "lower",
       "cx": 196,
@@ -3857,7 +3857,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-132",
+      "id": "circle-014",
       "type": "circle",
       "layer": "lower",
       "cx": 120,
@@ -3866,7 +3866,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-133",
+      "id": "circle-015",
       "type": "circle",
       "layer": "lower",
       "cx": 109,
@@ -3875,7 +3875,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-134",
+      "id": "circle-016",
       "type": "circle",
       "layer": "lower",
       "cx": 105,
@@ -3884,7 +3884,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-135",
+      "id": "circle-017",
       "type": "circle",
       "layer": "lower",
       "cx": 124,
@@ -3893,7 +3893,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-136",
+      "id": "circle-018",
       "type": "circle",
       "layer": "lower",
       "cx": 262,
@@ -3902,7 +3902,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-137",
+      "id": "circle-019",
       "type": "circle",
       "layer": "lower",
       "cx": 236,
@@ -3911,7 +3911,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-138",
+      "id": "circle-020",
       "type": "circle",
       "layer": "lower",
       "cx": 252,
@@ -3920,7 +3920,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-139",
+      "id": "circle-021",
       "type": "circle",
       "layer": "lower",
       "cx": 112,
@@ -3929,7 +3929,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-140",
+      "id": "circle-022",
       "type": "circle",
       "layer": "lower",
       "cx": 126,
@@ -3938,7 +3938,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-143",
+      "id": "circle-023",
       "type": "circle",
       "layer": "lower",
       "cx": 88,
@@ -3947,7 +3947,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-145",
+      "id": "circle-024",
       "type": "circle",
       "layer": "lower",
       "cx": 108,
@@ -3956,7 +3956,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-146",
+      "id": "circle-025",
       "type": "circle",
       "layer": "lower",
       "cx": 233,
@@ -3965,7 +3965,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-147",
+      "id": "circle-026",
       "type": "circle",
       "layer": "lower",
       "cx": 254,
@@ -3974,7 +3974,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-149",
+      "id": "circle-027",
       "type": "circle",
       "layer": "lower",
       "cx": 117,
@@ -3983,19 +3983,19 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-150",
+      "id": "centerPost-001",
       "type": "centerPost",
       "layer": "lower",
       "x": 170,
       "y": 468,
       "angle": 0,
       "triggerRollovers": [
-        "shape-42",
-        "shape-41"
+        "rollover-002",
+        "rollover-001"
       ]
     },
     {
-      "id": "shape-167",
+      "id": "circle-028",
       "type": "circle",
       "layer": "lower",
       "cx": 275,
@@ -4004,7 +4004,7 @@
       "mechanic": "solid-circle"
     },
     {
-      "id": "shape-170",
+      "id": "blockhole-001",
       "type": "blockhole",
       "layer": "lower",
       "x": 170,
@@ -4014,7 +4014,7 @@
       "attack": "lv3"
     },
     {
-      "id": "shape-171",
+      "id": "line-060",
       "type": "line",
       "layer": "lower",
       "mechanic": "rescue-kicker",
@@ -4034,7 +4034,7 @@
       "y2": 455
     },
     {
-      "id": "shape-172",
+      "id": "oneway-007",
       "type": "oneway",
       "layer": "lower",
       "mechanic": "rescue-return",
@@ -4046,7 +4046,7 @@
       "direction": -1
     },
     {
-      "id": "shape-173",
+      "id": "oneway-008",
       "type": "oneway",
       "layer": "lower",
       "mechanic": "rescue-return",
@@ -4058,7 +4058,7 @@
       "direction": -1
     },
     {
-      "id": "shape-174",
+      "id": "line-061",
       "type": "line",
       "layer": "lower",
       "mechanic": "rescue-kicker",
@@ -4078,7 +4078,7 @@
       "y2": 456
     },
     {
-      "id": "shape-232",
+      "id": "sensor-001",
       "type": "sensor",
       "layer": "upper",
       "x1": 322,
@@ -4088,7 +4088,7 @@
       "attack": "lv2"
     },
     {
-      "id": "shape-234",
+      "id": "sensor-002",
       "type": "sensor",
       "layer": "upper",
       "x1": 40,
@@ -4098,7 +4098,7 @@
       "attack": "lv2"
     },
     {
-      "id": "shape-235",
+      "id": "sensor-003",
       "type": "sensor",
       "layer": "upper",
       "x1": 319,
@@ -4107,17 +4107,17 @@
       "y2": 70
     },
     {
-      "id": "shape-11",
+      "id": "thickline-001",
       "type": "thickline",
-      "layer": "lower",
       "x1": 275,
       "y1": 440,
       "x2": 280,
       "y2": 460,
-      "thickness": 5
+      "thickness": 5,
+      "layer": "lower"
     },
     {
-      "id": "shape-24",
+      "id": "thickline-002",
       "type": "thickline",
       "layer": "lower",
       "x1": 105,
@@ -4127,7 +4127,7 @@
       "thickness": 5
     },
     {
-      "id": "shape-27",
+      "id": "thickline-003",
       "type": "thickline",
       "layer": "lower",
       "x1": 65,
@@ -4137,7 +4137,7 @@
       "thickness": 5
     },
     {
-      "id": "shape-28",
+      "id": "thickline-004",
       "type": "thickline",
       "layer": "lower",
       "x1": 275,
@@ -4147,7 +4147,7 @@
       "thickness": 5
     },
     {
-      "id": "shape-8",
+      "id": "arc-047",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4161,7 +4161,7 @@
       "y2": 205
     },
     {
-      "id": "shape-10",
+      "id": "arc-048",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4175,7 +4175,7 @@
       "y2": 199
     },
     {
-      "id": "shape-7",
+      "id": "arc-049",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4189,7 +4189,7 @@
       "y2": 275
     },
     {
-      "id": "shape-31",
+      "id": "arc-050",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4203,7 +4203,7 @@
       "y2": 283
     },
     {
-      "id": "shape-33",
+      "id": "arc-051",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4217,7 +4217,7 @@
       "y2": 340
     },
     {
-      "id": "shape-35",
+      "id": "arc-052",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4231,16 +4231,16 @@
       "y2": 335
     },
     {
-      "id": "shape-9",
+      "id": "targets-002",
       "type": "targets",
       "layer": "lower",
       "x": 186,
       "y": 147,
       "angle": 28.062,
       "targetGroup": {
-        "id": "group-shape-9",
+        "id": "targetGroup-002",
         "members": [
-          "shape-9"
+          "targets-002"
         ],
         "action": "boss",
         "repeatExtraBall": true
@@ -4248,52 +4248,52 @@
       "spacing": 16.422
     },
     {
-      "id": "shape-37",
+      "id": "targets-003",
       "type": "targets",
       "layer": "lower",
       "x": 122,
       "y": 79,
       "angle": 269.605,
       "targetGroup": {
-        "id": "group-shape-37",
+        "id": "targetGroup-003",
         "members": [
-          "shape-37"
+          "targets-003"
         ],
         "action": "upgrade",
         "bumpers": [
-          "hs-GameItem34-944",
-          "hs-GameItem35-945",
-          "hs-GameItem36-946"
+          "circle-001",
+          "circle-002",
+          "circle-003"
         ],
         "repeatExtraBall": true
       },
       "spacing": 17.506
     },
     {
-      "id": "shape-38",
+      "id": "targets-004",
       "type": "targets",
       "layer": "lower",
       "x": 120,
       "y": 196,
       "angle": -77.508,
       "targetGroup": {
-        "id": "group-shape-38",
+        "id": "targetGroup-004",
         "members": [
-          "shape-38"
+          "targets-004"
         ],
         "action": "unblock",
         "blockers": [
-          "shape-99",
-          "shape-98"
+          "arc-046",
+          "arc-045"
         ],
         "resetSensors": [
-          "shape-235"
+          "sensor-003"
         ]
       },
       "spacing": 18.2
     },
     {
-      "id": "shape-40",
+      "id": "oneway-009",
       "type": "oneway",
       "layer": "upper",
       "x1": 297,
@@ -4307,7 +4307,7 @@
       "bidirectional": false
     },
     {
-      "id": "shape-41",
+      "id": "rollover-001",
       "type": "rollover",
       "layer": "lower",
       "x1": 81,
@@ -4316,7 +4316,7 @@
       "y2": 375
     },
     {
-      "id": "shape-42",
+      "id": "rollover-002",
       "type": "rollover",
       "layer": "lower",
       "x1": 259,
@@ -4324,17 +4324,17 @@
       "x2": 275,
       "y2": 374,
       "rolloverGroup": {
-        "id": "rollovers-shape-42",
+        "id": "rolloverGroup-001",
         "members": [
-          "shape-42",
-          "shape-41"
+          "rollover-002",
+          "rollover-001"
         ],
         "attack": "none",
         "attackCount": 1
       }
     },
     {
-      "id": "shape-39",
+      "id": "line-062",
       "type": "line",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4345,7 +4345,7 @@
       "y2": 1
     },
     {
-      "id": "shape-43",
+      "id": "line-063",
       "type": "line",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4356,7 +4356,7 @@
       "y2": 4
     },
     {
-      "id": "shape-44",
+      "id": "line-064",
       "type": "line",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4367,7 +4367,7 @@
       "y2": 3
     },
     {
-      "id": "shape-48",
+      "id": "arc-053",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4382,7 +4382,7 @@
       "y2": 213
     },
     {
-      "id": "shape-45",
+      "id": "arc-054",
       "type": "arc",
       "mechanic": "guided-rail",
       "trackWidth": 18,
@@ -4397,7 +4397,7 @@
       "y2": 211
     },
     {
-      "id": "sensor-001",
+      "id": "sensor-004",
       "type": "sensor",
       "layer": "upper",
       "x1": 168,
@@ -4406,7 +4406,7 @@
       "y2": 16
     },
     {
-      "id": "sensor-002",
+      "id": "sensor-005",
       "type": "sensor",
       "layer": "upper",
       "x1": 216,
@@ -4415,7 +4415,7 @@
       "y2": 15
     },
     {
-      "id": "line-001",
+      "id": "line-065",
       "type": "line",
       "layer": "lower",
       "x1": 123,
@@ -4424,7 +4424,7 @@
       "y2": 100.785
     },
     {
-      "id": "thickline-001",
+      "id": "thickline-005",
       "type": "thickline",
       "layer": "lower",
       "x1": 273,

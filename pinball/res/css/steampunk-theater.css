@@ -17,3 +17,6 @@
 .stage[data-level='8'] .racer:first-child .hp{position:absolute;left:50%;top:-13cqw;transform:translateX(-50%);z-index:1}
 .stage[data-level='8'][data-phase='guards'] .racer:first-child .hp{visibility:hidden}
 .stage[data-level='8'] .racer:first-child.target img{filter:drop-shadow(0 5px 3px #0004)}
+
+.story-defeat .curtain,.story-defeat .hp{display:none!important}
+.story-defeat #racers{pointer-events:none}

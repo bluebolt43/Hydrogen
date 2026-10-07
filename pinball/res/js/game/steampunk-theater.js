@@ -4,6 +4,7 @@ TheaterFrame.mountControls({title:'蒸氣龐克紙雕劇場',attacks:{lv1:'機�
 const $=id=>document.getElementById(id),stage=$('stage'),effects=$('effects');
 const embedded=new URLSearchParams(location.search).has('embed');
 document.documentElement.classList.toggle('embed',embedded);
+document.documentElement.classList.toggle('story-defeat',new URLSearchParams(location.search).has('story-defeat'));
 const frame=TheaterFrame.create(stage,animate);
 const soundBank=embedded?null:new PinballSound(Object.fromEntries(Object.entries({...PirateMap.sounds,...SteampunkSounds}).map(([name,clip])=>[name,{...clip,src:new URL('../'+clip.src,document.baseURI).href}])));
 if(soundBank)for(const event of ['pointerdown','keydown'])addEventListener(event,()=>soundBank.unlock(),{capture:true});
@@ -126,7 +127,7 @@ try{
 function pause(value){soundBank?.setPaused(value);paused=value;stage.classList.toggle('paused',value);for(const a of running)value?a.pause():a.play();$('water').textContent=value?'播放動態':'暫停動態';$('water').setAttribute('aria-pressed',String(value));draw();}
 document.querySelectorAll('[data-attack]').forEach(b=>b.onclick=()=>attack(b.dataset.attack).catch(e=>{$('status').textContent=e.message;}));$('next-state').onclick=()=>enter();$('water').onclick=()=>pause(!paused);$('height').oninput=e=>stage.style.aspectRatio=100/Number(e.target.value);
 $('enemy-type').replaceChildren(...levels.map((config,i)=>{const option=document.createElement('option');option.value=String(i+1);option.textContent=`Boss ${i+1} · ${config.name}`;return option;}));
-async function choose(next,skipWarning=false){if(!Number.isInteger(next)||!levels[next-1])throw Error('Steampunk 尚未建立此關卡');level=next;setBackground(levels[level-1].background||0);await enter(skipWarning);}
+async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Steampunk 尚未建立此關卡');level=next;setBackground(levels[level-1].background||0);if(background){const image=stage.querySelector('.background');image.src=background;await image.decode();}await enter(skipWarning);}
 $('enemy-type').onchange=e=>choose(Number(e.target.value));
 $('next-level').onclick=()=>choose(level+1);
 async function advanceGodPunishment(){
@@ -192,7 +193,32 @@ TheaterFrame.connect({stage,ready,
   return {hearts:{x:(x-s.left)/s.width,y:(y-s.top)/s.height,w:(Math.max(...rs.map(r=>r.right))-x)/s.width,h:(Math.max(...rs.map(r=>r.bottom))-y)/s.height}};
  },
  async reset(){await frame.curtains(true);level=1;reset();$('racers').hidden=true;},
- async enemy(data){await choose(data.mode==='boss'?data.stage:data.mode==='free'?1+Math.floor(Math.random()*levels.length):level,data.skipWarning);},
+ async enemy(data){
+  if(data.attackDefeat){
+   level=data.stage;reset();target=-1;busy=true;
+   const background=stage.querySelector('.background');if(data.background)background.src=data.background;
+   await Promise.all([background.decode(),...[...$('racers').children].map(r=>r.querySelector(':scope > img').decode())]);
+   $('racers').hidden=false;draw();
+   await animate($('racers'),[{opacity:1},{opacity:1}],1200);
+   // Story finale: one electric wave destroys all three ships; gameplay HP is unchanged.
+   hp=hp.map(()=>1);busy=false;
+   await attack(data.attackDefeat);return;
+  }
+
+  if(data.defeatOnly){
+   level=data.stage;reset();busy=true;target=-1;
+   const background=stage.querySelector('.background');if(data.background)background.src=data.background;
+   const victims=level===7?hp.map((_,i)=>i):[0];
+   for(const i of victims){hp[i]=0;updateDamage(i);}draw();
+   await Promise.all([background.decode(),...victims.map(i=>$('racers').children[i].querySelector(':scope > img').decode())]);
+   $('racers').hidden=false;
+   await animate($('racers'),[{opacity:1},{opacity:1}],700);
+   sound('explosion');
+   await Promise.all(victims.map(async i=>{await explode(positions[i],42);await exitEnemy(i);}));
+   busy=false;return;
+  }
+  await choose(data.mode==='boss'?data.stage:data.mode==='free'?1+Math.floor(Math.random()*levels.length):level,data.skipWarning,data.background);
+ },
  async attack(command){const kind={ball:'lv1',barrel:'lv2',airdrop:'lv3',kraken:'lv4'}[command]||command;if(attacks[kind])await attack(kind);},
  state
 });

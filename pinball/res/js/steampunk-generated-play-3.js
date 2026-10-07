@@ -263,7 +263,7 @@ function pose(o,time,launchAt,resetAt=null){
 }
 function missionArt(o,game){
  if(o.src?.endsWith('/steampunk-mission-arrow-off.png')){
-  const attack=o.indicator?.trigger?.kind==='enemy-active',unlock=o.bind==='group-shape-38';
+  const attack=o.indicator?.trigger?.kind==='enemy-active',unlock=o.bind==='targetGroup-004';
   if(attack||unlock){
    const rule=game.configuredGroups?.find(r=>r.id===o.bind);
    const available=!!game.enemyActive&&!game.enemyIntroPending&&(!unlock||(!!rule&&rule.unlocked<rule.blockers.length))&&!(rule?.action==='blackHole'&&game.armedHoles?.has(rule.hole));
@@ -296,7 +296,7 @@ function unlockArt(o,game){
  }
  if(o.src.endsWith('/steampunk-blocker.png')&&game.isBlockerDisabled(o.bind))return {...o,hidden:true};
  if(!o.src.endsWith('/steampunk-unlock-lights-0.png'))return o;
- const rule=game.configuredGroups?.find(r=>r.id==='group-shape-38');
+ const rule=game.configuredGroups?.find(r=>r.id==='targetGroup-004');
  const lights=typeof module!=='undefined'&&module.exports?require('../indicator-lights.js'):root.IndicatorLights;
  if(o.indicator?.group&&lights.attractLight(game,o)!==null)return o;
  const count=Math.max(0,Math.min(2,rule?.unlocked||0));
@@ -306,8 +306,8 @@ class Renderer extends Art.Renderer{
  constructor(base,map){super(base,map);this.launchAt=null;this.resetAt=null;}
  onEvent(e){
   if(e.type==='new-game'){this.launchAt=null;this.resetAt=null;}
-  if(e.type==='blocker-unlocked'&&e.id==='group-shape-38'&&e.total>0&&e.count===e.total){this.launchAt=e.time;this.resetAt=null;}
-  if(e.type==='blockers-reset'&&e.id==='group-shape-38')this.resetAt=e.time;
+  if(e.type==='blocker-unlocked'&&e.id==='targetGroup-004'&&e.total>0&&e.count===e.total){this.launchAt=e.time;this.resetAt=null;}
+  if(e.type==='blockers-reset'&&e.id==='targetGroup-004')this.resetAt=e.time;
  }
  draw(ctx,items,plane,game){for(const o of items){if(o.id===game?.bonus?.config.artId){if(!o.hidden&&o.plane===plane)game.bonus.draw(ctx,o,this);}else this.drawItems(ctx,[o],plane,game);}}
  drawItems(ctx,items,plane,game){super.draw(ctx,game?items.map(o=>pose(missionArt(unlockArt(o,game),game),game.time,this.launchAt,this.resetAt)):items,plane,game);}
