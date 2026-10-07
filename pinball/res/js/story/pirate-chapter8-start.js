@@ -1,9 +1,9 @@
 const ch8Dialogue=[
   {speaker:'officer',text:'✋'},
-  {speaker:'main',image:'../img/kraken-normal-v1.png',label:'章魚'},
-  {speaker:'main',image:'../img/kraken-normal-v1.png',cross:true,label:'章魚禁止'},
-  {speaker:'main',image:'../img/stage8-2-treasure.png',label:'財寶'},
-  {speaker:'officer',image:'../img/stage8-2-queen.png',label:'女王剪影'},
+  {speaker:'main',image:'../img/pirate-kraken-normal.png',label:'章魚'},
+  {speaker:'main',image:'../img/pirate-kraken-normal.png',cross:true,label:'章魚禁止'},
+  {speaker:'main',image:'../img/pirate-story-treasure-chest.png',label:'財寶'},
+  {speaker:'officer',image:'../img/pirate-story-queen-silhouette.png',label:'女王剪影'},
   {speaker:'officer',text:'🤌'}, {speaker:'officer',text:'50%'},
   {speaker:'main',text:'💢'}
 ];
@@ -58,9 +58,9 @@ function renderCh8(ms){
     speech.setAttribute('aria-label',`${officer?'軍官':'主角'}：${line.label||line.text}`);
     if(line.image){
       const imageBySource={
-        '../img/kraken-normal-v1.png':kraken,
-        '../img/stage8-2-treasure.png':treasure,
-        '../img/stage8-2-queen.png':queen
+        '../img/pirate-kraken-normal.png':kraken,
+        '../img/pirate-story-treasure-chest.png':treasure,
+        '../img/pirate-story-queen-silhouette.png':queen
       };
       imageBySource[line.image].hidden=false;
       cross.hidden=!line.cross;

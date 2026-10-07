@@ -1,0 +1,19 @@
+.background{position:absolute;width:100%;height:100%;object-fit:cover;object-position:center 62%}#racers,#effects{position:absolute;inset:0}.racer{position:absolute;width:24%;border:0;padding:0;background:transparent;cursor:pointer;transform:translate(-50%,-50%);animation:float 3s ease-in-out infinite alternate}.racer img{display:block;width:100%;filter:drop-shadow(0 5px 3px #0004)}.racer.target img{filter:drop-shadow(0 0 4px #fff3a4)}.racer:focus-visible{outline:2px solid white}.hp{display:inline-block;background:#17232acd;color:#ffe9ab;border-radius:12px;padding:2px 9px;font:14px system-ui;margin-bottom:4px}.clouds{position:absolute;inset:68% 0 -15%;z-index:2;pointer-events:none;opacity:.7}.clouds img{position:absolute;width:80%;height:100%;object-fit:contain;animation:cloud 24s linear infinite;left:-85%}.clouds img+img{animation-delay:-12s}#effects{z-index:3;pointer-events:none}.fx{position:absolute;object-fit:contain;transform:translate(-50%,-50%)}.shade,.flash{position:absolute;inset:0;background:#001326b0}.flash{background:white}.shell{width:2.5%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 30% 25%,#ffebba,#af6d26 40%,#25252b 70%);box-shadow:0 0 10px #ffbb66}@keyframes float{to{translate:0 -9px;rotate:1deg}}@keyframes cloud{to{left:110%}}@media(prefers-reduced-motion:reduce){.racer,.clouds img{animation:none}}
+.racer .hp{background:none;padding:0;outline:none}.racer .hp[hidden]{display:none}.racer .hp .heart{width:clamp(17px,2.8cqw,29px);height:clamp(17px,2.8cqw,29px);margin:0 auto 4px}.embed .racer .hp .heart{width:2.8cqw;height:2.8cqw}.racer:disabled{opacity:1}
+
+.stage[data-background=mine] .clouds,.stage[data-background=space] .clouds{display:none}.stage[data-background=night] .clouds{filter:brightness(.4)}
+
+
+.stage:is([data-level='3'],[data-level='4'],[data-level='5'],[data-level='6'],[data-level='7'],[data-level='8']) .hp{display:flex;justify-content:center;gap:3px}.stage:is([data-level='3'],[data-level='4'],[data-level='5'],[data-level='6'],[data-level='7'],[data-level='8']) .racer .hp .heart{margin:0 0 4px}
+
+.stage[data-background=ruins] .clouds{display:none}
+/* Battleships retain a paper shadow without the selected-target glow. */
+.stage:is([data-level='3'],[data-level='5'],[data-level='7']) .racer.target img{filter:drop-shadow(0 5px 3px #0004)}
+.stage[data-level='6'] .hp{position:relative;top:14px;z-index:1}
+
+/* The mothership grows independently of its HUD, preserving its aspect ratio. */
+.stage[data-level='8'] .racer:first-child{height:0;animation:none}
+.stage[data-level='8'] .racer:first-child > img{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);max-width:none}
+.stage[data-level='8'] .racer:first-child .hp{position:absolute;left:50%;top:-13cqw;transform:translateX(-50%);z-index:1}
+.stage[data-level='8'][data-phase='guards'] .racer:first-child .hp{visibility:hidden}
+.stage[data-level='8'] .racer:first-child.target img{filter:drop-shadow(0 5px 3px #0004)}

@@ -1,0 +1,14 @@
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#293944,#10171d 80%);color:#ead8b7;font:16px system-ui,sans-serif;padding:24px}main{max-width:1050px;margin:auto}header{display:flex;align-items:baseline;justify-content:space-between;gap:12px}h1{font-size:24px;font-weight:500}header span,p{color:#b7b5a9;font-size:14px}
+.stage{position:relative;container-type:inline-size;isolation:isolate;aspect-ratio:3;overflow:hidden;background:#163345;box-shadow:0 20px 55px #0007}
+.curtain{position:absolute;top:0;bottom:0;width:52%;z-index:7;will-change:transform}.curtain::before{content:'';position:absolute;inset:0;background:url("../img/theater-curtain-right.png") center/cover}.curtain.left{left:0;transform:translateX(0%);box-shadow:4px 0 7px #0006}.curtain.left::before{transform:scaleX(-1)}.curtain.right{right:0;transform:translateX(0%);box-shadow:-4px 0 7px #0006}
+
+html.embed,html.embed body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:transparent}
+.embed main{width:100%;height:100%;max-width:none}.embed main>:not(.stage){display:none}.embed .stage{width:100%;height:100%;aspect-ratio:auto;box-shadow:none}
+.heart{width:clamp(17px,2.8cqw,29px);height:clamp(17px,2.8cqw,29px);overflow:visible;filter:drop-shadow(0 2px 2px #23120b88)}
+.heart.lost{animation:heart-break .45s ease-in forwards}@keyframes heart-break{0%{opacity:1;transform:scale(1)}30%{opacity:1;transform:scale(1.25) rotate(-10deg)}100%{opacity:0;transform:translateY(14px) rotate(25deg) scale(.6)}}
+.embed .heart{width:2.8cqw;height:2.8cqw}.paused *{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){.heart.lost{animation:none;opacity:0}}
+
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:24px 0 12px}button,select{font:inherit;background:#3b302a;color:#efdfbd;border:1px solid #a88657;border-radius:5px;padding:10px 14px}button{cursor:pointer}button.primary{background:#84512d}button:disabled,select:disabled{opacity:.45;cursor:wait}label{display:flex;align-items:center;gap:9px}input{width:125px;accent-color:#c69050}.states{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.states span{padding:6px 12px;border:1px solid #615442;border-radius:20px;color:#a49d8e;font-size:14px}.states .active{border-color:#e4b56c;color:#ffe1a7;background:#584126}.status{min-height:24px}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #ffdc99;outline-offset:3px}
+
+@media(max-width:600px){body{padding:12px}header{display:block}h1{font-size:20px}.controls{gap:8px}button,select{padding:9px 10px}}

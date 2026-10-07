@@ -1,5 +1,5 @@
 // Snapshot of stage7-3-layout.json; positions are in background pixels.
-const ch7Layout={"version":1,"coordinateSystem":"background-pixels","background":{"src":"../img/stage7-3.png","width":1672,"height":941},"camera":{"x":560,"y":22,"width":500,"height":888.89,"aspectRatio":"9:16"},"objects":[{"id":"eye-lv1-1","asset":"eye-lv1","src":"../img/eye-lv1.png","x":736,"y":268,"width":35,"height":33.97,"zIndex":1},{"id":"eye-lv1-2","asset":"eye-lv1","src":"../img/eye-lv1.png","x":828,"y":210,"width":40,"height":38.82,"zIndex":2},{"id":"eye-lv3-3","asset":"eye-lv3","src":"../img/eye-lv3.png","x":637,"y":278,"width":60,"height":58.24,"zIndex":3},{"id":"eye-lv2-4","asset":"eye-lv2","src":"../img/eye-lv2.png","x":948,"y":272,"width":60,"height":58.24,"zIndex":4},{"id":"eye-lv2-5","asset":"eye-lv2","src":"../img/eye-lv2.png","x":890,"y":316,"width":50,"height":48.53,"zIndex":5},{"id":"stage7-3-boss-6","asset":"stage7-3-boss","src":"../img/stage7-3-boss.png","x":470,"y":356,"width":700,"height":393.96,"zIndex":6},{"id":"stage7-3-attack-7","asset":"stage7-3-attack","src":"../img/stage7-3-attack.png","x":0,"y":0,"width":1680,"height":945.5,"zIndex":7}]};
+const ch7Layout={"version":1,"coordinateSystem":"background-pixels","background":{"src":"../img/pirate-story-kraken-cave.png","width":1672,"height":941},"camera":{"x":560,"y":22,"width":500,"height":888.89,"aspectRatio":"9:16"},"objects":[{"id":"pirate-eye-closed-1","asset":"pirate-eye-closed","src":"../img/pirate-eye-closed.png","x":736,"y":268,"width":35,"height":33.97,"zIndex":1},{"id":"pirate-eye-closed-2","asset":"pirate-eye-closed","src":"../img/pirate-eye-closed.png","x":828,"y":210,"width":40,"height":38.82,"zIndex":2},{"id":"pirate-eye-glowing-3","asset":"pirate-eye-glowing","src":"../img/pirate-eye-glowing.png","x":637,"y":278,"width":60,"height":58.24,"zIndex":3},{"id":"pirate-eye-open-4","asset":"pirate-eye-open","src":"../img/pirate-eye-open.png","x":948,"y":272,"width":60,"height":58.24,"zIndex":4},{"id":"pirate-eye-open-5","asset":"pirate-eye-open","src":"../img/pirate-eye-open.png","x":890,"y":316,"width":50,"height":48.53,"zIndex":5},{"id":"pirate-story-kraken-body-6","asset":"pirate-story-kraken-body","src":"../img/pirate-story-kraken-body.png","x":470,"y":356,"width":700,"height":393.96,"zIndex":6},{"id":"pirate-story-kraken-attack-burst-7","asset":"pirate-story-kraken-attack-burst","src":"../img/pirate-story-kraken-attack-burst.png","x":0,"y":0,"width":1680,"height":945.5,"zIndex":7}]};
 let ch7EyeSchedules=[];
 function resetCh7Eyes(){
  ch7EyeSchedules=Array.from({length:5},()=>{
@@ -31,7 +31,7 @@ function renderCh7Third(ms){
   let third=false;for(const frame of ch7EyeSchedules[index]){if(t<frame.time)break;third=frame.third;}
   eye.querySelector('.eye-third').style.opacity=third?1:0;
  });
- const boss=document.querySelector('#ch7-boss'), pose=ch7Layout.objects.find(o=>o.asset==='stage7-3-boss');
+ const boss=document.querySelector('#ch7-boss'), pose=ch7Layout.objects.find(o=>o.asset==='pirate-story-kraken-body');
  const rise=t-2800,below=pose.height+20;
  let shift=below;
  if(rise>=0 && rise<3000)shift=below*(1-rise/3000);
