@@ -149,30 +149,33 @@ function compileLayout(layout,base){
  const rod=g.artLayers.find(o=>o.state==='plunger'&&!o.hidden);
  if(rod){const a=rad(rod.angle),dx=rod.x+Math.sin(a)*rod.height/2-g.plunger.x;for(const k of ['x','left','right'])g.plunger[k]+=dx;g.plunger.rest_y=rod.y-Math.cos(a)*rod.height/2}
  const launcher=layout.objects.find(o=>o.type==='plunger');if(launcher){const dx=launcher.x-g.plunger.x;for(const k of ['x','left','right'])g.plunger[k]+=dx;g.plunger.rest_y=launcher.y-4}
+ g.plunger.layer=({lower:'lower',upper:'tavern',top:'top'}[launcher?.layer]||'lower');
  g.plunger.enabled=(layout.version||1)<6||!!(launcher||rod||floor);
  const collar=g.artLayers.find(o=>(o.src||'').endsWith('/plunger-collar.png')&&!o.hidden);if(collar)g.plunger.stroke=Math.max(0,collar.y-Math.cos(rad(collar.angle))*collar.height/2-g.plunger.rest_y);
  if((layout.version||1)<6)poly('shooter-divider-lower',[[311,300],[311,448],[316,448],[316,300]]);
  if((layout.version||1)>=6){const upper=copy(layout.upperLayout||[]);g.deck=upper.find(o=>o.kind==='deck')||{points:[]};g.ramp_triangles=upper.filter(o=>o.kind==='ramp-floor').map(o=>o.points);g.upper_parts=upper.filter(o=>!['deck','ramp-floor','portal','drop'].includes(o.kind));g.deck_exit=upper.find(o=>o.kind==='drop')||null;g.portals=g.portals.map(o=>upper.find(u=>u.kind==='portal'&&u.id===o.id)||o)}
  g.guided_tracks=[];g.visual_tracks=[];
- g.editor_transitions=[];
+ g.editor_transitions=[];g.oneway_speeds=[];
  for(const o of layout.objects){
-  const t=o.type,key=o.id;if(t.startsWith('original_'))continue;destination=o.layer==='top'?topParts:o.layer==='upper'?g.upper_parts:g.lower;
+  const t=o.type,key=o.id;if(o.bumperStrength!==undefined&&!['weak','strong'].includes(o.bumperStrength))throw Error('Bumper 強度不合法：'+key);if(o.reboundStrength!==undefined&&!['weak','strong'].includes(o.reboundStrength))throw Error('反彈強度不合法：'+key);if(t.startsWith('original_'))continue;destination=o.layer==='top'?topParts:o.layer==='upper'?g.upper_parts:g.lower;
   if(['rescue-kicker','rescue-return'].includes(o.mechanic))continue;
+  if(o.initialSpeed!==undefined&&(!Number.isFinite(o.initialSpeed)||o.initialSpeed<0))throw Error('單向線初速不合法：'+key);
   const points=()=>[[o.x1,o.y1],[o.x2,o.y2]],layer=o.layer||'lower';
   if(o.mechanic==='layer-transition'){
    const layers={lower:'lower',upper:'tavern',top:'top'};
    if(t!=='oneway'||!Object.hasOwn(layers,o.fromLayer)||!Object.hasOwn(layers,o.toLayer)||o.fromLayer===o.toLayer||typeof o.bidirectional!=='boolean'||![1,-1].includes(o.direction)||![o.x1,o.y1,o.x2,o.y2].every(Number.isFinite)||dist(...points())<.5)throw Error('跨層入口線設定不合法：'+key);
    const length=dist(...points()),n=[-(o.y2-o.y1)/length*o.direction,(o.x2-o.x1)/length*o.direction];
-   g.editor_transitions.push({id:key,points:points(),n,from:layers[o.fromLayer],to:layers[o.toLayer]});
-   if(o.bidirectional)g.editor_transitions.push({id:key,points:points(),n:n.map(v=>-v),from:layers[o.toLayer],to:layers[o.fromLayer]});
+   g.editor_transitions.push({id:key,points:points(),n,from:layers[o.fromLayer],to:layers[o.toLayer],initialSpeed:o.initialSpeed});
+   if(o.bidirectional)g.editor_transitions.push({id:key,points:points(),n:n.map(v=>-v),from:layers[o.toLayer],to:layers[o.fromLayer],initialSpeed:o.initialSpeed});
   }else if(o.mechanic==='active-rebound'){
    if(t!=='line'||![o.x1,o.y1,o.x2,o.y2].every(Number.isFinite)||dist(...points())<.5)throw Error('彈片線尺寸不合法：'+key);
-   poly(key,points(),'rebound',false,{mechanic:'active_rebound'});
+   poly(key,points(),'rebound',false,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak'});
   }else if(o.mechanic==='guided-rail'){
    if(!['line','arc'].includes(t)||!['x1','y1','x2','y2',...(t==='arc'?['qx','qy']:[])].every(k=>Number.isFinite(o[k]))||dist(...points())<.5||!Number.isFinite(o.trackWidth)||o.trackWidth<14||o.trackWidth>60)throw Error('高架軌道尺寸不合法：'+key);
    const n=t==='arc'?Math.max(8,Math.ceil((Math.hypot(o.qx-o.x1,o.qy-o.y1)+Math.hypot(o.x2-o.qx,o.y2-o.qy))/1.5)):1;
    const ps=t==='arc'?Array.from({length:n+1},(_,i)=>{const u=i/n;return[(1-u)**2*o.x1+2*(1-u)*u*o.qx+u*u*o.x2,(1-u)**2*o.y1+2*(1-u)*u*o.qy+u*u*o.y2]}):points();
-   (o.visualOnly?g.visual_tracks:g.guided_tracks).push({id:key,points:ps,width:o.trackWidth,railMaterial:o.railMaterial,layer:layer==='upper'?'tavern':layer,showAboveArt:o.showAboveArt===true});
+   if(o.ballSpeed!==undefined&&(!Number.isFinite(o.ballSpeed)||o.ballSpeed<0))throw Error('滑軌球速不合法：'+key);
+   (o.visualOnly?g.visual_tracks:g.guided_tracks).push({id:key,points:ps,width:o.trackWidth,railMaterial:o.railMaterial,ballSpeed:o.ballSpeed,layer:layer==='upper'?'tavern':layer,showAboveArt:o.showAboveArt===true});
   }else if(t==='line'&&o.mechanic==='airdrop-rollover')poly(key,points(),'airdrop-rollover',false,{layer,collision:false});
   else if(t==='circle'&&o.mechanic==='gravity-well')destination.push({id:key,kind:'field',mechanic:'gravity-well',center:[o.cx,o.cy],radius:o.r,layer,collision:false});
   else if(t==='circle'&&o.mechanic==='solid-circle'){
@@ -180,7 +183,8 @@ function compileLayout(layout,base){
    poly(key,Array.from({length:n},(_,i)=>[o.cx+o.r*Math.cos(i*2*Math.PI/n),o.cy+o.r*Math.sin(i*2*Math.PI/n)]),'wall',true,{mechanic:o.mechanic});
   }
   else if(t==='circle'&&o.mechanic==='pachinko-pin')destination.push({id:key,kind:'wall',mechanic:o.mechanic,center:[o.cx,o.cy],radius:2});
-  else if(t==='circle')destination.push({id:key,kind:'bumper',center:[o.cx,o.cy],radius:o.r});
+  else if(t==='circle')destination.push({id:key,kind:'bumper',center:[o.cx,o.cy],radius:o.r,bumperStrength:o.bumperStrength||'weak'});
+  else if(t==='rect')poly(key,[[-o.width/2,-o.height/2],[o.width/2,-o.height/2],[o.width/2,o.height/2],[-o.width/2,o.height/2]].map(p=>transform(o,p)),'wall',true);
   else if(t==='line')poly(key,points(),'rail');
   else if(t==='plunger')continue;
   else if(t==='sensor')poly(key,points(),'sensor',false,{layer,collision:false});
@@ -188,14 +192,14 @@ function compileLayout(layout,base){
   else if(t==='flipper'){
    const original=source.lower.find(f=>f.id==='space-355'),[ra,rb]=original.radii,length=dist(original.pivot,original.tip),local=-(length+ra+rb)/2+ra,pivot=transform(o,[local,0]),tip=transform(o,[local+length,0]),side=tip[0]>pivot[0]?'left':'right',src=source.lower.find(f=>f.id===(side==='left'?'space-355':'space-363'));
    const rest=Math.atan2(src.tip[1]-src.pivot[1],src.tip[0]-src.pivot[0]),raised=Math.atan2(src.raised[1]-src.pivot[1],src.raised[0]-src.pivot[0]),a=rad(o.angle)+Math.atan2(Math.sin(raised-rest),Math.cos(raised-rest));destination.push({id:key,kind:'flipper',pivot,tip,raised:[pivot[0]+length*Math.cos(a),pivot[1]+length*Math.sin(a)],radii:[ra,rb],control:side,profile:'tapered'});
-  }else if(t==='oneway'){const dx=o.x2-o.x1,dy=o.y2-o.y1,length=Math.hypot(dx,dy);if(length<.5||![-1,1].includes(o.direction))throw Error('Invalid one-way line: '+key);poly(key,points(),'rail',false,{pass_normal:[-dy/length*o.direction,dx/length*o.direction]})}
+  }else if(t==='oneway'){const dx=o.x2-o.x1,dy=o.y2-o.y1,length=Math.hypot(dx,dy);if(length<.5||![-1,1].includes(o.direction))throw Error('Invalid one-way line: '+key);const n=[-dy/length*o.direction,dx/length*o.direction];poly(key,points(),'rail',false,{pass_normal:n});if(o.initialSpeed>0)g.oneway_speeds.push({id:key,points:points(),n,layer:layer==='upper'?'tavern':layer,initialSpeed:o.initialSpeed});}
   else if(t==='arc'){const n=Math.max(8,Math.ceil((Math.hypot(o.qx-o.x1,o.qy-o.y1)+Math.hypot(o.x2-o.qx,o.y2-o.qy))/1.5));poly(key,Array.from({length:n+1},(_,i)=>{const t=i/n;return[(1-t)**2*o.x1+2*(1-t)*t*o.qx+t*t*o.x2,(1-t)**2*o.y1+2*(1-t)*t*o.qy+t*t*o.y2]}),'rail')}
-  else if(t==='rebound'){const length=layout.templates[t].width-1;poly(key,[transform(o,[-length/2,0]),transform(o,[length/2,0])],'rebound',false,{mechanic:'active_rebound'})}
+  else if(t==='rebound'){const length=layout.templates[t].width-1;poly(key,[transform(o,[-length/2,0]),transform(o,[length/2,0])],'rebound',false,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak'})}
   else if(t==='targets'||t==='target'){let i=0;for(const m of layout.templates[t].markup.matchAll(/<polygon points="([^"]+)"/g)){const ps=m[1].trim().split(/\s+/).map(p=>transform(o,p.split(',').map(Number)));poly(key+'-'+(++i),ps,'target',true,{target_group:rules[key]||key})}}
   else if(t==='triangleLeft'||t==='triangleRight'){
    const match=layout.templates?.[t]?.markup.match(/<polygon points="([^"]+)"/);
    if(!match)throw Error('三角擋板缺少輪廓：'+key);
-   poly(key,match[1].trim().split(/\s+/).map(p=>transform(o,p.split(',').map(Number))),'wall',true);
+   poly(key,match[1].trim().split(/\s+/).map(p=>transform(o,p.split(',').map(Number))),'rebound',true,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak'});
   }
   else if(t==='ublock')poly(key,[[-12,11],[-12,-11],[12,-11],[12,11],[9,11],[9,-8],[-9,-8],[-9,11]].map(p=>transform(o,p)),'wall',true);
   else if(t==='blockhole'||t==='hole'&&o.mechanic==='vortex-center')destination.push({id:key,kind:'field',mechanic:'vortex-center',center:[o.x,o.y],radius:5.5,layer,collision:false});
@@ -206,6 +210,8 @@ function compileLayout(layout,base){
  function segmentDistance(p,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy||1)));return Math.hypot(p[0]-a[0]-t*dx,p[1]-a[1]-t*dy)}
  const solids=g.lower.filter(o=>['wall','rail','active','rebound','bumper','target'].includes(o.kind));
  for(const socket of g.lower.filter(o=>o.kind==='socket'&&o.release)){
+  // A teleport-only entrance never ejects here; destinations still need clearance.
+  if(layout.objects.some(o=>o.id===socket.id&&o.exitHole)&&!layout.objects.some(o=>o.exitHole===socket.id))continue;
   const center=socket.remote_release?socket.release:socket.center,edges=[],circles=[];
   for(const solid of solids)if(solid.center)circles.push([solid.center,solid.radius]);else for(let i=1;i<solid.points.length;i++){const a=solid.points[i-1],b=solid.points[i];if(segmentDistance(center,a,b)<30)edges.push([a,b,(solid.thickness||0)/2])}
   function clearance(v){let result=Infinity;const required=g.ball_radius+1;for(let i=0;i<49;i++){const p=[center[0]+v[0]*i*.5,center[1]+v[1]*i*.5],fade=socket.remote_release?0:Math.max(0,1-i*.5/14);for(const [a,b,r] of edges)result=Math.min(result,segmentDistance(p,a,b)-r+Math.max(0,required-segmentDistance(center,a,b)+r)*fade);for(const [c,r] of circles)result=Math.min(result,dist(p,c)-r+Math.max(0,required-dist(center,c)+r)*fade)}return result}
@@ -245,8 +251,8 @@ function createGame(core){
    const parts=this.g.top_parts||[],edges=[];
    for(const o of parts){
     if(['wall','rail','active','rebound','bumper','test-post','target'].includes(o.kind)){
-     if(o.center)edges.push({id:o.id,c:o.center,r:o.radius,kind:o.kind});
-     else for(let i=1;i<(o.points||[]).length;i++)edges.push({id:o.id,a:o.points[i-1],b:o.points[i],kind:o.kind,n:o.pass_normal,thickness:o.thickness||0,mechanic:o.mechanic,launchOnly:o.collisionMode==='launch-only'});
+     if(o.center)edges.push({id:o.id,c:o.center,r:o.radius,kind:o.kind,bumperStrength:o.bumperStrength});
+     else for(let i=1;i<(o.points||[]).length;i++)edges.push({id:o.id,a:o.points[i-1],b:o.points[i],kind:o.kind,n:o.pass_normal,thickness:o.thickness||0,mechanic:o.mechanic,reboundStrength:o.reboundStrength,launchOnly:o.collisionMode==='launch-only'});
     }
    }
    this.edges.top=edges;this.grids.top=new Grid(edges);
@@ -264,8 +270,9 @@ function createGame(core){
     if(this.ball.layer!==t.from)continue;
     const from=dot(sub(p,t.points[0]),t.n),speed=dot(d,t.n);
     if(speed<=0||from>0||from+speed<0)continue;
-    const time=-from/speed,q=add(p,mul(d,time)),near=nearest(q,...t.points),width=len(sub(...t.points));
-    if(len(sub(q,near.p))>.01||near.t*width<this.config.ballRadius||(1-near.t)*width<this.config.ballRadius)continue;
+    const time=-from/speed,q=add(p,mul(d,time)),near=nearest(q,...t.points);
+    // An entrance is a crossing sensor; adjacent walls determine physical clearance.
+    if(len(sub(q,near.p))>.01)continue;
     if(!best||time<best.t)best={t:time,editorPortal:t,n:t.n};
    }
    return best;
@@ -273,7 +280,19 @@ function createGame(core){
   transition(hit){
    if(!hit.editorPortal)return super.transition(hit);
    this.ball.layer=hit.editorPortal.to;this.lastPortal=this.time;
+   if(hit.editorPortal.initialSpeed>0)this.ball.v=mul(this.ball.v,hit.editorPortal.initialSpeed/(len(this.ball.v)||1));
    this.emit('layer',{id:hit.editorPortal.id,to:this.ball.layer});
+  }
+  applyOneWaySpeed(previous,layer){
+   const b=this.ball;if(b.state!=='playing'||b.layer!==layer)return;
+   for(const line of this.g.oneway_speeds||[]){
+    if(line.layer!==layer||!this.edgeEnabled({id:line.id,kind:'rail'}))continue;
+    const from=dot(sub(previous,line.points[0]),line.n),to=dot(sub(b.p,line.points[0]),line.n);
+    if(from>=0||to<0)continue;
+    const q=add(previous,mul(sub(b.p,previous),-from/(to-from)));
+    if(len(sub(q,nearest(q,...line.points).p))>.01)continue;
+    b.v=mul(b.v,line.initialSpeed/(len(b.v)||1));
+   }
   }
   visualPlane(ball){return ball.layer==='top'?'top':super.visualPlane(ball);}
   field(){const result=super.field();if(this.ball.layer==='top')this.ball.z=this.config.rampHeight*2;return result;}
@@ -320,7 +339,8 @@ function prepare(layout,g){
   const layerNames={lower:'lower',upper:'tavern',top:'top'};
   g.circle_entries=objects.filter(o=>o.type==='circle'&&o.mechanic==='layer-transition').map(o=>{
    if(!layerNames[o.fromLayer]||!layerNames[o.toLayer]||o.fromLayer===o.toLayer||!Number.isFinite(o.r)||o.r<.5)throw Error('跨層入口圓設定不合法：'+o.id);
-   return {id:o.id,center:[o.cx,o.cy],radius:o.r,from:layerNames[o.fromLayer],to:layerNames[o.toLayer],bidirectional:o.bidirectional};
+   if(o.initialSpeed!==undefined&&(!Number.isFinite(o.initialSpeed)||o.initialSpeed<0))throw Error('跨層圓初速不合法：'+o.id);
+   return {id:o.id,initialSpeed:o.initialSpeed,center:[o.cx,o.cy],radius:o.r,from:layerNames[o.fromLayer],to:layerNames[o.toLayer],bidirectional:o.bidirectional};
   });
   for(const e of g.circle_entries)g[e.from==='lower'?'lower':e.from==='top'?'top_parts':'upper_parts'].push({...e,kind:'layer-circle',collision:false});
   for(const o of objects.filter(o=>o.type==='targets'&&o.spacing!==undefined)){
@@ -338,20 +358,28 @@ function prepare(layout,g){
  for(const part of parts(g))if(part.kind==='target')delete part.target_group;
  delete g.gameplay.target_rules;
  delete g.gameplay.hole_attacks;
+ const objectEffects=objects.filter(o=>o.objectEffect).map(o=>{const effect=o.objectEffect,target=parts(g).find(p=>p.id===effect.object);if(!['target','targets','hole','blockhole','sensor'].includes(o.type)||!['hide','restore','rotate90'].includes(effect.action)||!target||!['wall','rail','bumper','rebound','active'].includes(target.kind)||target.mechanic==='guided-rail'||o.id===effect.object)throw Error('控制物件設定不合法：'+o.id);return {source:o.id,...effect};});
+ g.objectEffects=objectEffects;
  const groups=objects.filter(o=>o.targetGroup).map(o=>JSON.parse(JSON.stringify(o.targetGroup))),used=new Set();
  for(const r of groups){
   const bank=Array.isArray(r.members)&&r.members.length===1&&objects.some(o=>o.id===r.members[0]&&o.type==='targets');
-  if(!Array.isArray(r.members)||(!bank&&(r.members.length!==3||new Set(r.members).size!==3))||r.members.some(id=>!objects.some(o=>o.id===id&&(bank?o.type==='targets':o.type==='target'))||used.has(id)))throw Error('Target 群組需要三顆不重複的單個 target');
+  if(!Array.isArray(r.members)||(!bank&&(![1,2,3].includes(r.members.length)||new Set(r.members).size!==r.members.length))||r.members.some(id=>!objects.some(o=>o.id===id&&(bank?o.type==='targets':o.type==='target'))||used.has(id)))throw Error('Target 群組需要一至三顆不重複的單個 target');
   r.members.forEach(id=>used.add(id));
-  if(!['upgrade','boss','blackHole','unblock'].includes(r.action))throw Error('請設定 Target 群組事件');
-  if(r.action==='upgrade'&&(!Array.isArray(r.bumpers)||r.bumpers.length<1||r.bumpers.length>3||new Set(r.bumpers).size!==r.bumpers.length||r.bumpers.some(id=>!parts(g).some(o=>o.id===id&&o.kind==='bumper'))))throw Error('升級事件需指定 1～3 個 Bumper');
+  if(!r.action&&!r.secondary?.action)throw Error('請設定 Target 群組事件');
+  if(r.secondary)r.secondary.id=r.id+':secondary';
+  for(const event of [r,r.secondary]){if(!event?.action)continue;const r=event;
+  if(!['upgrade','boss','blackHole','unblock','objectControl','attack'].includes(r.action))throw Error('請設定 Target 群組事件');
+  if(r.action==='objectControl'){const target=parts(g).find(p=>p.id===r.object);if(!target||!['wall','rail','bumper','rebound','active'].includes(target.kind)||!['hide','restore','rotate90'].includes(r.effect||'hide'))throw Error('Target 群組控制物件設定不合法：'+r.id);g.objectEffects.push({source:'group:'+r.id,object:r.object,action:r.effect||'hide'});}
+  if(r.action==='upgrade'&&(!Array.isArray(r.bumpers)||r.bumpers.length<1||new Set(r.bumpers).size!==r.bumpers.length||r.bumpers.some(id=>!parts(g).some(o=>o.id===id&&o.kind==='bumper'))))throw Error('升級事件需指定至少一個不重複的 Bumper');
   if(r.action==='blackHole'&&!objects.some(o=>o.id===r.hole&&['hole','blockhole'].includes(o.type)))throw Error('請指定黑洞');
   if(r.action==='unblock'){
    if(!Array.isArray(r.blockers)||r.blockers.length!==2||new Set(r.blockers).size!==2||r.blockers.some(id=>!parts(g).some(p=>p.id===id&&['wall','rail','active','rebound','bumper'].includes(p.kind))))throw Error('依序解除阻擋需指定兩個不同的碰撞物件：'+r.id);
    if(!Array.isArray(r.resetSensors)||!r.resetSensors.length||new Set(r.resetSensors).size!==r.resetSensors.length||r.resetSensors.some(id=>!objects.some(o=>o.id===id&&['sensor','rollover'].includes(o.type))))throw Error('請指定重置用的偵測線或 Rollover：'+r.id);
   }
+  if(r.action==='attack'&&(!['lv1','lv2','lv3','lv4'].includes(r.attack||'lv1')||!Number.isInteger(r.attackCount??1)||(r.attackCount??1)<1||(r.attackCount??1)>99))throw Error('Target 攻擊設定不合法：'+r.id);
+  }
   r.targets=r.members.flatMap(id=>parts(g).filter(o=>o.kind==='target'&&(o.id===id||o.id.startsWith(id+'-'))).map(o=>o.id));
-  if(r.targets.length!==3)throw Error('Target 群組編譯後必須有三顆');
+  if(r.targets.length!==(bank?3:r.members.length))throw Error('Target 群組編譯後數量不符');
   for(const part of parts(g))if(r.targets.includes(part.id))part.target_group=r.id;
  }
  // Unassigned targets keep hit/reset feedback.
@@ -371,11 +399,19 @@ function prepare(layout,g){
   if(o.releaseMode!==undefined&&!['fixed','cadet'].includes(o.releaseMode)||o.releaseMode==='fixed'&&!Number.isFinite(o.releaseAngle))throw Error('Hole 彈射設定不合法：'+o.id);
   const socket=parts(g).find(p=>p.id===o.id&&p.kind==='socket');
  if(!socket)continue;
+  if(o.ballSpeed!==undefined&&(!Number.isFinite(o.ballSpeed)||o.ballSpeed<0))throw Error('洞球速不合法：'+o.id);
+  socket.ballSpeed=o.ballSpeed;
+  socket.layer=floor(o);
   socket.release_mode=o.releaseMode||(o.release_direction?'fixed':'cadet');
   if(o.releaseMode==='fixed'){const a=o.releaseAngle*Math.PI/180;
  socket.release_direction=[Math.cos(a),Math.sin(a)];
  socket.release=socket.mechanic==='vortex-center'?[...socket.center]:o.release_point||socket.center.map((v,i)=>v+14*socket.release_direction[i]);
  }
+ }
+ for(const o of objects.filter(o=>['hole','blockhole'].includes(o.type)&&o.exitHole)){
+  const entrance=parts(g).find(p=>p.id===o.id&&p.kind==='socket'),exit=parts(g).find(p=>p.id===o.exitHole&&p.kind==='socket');
+  if(!entrance||!exit||o.id===o.exitHole)throw Error('出口洞設定不合法：'+o.id);
+  entrance.exit_hole=o.exitHole;
  }
  for(const o of objects.filter(o=>['hole','blockhole'].includes(o.type)&&o.attractionRadius!==undefined)){
   if(!Number.isFinite(o.attractionRadius)||o.attractionRadius<0)throw Error('吸引範圍不合法：'+o.id);
@@ -392,7 +428,7 @@ function prepare(layout,g){
   return {...part,layer:floor(o),sensors,hits};
  });
  const attacks={};
- for(const o of objects)if(o.attack!==undefined){if(!['hole','blockhole','rollover','sensor'].includes(o.type)||!['none','lv1','lv2','lv3','lv4'].includes(o.attack))throw Error('攻擊設定不合法：'+o.id);
+ for(const o of objects)if(o.attack!==undefined){if(!['hole','blockhole','rollover','sensor','target'].includes(o.type)||!['none','lv1','lv2','lv3','lv4'].includes(o.attack))throw Error('攻擊設定不合法：'+o.id);
  attacks[o.id]=o.attack;
  }
  const rolloverGroups=objects.filter(o=>o.rolloverGroup).map(o=>JSON.parse(JSON.stringify(o.rolloverGroup))),rolloverMembers=new Set();
@@ -400,10 +436,11 @@ function prepare(layout,g){
  r.members.forEach(id=>rolloverMembers.add(id));
  }
  const attackCounts={};
- for(const o of objects.filter(o=>['rollover','sensor'].includes(o.type)))attackCounts[o.id]=o.attackCount??1;
+ for(const o of objects.filter(o=>['rollover','sensor','target'].includes(o.type)))attackCounts[o.id]=o.attackCount??1;
  for(const r of rolloverGroups)attackCounts[r.id]=r.attackCount??1;
  for(const [id,count] of Object.entries(attackCounts))if(!Number.isInteger(count)||count<1||count>99)throw Error('攻擊倒數需為 1～99：'+id);
- g.mechanisms={posts:configs,groups,attacks,rolloverGroups,attackCounts};
+ const targetAttackSources={};for(const o of objects.filter(o=>o.type==='target'&&o.attack&&o.attack!=='none'))for(const p of parts(g).filter(p=>p.kind==='target'&&(p.id===o.id||p.id.startsWith(o.id+'-'))))targetAttackSources[p.id]=o.id;
+ g.mechanisms={posts:configs,groups,attacks,rolloverGroups,attackCounts,targetAttackSources};
  return g;
 }
 function compile(layout,base,compiler){const copy=JSON.parse(JSON.stringify(layout));
@@ -420,7 +457,7 @@ const api={prepare,compile};
 /* Layout guides and debug text; no gameplay mutations. */
 (function(root){
 "use strict";
-function draw(o,game,ctx,circle){if(!o)return false;
+function draw(o,game,ctx,circle){if(!o)return false;if(game.hiddenObjects?.has(o.id))return true;
  if(game.isBlockerDisabled?.(o.id)){ctx.save();
  ctx.globalAlpha*=.25;
  ctx.setLineDash([2,2]);
@@ -524,7 +561,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   for(const e of entries){const to=b.layer===e.from?e.to:e.bidirectional&&b.layer===e.to?e.from:null;
  if(!to)continue;
  const h=P.len(P.sub(p,e.center))<=e.radius?{t:0}:P.circleHit(p,d,e.center,e.radius);
- if(h&&(!best||h.t<best.t))best={t:h.t,editorPortal:{id:e.id,to},circleEntry:true};
+ if(h&&(!best||h.t<best.t))best={t:h.t,editorPortal:{id:e.id,to,initialSpeed:e.initialSpeed},circleEntry:true};
  }return best;
  }
  transition(hit){super.transition(hit);
@@ -546,11 +583,36 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  return remaining;
  }finally{this.guidedTracks=tracks;
  }}
+ rebuildObjectGrids(){for(const layer of ['lower','tavern','top'])if(this.edges[layer])this.grids[layer]=new P.Grid(this.edges[layer]);}
+ restoreObjectGeometry(part){const original=this.objectGeometryOriginal?.get(part);if(!original)return;for(const [point,value] of original){point[0]=value[0];point[1]=value[1];}this.objectGeometryOriginal.delete(part);this.rebuildObjectGrids();}
+ applyObjectEffect(source){
+  for(const rule of this.g.objectEffects||[]){if(rule.source!==source||(rule.action!=='restore'&&this.objectEffectsDone.has(source))||(rule.action==='rotate90'&&this.rotatedObjects.has(rule.object)))continue;
+   this.objectEffectsDone.add(source);
+   const part=[...this.g.lower,...this.g.upper_parts,...(this.g.top_parts||[])].find(o=>o.id===rule.object);
+   if(rule.action==='hide')this.hiddenObjects.add(part.id);
+   else if(rule.action==='restore'){this.hiddenObjects.delete(part.id);this.restoreObjectGeometry(part);this.rotatedObjects.delete(part.id);for(const related of this.g.objectEffects||[])if(related.object===part.id)this.objectEffectsDone.delete(related.source);}
+   else if(part.points?.length){
+    this.rotatedObjects.add(part.id);
+    const points=[...new Set(part.points)],normal=part.pass_normal;
+    if(!this.objectGeometryOriginal.has(part))this.objectGeometryOriginal.set(part,new Map([...points,...(normal?[normal]:[])].map(p=>[p,[...p]])));
+    const center=[(Math.min(...points.map(p=>p[0]))+Math.max(...points.map(p=>p[0])))/2,(Math.min(...points.map(p=>p[1]))+Math.max(...points.map(p=>p[1])))/2];
+    for(const p of points){const x=p[0]-center[0],y=p[1]-center[1];p[0]=center[0]-y;p[1]=center[1]+x;}
+    if(normal){const x=normal[0];normal[0]=-normal[1];normal[1]=x;}
+    this.rebuildObjectGrids();
+   }
+   this.emit('object-effect',{source,object:rule.object,action:rule.action});
+  }
+ }
+ capture(...args){super.capture(...args);if(this.ball.state==='captured'&&this.held?.id===args[0])this.applyObjectEffect(args[0]);}
  // Rule state.
- resetTargets(){super.resetTargets();
+ resetTargets(){
+ for(const part of this.objectGeometryOriginal?.keys()||[])this.restoreObjectGeometry(part);
+ this.objectGeometryOriginal=new Map();
+ this.objectEffectsDone=new Set();this.hiddenObjects=new Set();this.rotatedObjects=new Set();
+ super.resetTargets();
  this.configuredPosts=new Map((this.g.mechanisms?.posts||[]).map(p=>[p.id,{...p,collected:new Set(),raised:false,left:0,contacts:new Set()}]));
- this.configuredGroups=(this.g.mechanisms?.groups||[]).map(r=>({...r,collected:new Set(),last:-Infinity,unlocked:0}));
- for(const r of this.configuredGroups){let group=this.targetGroups.find(g=>g.id===r.id);
+ this.configuredGroups=(this.g.mechanisms?.groups||[]).map(r=>({...r,secondary:r.secondary?{...r.secondary,unlocked:0}:undefined,collected:new Set(),last:-Infinity,unlocked:0}));
+ for(const r of this.configuredGroups){if(r.secondary)r.secondary.groupState=r;let group=this.targetGroups.find(g=>g.id===r.id);
  if(!group){group={id:r.id,hits:new Set(),complete:false,completions:0,resetAt:0};
  this.targetGroups.push(group);
  }group.targets=[...r.targets];
@@ -574,8 +636,8 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  this.targetDisplayById=new Map(this.targetGroups.map(group=>[group.id,group]));
  this.blockerOwners=new Map();this.blockerResets=new Map();this.controlledHoles=new Set();
  const add=(map,id,value)=>{if(!map.has(id))map.set(id,[]);map.get(id).push(value)};
- for(const rule of this.configuredGroups){
-  for(const id of rule.targets)this.targetRuleById.set(id,rule);
+ for(const rule of this.configuredGroups.flatMap(r=>[r,...(r.secondary?[r.secondary]:[])])){
+  for(const id of rule.targets||[])this.targetRuleById.set(id,rule);
   if(rule.action==='blackHole')this.controlledHoles.add(rule.hole);
   if(rule.action==='unblock'){
    rule.blockers.forEach((id,index)=>add(this.blockerOwners,id,{rule,index}));
@@ -620,24 +682,24 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  }
  // Hole release, activation and expiry.
  release(){
-  const h=this.held,socket=this.socketsById.get(h?.id),releaseStart=[...this.ball.p];
+  const h=this.held,entrance=this.socketsById.get(h?.id),socket=this.socketsById.get(entrance?.exit_hole)||entrance,releaseStart=[...this.ball.p],remote=socket!==entrance;
  if(!socket?.release_mode)return super.release();
   // Space Cadet angular and speed variation.
   // https://github.com/k4zmu2a/SpaceCadetPinball/blob/master/SpaceCadetPinball/TBall.cpp
   const spread=socket.mechanic==='vortex-center'?45:5;
   const random=this.random||Math.random,angle=socket.release_mode==='fixed'?0:(1-2*random())*spread*Math.PI/180;
-  const d=socket.release_direction||h.direction,c=Math.cos(angle),s=Math.sin(angle),speed=260*this.config.speedScale*(1+(1-2*random())*.1),b=this.ball;
-  b.p=[...h.release];
- b.layer=h.layer;
- b.z=0;
+  const d=socket.release_direction||h.direction,c=Math.cos(angle),s=Math.sin(angle),speed=socket.ballSpeed>0?socket.ballSpeed:260*this.config.speedScale*(1+(1-2*random())*.1),b=this.ball;
+  b.p=[...(remote?socket.release:h.release)];
+ b.layer=remote?socket.layer:h.layer;
+ b.z=b.layer==='top'?this.config.rampHeight*2:b.layer==='tavern'?this.config.rampHeight:0;
  b.v=P.mul(P.unit([d[0]*c-d[1]*s,d[0]*s+d[1]*c]),speed);
   b.state='playing';
- b.immunity=this.time+1.25;
+ b.immunity=this.time+.5;
  this.held=null;
  this.limitSpeed();
  this.emit('release',{id:h.id,speed:P.len(b.v)});
- // Local hole ejection traverses the short segment to its exit, including sensors.
- if(!socket.remote_release)this.crossConfiguredSensors(releaseStart,h.layer);
+ // Scan only the exit's local ejection segment, never the teleport between holes.
+ if(!socket.remote_release)this.crossConfiguredSensors(remote?socket.center:releaseStart,b.layer);
  }
  syncHoleActivation(){this.vortexActive=this.armedHoles.size>0;
  }
@@ -701,17 +763,17 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  isBlockerDisabled(id){return (this.blockerOwners?.get(id)||[]).some(({rule,index})=>index<rule.unlocked);
  }
  resetBlockers(sensorId){for(const r of this.blockerResets.get(sensorId)||[]){r.unlocked=0;
- r.last=this.time;
- r.collected.clear();
- for(const id of r.targets){this.targetHits.delete(id);
+ const state=r.groupState||r;state.last=this.time;
+ state.collected.clear();
+ for(const id of state.targets){this.targetHits.delete(id);
  this.targetHitAt.delete(id);
- }const display=this.targetDisplayById.get(r.id);
+ }const display=this.targetDisplayById.get(state.id);
  display.hits.clear();
  display.complete=false;
  display.resetAt=0;
  this.emit('blockers-reset',{id:r.id,objects:[...r.blockers]});
  }}
- edgeEnabled(e,b=this.ball){if(this.isBlockerDisabled(e.id))return false;
+ edgeEnabled(e,b=this.ball){if(this.hiddenObjects?.has(e.id)||this.isBlockerDisabled(e.id))return false;
  const p=this.configuredPosts?.get(e.id);
  return p?p.raised:super.edgeEnabled(e,b);
  }
@@ -730,6 +792,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  for(const p of this.configuredPosts.values())for(const b of p.contacts)if(b.state!=='playing'||b.layer!==p.layer||P.len(P.sub(b.p,p.center))>p.radius+this.config.ballRadius+.3)p.contacts.delete(b);
  }
  afterBallStep(previous,layer,dt){
+  this.applyOneWaySpeed?.(previous,layer);
   if(this.ball.launchGuard&&this.ball.v[1]>=0&&this.ball.p[1]>this.launchGateExitY+this.config.ballRadius)this.ball.launchGuard=false;
   this.flagSensors(previous,layer);
   this.sensors(dt);
@@ -756,6 +819,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
     this.recordRolloverLight(sensor.id);
     this.emit('rollover',{id:sensor.id,layer});
    }
+   this.applyObjectEffect(sensor.id);
    this.fireObjectAttack(sensor.id);
    this.resetBlockers(sensor.id);
   }
@@ -770,9 +834,9 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  bumperLevel(id){return this.configuredBumpers?.get(id)??1;
  }
  // Target-bank completion actions.
- recordTarget(id){const r=this.targetRuleById.get(id);
+ recordTarget(id){const attackSource=this.g.mechanisms?.targetAttackSources?.[id];if(attackSource)this.fireObjectAttack(attackSource);this.applyObjectEffect(id);const bank=(this.g.objectEffects||[]).find(r=>id.startsWith(r.source+'-'));if(bank)this.applyObjectEffect(bank.source);const r=this.targetRuleById.get(id);
  if(!r)return;
-  if(r.action==='unblock'&&r.unlocked>=r.blockers.length)return;
+  if(r.action==='unblock'&&r.unlocked>=r.blockers.length&&!r.secondary?.action)return;
  this.updateTargetGroups();
  if(this.time-r.last<.4||r.collected.has(id))return;
  this.targetHitAt.set(id,this.time);
@@ -787,7 +851,12 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  display.complete=true;
  display.resetAt=this.time+.4;
  display.completions++;
-  if(r.action==='unblock'){const object=r.blockers[r.unlocked++];
+  for(const event of [r,r.secondary].filter(e=>e?.action).sort((a,b)=>(b.action==='boss')-(a.action==='boss')))this.runTargetEvent(event);
+  this.emit('target-group-complete',{id:r.id});
+ }
+ runTargetEvent(r){
+  if(r.action==='objectControl')this.applyObjectEffect('group:'+r.id);
+  if(r.action==='unblock'&&r.unlocked<r.blockers.length){const object=r.blockers[r.unlocked++];
  this.emit('blocker-unlocked',{id:r.id,object,count:r.unlocked,total:r.blockers.length});
  }
   if(r.action==='upgrade'){const max=r.bumpers.every(id=>this.bumperLevel(id)>=3);
@@ -802,7 +871,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   if(r.action==='blackHole'){this.activateHole(r.hole);
  this.emit('vortex-activated',{id:r.hole});
  }
-  this.emit('target-group-complete',{id:r.id});
+  if(r.action==='attack'){r.attackRemaining=(r.attackRemaining??r.attackCount??1)-1;if(r.attackRemaining<=0){r.attackRemaining=r.attackCount??1;this.emit('configured-attack',{kind:r.attack||'lv1',id:r.id,position:[...this.ball.p]});}}
  }
  sensors(){
   this.expireHoles();
@@ -1103,7 +1172,7 @@ function startBoss(){
 if(bossStage&&(!tutorialMode||PLAYTEST_THEME==='steampunk'))startBoss();
 function path(points,fill,stroke,width=1,closed=false){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));if(closed)ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}}
 function circle(p,r,fill,stroke){ctx.beginPath();ctx.arc(...p,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=.65;ctx.stroke()}}
-function object(o,upper=false){if(ConfiguredMechanisms.draw(o,game,ctx,circle))return;
+function object(o,upper=false,outline=upper?'#dfa6ff':'#83bdd0'){if(ConfiguredMechanisms.draw(o,game,ctx,circle))return;
  if(!o)return;
  if(o.kind==='field'&&o.mechanic==='gravity-well'){
   if(!game.vortexActive){ctx.save();ctx.setLineDash([2,3]);circle(o.center,o.radius,null,'#3c6574');ctx.setLineDash([]);ctx.fillStyle='#78a4b0';ctx.font='5px sans-serif';ctx.textAlign='center';ctx.fillText('水渦未啟動',o.center[0],o.center[1]);ctx.restore();return;}
@@ -1116,9 +1185,9 @@ function object(o,upper=false){if(ConfiguredMechanisms.draw(o,game,ctx,circle))r
  }
  if(['flipper','field'].includes(o.kind)||o.id==='gravity-well')return;
  if(o.id==='test-post-center'){circle(o.center,o.radius,game.centerPostRaised?'#ffd477':'#263945',game.centerPostRaised?'#fff1b9':'#667986');return}
- if(o.center){const color=o.kind==='bumper'?['','#75d8f5','#a7ec84','#ffd477'][game.bumperLevel(o.id)]:o.kind==='socket'||o.kind==='drop'?'#17202c':'#b8bec5';circle(o.center,o.radius,color,upper?'#dfa6ff':'#8eccdf');if(o.kind==='bumper'){circle(o.center,o.radius*.6,'#1d657d','#bcefff');ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.font='bold 5px sans-serif';ctx.fillText(String(game.bumperLevel(o.id)),...o.center);ctx.restore();}if(o.kind==='socket')circle(o.center,o.radius*.55,'#02080e');return}
+ if(o.center){const color=o.kind==='bumper'?['','#75d8f5','#a7ec84','#ffd477'][game.bumperLevel(o.id)]:o.kind==='socket'||o.kind==='drop'?'#17202c':'#b8bec5';circle(o.center,o.radius,color,upper?outline:'#8eccdf');if(o.kind==='bumper'){circle(o.center,o.radius*.6,'#1d657d','#bcefff');ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff';ctx.font='bold 5px sans-serif';ctx.fillText(String(game.bumperLevel(o.id)),...o.center);ctx.restore();}if(o.kind==='socket')circle(o.center,o.radius*.55,'#02080e');return}
  if(!o.points)return;
- const lit=game.targetHits.has(o.id);let stroke=upper?'#dfa6ff':'#83bdd0',fill=o.closed&&o.mechanic!=='solid-circle'?'#334956':null,width=.9;
+ const lit=game.targetHits.has(o.id);let stroke=outline,fill=o.closed&&o.mechanic!=='solid-circle'?'#334956':null,width=.9;
  if(o.kind==='target'){stroke=lit?'#385362':'#a5f1ff';fill=lit?'#20323d':'#467788'}
  if(o.kind==='rebound'||o.kind==='active'){stroke='#ffbe86';width=2}
  if(o.kind==='flag'){stroke='#e6a5ea';width=1.8}
@@ -1129,6 +1198,10 @@ function object(o,upper=false){if(ConfiguredMechanisms.draw(o,game,ctx,circle))r
 function setText(id,value){if(id==='mechanics'&&game.configuredPosts?.size)value=value+' · '+ConfiguredMechanisms.status(game);if(id==='targetDebugStatus'&&(game.configuredGroups?.length||game.rolloverGroups?.length||Object.keys(game.g.mechanisms?.attacks||{}).length))value=ConfiguredMechanisms.groupStatus(game);const element=$(id),text=String(value);if(element.textContent!==text)element.textContent=text;}
 const reboundEffects=createReboundEffects(game,soundBank);
 const trackOverlay=GuidedTrackGeometry.outlines([...(G.guided_tracks||[]),...(G.visual_tracks||[])]);const trackLayout=new Map([...trackOverlay].map(([id,t])=>[id,{...t,showAboveArt:true}]));
+function withLayoutLayer(layer,draw){
+ const active=game.balls.some(b=>b.state!=='drained'&&(b.state==='guided'?(game.guidedTracks.find(t=>t.id===b.track?.id)?.layer||'lower'):b.layer)===layer);
+ ctx.save();ctx.globalAlpha=active?1:.5;draw();ctx.restore();
+}
 function draw(){
  updateScreenDim();
  const scale=canvas.width/view[2];ctx.setTransform(scale,0,0,scale,-view[0]*scale,-view[1]*scale);ctx.clearRect(...view);ctx.fillStyle='#13242f';ctx.fillRect(...view);
@@ -1159,26 +1232,26 @@ function draw(){
   ctx.restore();}
 
  if($('geometryToggle').checked){
- for(const island of G.preview_islands)path(island,'#304657',null,1,true);
- G.lower.forEach(o=>object(o));
- for(const k of G.rescue_kickers||[])if((k.layer||'lower')==='lower'||$('upper').checked||game.balls.some(b=>b.layer===k.layer))path(k.points,null,game.rescueState(k.layer||'lower').available[k.side]?'#ffd477':'#667986',1.4);
+ withLayoutLayer('lower',()=>{for(const island of G.preview_islands)path(island,'#304657',null,1,true);G.lower.forEach(o=>object(o));});
+ for(const k of G.rescue_kickers||[])if((k.layer||'lower')==='lower'||$('upper').checked||game.balls.some(b=>b.layer===k.layer))withLayoutLayer(k.layer||'lower',()=>path(k.points,null,game.rescueState(k.layer||'lower').available[k.side]?'#ffd477':'#667986',1.4));
 
- for(const f of game.flippers){const tip=P.add(f.pivot,[Math.cos(f.angle)*f.length,Math.sin(f.angle)*f.length]);path(P.taperedOutline(f.pivot,tip,...f.radii),'#ccd5db','#a1b6c4',.4,true);circle(f.pivot,1.5,'#43596a')}
+ for(const f of game.flippers)withLayoutLayer(f.layer||'lower',()=>{const tip=P.add(f.pivot,[Math.cos(f.angle)*f.length,Math.sin(f.angle)*f.length]);path(P.taperedOutline(f.pivot,tip,...f.radii),'#ccd5db','#a1b6c4',.4,true);circle(f.pivot,1.5,'#43596a')});
  }
  if($('geometryToggle').checked)for(const gate of game.gates){
   if(gate.mechanic!=='rescue-return'&&!['left-return','right-return'].includes(gate.id))continue;
   if(gate.layer!=='lower'&&!$('upper').checked&&!game.balls.some(b=>b.layer===gate.layer))continue;
-  const closed=gate.closed&&!gate.unlocked;ctx.save();ctx.setLineDash(closed?[]:[2,1.5]);
+  const closed=gate.closed&&!gate.unlocked;withLayoutLayer(gate.layer||'lower',()=>{ctx.save();ctx.setLineDash(closed?[]:[2,1.5]);
   path(gate.points,null,closed?'#ffbe86':'#78b6b9',closed?2:1);
-  circle(gate.points[0],1.5,closed?'#ffbe86':'#78b6b9');ctx.restore();
+  circle(gate.points[0],1.5,closed?'#ffbe86':'#78b6b9');ctx.restore();});
  }
 
  if($('geometryToggle').checked&&($('upper').checked||game.balls.some(b=>b.layer!=='lower'))){
-  ctx.globalAlpha=game.balls.some(b=>b.layer!=='lower')?.8:.22;path(G.deck.points,'#775e9a','#d0abec',.7,true);if(G.upper_feeder_floor?.length)path(G.upper_feeder_floor,'#775e9a',null,0,true);if(G.upper_route_floor?.length)path(G.upper_route_floor,'#775e9a',null,0,true);G.upper_parts.forEach(o=>object(o,true));(G.top_parts||[]).forEach(o=>object(o,true));object(G.deck_exit,true);ctx.globalAlpha=1;
+  withLayoutLayer('tavern',()=>{path(G.deck.points,'#775e9a','#d0abec',.7,true);if(G.upper_feeder_floor?.length)path(G.upper_feeder_floor,'#775e9a',null,0,true);if(G.upper_route_floor?.length)path(G.upper_route_floor,'#775e9a',null,0,true);G.upper_parts.forEach(o=>object(o,true));object(G.deck_exit,true);});
+  withLayoutLayer('top',()=>{(G.top_parts||[]).forEach(o=>object(o,true,'#559dff'));});
  }
 
- const charge=game.charge;if($('geometryToggle').checked&&G.plunger.enabled!==false)path([[G.plunger.x-5,G.plunger.rest_y+7.4+charge*10],[G.plunger.x+5,G.plunger.rest_y+7.4+charge*10]],null,'#f1bb77',2);
- if($('geometryToggle').checked){GuidedTrackGeometry.drawRails(ctx,trackLayout,'lower');if($('upper').checked){GuidedTrackGeometry.drawRails(ctx,trackLayout,'upper');GuidedTrackGeometry.drawRails(ctx,trackLayout,'top');}}
+ const charge=game.charge;if($('geometryToggle').checked&&G.plunger.enabled!==false)withLayoutLayer(G.plunger.layer||'lower',()=>path([[G.plunger.x-5,G.plunger.rest_y+7.4+charge*10],[G.plunger.x+5,G.plunger.rest_y+7.4+charge*10]],null,'#f1bb77',2));
+ if($('geometryToggle').checked){withLayoutLayer('lower',()=>GuidedTrackGeometry.drawRails(ctx,trackLayout,'lower'));if($('upper').checked){withLayoutLayer('tavern',()=>GuidedTrackGeometry.drawRails(ctx,trackLayout,'upper'));withLayoutLayer('top',()=>GuidedTrackGeometry.drawRails(ctx,trackLayout,'top'));}}
  drawFloatingRewards();
  drawBallOutlines();
  setText('mechanics',`${ConfiguredMechanisms.status(game)} · Multiball 彈簧：左 ${game.rescueState(game.ball.layer).hits.left?'✓':'○'}／右 ${game.rescueState(game.ball.layer).hits.right?'✓':'○'} · 場上 ${game.balls.filter(b=>b.state!=='drained').length} 球 · 獎勵 ${game.multiballAwards} 次`);
@@ -1245,8 +1318,8 @@ function setupPhysicsDebug(){
  function setPanel(open){panel.hidden=!open;$('debugToggle')?.setAttribute('aria-expanded',String(open));resize();}
  $('debugToggle').onclick=()=>setPanel(panel.hidden);$('debugClose').onclick=()=>setPanel(false);
  $('probe').checked=false;
- const launcher=G.art_layout_objects?.find(o=>o.type==='plunger');
- $('probeLayer').value=({lower:'lower',upper:'tavern',top:'top'}[launcher?.layer]||'lower');
+ const mainFlipper=game.flippers.reduce((lowest,f)=>!lowest||f.pivot[1]>lowest.pivot[1]?f:lowest,null);
+ $('probeLayer').value=mainFlipper?.layer||'lower';
  $('debugProbe').checked=$('probe').checked;
  $('debugProbe').onchange=()=>{$('probe').checked=$('debugProbe').checked;};
  $('probe').addEventListener('change',()=>{$('debugProbe').checked=$('probe').checked;});

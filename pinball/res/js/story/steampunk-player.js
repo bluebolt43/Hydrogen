@@ -256,7 +256,7 @@ function paint(index,elapsed){
   const bubble=panel.querySelector('.villain-dialogue');
   const bx=d.x/100*941,by=d.y/100*1672,bw=d.w/100*941,bh=d.h/100*1672;
   Object.assign(bubble.style,{left:(bx-cam.x)/cam.width*100+'%',top:(by-cam.y)/cam.height*100+'%',width:bw/cam.width*100+'%',height:bh/cam.height*100+'%'});
-  for(const [selector,box] of [['.villain-ship',d.shipBox],['.villain-count',d.countBox]])Object.assign(panel.querySelector(selector).style,{left:(box.x-bx)/bw*100+'%',top:(box.y-by)/bh*100+'%',width:box.width/bw*100+'%',height:box.height/bh*100+'%',bottom:'auto',objectFit:'contain'});
+  for(const [selector,box] of [['.villain-anger',d.shipBox],['.villain-ship',d.shipBox],['.villain-count',d.countBox]])Object.assign(panel.querySelector(selector).style,{left:(box.x-bx)/bw*100+'%',top:(box.y-by)/bh*100+'%',width:box.width/bw*100+'%',height:box.height/bh*100+'%',bottom:'auto',objectFit:'contain'});
 
   panel.querySelector('.villain-dialogue').style.opacity=t>=d.angerAt?1:0;
   panel.querySelector('.villain-anger').style.opacity=t>=d.angerAt&&t<d.shipAt?1:0;

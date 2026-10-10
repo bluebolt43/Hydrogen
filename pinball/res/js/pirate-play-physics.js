@@ -585,7 +585,9 @@ class CoreGame {
  emit(type,data={}){this.mapEvent(type,data);const e={type,time:this.time,...data};this.events.push(e);if(this.events.length>200)this.events.shift();if(this.onEvent)this.onEvent(e);}
  scoreHit(id,points,cooldown=.12){if((this.cooldowns.get(id)||0)>this.time)return;this.cooldowns.set(id,this.time+cooldown);if(this.scoringEnabled!==false){this.score+=points;this.emit('score',{id,points,position:[...this.ball.p]});}this.recordTarget(id);}
  reset(){this.score=0;this.extraLives=0;this.ballNumber=1;this.hasLaunchedOnce=false;this.gameOver=false;this.time=0;this.events=[];this.cooldowns.clear();this.input.left=this.input.right=this.input.launch=false;this.charge=0;this.paused=false;this.newBall();this.emit('new-game');}
- newBall(preserveTable=false){this.lifeLaunched=false;this.ball={p:[this.g.plunger.x,this.g.plunger.rest_y-this.config.ballRadius],v:[0,0],layer:'lower',z:0,state:'ready',immunity:0,saverAvailable:true};this.balls=[this.ball];if(!preserveTable)this.resetMapBall();this.plungerReleasedAt=-10;this.plungerReleaseCharge=0;this.charge=0;this.chargeElapsed=0;this.nudges=0;this.drainTimer=0;this.lastPortal=-10;this.trail=[];if(preserveTable){for(const gate of this.gates){gate.pending=false;gate.pendingBall=null;if(gate.id==='shooter-return')gate.closed=false;}}else{this.resetGates();this.resetTargets();for(const f of this.flippers){f.angle=f.rest;f.omega=0;f.cadet=null;}}}
+ launchLayer(){return this.g.plunger.layer||'lower';}
+ launchHeight(){return this.launchLayer()==='top'?this.config.rampHeight*2:this.launchLayer()==='tavern'?this.config.rampHeight:0;}
+ newBall(preserveTable=false){this.lifeLaunched=false;this.ball={p:[this.g.plunger.x,this.g.plunger.rest_y-this.config.ballRadius],v:[0,0],layer:this.launchLayer(),z:this.launchHeight(),state:'ready',immunity:0,saverAvailable:true};this.balls=[this.ball];if(!preserveTable)this.resetMapBall();this.plungerReleasedAt=-10;this.plungerReleaseCharge=0;this.charge=0;this.chargeElapsed=0;this.nudges=0;this.drainTimer=0;this.lastPortal=-10;this.trail=[];if(preserveTable){for(const gate of this.gates){gate.pending=false;gate.pendingBall=null;if(gate.id==='shooter-return')gate.closed=false;}}else{this.resetGates();this.resetTargets();for(const f of this.flippers){f.angle=f.rest;f.omega=0;f.cadet=null;}}}
  limitSpeed(){const speed=len(this.ball.v),cap=Math.min(this.ball.speedLimit||this.config.maxSpeed,this.config.maxSpeed);if(speed>cap)this.ball.v=mul(this.ball.v,cap/speed);}
  chargePower(seconds){const p=this.g.plunger,step=p.charge_step_seconds||0,duration=p.charge_seconds||1;return clamp(step?(Math.floor(seconds/step)+1)*step/duration:seconds/duration,0,1);}
  launch(power=.7){if(this.ball.state!=='ready'||this.gameOver)return;if(this.ball.saverAvailable&&this.ball.saverUntil===undefined)this.ball.saverUntil=this.time+(this.g.gameplay?.ball_saver_seconds||0);this.lifeLaunched=true;this.hasLaunchedOnce=true;this.plungerReleasedAt=this.time;power=clamp(power,0,1);this.plungerReleaseCharge=power;this.ball.state='playing';const p=this.g.plunger,speed=p.launch_min!==undefined?p.launch_min+(p.launch_max-p.launch_min)*power:(640+180*power)*this.config.speedScale;this.ball.speedLimit=this.config.maxSpeed;this.ball.v=[0,-speed*(1+this.random()*.1)];this.limitSpeed();this.emit('launch',{power,speed:len(this.ball.v)});}
@@ -615,7 +617,7 @@ class CoreGame {
   return best;
  }
  enterGuidedTrack(track){
-  const b=this.ball,speed=b.state==='guided'?b.track.speed:len(b.v);b.state='guided';b.layer='guided';b.z=this.config.rampHeight;b.track={id:track.id,distance:0,speed};b.p=[...track.points[0]];b.v=mul(track.entry,speed);b.trail=[];b.launchGuard=false;
+  const b=this.ball,speed=track.ballSpeed>0?track.ballSpeed:b.state==='guided'?b.track.speed:len(b.v);b.state='guided';b.layer='guided';b.z=this.config.rampHeight;b.track={id:track.id,distance:0,speed};b.p=[...track.points[0]];b.v=mul(track.entry,speed);b.trail=[];b.launchGuard=false;
   this.emit('track-enter',{id:track.id});
  }
  advanceGuidedTrack(dt){
@@ -625,7 +627,7 @@ class CoreGame {
    let i=1;while(i<track.distances.length-1&&track.distances[i]<=b.track.distance)i++;
    const a=track.points[i-1],z=track.points[i],span=track.distances[i]-track.distances[i-1];
    // Integrate each sampled segment so gravity follows the downhill tangent.
-   const acceleration=this.config.gravity*Math.max(0,span?(z[1]-a[1])/span:0),speed=b.track.speed,distance=track.distances[i]-b.track.distance;
+   const acceleration=track.ballSpeed>0?0:this.config.gravity*Math.max(0,span?(z[1]-a[1])/span:0),speed=b.track.speed,distance=track.distances[i]-b.track.distance;
    const remaining=acceleration>0?2*distance/(speed+Math.sqrt(speed*speed+2*acceleration*distance)):speed>0?distance/speed:Infinity,used=Math.min(dt,remaining);
    b.track.distance=used===remaining?track.distances[i]:b.track.distance+speed*used+.5*acceleration*used*used;
    b.track.speed+=acceleration*used;dt-=used;
@@ -672,8 +674,8 @@ class CoreGame {
    if(this.handleCollision(e)){if(b.state!=='playing')return;remaining-=len(b.v)>1e-9?Math.abs(hitDistance/len(b.v)):remaining;continue;}
    const approach=Math.abs(dot(b.v,best.n)),active=e.kind==='active'||e.mechanic==='active_rebound',c=this.config;
    let boost=0,threshold=1e9,elasticity=e.material==='roughWall'?c.roughWallElasticity:c.elasticity,smoothness=e.material==='roughWall'?c.roughWallSmoothness:c.collisionSmoothness;
-   if(e.kind==='bumper'){boost=e.material==='upperBumper'?c.upperBumperBoost:c.bumperBoost;threshold=(this.bumperHitUntil.get(e.id)||0)>this.time?1e9:c.bumperThreshold;elasticity=c.bumperElasticity;smoothness=c.bumperSmoothness;}
-   if(active){boost=c.activeBoost;threshold=c.activeThreshold;elasticity=c.activeElasticity;smoothness=c.activeSmoothness;}
+   if(e.kind==='bumper'){boost=(e.material==='upperBumper'?c.upperBumperBoost:c.bumperBoost)*(e.bumperStrength==='strong'?1:.5);threshold=(this.bumperHitUntil.get(e.id)||0)>this.time?1e9:c.bumperThreshold;elasticity=c.bumperElasticity;smoothness=c.bumperSmoothness;}
+   if(active){boost=c.activeBoost*(e.reboundStrength==='strong'?1:.5);threshold=c.activeThreshold;elasticity=c.activeElasticity;smoothness=c.activeSmoothness;}
    if(e.kind==='flipper')({boost,threshold,elasticity,smoothness}=e.f.cadet.response());
    {b.v=basicCollision(b.v,best.n,elasticity,smoothness,threshold,boost);
     this.collisionEffect(e,approach);
@@ -692,7 +694,7 @@ class CoreGame {
  }
  release(){const h=this.held,b=this.ball;let speed=clamp(h.speed*.68+90*this.config.speedScale,160*this.config.speedScale,380*this.config.speedScale);b.p=[...h.release];b.layer=h.layer;b.z=0;
   b.v=mul(unit(h.direction),speed);
-  b.state='playing';b.immunity=this.time+1.25;this.held=null;this.limitSpeed();this.emit('release',{id:h.id,speed});}
+  b.state='playing';b.immunity=this.time+.5;this.held=null;this.limitSpeed();this.emit('release',{id:h.id,speed});}
  drain(){if(this.ball.state!=='playing')return;const b=this.ball;if(b.saverAvailable&&this.time<b.saverUntil){b.saverAvailable=false;b.state='saver-return';b.v=[0,0];b.saveReturnAt=this.time+.35;this.emit('ball-saved');return;}this.ball.state='drained';this.drainTimer=1.1;this.emit('drain');}
  selectBall(){this.ball=this.balls.find(b=>b.state==='ready')||this.balls.find(b=>b.state==='playing')||this.balls.find(b=>b.state!=='drained')||this.balls[0];}
  collideBalls(){const r=this.config.ballRadius;
@@ -710,8 +712,8 @@ class CoreGame {
   if(this.balls.every(b=>b.state==='drained')&&!this.freeBallQueue){this.drainTimer-=dt;if(this.drainTimer<=0){if(this.extraLives>0){this.extraLives--;this.newBall(this.preserveTableOnDrain);this.emit('ready');}else if(this.ballNumber>=3){this.gameOver=true;this.emit('game-over');}else {this.ballNumber++;this.newBall(this.preserveTableOnDrain);this.emit('ready');}}return;}
   for(const b of this.balls)if(b.state==='saver-return'&&this.time>=b.saveReturnAt){
    const spawn=[this.g.plunger.x,this.g.plunger.rest_y-this.config.ballRadius];
-   if(this.balls.some(other=>other!==b&&other.state!=='drained'&&other.state!=='saver-return'&&other.layer==='lower'&&(other.state==='ready'||len(sub(other.p,spawn))<this.config.ballRadius*2+3)))continue;
-   Object.assign(b,{p:spawn,v:[0,0],state:'ready',layer:'lower',z:0,trail:[],immunity:0,lastPortal:-10,regionPrevious:null,vortexDwell:0});
+   if(this.balls.some(other=>other!==b&&other.state!=='drained'&&other.state!=='saver-return'&&other.layer===this.launchLayer()&&(other.state==='ready'||len(sub(other.p,spawn))<this.config.ballRadius*2+3)))continue;
+   Object.assign(b,{p:spawn,v:[0,0],state:'ready',layer:this.launchLayer(),z:this.launchHeight(),trail:[],immunity:0,lastPortal:-10,regionPrevious:null,vortexDwell:0});
    this.charge=this.chargeElapsed=0;this.input.launch=false;
    const gate=this.gates.find(g=>g.id==='shooter-return');if(gate){gate.closed=false;gate.pending=false;gate.pendingBall=null;}
    this.emit('ball-save-ready');
@@ -759,7 +761,7 @@ if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.Pira
 function createGame(core){
  const {CoreGame,Grid,EPS,clamp,add,sub,mul,dot,cross,len,unit,mix,nearest,inside,basicCollision}=core;
  return class TableGame extends CoreGame {
- dynamicEdges(){const p=this.g.plunger;return [...(p.enabled!==false&&this.ball.layer==='lower'?[{id:'plunger',kind:'plunger',faceOnly:true,a:[p.left,p.rest_y],b:[p.right,p.rest_y]}]:[]),...this.gates.filter(g=>!g.unlocked&&g.layer===this.ball.layer&&(g.closed||g.mechanic==='directional_flap')).map(g=>({a:g.points[0],b:g.points[1],id:g.id,kind:'gate',n:g.mechanic==='directional_flap'?g.n:undefined})),...(this.g.rescue_kickers||[]).filter(k=>(k.layer||'lower')===this.ball.layer).map(k=>({id:k.id,kind:'rescue-kicker',a:k.points[0],b:k.points[1],side:k.side,aim:k.aim,direction:k.direction,speed:this.config.kickbackSpeed}))];}
+ dynamicEdges(){const p=this.g.plunger;return [...(p.enabled!==false&&this.ball.layer===(p.layer||'lower')?[{id:'plunger',kind:'plunger',faceOnly:true,a:[p.left,p.rest_y],b:[p.right,p.rest_y]}]:[]),...this.gates.filter(g=>!g.unlocked&&g.layer===this.ball.layer&&(g.closed||g.mechanic==='directional_flap')).map(g=>({a:g.points[0],b:g.points[1],id:g.id,kind:'gate',n:g.mechanic==='directional_flap'?g.n:undefined})),...(this.g.rescue_kickers||[]).filter(k=>(k.layer||'lower')===this.ball.layer).map(k=>({id:k.id,kind:'rescue-kicker',a:k.points[0],b:k.points[1],side:k.side,aim:k.aim,direction:k.direction,speed:this.config.kickbackSpeed}))];}
  portalHit(){}
  transition(){}
  rescueState(layer='lower'){if(layer==='lower')return {available:this.kickbacks,hits:this.kickbackHits};return this.rescueLayers[layer]||(this.rescueLayers[layer]={available:{left:true,right:true},hits:{left:false,right:false}});}
@@ -794,8 +796,8 @@ function createGame(core){
   const objectsToEdges=objects=>{const edges=[];for(const o of objects){
    if(!['wall','rail','active','rebound','bumper','test-post','target'].includes(o.kind))continue;
    const material=o.material||null;
-   if(o.center){edges.push({id:o.id,c:o.center,r:o.radius,kind:o.kind,material,retractUp:o.mechanic==='retract_for_upward_ball'});continue;}
-   const ps=o.points||[];for(let i=1;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>EPS)edges.push({id:o.id,a:ps[i-1],b:ps[i],kind:o.kind,material,mechanic:o.mechanic,n:o.pass_normal,thickness:o.thickness||0,launchOnly:o.collisionMode==='launch-only'});
+   if(o.center){edges.push({id:o.id,c:o.center,r:o.radius,kind:o.kind,material,bumperStrength:o.bumperStrength,retractUp:o.mechanic==='retract_for_upward_ball'});continue;}
+   const ps=o.points||[];for(let i=1;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>EPS)edges.push({id:o.id,a:ps[i-1],b:ps[i],kind:o.kind,material,mechanic:o.mechanic,reboundStrength:o.reboundStrength,n:o.pass_normal,thickness:o.thickness||0,launchOnly:o.collisionMode==='launch-only'});
   }return edges;};
   this.edges={lower:objectsToEdges(g.lower),tavern:objectsToEdges(g.upper_parts)};
   for(const [layer,es]of Object.entries(this.edges))this.grids[layer]=new Grid(es);
@@ -853,9 +855,10 @@ function createGame(core){
   this.freeBallRewardPositions.push([...position]);this.freeBallQueue++;this.multiballAwards++;this.emit('multiball-awarded',{count:this.multiballAwards});
  }
  spawnFreeBall(){if(!this.freeBallQueue)return;if(this.balls.filter(b=>b.state!=='drained').length>=3){this.freeBallQueue--;this.awardExtraLife('multiball',this.freeBallRewardPositions.shift()||this.ball.p);return;}const p=[this.g.plunger.x,this.g.plunger.rest_y-this.config.ballRadius-18];
-  if(this.balls.some(b=>b.state!=='drained'&&b.layer==='lower'&&len(sub(b.p,p))<this.config.ballRadius*2+3))return;
+  const layer=this.launchLayer();
+  if(this.balls.some(b=>b.state!=='drained'&&b.layer===layer&&len(sub(b.p,p))<this.config.ballRadius*2+3))return;
   const gate=this.gates.find(g=>g.id==='shooter-return');if(gate){gate.closed=false;gate.pending=false;}
-  this.balls.push({p,v:[0,-this.config.maxSpeed],layer:'lower',z:0,state:'playing',immunity:0,lastPortal:-10,trail:[],free:true,launchGuard:true});
+  this.balls.push({p,v:[0,-this.config.maxSpeed],layer,z:this.launchHeight(),state:'playing',immunity:0,lastPortal:-10,trail:[],free:true,launchGuard:true});
   this.freeBallQueue--;this.freeBallRewardPositions.shift();this.plungerReleasedAt=this.time;this.plungerReleaseCharge=1;this.emit('free-ball-launch');
  }
 
