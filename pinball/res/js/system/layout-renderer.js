@@ -49,7 +49,7 @@ function drawPlayTexture(ctx,image,button,r){
 }
 function edgeLimit(o){return Math.min(64,Math.floor(Math.min(o.width,o.height)/8));}
 function number(value,min,max,label){if(!Number.isFinite(value)||value<min||value>max)throw Error(label+'超出範圍');return value;}
-function asset(src){if(typeof src!=='string'||!/^res\/img\/[^/\\?#]+\.(png|webp|jpg|jpeg|svg)$/i.test(src)||src.includes('..'))throw Error('素材路徑須為 res/img/檔名');return src;}
+function asset(src){if(typeof src!=='string'||!/^res\/img\/(?:(?:pirate|steampunk)\/)?[^/\\?#]+\.(png|webp|jpg|jpeg|svg)$/i.test(src)||src.includes('..'))throw Error('素材路徑須為 res/img/ 或 res/img/pirate/ 下的檔案');return src;}
 function validate(input){
  const d=JSON.parse(JSON.stringify(input));
  if(d.format!=='pinball-system-layout'||d.version!==1||!d.canvas||!Array.isArray(d.objects)||d.objects.length>200)throw Error('不是有效的系統布局 JSON');

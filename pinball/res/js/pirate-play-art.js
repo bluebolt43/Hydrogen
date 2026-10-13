@@ -71,6 +71,7 @@ function compactIndicator(o){
 }
 function validateIndicator(c){
  if(!c||typeof c!=='object'||Array.isArray(c))throw Error('燈號設定不合法');
+ if(c.impactFlash!==undefined&&typeof c.impactFlash!=='boolean')throw Error('命中／Combo 閃光設定不合法');
  const states=c.type==='bumper'?['lv1','lv2','lv3']:['off','on'];
  if(c.type!==undefined&&!['binary','bumper'].includes(c.type))throw Error('燈號類型不合法');
  if(c.defaultState!==undefined&&!states.includes(c.defaultState))throw Error('燈號預設狀態不合法');
@@ -109,6 +110,28 @@ function validate(items){
 class Renderer{
  constructor(base='',map=defaultMap()){this.map=map;this.base=base;this.cache=new Map();}
  image(src){if(!this.cache.has(src)){const img=new Image();if(src)img.src=src.startsWith('blob:')?src:this.base+src;this.cache.set(src,img);}return this.cache.get(src);}
+ // Gameplay opts in; editors retain original pixels. Cache only raster content,
+ // so transforms, light state, opacity and animation still update every frame.
+ drawRaster(ctx,img,sx,sy,sw,sh,width,height){
+  if(!this.rasterCacheEnabled){ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);return;}
+  const t=ctx.getTransform(),scale=Math.ceil(Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))*2)/2;
+  const w=Math.max(1,Math.min(2048,Math.ceil(width*scale))),h=Math.max(1,Math.min(2048,Math.ceil(height*scale)));
+  const brightness=this.brightness??1,key=JSON.stringify([img.src,sx,sy,sw,sh,w,h,brightness]);
+  this.rasters??=new Map();this.rasterPixels??=0;
+  let entry=this.rasters.get(key);
+  if(entry&&entry.image!==img){this.rasterPixels-=entry.pixels;this.rasters.delete(key);entry=null;}
+  if(!entry){
+   const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+   const c=canvas.getContext('2d');c.drawImage(img,sx,sy,sw,sh,0,0,w,h);
+   if(brightness<1){c.globalCompositeOperation='source-atop';c.fillStyle=`rgba(0,0,0,${1-brightness})`;c.fillRect(0,0,w,h);}
+   entry={image:img,canvas,pixels:w*h};
+   // Bound prepared pixels to 64 MiB, including obsolete viewport sizes.
+   while(this.rasterPixels+entry.pixels>16777216&&this.rasters.size){const oldest=this.rasters.keys().next().value;this.rasterPixels-=this.rasters.get(oldest).pixels;this.rasters.delete(oldest);}
+   this.rasterPixels+=entry.pixels;
+  }
+  this.rasters.delete(key);this.rasters.set(key,entry);
+  ctx.drawImage(entry.canvas,-width/2,-height/2,width,height);
+ }
  draw(ctx,items,plane,game=null){
   for(const o of items){if(o.state==='ball-layer'||o.plane!==plane||o.hidden)continue;
    this.beforeDraw?.(ctx,o);
@@ -157,8 +180,8 @@ class Renderer{
    }
    ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway);ctx.scale(o.flipX?-1:1,o.flipY?-1:1);
    // Keep the default image underneath every state/frame overlay.
-   if(ready(baseImage,o.crop[0],o.crop[1]))ctx.drawImage(baseImage,o.crop[0],o.crop[1],sw,sh,-o.width/2,-o.height/2,o.width,o.height);
-   if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))ctx.drawImage(img,sx,sy,sw,sh,-o.width/2,-o.height/2,o.width,o.height);
+   if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height);
+   if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height);
    ctx.restore();
   }
  }

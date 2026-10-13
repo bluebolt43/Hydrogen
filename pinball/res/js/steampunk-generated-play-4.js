@@ -27,8 +27,9 @@ class LayoutTheater{
   document.body.append(this.frame);
   addEventListener('message',e=>{
    if(e.source!==this.frame.contentWindow||e.data?.channel!=='pinball-theater')return;
+   if(e.data.type==='complete')this.hudState=e.data;
    if(e.data.type==='tutorial-bounds'){this.tutorialBounds=e.data.bounds;this.onTutorialBounds?.();return;}
-   if(e.data.type==='sound'){this.soundBank?.play(e.data.name);return;}
+   if(e.data.type==='sound'){this.soundBank?.play(e.data.name);this.onSound?.(e.data.name);return;}
    if(e.data.type==='warning'){this.showWarning(e.data.token);return;}
    if(e.data.type==='ready'){this.ready=true;this.curtainClosing=false;this.send({command:'pause',paused:!!this.game?.paused});for(const message of this.pending)this.send(message);this.pending=[];}
    if(['complete','error'].includes(e.data.type)&&e.data.id===this.generation+':reset:0')this.curtainClosing=false;
@@ -61,7 +62,7 @@ class LayoutTheater{
   warning.finished.then(()=>{if(generation!==this.generation||this.warning!==warning)return;this.warning=null;this.send({command:'warning-complete',token});});
  }
  send(message){this.frame.contentWindow.postMessage({channel:'pinball-theater',...message},'*');}
- reset(){this.bossDefeated=false;this.warning?.cancel();this.warning=null;this.generation++;this.pending=[];this.activeCommands.clear();if(this.game)this.game.theaterFrozen=false;this.curtainClosing=true;if(this.ready)this.send({command:'reset',id:this.generation+':reset:0'});else this.frame.src='res/'+this.theme+'-theater.html?embed=1&session='+this.generation;}
+ reset(){this.hudState=null;this.bossDefeated=false;this.warning?.cancel();this.warning=null;this.generation++;this.pending=[];this.activeCommands.clear();if(this.game)this.game.theaterFrozen=false;this.curtainClosing=true;if(this.ready)this.send({command:'reset',id:this.generation+':reset:0'});else this.frame.src='res/'+this.theme+'-theater.html?embed=1&session='+this.generation;}
  onEvent(e){
   if(e.type==='new-game'||(e.type==='ready'&&!this.bossStage)){this.reset();return;}
   // A replacement ball keeps the stage Boss and its HP.
@@ -86,6 +87,8 @@ class LayoutTheater{
  }
  draw(ctx,game,top=-170.5){
   this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
+  if(this.panelElement){const box=this.panelElement.getBoundingClientRect(),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};Object.assign(this.frame.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
+  this.frame.style.zIndex='2';
   const canvas=ctx.canvas,r=canvas.getBoundingClientRect(),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
   const position={left:(r.left+m.e*sx)+'px',top:(r.top+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden'};
   for(const [key,value] of Object.entries(position))if(this.frame.style[key]!==value)this.frame.style[key]=value;

@@ -100,6 +100,13 @@ function paintRuinsGate(panel,layout,t){
  panel.querySelector('.ruins-mist').style.opacity=Math.pow(1-clamp(t/timing.mistDuration),3);
  panel.querySelector('.race-window').style.opacity=ease(t-timing.panel);
  const item=id=>panel.querySelector(`[data-race-id="${id}"]`);
+ const objects=Object.fromEntries(layout.objects.map(o=>[o.id,o]));
+ const entry=ease((t-timing.characters)/(timing.entryDuration||2));
+ for(const [from,to] of [['image-005','image-002'],['image-006','image-003']]){
+  const a=objects[from],b=objects[to];if(!a)continue;
+  const pose={};for(const key of ['x','y','width','height'])pose[key]=a[key]+(b[key]-a[key])*entry;
+  Object.assign(item(to).style,{left:pose.x/source.width*100+'%',top:pose.y/source.height*100+'%',width:pose.width/source.width*100+'%',height:pose.height/source.height*100+'%'});
+ }
  item('image-002').style.opacity=ease(t-timing.characters);
  const transfer=ease((t-timing.heroine)/1.5);
  item('image-003').style.opacity=ease(t-timing.characters)*(1-transfer);
@@ -185,7 +192,7 @@ function paintRaceSequence(panel,layout,t){
   for(const id of ['image-001','image-005','image-003']){
    const lamp=panel.querySelector(`[data-race-id="${id}"]`);
    lamp.src=t>=2.4?on:off;
-   lamp.hidden=t>=timing.rivals;
+   lamp.hidden=false;
   }
   for(const [i,id] of ['image-006','image-009','image-011'].entries()){
    const el=panel.querySelector(`[data-race-id="${id}"]`),p=clamp((t-timing.rivals-i*.2)/timing.rivalMove);

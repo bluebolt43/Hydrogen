@@ -13,7 +13,7 @@ function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',t
 const damage={ball:1,barrel:2,pirates:3,kraken:4};
 const cache=new Map();function preload(src){if(!cache.has(src)){const im=new Image();im.src=src;cache.set(src,im.decode().then(()=>im).catch(e=>{cache.delete(src);throw e;}));}return cache.get(src);}
 function lock(v){isBusy=v;picker.disabled=next.disabled=daynight.disabled=v;$('height').disabled=v;document.querySelectorAll('[data-attack]').forEach(b=>b.disabled=v||defeated);$('next-level').disabled=v||!defeated;}
-function backgroundSources(type){const src=type.id==='kraken'?'res/img/pirate-story-kraken-cave.png':type.id==='sea-serpent'?'res/img/pirate-story-waterfall-channel.png':null;return src?[src,src]:['res/img/pirate-theater-background-day.png','res/img/pirate-theater-background-night.png'];}
+function backgroundSources(type){const src=type.id==='kraken'?'res/img/pirate/pirate-story-kraken-cave.png':type.id==='sea-serpent'?'res/img/pirate/pirate-story-waterfall-channel.png':null;return src?[src,src]:['res/img/pirate/pirate-theater-background-day.png','res/img/pirate/pirate-theater-background-night.png'];}
 function sync(){const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){const image=$(id),src=backgroundSources(type)[i];if(image.getAttribute('src')!==src)image.src=src;}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;positionHealth();}
 function animate(el,from,to,duration){if(!duration){el.style.transform=to;return Promise.resolve();}const animation=el.animate([{transform:from},{transform:to}],{duration,easing:'linear',fill:'forwards'});return animation.finished.then(()=>{el.style.transform=to;animation.cancel();});}
 function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=maximum*67?1:0;}
@@ -45,7 +45,7 @@ async function flip(to){
 }
 // Story mode uses this theater's original enemy, water layers and sinking path.
 async function victoryBlast(){
- const layer=$('attack-layer'),smoke='res/img/pirate-explosion-smoke.png';
+ const layer=$('attack-layer'),smoke='res/img/pirate/pirate-explosion-smoke.png';
  await preload(smoke);sound('explosion');
  const w=stage.clientWidth,h=stage.clientHeight,size=w*.256;
  const animations=[],puffs=[];
@@ -63,7 +63,7 @@ async function victoryBlast(){
  }finally{animations.forEach(a=>a.cancel());puffs.forEach(p=>p.remove());}
 }
 async function sinkingThumb(){
- const src='res/img/pirate-story-thumbs-up.png';
+ const src='res/img/pirate/pirate-story-thumbs-up.png';
  await preload(src);
  const water=stage.clientHeight*2/3+stage.clientWidth*.019333;
  const size=stage.clientWidth*.23;
@@ -91,7 +91,7 @@ async function playStoryVictory(){
  try{
   typeIndex=catalog.findIndex(t=>t.id==='pirate-gunship');stateIndex=2;
   const asset=catalog[typeIndex].states[stateIndex];
-  await Promise.all([preload(asset.src),preload('res/img/pirate-explosion-smoke.png'),preload('res/img/pirate-story-thumbs-up.png')]);
+  await Promise.all([preload(asset.src),preload('res/img/pirate/pirate-explosion-smoke.png'),preload('res/img/pirate/pirate-story-thumbs-up.png')]);
   enemy.src=asset.src;hp=1;maxHp=3;defeated=false;sync();
   isNight=true;$('day').hidden=true;$('night').hidden=false;stage.classList.add('night');
   document.querySelectorAll('.curtain').forEach(el=>el.style.display='none');
@@ -168,7 +168,7 @@ async function attack(kind){
  };
  const sprite=(src,size)=>{const im=document.createElement('img');im.src=src;im.className='attack-sprite';im.style.width=size+'px';im.alt='';layer.append(im);return im;};
  try{
-  const src='res/img/'+attackAssets[kind],smoke='res/img/pirate-explosion-smoke.png';
+  const src='res/img/pirate/'+attackAssets[kind],smoke='res/img/pirate/pirate-explosion-smoke.png';
   await Promise.all([preload(src),preload(smoke)]);
   const rect=stage.getBoundingClientRect(),w=rect.width,h=rect.height;
   const anchor=document.querySelector('.enemy-anchor').getBoundingClientRect();
@@ -218,7 +218,7 @@ async function tentacleAttack(){
  };
  const add=(layer,src,size,cls)=>{const im=document.createElement('img');im.src=src;im.className=cls;im.style.width=size+'px';im.alt='';layer.append(im);return im;};
  try{
-  const dir='res/img/',tentacle=dir+'pirate-kraken-tentacle.png',bolt=dir+'pirate-lightning.png',smoke=dir+'pirate-explosion-smoke.png';
+  const dir='res/img/pirate/',tentacle=dir+'pirate-kraken-tentacle.png',bolt=dir+'pirate-lightning.png',smoke=dir+'pirate-explosion-smoke.png';
   await Promise.all([tentacle,bolt,smoke].map(preload));
   const rect=stage.getBoundingClientRect(),w=rect.width,h=rect.height;
   const enemyRect=document.querySelector('.enemy-anchor').getBoundingClientRect();
@@ -282,7 +282,7 @@ TheaterFrame.connect({stage,ready,
   enemyPresent=true;
  },
  async attack(command){if(!enemyPresent||defeated)return;const kind={lv1:'ball',lv2:'barrel',lv3:'pirates',lv4:'kraken',airdrop:'pirates',ball:'ball',barrel:'barrel',kraken:'kraken'}[command];if(kind)await attack(kind);},
- state:()=>({defeated:enemyPresent&&defeated,maxHp}),
+ state:()=>({defeated:enemyPresent&&defeated,maxHp,hp,level,name:enemyPresent?catalog[typeIndex].name:null}),
  storyVictory:()=>storyVictory?playStoryVictory():undefined
 });
 window.enemyTheater={ready,choose,changeDay,attack,nextLevel,catalog,getState:()=>({typeIndex,stateIndex,isBusy,isNight,level,hp,maxHp,defeated})};

@@ -3,7 +3,7 @@
   "artLayers": [
     {
       "id": "art-013",
-      "src": "res/img/steampunk-floor-background.png",
+      "src": "res/img/steampunk/steampunk-floor-background.png",
       "x": 180,
       "y": 235,
       "width": 360,
@@ -11,10 +11,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        360,
-        470
+        0.0,
+        0.0,
+        361.0,
+        470.0
       ],
       "plane": "background",
       "frames": 1,
@@ -23,7 +23,7 @@
     },
     {
       "id": "art-007",
-      "src": "res/img/steampunk-rollover-off.png",
+      "src": "res/img/steampunk/steampunk-rollover-off.png",
       "x": 73,
       "y": 375,
       "width": 14,
@@ -31,10 +31,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        361,
-        368
+        0.0,
+        0.0,
+        783.0,
+        797.0
       ],
       "plane": "background",
       "frames": 1,
@@ -43,8 +43,8 @@
       "indicator": {
         "group": "4",
         "defaultState": "off",
-        "off": "res/img/steampunk-rollover-off.png",
-        "on": "res/img/steampunk-rollover-on.png",
+        "off": "res/img/steampunk/steampunk-rollover-off.png",
+        "on": "res/img/steampunk/steampunk-rollover-on.png",
         "trigger": {
           "kind": "rollover",
           "source": "rollover-001"
@@ -56,7 +56,7 @@
     },
     {
       "id": "art-008",
-      "src": "res/img/steampunk-rollover-off.png",
+      "src": "res/img/steampunk/steampunk-rollover-off.png",
       "x": 267,
       "y": 374,
       "width": 14,
@@ -64,10 +64,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        361,
-        368
+        0.0,
+        0.0,
+        783.0,
+        797.0
       ],
       "plane": "background",
       "frames": 1,
@@ -76,8 +76,8 @@
       "indicator": {
         "group": "4",
         "defaultState": "off",
-        "off": "res/img/steampunk-rollover-off.png",
-        "on": "res/img/steampunk-rollover-on.png",
+        "off": "res/img/steampunk/steampunk-rollover-off.png",
+        "on": "res/img/steampunk/steampunk-rollover-on.png",
         "trigger": {
           "kind": "rollover",
           "source": "rollover-002"
@@ -89,7 +89,7 @@
     },
     {
       "id": "art-060",
-      "src": "res/img/steampunk-table-frame-theme.png",
+      "src": "res/img/steampunk/steampunk-table-frame-theme.png",
       "x": 180,
       "y": 230,
       "width": 360,
@@ -97,10 +97,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        360,
-        480
+        0.0,
+        0.0,
+        360.0,
+        480.0
       ],
       "plane": "background",
       "frames": 1,
@@ -109,18 +109,18 @@
     },
     {
       "id": "art-061",
-      "src": "res/img/steampunk-mine-laboratory.png",
-      "x": 100,
+      "src": "res/img/steampunk/steampunk-mine-laboratory.png",
+      "x": 105,
       "y": 125,
-      "width": 70,
-      "height": 210,
+      "width": 72,
+      "height": 216,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        70,
-        210
+        0.0,
+        0.0,
+        72.9166666667,
+        216.8055555556
       ],
       "plane": "lower",
       "frames": 1,
@@ -129,7 +129,7 @@
     },
     {
       "id": "art-062",
-      "src": "res/img/steampunk-airship-dock.png",
+      "src": "res/img/steampunk/steampunk-airship-dock.png",
       "x": 260,
       "y": 78,
       "width": 90,
@@ -137,10 +137,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        90,
-        115
+        0.0,
+        0.0,
+        90.0,
+        124.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -149,7 +149,7 @@
     },
     {
       "id": "art-063",
-      "src": "res/img/steampunk-village.png",
+      "src": "res/img/steampunk/steampunk-village.png",
       "x": 276,
       "y": 114,
       "width": 40,
@@ -157,10 +157,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        40,
-        100
+        0.0,
+        0.0,
+        40.0,
+        101.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -169,7 +169,7 @@
     },
     {
       "id": "art-064",
-      "src": "res/img/steampunk-race-venue.png",
+      "src": "res/img/steampunk/steampunk-race-venue.png",
       "x": 190,
       "y": 132,
       "width": 64,
@@ -177,10 +177,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        64,
-        64
+        0.0,
+        0.0,
+        64.0,
+        69.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -189,7 +189,7 @@
     },
     {
       "id": "art-065",
-      "src": "res/img/steampunk-sling-left-idle.png",
+      "src": "res/img/steampunk/steampunk-sling-left-idle.png",
       "x": 98,
       "y": 367,
       "width": 50,
@@ -197,10 +197,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        50,
-        90
+        0.0,
+        0.0,
+        934.0,
+        1684.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -208,8 +208,8 @@
       "state": "static",
       "indicator": {
         "defaultState": "off",
-        "off": "res/img/steampunk-sling-left-idle.png",
-        "on": "res/img/steampunk-sling-left-active.png",
+        "off": "res/img/steampunk/steampunk-sling-left-idle.png",
+        "on": "res/img/steampunk/steampunk-sling-left-active.png",
         "trigger": {
           "kind": "rebound",
           "source": "line-059"
@@ -223,7 +223,7 @@
     },
     {
       "id": "art-066",
-      "src": "res/img/steampunk-sling-right-idle.png",
+      "src": "res/img/steampunk/steampunk-sling-right-idle.png",
       "x": 244,
       "y": 366,
       "width": 50,
@@ -231,10 +231,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        50,
-        90
+        0.0,
+        0.0,
+        934.0,
+        1684.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -242,8 +242,8 @@
       "state": "static",
       "indicator": {
         "defaultState": "off",
-        "off": "res/img/steampunk-sling-right-idle.png",
-        "on": "res/img/steampunk-sling-right-active.png",
+        "off": "res/img/steampunk/steampunk-sling-right-idle.png",
+        "on": "res/img/steampunk/steampunk-sling-right-active.png",
         "trigger": {
           "kind": "rebound",
           "source": "line-058"
@@ -257,7 +257,7 @@
     },
     {
       "id": "art-067",
-      "src": "res/img/steampunk-return-left.png",
+      "src": "res/img/steampunk/steampunk-return-left.png",
       "x": 91,
       "y": 388,
       "width": 59,
@@ -265,10 +265,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        59,
-        108
+        0.0,
+        0.0,
+        59.0,
+        109.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -277,7 +277,7 @@
     },
     {
       "id": "art-068",
-      "src": "res/img/steampunk-return-right.png",
+      "src": "res/img/steampunk/steampunk-return-right.png",
       "x": 250,
       "y": 389,
       "width": 58,
@@ -285,10 +285,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        58,
-        108
+        0.0,
+        0.0,
+        58.0,
+        109.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -323,7 +323,7 @@
     },
     {
       "id": "art-105",
-      "src": "res/img/steampunk-rollover-off.png",
+      "src": "res/img/steampunk/steampunk-rollover-off.png",
       "x": 54,
       "y": 394,
       "width": 14,
@@ -331,10 +331,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        361,
-        368
+        0.0,
+        0.0,
+        783.0,
+        797.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -342,8 +342,8 @@
       "state": "static",
       "indicator": {
         "defaultState": "off",
-        "off": "res/img/steampunk-rollover-off.png",
-        "on": "res/img/steampunk-rollover-on.png",
+        "off": "res/img/steampunk/steampunk-rollover-off.png",
+        "on": "res/img/steampunk/steampunk-rollover-on.png",
         "trigger": {
           "kind": "kickback",
           "source": "line-060"
@@ -357,7 +357,7 @@
     },
     {
       "id": "art-098",
-      "src": "res/img/steampunk-rollover-off.png",
+      "src": "res/img/steampunk/steampunk-rollover-off.png",
       "x": 286,
       "y": 394,
       "width": 14,
@@ -365,10 +365,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        361,
-        368
+        0.0,
+        0.0,
+        783.0,
+        797.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -376,8 +376,8 @@
       "state": "static",
       "indicator": {
         "defaultState": "off",
-        "off": "res/img/steampunk-rollover-off.png",
-        "on": "res/img/steampunk-rollover-on.png",
+        "off": "res/img/steampunk/steampunk-rollover-off.png",
+        "on": "res/img/steampunk/steampunk-rollover-on.png",
         "trigger": {
           "kind": "kickback",
           "source": "line-061"
@@ -417,18 +417,18 @@
     },
     {
       "id": "art-001",
-      "src": "res/img/steampunk-bumper-furnace-level-1.png",
+      "src": "res/img/steampunk/steampunk-bumper-furnace-level-1.png",
       "x": 172,
       "y": 51,
-      "width": 28,
-      "height": 28,
+      "width": 35,
+      "height": 35,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        28,
-        28
+        0.0,
+        0.0,
+        35.0,
+        36.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -438,9 +438,9 @@
         "type": "bumper",
         "group": "5",
         "defaultState": "lv1",
-        "lv1": "res/img/steampunk-bumper-furnace-level-1.png",
-        "lv2": "res/img/steampunk-bumper-furnace-level-2.png",
-        "lv3": "res/img/steampunk-bumper-furnace-level-3.png",
+        "lv1": "res/img/steampunk/steampunk-bumper-furnace-level-1.png",
+        "lv2": "res/img/steampunk/steampunk-bumper-furnace-level-2.png",
+        "lv3": "res/img/steampunk/steampunk-bumper-furnace-level-3.png",
         "trigger": {
           "kind": "level",
           "source": "circle-001"
@@ -449,18 +449,18 @@
     },
     {
       "id": "art-002",
-      "src": "res/img/steampunk-bumper-furnace-level-1.png",
+      "src": "res/img/steampunk/steampunk-bumper-furnace-level-1.png",
       "x": 229,
       "y": 74,
-      "width": 28,
-      "height": 28,
+      "width": 35,
+      "height": 35,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        28,
-        28
+        0.0,
+        0.0,
+        35.0,
+        36.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -470,9 +470,9 @@
         "type": "bumper",
         "group": "5",
         "defaultState": "lv1",
-        "lv1": "res/img/steampunk-bumper-furnace-level-1.png",
-        "lv2": "res/img/steampunk-bumper-furnace-level-2.png",
-        "lv3": "res/img/steampunk-bumper-furnace-level-3.png",
+        "lv1": "res/img/steampunk/steampunk-bumper-furnace-level-1.png",
+        "lv2": "res/img/steampunk/steampunk-bumper-furnace-level-2.png",
+        "lv3": "res/img/steampunk/steampunk-bumper-furnace-level-3.png",
         "trigger": {
           "kind": "level",
           "source": "circle-002"
@@ -481,18 +481,18 @@
     },
     {
       "id": "art-003",
-      "src": "res/img/steampunk-bumper-furnace-level-1.png",
+      "src": "res/img/steampunk/steampunk-bumper-furnace-level-1.png",
       "x": 181,
-      "y": 112,
-      "width": 28,
-      "height": 28,
+      "y": 109,
+      "width": 35,
+      "height": 35,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        28,
-        28
+        0.0,
+        0.0,
+        35.0,
+        36.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -502,9 +502,9 @@
         "type": "bumper",
         "group": "5",
         "defaultState": "lv1",
-        "lv1": "res/img/steampunk-bumper-furnace-level-1.png",
-        "lv2": "res/img/steampunk-bumper-furnace-level-2.png",
-        "lv3": "res/img/steampunk-bumper-furnace-level-3.png",
+        "lv1": "res/img/steampunk/steampunk-bumper-furnace-level-1.png",
+        "lv2": "res/img/steampunk/steampunk-bumper-furnace-level-2.png",
+        "lv3": "res/img/steampunk/steampunk-bumper-furnace-level-3.png",
         "trigger": {
           "kind": "level",
           "source": "circle-003"
@@ -513,7 +513,7 @@
     },
     {
       "id": "art-004",
-      "src": "res/img/steampunk-flipper.png",
+      "src": "res/img/steampunk/steampunk-flipper.png",
       "x": 205,
       "y": 450,
       "width": 51,
@@ -521,10 +521,10 @@
       "angle": -211.5,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        51,
-        14
+        0.0,
+        0.0,
+        51.0,
+        15.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -534,7 +534,7 @@
     },
     {
       "id": "art-005",
-      "src": "res/img/steampunk-flipper.png",
+      "src": "res/img/steampunk/steampunk-flipper.png",
       "x": 136,
       "y": 450,
       "width": 51,
@@ -542,10 +542,10 @@
       "angle": 31.5,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        51,
-        14
+        0.0,
+        0.0,
+        51.0,
+        15.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -555,7 +555,7 @@
     },
     {
       "id": "art-006",
-      "src": "res/img/steampunk-flipper.png",
+      "src": "res/img/steampunk/steampunk-flipper.png",
       "x": 282,
       "y": 230,
       "width": 51,
@@ -563,10 +563,10 @@
       "angle": 111,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        51,
-        14
+        0.0,
+        0.0,
+        51.0,
+        15.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -576,18 +576,18 @@
     },
     {
       "id": "art-085",
-      "src": "res/img/steampunk-steam-tower-off.png",
+      "src": "res/img/steampunk/steampunk-steam-tower-off.png",
       "x": 30,
-      "y": 193,
-      "width": 34,
-      "height": 62,
+      "y": 182,
+      "width": 50,
+      "height": 91,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        10,
-        1,
-        34,
-        62
+        17.0,
+        1.0,
+        56.0,
+        91.0
       ],
       "plane": "top",
       "frames": 1,
@@ -595,8 +595,8 @@
       "state": "static",
       "indicator": {
         "group": "1",
-        "off": "res/img/steampunk-steam-tower-off.png",
-        "on": "res/img/steampunk-steam-tower-on.png",
+        "off": "res/img/steampunk/steampunk-steam-tower-off.png",
+        "on": "res/img/steampunk/steampunk-steam-tower-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "sensor",
@@ -618,7 +618,7 @@
     },
     {
       "id": "art-014",
-      "src": "res/img/steampunk-flag.png",
+      "src": "res/img/steampunk/steampunk-flag.png",
       "x": 299,
       "y": 100,
       "width": 16,
@@ -626,10 +626,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        240,
-        360
+        0.0,
+        0.0,
+        16.0,
+        24.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -639,7 +639,7 @@
     },
     {
       "id": "art-015",
-      "src": "res/img/steampunk-flag.png",
+      "src": "res/img/steampunk/steampunk-flag.png",
       "x": 64,
       "y": 133,
       "width": 16,
@@ -647,10 +647,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        240,
-        360
+        0.0,
+        0.0,
+        16.0,
+        24.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -660,7 +660,7 @@
     },
     {
       "id": "art-016",
-      "src": "res/img/steampunk-flag.png",
+      "src": "res/img/steampunk/steampunk-flag.png",
       "x": 253,
       "y": 122,
       "width": 16,
@@ -668,10 +668,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        240,
-        360
+        0.0,
+        0.0,
+        16.0,
+        24.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -681,7 +681,7 @@
     },
     {
       "id": "art-018",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 124,
       "y": 43,
       "width": 21,
@@ -689,10 +689,10 @@
       "angle": 123.34466092102573,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -711,7 +711,7 @@
     },
     {
       "id": "art-019",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 236,
       "y": 43,
       "width": 14,
@@ -719,10 +719,10 @@
       "angle": -72.89727103094764,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -741,7 +741,7 @@
     },
     {
       "id": "art-020",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 244,
       "y": 32,
       "width": 14,
@@ -749,10 +749,10 @@
       "angle": -33.690067525979785,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -771,7 +771,7 @@
     },
     {
       "id": "art-021",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 227,
       "y": 107,
       "width": 19,
@@ -779,10 +779,10 @@
       "angle": 90,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -802,7 +802,7 @@
     },
     {
       "id": "art-022",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 205,
       "y": 137,
       "width": 21,
@@ -810,10 +810,10 @@
       "angle": 62.24145939893998,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -832,7 +832,7 @@
     },
     {
       "id": "art-024",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 282,
       "y": 108,
       "width": 38,
@@ -840,10 +840,10 @@
       "angle": 108.43494882292202,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -862,7 +862,7 @@
     },
     {
       "id": "art-025",
-      "src": "res/img/steampunk-rebound.png",
+      "src": "res/img/steampunk/steampunk-rebound.png",
       "x": 194,
       "y": -1,
       "width": 131,
@@ -870,10 +870,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        131,
-        5
+        0.0,
+        0.0,
+        131.0,
+        44.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -892,18 +892,18 @@
     },
     {
       "id": "art-029",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 76,
       "y": 277,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -913,8 +913,8 @@
       "flipX": true,
       "indicator": {
         "group": "8",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -926,18 +926,18 @@
     },
     {
       "id": "art-030",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 77,
       "y": 262,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -947,8 +947,8 @@
       "flipX": true,
       "indicator": {
         "group": "8",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -960,18 +960,18 @@
     },
     {
       "id": "art-031",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 78,
       "y": 247,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -981,8 +981,8 @@
       "flipX": true,
       "indicator": {
         "group": "8",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -994,18 +994,18 @@
     },
     {
       "id": "art-032",
-      "src": "res/img/steampunk-target-bullseye.png",
+      "src": "res/img/steampunk/steampunk-target-bullseye.png",
       "x": 173,
       "y": 140,
-      "width": 12,
-      "height": 12,
+      "width": 20,
+      "height": 20,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        12
+        0.0,
+        0.0,
+        20.0,
+        21.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1015,18 +1015,18 @@
     },
     {
       "id": "art-033",
-      "src": "res/img/steampunk-target-bullseye.png",
+      "src": "res/img/steampunk/steampunk-target-bullseye.png",
       "x": 186,
       "y": 147,
-      "width": 12,
-      "height": 12,
+      "width": 20,
+      "height": 20,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        12
+        0.0,
+        0.0,
+        20.0,
+        21.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1036,18 +1036,18 @@
     },
     {
       "id": "art-034",
-      "src": "res/img/steampunk-target-bullseye.png",
+      "src": "res/img/steampunk/steampunk-target-bullseye.png",
       "x": 199,
       "y": 154,
-      "width": 12,
-      "height": 12,
+      "width": 20,
+      "height": 20,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        12
+        0.0,
+        0.0,
+        20.0,
+        21.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1057,18 +1057,18 @@
     },
     {
       "id": "art-035",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 122,
       "y": 94,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1078,8 +1078,8 @@
       "flipX": true,
       "indicator": {
         "group": "9",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -1091,18 +1091,18 @@
     },
     {
       "id": "art-036",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 122,
       "y": 79,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1112,8 +1112,8 @@
       "flipX": true,
       "indicator": {
         "group": "9",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -1125,18 +1125,18 @@
     },
     {
       "id": "art-037",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 122,
       "y": 64,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1146,8 +1146,8 @@
       "flipX": true,
       "indicator": {
         "group": "9",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -1159,18 +1159,18 @@
     },
     {
       "id": "art-038",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 117,
       "y": 211,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1180,8 +1180,8 @@
       "flipX": true,
       "indicator": {
         "group": "10",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -1193,18 +1193,18 @@
     },
     {
       "id": "art-039",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 120,
       "y": 196,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1214,8 +1214,8 @@
       "flipX": true,
       "indicator": {
         "group": "10",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -1227,18 +1227,18 @@
     },
     {
       "id": "art-040",
-      "src": "res/img/steampunk-target-gear-standing-off.png",
+      "src": "res/img/steampunk/steampunk-target-gear-standing-off.png",
       "x": 123,
       "y": 181,
-      "width": 12,
-      "height": 18,
+      "width": 20,
+      "height": 30,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        12,
-        18
+        0.0,
+        0.0,
+        24.0,
+        30.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1248,8 +1248,8 @@
       "flipX": true,
       "indicator": {
         "group": "10",
-        "off": "res/img/steampunk-target-gear-standing-off.png",
-        "on": "res/img/steampunk-target-gear-standing-on.png",
+        "off": "res/img/steampunk/steampunk-target-gear-standing-off.png",
+        "on": "res/img/steampunk/steampunk-target-gear-standing-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "default"
@@ -1261,7 +1261,7 @@
     },
     {
       "id": "art-069",
-      "src": "res/img/steampunk-gear.png",
+      "src": "res/img/steampunk/steampunk-gear.png",
       "x": 30,
       "y": 19,
       "width": 85,
@@ -1269,10 +1269,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        64,
-        64
+        0.0,
+        0.0,
+        85.0,
+        85.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1280,8 +1280,29 @@
       "state": "static"
     },
     {
+      "id": "art-104",
+      "src": "res/img/steampunk/steampunk-target-sign-blackhole.png",
+      "x": 61,
+      "y": 261,
+      "width": 65,
+      "height": 22,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0.0,
+        0.0,
+        66.0,
+        22.0
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
       "id": "art-070",
-      "src": "res/img/steampunk-pressure-gauge.png",
+      "src": "res/img/steampunk/steampunk-pressure-gauge.png",
       "x": 340,
       "y": 54,
       "width": 42,
@@ -1289,10 +1310,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        42,
-        42
+        0.0,
+        0.0,
+        42.0,
+        42.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1301,7 +1322,7 @@
     },
     {
       "id": "art-071",
-      "src": "res/img/steampunk-pressure-needle.png",
+      "src": "res/img/steampunk/steampunk-pressure-needle.png",
       "x": 340,
       "y": 54,
       "width": 42,
@@ -1309,10 +1330,10 @@
       "angle": 45,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        42,
-        42
+        0.0,
+        0.0,
+        42.0,
+        42.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1321,7 +1342,7 @@
     },
     {
       "id": "art-074",
-      "src": "res/img/steampunk-rescue-bar.png",
+      "src": "res/img/steampunk/steampunk-rescue-bar.png",
       "x": 56,
       "y": 435,
       "width": 25,
@@ -1329,16 +1350,16 @@
       "angle": 31.40163462281317,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        52,
-        5
+        0.0,
+        0.0,
+        26.0,
+        9.0
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static",
-      "bind": "thickline-003",
+      "state": "return-gate",
+      "bind": "oneway-007",
       "animation": {
         "enabled": false,
         "effect": "shake",
@@ -1352,7 +1373,7 @@
     },
     {
       "id": "art-076",
-      "src": "res/img/steampunk-rescue-bar.png",
+      "src": "res/img/steampunk/steampunk-rescue-bar.png",
       "x": 286,
       "y": 435,
       "width": 26,
@@ -1360,20 +1381,20 @@
       "angle": -28.02140981141757,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        52,
-        5
+        0.0,
+        0.0,
+        26.0,
+        9.0
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static",
-      "bind": "thickline-001"
+      "state": "return-gate",
+      "bind": "oneway-008"
     },
     {
       "id": "art-080",
-      "src": "res/img/steampunk-upper-deck.png",
+      "src": "res/img/steampunk/steampunk-upper-deck.png",
       "x": 203,
       "y": 13,
       "width": 170,
@@ -1381,10 +1402,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        170,
-        44
+        0.0,
+        0.0,
+        170.0,
+        57.0
       ],
       "plane": "upper",
       "frames": 1,
@@ -1415,7 +1436,7 @@
     },
     {
       "id": "art-084",
-      "src": "res/img/steampunk-crystal-off.png",
+      "src": "res/img/steampunk/steampunk-crystal-off.png",
       "x": 308,
       "y": 66,
       "width": 32,
@@ -1423,10 +1444,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        32,
-        27
+        0.0,
+        0.0,
+        32.0,
+        28.0
       ],
       "plane": "upper",
       "frames": 1,
@@ -1434,8 +1455,8 @@
       "state": "static",
       "indicator": {
         "defaultState": "off",
-        "off": "res/img/steampunk-crystal-off.png",
-        "on": "res/img/steampunk-crystal-on.png",
+        "off": "res/img/steampunk/steampunk-crystal-off.png",
+        "on": "res/img/steampunk/steampunk-crystal-on.png",
         "trigger": {
           "kind": "attack",
           "source": "lv4"
@@ -1452,7 +1473,7 @@
     },
     {
       "id": "art-090",
-      "src": "res/img/steampunk-enemy-battleship.png",
+      "src": "res/img/steampunk/steampunk-enemy-battleship.png",
       "x": 175,
       "y": 20,
       "width": 80,
@@ -1460,10 +1481,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        2,
-        56,
-        359,
-        117
+        1.0,
+        29.0,
+        187.0,
+        61.0
       ],
       "plane": "top",
       "frames": 1,
@@ -1483,7 +1504,7 @@
     },
     {
       "id": "art-077",
-      "src": "res/img/steampunk-blocker.png",
+      "src": "res/img/steampunk/steampunk-blocker.png",
       "x": 175,
       "y": 4,
       "width": 36,
@@ -1491,10 +1512,10 @@
       "angle": 46.27303002005671,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        37,
-        10
+        0.0,
+        0.0,
+        37.0,
+        13.0
       ],
       "plane": "upper",
       "frames": 1,
@@ -1504,7 +1525,7 @@
     },
     {
       "id": "art-078",
-      "src": "res/img/steampunk-blocker.png",
+      "src": "res/img/steampunk/steampunk-blocker.png",
       "x": 224,
       "y": 4,
       "width": 37,
@@ -1512,10 +1533,10 @@
       "angle": 45,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        37,
-        10
+        0.0,
+        0.0,
+        37.0,
+        13.0
       ],
       "plane": "upper",
       "frames": 1,
@@ -1525,7 +1546,7 @@
     },
     {
       "id": "art-089",
-      "src": "res/img/steampunk-enemy-carrier.png",
+      "src": "res/img/steampunk/steampunk-enemy-carrier.png",
       "x": 242,
       "y": 18,
       "width": 80,
@@ -1533,10 +1554,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        4,
-        79,
-        716,
-        261
+        1.0,
+        14.0,
+        129.0,
+        47.0
       ],
       "plane": "top",
       "frames": 1,
@@ -1557,18 +1578,18 @@
     },
     {
       "id": "art-092",
-      "src": "res/img/steampunk-steam-tower-off.png",
-      "x": 331,
-      "y": 184,
-      "width": 34,
-      "height": 62,
+      "src": "res/img/steampunk/steampunk-steam-tower-off.png",
+      "x": 329,
+      "y": 183,
+      "width": 50,
+      "height": 91,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        10,
-        1,
-        34,
-        62
+        17.0,
+        1.0,
+        56.0,
+        91.0
       ],
       "plane": "top",
       "frames": 1,
@@ -1576,8 +1597,8 @@
       "state": "static",
       "indicator": {
         "group": "1",
-        "off": "res/img/steampunk-steam-tower-off.png",
-        "on": "res/img/steampunk-steam-tower-on.png",
+        "off": "res/img/steampunk/steampunk-steam-tower-off.png",
+        "on": "res/img/steampunk/steampunk-steam-tower-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "sensor",
@@ -1599,7 +1620,7 @@
     },
     {
       "id": "art-091",
-      "src": "res/img/steampunk-enemy-airship.png",
+      "src": "res/img/steampunk/steampunk-enemy-airship.png",
       "x": 266,
       "y": 61,
       "width": 24,
@@ -1607,10 +1628,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        720,
-        360
+        0.0,
+        0.0,
+        361.0,
+        181.0
       ],
       "plane": "upper",
       "frames": 1,
@@ -1630,18 +1651,18 @@
     },
     {
       "id": "art-093",
-      "src": "res/img/steampunk-rocket.png",
-      "x": 106,
-      "y": 147,
-      "width": 35,
-      "height": 51,
+      "src": "res/img/steampunk/steampunk-rocket.png",
+      "x": 105,
+      "y": 137,
+      "width": 53,
+      "height": 77,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        361,
-        542
+        0.0,
+        0.0,
+        361.0,
+        542.0
       ],
       "plane": "top",
       "frames": 1,
@@ -1650,41 +1671,19 @@
       "bind": ""
     },
     {
-      "id": "art-094",
-      "src": "res/img/steampunk-air-bike-11.png",
-      "x": 200,
-      "y": 133,
-      "width": 28,
-      "height": 14,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        28,
-        14
-      ],
-      "plane": "top",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "flipX": true
-    },
-    {
       "id": "art-012",
-      "src": "res/img/steampunk-unlock-lights-0.png",
-      "x": 104,
-      "y": 171,
-      "width": 36,
-      "height": 18,
-      "angle": 0,
+      "src": "res/img/steampunk/steampunk-unlock-lights-0.png",
+      "x": 103,
+      "y": 172,
+      "width": 52,
+      "height": 26,
+      "angle": -1.795517946211504,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        36,
-        18
+        0.0,
+        0.0,
+        52.0,
+        27.0
       ],
       "plane": "top",
       "frames": 1,
@@ -1693,8 +1692,8 @@
       "indicator": {
         "group": "6",
         "defaultState": "off",
-        "off": "res/img/steampunk-unlock-lights-0.png",
-        "on": "res/img/steampunk-unlock-lights-2.png",
+        "off": "res/img/steampunk/steampunk-unlock-lights-0.png",
+        "on": "res/img/steampunk/steampunk-unlock-lights-2.png",
         "trigger": {
           "kind": "default"
         },
@@ -1704,61 +1703,19 @@
       }
     },
     {
-      "id": "art-095",
-      "src": "res/img/steampunk-air-bike-03.png",
-      "x": 206,
-      "y": 140,
-      "width": 29,
-      "height": 14,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        29,
-        14
-      ],
-      "plane": "top",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": ""
-    },
-    {
-      "id": "art-096",
-      "src": "res/img/steampunk-air-bike-02.png",
-      "x": 211,
-      "y": 147,
-      "width": 17,
-      "height": 8,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        17,
-        8
-      ],
-      "plane": "top",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": ""
-    },
-    {
       "id": "art-097",
-      "src": "res/img/steampunk-table-dragon.png",
-      "x": 60,
+      "src": "res/img/steampunk/steampunk-table-dragon.png",
+      "x": 54,
       "y": 86,
-      "width": 64,
-      "height": 74,
+      "width": 60,
+      "height": 70,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        64,
-        74
+        0.0,
+        0.0,
+        62.0,
+        70.0
       ],
       "plane": "upper",
       "frames": 1,
@@ -1841,29 +1798,8 @@
       "bind": ""
     },
     {
-      "id": "art-104",
-      "src": "res/img/steampunk-target-sign-blackhole.png",
-      "x": 65,
-      "y": 257,
-      "width": 32,
-      "height": 10,
-      "angle": 90,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        50,
-        16
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": ""
-    },
-    {
       "id": "art-108",
-      "src": "res/img/steampunk-low-ramp.png",
+      "src": "res/img/steampunk/steampunk-low-ramp.png",
       "x": 200,
       "y": 66,
       "width": 260,
@@ -1871,10 +1807,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        260,
-        166
+        0.0,
+        0.0,
+        260.0,
+        166.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1884,7 +1820,7 @@
     },
     {
       "id": "art-122",
-      "src": "res/img/steampunk-bonus-ring-background.png",
+      "src": "res/img/steampunk/steampunk-bonus-ring-background.png",
       "x": 170,
       "y": 310,
       "width": 140,
@@ -1892,10 +1828,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        140,
-        140
+        0.0,
+        0.0,
+        140.0,
+        140.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1926,19 +1862,19 @@
       "bind": ""
     },
     {
-      "id": "art-106",
-      "src": "res/img/steampunk-target-sign-upgrade.png",
-      "x": 110,
-      "y": 77,
-      "width": 32,
-      "height": 10,
-      "angle": 90,
+      "id": "art-107",
+      "src": "res/img/steampunk/steampunk-upper-ramp.png",
+      "x": 200,
+      "y": 67,
+      "width": 260,
+      "height": 166,
+      "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        50,
-        16
+        0.0,
+        0.0,
+        260.0,
+        166.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1947,19 +1883,19 @@
       "bind": ""
     },
     {
-      "id": "art-107",
-      "src": "res/img/steampunk-upper-ramp.png",
-      "x": 200,
-      "y": 67,
-      "width": 260,
-      "height": 166,
-      "angle": 0,
+      "id": "art-106",
+      "src": "res/img/steampunk/steampunk-target-sign-upgrade.png",
+      "x": 110,
+      "y": 77,
+      "width": 59,
+      "height": 20,
+      "angle": 90,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        260,
-        166
+        0.0,
+        0.0,
+        60.0,
+        20.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1969,7 +1905,7 @@
     },
     {
       "id": "art-109",
-      "src": "res/img/steampunk-center-post.png",
+      "src": "res/img/steampunk/steampunk-center-post.png",
       "x": 170,
       "y": 468,
       "width": 14,
@@ -1977,10 +1913,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        14,
-        18
+        0.0,
+        0.0,
+        18.0,
+        18.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -1990,7 +1926,7 @@
     },
     {
       "id": "art-115",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 261,
       "y": 80,
       "width": 16,
@@ -1998,10 +1934,10 @@
       "angle": -82.14845293840264,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2011,21 +1947,21 @@
       "indicator": {
         "group": "11",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "enemy-active"
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.5,
-          "offSeconds": 0.5
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     },
     {
       "id": "art-116",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 209,
       "y": 168,
       "width": 16,
@@ -2033,10 +1969,10 @@
       "angle": 268.67113861400287,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2046,19 +1982,21 @@
       "indicator": {
         "group": "13",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "enemy-idle"
         },
         "behavior": {
-          "mode": "keep"
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     },
     {
       "id": "art-117",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 113,
       "y": 128,
       "width": 16,
@@ -2066,10 +2004,10 @@
       "angle": 235.99257286408647,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2079,21 +2017,21 @@
       "indicator": {
         "group": "11",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "enemy-active"
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.5,
-          "offSeconds": 0.5
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     },
     {
       "id": "art-118",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 105,
       "y": 115,
       "width": 16,
@@ -2101,10 +2039,10 @@
       "angle": 241.98412999827585,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2114,21 +2052,21 @@
       "indicator": {
         "group": "11",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "enemy-active"
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.5,
-          "offSeconds": 0.5
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     },
     {
       "id": "art-119",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 122,
       "y": 140,
       "width": 16,
@@ -2136,10 +2074,10 @@
       "angle": 230.29339143613632,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2149,21 +2087,21 @@
       "indicator": {
         "group": "11",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "enemy-active"
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.5,
-          "offSeconds": 0.5
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     },
     {
       "id": "art-120",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 115,
       "y": 226,
       "width": 16,
@@ -2171,10 +2109,10 @@
       "angle": 268.65270630379194,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2184,19 +2122,21 @@
       "indicator": {
         "group": "12",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "default"
         },
         "behavior": {
-          "mode": "keep"
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     },
     {
       "id": "art-121",
-      "src": "res/img/steampunk-mission-arrow-off.png",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
       "x": 81,
       "y": 291,
       "width": 16,
@@ -2204,10 +2144,10 @@
       "angle": 251.4000426412865,
       "opacity": 1,
       "crop": [
-        0,
-        0,
-        16,
-        16
+        0.0,
+        0.0,
+        16.0,
+        16.0
       ],
       "plane": "lower",
       "frames": 1,
@@ -2217,15 +2157,190 @@
       "indicator": {
         "group": "11",
         "defaultState": "off",
-        "off": "res/img/steampunk-mission-arrow-off.png",
-        "on": "res/img/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "enemy-active"
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.5,
-          "offSeconds": 0.5
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-125",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
+      "x": 169,
+      "y": 232,
+      "width": 16,
+      "height": 16,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        0.0,
+        0.0,
+        16.0,
+        16.0
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "blockhole-001",
+      "indicator": {
+        "group": "steampunk-vortex-arrows",
+        "defaultState": "off",
+        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "trigger": {
+          "kind": "default"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-126",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
+      "x": 191,
+      "y": 235,
+      "width": 16,
+      "height": 16,
+      "angle": 105,
+      "opacity": 1,
+      "crop": [
+        0.0,
+        0.0,
+        16.0,
+        16.0
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "blockhole-001",
+      "indicator": {
+        "group": "steampunk-vortex-arrows",
+        "defaultState": "off",
+        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "trigger": {
+          "kind": "default"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-127",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
+      "x": 211,
+      "y": 242,
+      "width": 16,
+      "height": 16,
+      "angle": 120,
+      "opacity": 1,
+      "crop": [
+        0.0,
+        0.0,
+        16.0,
+        16.0
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "blockhole-001",
+      "indicator": {
+        "group": "steampunk-vortex-arrows",
+        "defaultState": "off",
+        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "trigger": {
+          "kind": "default"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-128",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
+      "x": 226,
+      "y": 255,
+      "width": 16,
+      "height": 16,
+      "angle": 135,
+      "opacity": 1,
+      "crop": [
+        0.0,
+        0.0,
+        16.0,
+        16.0
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "blockhole-001",
+      "indicator": {
+        "group": "steampunk-vortex-arrows",
+        "defaultState": "off",
+        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "trigger": {
+          "kind": "default"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-129",
+      "src": "res/img/steampunk/steampunk-mission-arrow-off.png",
+      "x": 241,
+      "y": 271,
+      "width": 16,
+      "height": 16,
+      "angle": 150,
+      "opacity": 1,
+      "crop": [
+        0.0,
+        0.0,
+        16.0,
+        16.0
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "blockhole-001",
+      "indicator": {
+        "group": "steampunk-vortex-arrows",
+        "defaultState": "off",
+        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "trigger": {
+          "kind": "default"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
         }
       }
     }
@@ -2255,7 +2370,7 @@
           "kind": "enemy",
           "value": 0,
           "art": {
-            "src": "res/img/steampunk-bonus-enemy.png",
+            "src": "res/img/steampunk/steampunk-bonus-enemy.png",
             "crop": [
               0,
               0,
@@ -2274,7 +2389,7 @@
           "kind": "score",
           "value": 1000,
           "art": {
-            "src": "res/img/steampunk-bonus-score-1000.png",
+            "src": "res/img/steampunk/steampunk-bonus-score-1000.png",
             "crop": [
               0,
               0,
@@ -2293,7 +2408,7 @@
           "kind": "score",
           "value": 2500,
           "art": {
-            "src": "res/img/steampunk-bonus-score-2500.png",
+            "src": "res/img/steampunk/steampunk-bonus-score-2500.png",
             "crop": [
               0,
               0,
@@ -2312,7 +2427,7 @@
           "kind": "score",
           "value": 5000,
           "art": {
-            "src": "res/img/steampunk-bonus-score-5000.png",
+            "src": "res/img/steampunk/steampunk-bonus-score-5000.png",
             "crop": [
               0,
               0,
@@ -2331,7 +2446,7 @@
           "kind": "score",
           "value": 10000,
           "art": {
-            "src": "res/img/steampunk-bonus-score-10000.png",
+            "src": "res/img/steampunk/steampunk-bonus-score-10000.png",
             "crop": [
               0,
               0,
@@ -2350,7 +2465,7 @@
           "kind": "multi",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk-bonus-multiball.png",
+            "src": "res/img/steampunk/steampunk-bonus-multiball.png",
             "crop": [
               0,
               0,
@@ -2369,7 +2484,7 @@
           "kind": "enemy",
           "value": 0,
           "art": {
-            "src": "res/img/steampunk-bonus-enemy.png",
+            "src": "res/img/steampunk/steampunk-bonus-enemy.png",
             "crop": [
               0,
               0,
@@ -2388,7 +2503,7 @@
           "kind": "multiplier",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk-bonus-multiplier-2.png",
+            "src": "res/img/steampunk/steampunk-bonus-multiplier-2.png",
             "crop": [
               0,
               0,
@@ -2407,7 +2522,7 @@
           "kind": "multiplier",
           "value": 3,
           "art": {
-            "src": "res/img/steampunk-bonus-multiplier-3.png",
+            "src": "res/img/steampunk/steampunk-bonus-multiplier-3.png",
             "crop": [
               0,
               0,
@@ -2426,7 +2541,7 @@
           "kind": "multiplier",
           "value": 4,
           "art": {
-            "src": "res/img/steampunk-bonus-multiplier-4.png",
+            "src": "res/img/steampunk/steampunk-bonus-multiplier-4.png",
             "crop": [
               0,
               0,
@@ -2445,7 +2560,7 @@
           "kind": "ball",
           "value": 1,
           "art": {
-            "src": "res/img/steampunk-bonus-ball-plus-1.png",
+            "src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png",
             "crop": [
               0,
               0,
@@ -2464,7 +2579,7 @@
           "kind": "ball",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk-bonus-ball-plus-2.png",
+            "src": "res/img/steampunk/steampunk-bonus-ball-plus-2.png",
             "crop": [
               0,
               0,
@@ -2479,9 +2594,9 @@
           }
         }
       ],
-      "sphere": "res/img/steampunk-attack-electric-sphere.png",
+      "sphere": "res/img/steampunk/steampunk-attack-electric-sphere.png",
       "mine": {
-        "src": "res/img/steampunk-tesla-mine.png",
+        "src": "res/img/steampunk/steampunk-tesla-mine.png",
         "crop": [
           1,
           1,
@@ -3668,6 +3783,7 @@
       "y1": 34,
       "x2": 117,
       "y2": 53,
+      "slingshot": false,
       "mechanic": "active-rebound"
     },
     {
@@ -3678,6 +3794,7 @@
       "y1": 49,
       "x2": 238,
       "y2": 36,
+      "slingshot": false,
       "mechanic": "active-rebound"
     },
     {
@@ -3688,6 +3805,7 @@
       "y1": 36,
       "x2": 250,
       "y2": 28,
+      "slingshot": false,
       "mechanic": "active-rebound"
     },
     {
@@ -3698,6 +3816,7 @@
       "y1": 97,
       "x2": 227,
       "y2": 116,
+      "slingshot": false,
       "mechanic": "active-rebound"
     },
     {
@@ -3708,6 +3827,7 @@
       "y1": 127,
       "x2": 210,
       "y2": 146,
+      "slingshot": false,
       "mechanic": "active-rebound"
     },
     {
@@ -3718,6 +3838,7 @@
       "y1": 90,
       "x2": 276,
       "y2": 126,
+      "slingshot": false,
       "mechanic": "active-rebound"
     },
     {
@@ -3728,6 +3849,7 @@
       "y1": -1,
       "x2": 259,
       "y2": -1,
+      "reboundStrength": "strong",
       "mechanic": "active-rebound"
     },
     {
@@ -3738,6 +3860,7 @@
       "y1": 392,
       "x2": 248,
       "y2": 334,
+      "reboundStrength": "strong",
       "mechanic": "active-rebound"
     },
     {
@@ -3748,6 +3871,7 @@
       "y1": 392,
       "x2": 94,
       "y2": 335,
+      "reboundStrength": "strong",
       "mechanic": "active-rebound"
     },
     {
@@ -4109,12 +4233,12 @@
     {
       "id": "thickline-001",
       "type": "thickline",
+      "layer": "lower",
       "x1": 275,
       "y1": 440,
       "x2": 280,
       "y2": 460,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "thickline-002",
@@ -4304,7 +4428,8 @@
       "mechanic": "layer-transition",
       "fromLayer": "upper",
       "toLayer": "lower",
-      "bidirectional": false
+      "bidirectional": false,
+      "stopOnEntry": true
     },
     {
       "id": "rollover-001",
@@ -4434,6 +4559,7 @@
       "thickness": 5
     }
   ],
+  "gravityRegions": [],
   "lockedLayout": [],
   "upperLayout": [],
   "topLayout": [],
