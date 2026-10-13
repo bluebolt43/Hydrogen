@@ -2192,8 +2192,8 @@
       "indicator": {
         "group": "steampunk-vortex-arrows",
         "defaultState": "off",
-        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
-        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "default"
         },
@@ -2227,8 +2227,8 @@
       "indicator": {
         "group": "steampunk-vortex-arrows",
         "defaultState": "off",
-        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
-        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "default"
         },
@@ -2262,8 +2262,8 @@
       "indicator": {
         "group": "steampunk-vortex-arrows",
         "defaultState": "off",
-        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
-        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "default"
         },
@@ -2297,8 +2297,8 @@
       "indicator": {
         "group": "steampunk-vortex-arrows",
         "defaultState": "off",
-        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
-        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "default"
         },
@@ -2332,8 +2332,8 @@
       "indicator": {
         "group": "steampunk-vortex-arrows",
         "defaultState": "off",
-        "off": "res/hd_img/steampunk/steampunk-mission-arrow-off.png",
-        "on": "res/hd_img/steampunk/steampunk-mission-arrow-on.png",
+        "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
+        "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
         "trigger": {
           "kind": "default"
         },
