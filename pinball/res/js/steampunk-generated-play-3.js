@@ -286,15 +286,15 @@ function pose(o,time,launchAt,resetAt=null){
 }
 function missionArt(o,game){
  if(o.src?.endsWith('/steampunk-mission-arrow-off.png')){
-  if(o.indicator?.group==='steampunk-vortex-arrows'){
+  const lights=typeof module!=='undefined'&&module.exports?require('../indicator-lights.js'):root.IndicatorLights;
+  if(game.ball?.state==='ready'&&o.indicator?.group&&lights.attractLight(game,o)!==null)return o;
+  if(o.bind==='blockhole-001'&&o.indicator){
    const until=game.holeExpiresAt?.get(o.bind),time=game.time||0;
    const available=game.armedHoles?.has(o.bind)&&Number.isFinite(until)&&time<until;
    const age=Math.max(0,time-(until-15)),b=o.indicator.behavior;
    const lit=available&&age%(b.onSeconds+b.offSeconds)<b.onSeconds;
    return {...o,indicator:undefined,src:lit?o.indicator.on:o.indicator.off};
   }
-  const lights=typeof module!=='undefined'&&module.exports?require('../indicator-lights.js'):root.IndicatorLights;
-  if(game.ball?.state==='ready'&&o.indicator?.group&&lights.attractLight(game,o)!==null)return o;
   const attack=o.indicator?.trigger?.kind==='enemy-active',unlock=o.bind==='targetGroup-004';
   if(attack||unlock){
    const rule=game.configuredGroups?.find(r=>r.id===o.bind);
@@ -330,8 +330,6 @@ function unlockArt(o,game){
  if(o.src.endsWith('/steampunk-blocker.png')&&game.isBlockerDisabled(o.bind))return {...o,hidden:true};
  if(!o.src.endsWith('/steampunk-unlock-lights-0.png'))return o;
  const rule=game.configuredGroups?.find(r=>r.id==='targetGroup-004');
- const lights=typeof module!=='undefined'&&module.exports?require('../indicator-lights.js'):root.IndicatorLights;
- if(o.indicator?.group&&lights.attractLight(game,o)!==null)return o;
  const count=Math.max(0,Math.min(2,rule?.unlocked||0));
  return {...o,indicator:undefined,src:`res/img/steampunk/steampunk-unlock-lights-${count}.png`};
 }

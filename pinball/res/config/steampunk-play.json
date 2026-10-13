@@ -119,8 +119,8 @@
       "crop": [
         0.0,
         0.0,
-        72.9166666667,
-        216.8055555556
+        73.0,
+        216.0225225225
       ],
       "plane": "lower",
       "frames": 1,
@@ -130,17 +130,17 @@
     {
       "id": "art-062",
       "src": "res/img/steampunk/steampunk-airship-dock.png",
-      "x": 260,
-      "y": 78,
-      "width": 90,
-      "height": 115,
+      "x": 263,
+      "y": 79,
+      "width": 94,
+      "height": 106,
       "angle": 0,
       "opacity": 1,
       "crop": [
         0.0,
         0.0,
-        90.0,
-        124.0
+        94.7872340426,
+        128.7692307692
       ],
       "plane": "lower",
       "frames": 1,
@@ -1699,7 +1699,8 @@
         },
         "behavior": {
           "mode": "keep"
-        }
+        },
+        "impactFlash": false
       }
     },
     {
@@ -2190,7 +2191,7 @@
       "state": "static",
       "bind": "blockhole-001",
       "indicator": {
-        "group": "steampunk-vortex-arrows",
+        "group": "14",
         "defaultState": "off",
         "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
         "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
@@ -2225,7 +2226,7 @@
       "state": "static",
       "bind": "blockhole-001",
       "indicator": {
-        "group": "steampunk-vortex-arrows",
+        "group": "14",
         "defaultState": "off",
         "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
         "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
@@ -2260,7 +2261,7 @@
       "state": "static",
       "bind": "blockhole-001",
       "indicator": {
-        "group": "steampunk-vortex-arrows",
+        "group": "14",
         "defaultState": "off",
         "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
         "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
@@ -2295,7 +2296,7 @@
       "state": "static",
       "bind": "blockhole-001",
       "indicator": {
-        "group": "steampunk-vortex-arrows",
+        "group": "14",
         "defaultState": "off",
         "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
         "on": "res/img/steampunk/steampunk-mission-arrow-on.png",
@@ -2330,7 +2331,7 @@
       "state": "static",
       "bind": "blockhole-001",
       "indicator": {
-        "group": "steampunk-vortex-arrows",
+        "group": "14",
         "defaultState": "off",
         "off": "res/img/steampunk/steampunk-mission-arrow-off.png",
         "on": "res/img/steampunk/steampunk-mission-arrow-on.png",

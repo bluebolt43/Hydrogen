@@ -2000,8 +2000,8 @@
     {
       "id": "art-029",
       "src": "res/hd_img/pirate/pirate-target-crate.png",
-      "x": 250,
-      "y": 104,
+      "x": 254,
+      "y": 103,
       "width": 15,
       "height": 15,
       "angle": 0,
@@ -2021,8 +2021,8 @@
     {
       "id": "art-030",
       "src": "res/hd_img/pirate/pirate-target-crate.png",
-      "x": 257,
-      "y": 119,
+      "x": 261,
+      "y": 118,
       "width": 15,
       "height": 15,
       "angle": 0,
@@ -2042,8 +2042,8 @@
     {
       "id": "art-031",
       "src": "res/hd_img/pirate/pirate-target-crate.png",
-      "x": 263,
-      "y": 136,
+      "x": 267,
+      "y": 132,
       "width": 15,
       "height": 15,
       "angle": 0,
@@ -3058,7 +3058,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "target",
-      "bind": "targets-004-1",
+      "bind": "targets-004-3",
       "animation": {
         "enabled": true,
         "effect": "shake",
@@ -3120,7 +3120,7 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "target",
-      "bind": "targets-004-3",
+      "bind": "targets-004-1",
       "animation": {
         "enabled": true,
         "effect": "shake",
