@@ -25,6 +25,7 @@ function renderCh8End(ms){
   document.querySelector('#ch8-end-dialogue').setAttribute('aria-label',['音符','財寶','微笑'][dialogueBeat]);
   document.querySelector('#ch8-end-fifth').style.opacity=clamp((ms-35700)/1500,0,1);
   document.querySelector('#ch8-end-sixth').style.opacity=clamp((ms-44200)/1500,0,1);
+  StoryEndingText.paint(document.querySelector('#ch8-end-text'),clamp((ms-35700)/1500,0,1));
   document.querySelector('#ch8-end-black').style.opacity=clamp((ms-46700)/500,0,1);
   const shake=Math.max(...[1000,1800,2600].map(at=>{
     const age=ms-at;return age>=0&&age<1100?1.4*(1-age/1100):0;

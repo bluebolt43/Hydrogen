@@ -1,21 +1,19 @@
-/* Menu music: preserve playback and the ten-second repeat gap while suspended. */
+/* Menu music: loop continuously and preserve playback position while suspended. */
 (function(root){
 'use strict';
 function createMenuMusic(src){
- const audio=new Audio(src);audio.preload='metadata';audio.loop=false;
- let enabled=false,disposed=false,timer=null,due=0,remaining=null;
+ const audio=new Audio(src);audio.preload='metadata';audio.loop=true;
+ let enabled=false,disposed=false;
  function pause(){
-  audio.pause();if(timer!==null){remaining=Math.max(0,due-performance.now());clearTimeout(timer);timer=null;}
+  audio.pause();
  }
  function start(){
   if(!enabled||disposed)return;
-  if(remaining!==null){if(timer!==null)return;due=performance.now()+remaining;timer=setTimeout(()=>{timer=null;remaining=null;audio.currentTime=0;start();},remaining);return;}
   if(audio.paused)audio.play().catch(()=>{}); // Retry on a user gesture if autoplay is blocked.
  }
- audio.addEventListener('ended',()=>{remaining=10000;start();});
  function gesture(){start();}
  document.addEventListener('pointerup',gesture);document.addEventListener('keydown',gesture);
- return {audio,stop(){enabled=false;pause();remaining=null;audio.currentTime=0;},setEnabled(value){enabled=!!value;if(enabled)start();else pause();},dispose(){disposed=true;enabled=false;pause();document.removeEventListener('pointerup',gesture);document.removeEventListener('keydown',gesture);audio.removeAttribute('src');audio.load();}};
+ return {audio,stop(){enabled=false;pause();audio.currentTime=0;},setEnabled(value){enabled=!!value;if(enabled)start();else pause();},dispose(){disposed=true;enabled=false;pause();document.removeEventListener('pointerup',gesture);document.removeEventListener('keydown',gesture);audio.removeAttribute('src');audio.load();}};
 }
 function createMenuMixer(sources,initial){
  const tracks=Object.fromEntries(Object.entries(sources).map(([key,src])=>[key,createMenuMusic(src)]));

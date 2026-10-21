@@ -1,11 +1,12 @@
-/* Fixed chrome shared by every table. Theme layouts contain table art only. */
+/* Shared chrome geometry and controls; Space supplies its own score-bar skin. */
 const PlayFrame={
- legacyNames:new Set(['score-bar.png','pirate-score-bar.png','system-marker-sound.png','system-marker-settings.png','system-marker-back.png']),
+ legacyNames:new Set(['score-bar.png','pirate-score-bar.png','space-system-score-bar.png','system-marker-sound.png','system-marker-settings.png','system-marker-back.png']),
  isFrameArt(item){return this.legacyNames.has(item?.src?.split('/').pop());},
- createArt(){
+ createArt(theme){
+  const space=['space','sci-fi','cosmic-dessert'].includes(theme);
   const common={angle:0,opacity:1,frames:1,frameAxis:'x',state:'static',bind:''};
   return [
-   {id:'frame-score',src:'res/img/score-bar.png',x:180,y:-157,width:370,height:123,crop:[0,0,370,124],plane:'background'},
+   {id:'frame-score',src:space?'res/img/space/space-system-score-bar.png':'res/img/score-bar.png',x:180,y:-157,width:370,height:123,crop:[0,0,370,124],plane:'background'},
    {id:'frame-sound',src:'res/img/system-marker-sound.png',x:269,y:-156,width:30,height:30,crop:[0,0,49,48],plane:'lower'},
    {id:'frame-settings',src:'res/img/system-marker-settings.png',x:301,y:-155,width:31,height:30,crop:[0,0,49,46],plane:'lower'},
    {id:'frame-back',src:'res/img/system-marker-back.png',x:332,y:-155,width:31,height:30,crop:[0,0,49,46],plane:'lower'}
@@ -20,9 +21,9 @@ if(typeof module!=='undefined'&&module.exports)module.exports=PlayFrame;
 'use strict';
 class LayoutTheater{
  constructor(theme='pirate'){
-  this.theme=theme==='steampunk'?'steampunk':'pirate';
+  this.theme=['saga','norse','ragnarok'].includes(theme)?'saga':['space','sci-fi','cosmic-dessert'].includes(theme)?'space':['touhou1','touhou-horrors'].includes(theme)?'touhou1':['touhou2','touhou-black-knight-2000'].includes(theme)?'touhou2':theme==='steampunk'?'steampunk':'pirate';
   this.pending=[];this.activeCommands=new Map();this.ready=false;this.curtainClosing=true;this.paused=null;this.generation=0;
-  this.frame=document.createElement('iframe');this.frame.title=this.theme==='steampunk'?'蒸氣龐克劇場':'海盜劇場';
+  this.frame=document.createElement('iframe');this.frame.title=this.theme==='saga'?'黑曜石傳奇劇場':this.theme==='space'?'宇宙點心劇場':['touhou1','touhou2'].includes(this.theme)?'東方賽銭録劇場':this.theme==='steampunk'?'蒸氣龐克劇場':'海盜劇場';
   this.frame.style.cssText='position:fixed;border:0;pointer-events:none;z-index:2;visibility:hidden';
   document.body.append(this.frame);
   addEventListener('message',e=>{
@@ -68,7 +69,7 @@ class LayoutTheater{
   // A replacement ball keeps the stage Boss and its HP.
   if(e.type==='ready'&&this.bossStage){if(this.game)this.game.enemyActive=!this.bossDefeated;return;}
   const attack=e.type==='configured-attack';
-  const command=e.type==='enemy-spawn-requested'?'enemy':attack?(this.theme==='steampunk'?e.kind:{lv1:'ball',lv2:'barrel',lv3:'airdrop',lv4:'kraken'}[e.kind]):null;
+  const command=e.type==='enemy-spawn-requested'?'enemy':attack?(['steampunk','space','touhou1','touhou2','saga'].includes(this.theme)?e.kind:{lv1:'ball',lv2:'barrel',lv3:'airdrop',lv4:'kraken'}[e.kind]):null;
   if(!command||attack&&!this.game?.enemyActive)return;
   if(command==='enemy'&&this.game)this.game.enemyIntroPending=true;
   const message={command,skipWarning:!!this.tutorialPreview,mode:this.bossStage?'boss':this.game?.g?.gameplay?.mode||'free',stage:this.bossStage||0,id:this.generation+':'+command+':'+(attack?(this.attackSerial=(this.attackSerial||0)+1):(e.eventId||0))};
@@ -81,7 +82,7 @@ class LayoutTheater{
   ctx.save();ctx.beginPath();ctx.rect(x,y,width,height);ctx.clip();
   ctx.font='bold 15px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
   ctx.fillStyle='#ffe6a3';
-  const text='DEFEAT BOSS',span=ctx.measureText(text).width+45,offset=(time*35)%span;
+  const text=PinballI18n.t('table.defeatBoss'),span=ctx.measureText(text).width+45,offset=(time*35)%span;
   for(let at=x-offset;at<x+width;at+=span)ctx.fillText(text,at,y+height/2);
   ctx.restore();
  }

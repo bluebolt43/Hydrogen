@@ -15,6 +15,7 @@ window.TheaterFrame={create(stage,animate){
 
 /* Both themes use the same embedding, command queue, pause and completion contract. */
 window.TheaterFrame.connect=function({stage,ready,reset,enemy,attack,state,bounds,storyVictory}){
+ window.viewReady=ready;
  const embedded=new URLSearchParams(location.search).has('embed');
  document.documentElement.classList.toggle('embed',embedded);
  if(!embedded)return;

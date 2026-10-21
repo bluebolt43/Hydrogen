@@ -1,0 +1,176 @@
+* { box-sizing: border-box; }
+  html, body { margin: 0; background: #171820; color: #f1e2c9; font: 14px system-ui, sans-serif; }
+  body { min-height: 100dvh; display: grid; place-items: center; }
+  .layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 34px; align-items: center; padding: 24px; width: fit-content; max-width: 100%; }
+  aside { max-width: 235px; }
+  .overline { font-size: 10px; letter-spacing: 3px; color: #bba17e; }
+  .chapter-tag { display: inline-block; margin-top: 12px; padding: 4px 9px; border: 1px solid #79614b; border-radius: 5px; color: #dec7a5; font-size: 11px; letter-spacing: 1px; }
+  .end-link { width: 100%; text-align: left; }
+  .chapter-start { width: 100%; text-align: left; margin-top: 12px; }
+  .shot-details { margin: 12px 0; }
+  .shot-details summary { color: #bba17e; cursor: pointer; font-size: 12px; padding: 6px 0; }
+  .shot-details .shots { margin: 8px 0; }
+  summary:focus-visible { outline: 3px solid #eac38b; outline-offset: 3px; }
+  h1 { font-size: 24px; line-height: 1.5; font-weight: 600; margin: 12px 0 8px; }
+  aside p { font-size: 12px; line-height: 1.8; color: #a9a5ad; }
+  .shots { display: grid; gap: 8px; margin: 24px 0; }
+  .shots button { text-align: left; }
+  .player { min-width: 0; width: min(70vw, calc((100dvh - 145px) * 9 / 16)); }
+  #stage { position: relative; width: 100%; aspect-ratio: 9 / 16; overflow: hidden; background: #050609; border: 1px solid #79614b; border-radius: 4px; box-shadow: 0 15px 60px #0008; }
+  #stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #wide { transform-origin: 50% 62%; }
+  #near { opacity: 0; transform-origin: 50% 65%; }
+  #box-shot { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  #stage #reimu-back { inset: auto; left: 50%; bottom: 0; width: 65%; height: 57%; object-fit: contain; object-position: center bottom; transform: translate(-50%, 110%); }
+  #discovery, #suspect, #lake, #fairy-play, #reimu-question, #cirno-talk, #cirno-angry, #box-bubble { opacity: 0; }
+  #stage.end-preview:not(.lake-backdrop) #lake { visibility: hidden; }
+  #fairy-play { transform-origin: 65% 78%; }
+  #fairy-play-position { position: absolute; inset: 0; transform: translateY(-31%); pointer-events: none; }
+  #cirno-talk { transform-origin: 0 0; transform: translate(19.3%, 13.8%) scale(.8); }
+  #stage #box-bubble { inset: auto; top: 9%; left: 12%; width: 76%; height: 33%; object-fit: contain; }
+  #end-search, #end-money, #aya-thought { display: none; }
+  #stage.a2-preview #aya-thought { display: block; }
+  #a2-mountain, #a2-reimu, #a2-aya, #a2-reimu-angry, #a2-info, #a2-payment { display: none; opacity: 0; }
+  #stage.a2-preview #a2-mountain, #stage.a2-preview #a2-reimu, #stage.a2-preview #a2-aya, #stage.a2-preview #a2-reimu-angry, #stage.a2-preview #a2-info, #stage.a2-preview #a2-payment { display: block; }
+  #a2-reimu, #a2-reimu-angry { transform-origin: 0 0; transform: translate(2%, 29%) scale(.6); }
+  #stage #a2-info, #stage #a2-payment { inset: auto; top: 9%; left: 10%; width: 80%; height: 32%; object-fit: contain; }
+  #a2-aya { transform-origin: 0 0; transform: translate(40%, 34%) scale(.565); }
+  #stage.a2-preview #fairy-play-position, #stage.a2-preview #reimu-question, #stage.a2-preview #cirno-talk, #stage.a2-preview #cirno-angry, #stage.a2-preview #box-bubble { visibility: hidden; }
+  #stage.end-preview #end-search, #stage.end-preview #end-money { display: block; }
+  #a2-end-aya { display: none; transform-origin: 0 0; transform: translate(10%, 12%) scale(.8); }
+  #stage.a2-end-preview #a2-mountain { display: block; opacity: 1; }
+  #stage.a2-end-preview #a2-end-aya { display: block; }
+  #stage.a2-end-preview #end-search, #stage.a2-end-preview #end-money { display: none; }
+  #a3-hands, #a3-sanae, #a3-shrine, #a3-sweeping, #a3-reimu, #a3-talk, #a3-reply, #a3-gohei, #a3-box-bubble { display: none; opacity: 0; }
+  #a3-reimu, #a3-gohei { transform-origin: 0 0; transform: translate(2%, 29%) scale(.6); }
+  #a3-sweeping, #a3-talk { transform-origin: 0 0; transform: translate(42%, 34%) scale(.55); }
+  #stage #a3-box-bubble, #stage #a3-reply, #stage #a6-question-mark { inset: auto; top: 9%; left: 12%; width: 76%; height: 33%; object-fit: contain; }
+  #a3-end-empty { display: none; }
+  #stage.a3-end-preview #a3-shrine { display: block; opacity: 1; }
+  #stage.a3-end-preview #a3-end-empty { display: block; }
+  #stage.a3-end-preview #end-search, #stage.a3-end-preview #end-money { display: none; }
+  #a4-hands, #a4-youmu, #a4-hakugyokurou, #a4-question, #a4-rear, #a4-advance, #a4-protect, #a4-explain, #a4-concern, #a4-ready { display: none; opacity: 0; }
+  #a4-explain, #a4-advance, #a4-protect { transform: translate(-7%, 3%) scale(.88); }
+  #a4-concern { transform-origin: 100% 50%; }
+  #a4-end-fertilizer, #a4-end-back, #a4-end-bloom, #a4-end-watch, #a4-end-reimu, #a4-end-yuyuko { display: none; opacity: 0; }
+  #a4-end-fertilizer { transform: translate(-7%, 3%) scale(.88); }
+  #a4-end-back { transform: translate(6%, -1%) scale(.60); }
+  #a4-end-watch, #a4-end-reimu { transform-origin: 0 0; transform: translate(-3%, 20%) scale(.70); }
+  #stage #a4-end-bloom { inset: auto; top: 3%; left: 8%; width: 72%; height: 31%; object-fit: contain; }
+  #a5-hands, #a5-reisen, #a5-eientei, #a5-reimu-talk, #a5-reimu-angry, #a5-reisen-talk, #a5-box-bubble, #a5-order-bubble { display: none; opacity: 0; }
+  #a5-reimu-talk, #a5-reimu-angry { transform-origin: 0 0; transform: translate(1%, 34%) scale(.59); }
+  #a5-reisen-talk { transform-origin: 0 0; transform: translate(49%, 40%) scale(.48); }
+  #stage #a5-box-bubble, #stage #a5-order-bubble { inset: auto; top: 6%; left: 10%; width: 80%; height: 33%; object-fit: contain; }
+  #a5-end-reisen, #a5-end-reimu, #a5-end-memory { display: none; opacity: 0; }
+  #a5-end-reisen { transform-origin: 0 0; transform: translate(49%, 40%) scale(.48); }
+  #a5-end-reimu { transform-origin: 0 0; transform: translate(1%, 34%) scale(.59); }
+  #stage #a5-end-memory { inset: auto; top: 3%; left: 4%; width: 92%; height: 40%; object-fit: contain; }
+  #stage.a5-end-preview #a5-eientei { display: block; opacity: 1; }
+  #stage.a5-end-preview #a5-end-reisen, #stage.a5-end-preview #a5-end-reimu, #stage.a5-end-preview #a5-end-memory { display: block; }
+  #stage.a5-end-preview #end-search, #stage.a5-end-preview #end-money { display: none; }
+  #a6-bamboo, #a6-black, #a6-mokou, #a6-reimu-back, #a6-reimu-talk, #a6-mokou-talk, #a6-mokou-angry, #a6-gohei, #a6-question-bubble, #a6-question-mark { display: none; }
+  #stage #a6-mokou { inset: auto; left: 34%; top: 46%; width: 32%; height: 32%; object-fit: contain; opacity: 0; }
+  #stage #a6-reimu-back { inset: auto; left: 31%; top: 55%; width: 38%; height: 45%; object-fit: contain; opacity: 0; }
+  #a6-reimu-talk, #a6-gohei { transform-origin: 0 0; transform: translate(2%, 30%) scale(.60); opacity: 0; }
+  #a6-mokou-talk, #a6-mokou-angry { transform-origin: 0 0; transform: translate(51%, 43.65%) scale(.44); opacity: 0; }
+  #stage #a6-question-bubble { inset: auto; top: 5%; left: 10%; width: 80%; height: 32%; object-fit: contain; opacity: 0; }
+  #a6-end-mokou, #a6-end-reimu, #a6-end-intro, .a6-memory { display: none; opacity: 0; }
+  #stage #a6-end-mokou { inset: auto; left: 55%; top: 55%; width: 34%; height: 34%; object-fit: contain; }
+  #a6-end-reimu { transform-origin: 0 0; transform: translate(1%, 38%) scale(.56); }
+  #stage .a6-memory { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  #stage #a6-end-intro { inset: auto; top: 5%; left: 10%; width: 80%; height: 35%; object-fit: contain; transform-origin: 65% 100%; }
+  #stage.a6-end-preview #a6-bamboo { display: block; }
+  #stage.a6-end-preview #a6-end-mokou, #stage.a6-end-preview #a6-end-reimu, #stage.a6-end-preview #a6-end-intro, #stage.a6-end-preview .a6-memory { display: block; }
+  #stage.a6-end-preview #end-search, #stage.a6-end-preview #end-money { display: none; }
+  #a6-question-bubble { transform: scaleX(-1); }
+  #a6-question-mark { opacity: 0; }
+  #a7-bg, #a7-reimu, #a7-yukari, #a7-evasive, #a7-witness, #a7-box, #a7-refusal, #a7-gohei { display: none; opacity: 0; }
+  #a7-reimu, #a7-gohei { transform-origin: 0 0; transform: translate(2%, 30%) scale(.60); }
+  #a7-yukari, #a7-evasive { transform-origin: 0 0; transform: translate(51%, 43.31%) scale(.44); }
+  #stage #a7-witness, #stage #a7-box { inset: auto; top: 5%; left: 10%; width: 80%; height: 33%; object-fit: contain; }
+  .a8-end-scene { display: none; opacity: 0; }
+  #stage.a8-end-preview .a8-end-scene { display: block; }
+  #stage.a8-end-preview #end-search, #stage.a8-end-preview #end-money { display: none; }
+  .a8-start-scene { display: none; opacity: 0; }
+  #stage.a8-preview .a8-start-scene { display: block; }
+  #stage.a8-preview #end-search, #stage.a8-preview #end-money { display: none; }
+  #stage #a7-end-closeup { inset: auto; top: 4%; left: 7%; width: 86%; height: 40%; object-fit: cover; border: 3px solid #f1e2c9; border-radius: 10px; box-shadow: 0 8px 30px #0009; transform-origin: 80% 20%; }
+  .a7-end-scene { display: none; opacity: 0; }
+  #stage.a7-end-preview .a7-end-scene { display: block; }
+  #stage.a7-end-preview #end-search, #stage.a7-end-preview #end-money { display: none; }
+  #a7-witness { transform: scaleX(-1); }
+  #stage #a7-refusal { inset: auto; top: 15%; left: 55%; width: 34%; height: 22%; object-fit: contain; }
+  #stage.a7-preview #a7-bg, #stage.a7-preview #a7-reimu, #stage.a7-preview #a7-yukari, #stage.a7-preview #a7-evasive, #stage.a7-preview #a7-witness, #stage.a7-preview #a7-box, #stage.a7-preview #a7-refusal, #stage.a7-preview #a7-gohei { display: block; }
+  #stage.a7-preview #end-search, #stage.a7-preview #end-money { display: none; }
+  #a6-black { position: absolute; inset: 0; background: #000; }
+  #stage.a6-preview #a6-bamboo, #stage.a6-preview #a6-black, #stage.a6-preview #a6-mokou, #stage.a6-preview #a6-reimu-back, #stage.a6-preview #a6-reimu-talk, #stage.a6-preview #a6-mokou-talk, #stage.a6-preview #a6-mokou-angry, #stage.a6-preview #a6-gohei, #stage.a6-preview #a6-question-bubble, #stage.a6-preview #a6-question-mark { display: block; }
+  #stage.a6-preview #end-search, #stage.a6-preview #end-money { display: none; }
+  #a5-hands { transform-origin: 78% 44%; }
+  #stage #a5-reisen { inset: auto; top: 7%; left: 7%; width: 86%; height: 86%; object-fit: contain; }
+  #stage.a5-preview #a4-rear { display: block; opacity: 1; }
+  #stage.a5-preview #a5-hands, #stage.a5-preview #a5-reisen, #stage.a5-preview #a5-eientei, #stage.a5-preview #a5-reimu-talk, #stage.a5-preview #a5-reimu-angry, #stage.a5-preview #a5-reisen-talk, #stage.a5-preview #a5-box-bubble, #stage.a5-preview #a5-order-bubble { display: block; }
+  #stage.a5-preview #a4-rear { display: block; opacity: 1; }
+  #stage.a5-preview #end-search, #stage.a5-preview #end-money { display: none; }
+  #a4-end-yuyuko { transform-origin: 100% 50%; }
+  #stage.a4-end-preview #a4-rear { display: block; opacity: 1; }
+  #stage.a4-end-preview #a4-end-fertilizer, #stage.a4-end-preview #a4-end-back, #stage.a4-end-preview #a4-end-bloom, #stage.a4-end-preview #a4-end-watch, #stage.a4-end-preview #a4-end-reimu, #stage.a4-end-preview #a4-end-yuyuko { display: block; }
+  #stage.a4-end-preview #end-search, #stage.a4-end-preview #end-money { display: none; }
+  #a4-hands { transform-origin: 50% 44%; }
+  #stage #a4-youmu { inset: auto; top: 7%; left: 7%; width: 86%; height: 86%; object-fit: contain; }
+  #stage.a4-preview #a4-hands, #stage.a4-preview #a4-youmu, #stage.a4-preview #a4-hakugyokurou, #stage.a4-preview #a4-question, #stage.a4-preview #a4-rear, #stage.a4-preview #a4-advance, #stage.a4-preview #a4-protect, #stage.a4-preview #a4-explain, #stage.a4-preview #a4-concern, #stage.a4-preview #a4-ready { display: block; }
+  #stage.a4-preview #a3-shrine { display: block; opacity: 1; }
+  #stage.a4-preview #end-search, #stage.a4-preview #end-money { display: none; }
+  #a3-hands { transform-origin: 27% 45%; }
+  #stage #a3-sanae { inset: auto; top: 7%; left: 7%; width: 86%; height: 86%; object-fit: contain; }
+  #stage.a3-preview #a3-hands, #stage.a3-preview #a3-sanae, #stage.a3-preview #a3-shrine, #stage.a3-preview #a3-sweeping, #stage.a3-preview #a3-reimu, #stage.a3-preview #a3-talk, #stage.a3-preview #a3-reply, #stage.a3-preview #a3-gohei, #stage.a3-preview #a3-box-bubble { display: block; }
+  #stage.a3-preview #a2-mountain { display: block; opacity: 1; }
+  #stage.a3-preview #end-search, #stage.a3-preview #end-money { display: none; }
+  #end-money { position: absolute; left: 13%; top: 10%; width: 74%; height: 31%; opacity: 0; }
+  #stage #end-money img { object-fit: contain; }
+  #no-money-cross { position: absolute; inset: 18% 24% 25%; width: 52%; height: 57%; opacity: 0; filter: drop-shadow(0 2px 1px #fff); }
+  #stage.end-preview #fairy-play-position, #stage.end-preview #reimu-question, #stage.end-preview #cirno-talk, #stage.end-preview #cirno-angry, #stage.end-preview #box-bubble { visibility: hidden; }
+  #shade { position: absolute; inset: 0; background: #000; pointer-events: none; }
+  #stage:fullscreen { width: 100vw; height: 100vh; aspect-ratio: auto; }
+  #stage:fullscreen img { object-fit: contain; }
+  button { font: inherit; color: inherit; background: #2c2b35; border: 1px solid #5f5350; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+  button:hover { background: #413a3d; }
+  button:disabled { opacity: .4; cursor: default; }
+  button[aria-pressed=true] { border-color: #dabb88; background: #554234; }
+  button:focus-visible, input:focus-visible { outline: 3px solid #eac38b; outline-offset: 3px; }
+  .controls { padding-top: 12px; }
+  .timeline { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+  input { flex: 1; min-width: 0; accent-color: #dec092; }
+  output { font-size: 10px; color: #b8aead; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .buttons button { font-size: 12px; }
+  #pause { background: #caa878; color: #221c20; border-color: #caa878; min-width: 65px; }
+  #shot-name { color: #dec7a5; margin-top: 14px; font-size: 12px; min-height: 36px; line-height: 1.7; }
+  #status { text-align: center; color: #b8aead; margin: 8px 0 0; min-height: 18px; font-size: 12px; }
+  @media(max-width:700px) {
+    .layout { display: flex; flex-direction: column; gap: 14px; padding: 12px; }
+    aside { width: 100%; max-width: none; }
+    .overline, aside p { display: none; }
+    h1 { font-size: 17px; margin: 0; }
+    h1 br { display: none; }
+    .shots { display: flex; flex-wrap: wrap; margin: 12px 0 0; gap: 6px; }
+    .shots button { font-size: 11px; padding: 6px 8px; }
+    #shot-name { min-height: 18px; margin-top: 8px; }
+    .player { width: min(100%, calc((100dvh - 230px) * 9 / 16)); }
+  }
+
+/* Composed scenes reuse backgrounds and transparent character objects. */
+.story-layer-scene { position: absolute; inset: 0; width: 100%; height: 100%; }
+#stage .a7-standing { inset: auto; left: -22%; bottom: 12%; width: 90%; height: 65%; object-fit: contain; }
+#stage .a7-pointing { inset: auto; left: -22%; bottom: 12%; width: 100%; height: 65%; object-fit: contain; }
+#stage .a7-seated { inset: auto; right: 0; bottom: 13%; width: 70%; height: 46%; object-fit: contain; }
+#stage .a7-flying { inset: auto; right: 6%; top: 4%; width: 24%; height: 17%; object-fit: contain; }
+#stage .a8-discovering { inset: auto; left: 0; top: 9%; width: 59%; height: 39%; object-fit: contain; }
+#stage .a8-moneybag { inset: auto; right: 13%; bottom: 13%; width: 28%; height: 17%; object-fit: contain; }
+#stage .a8-picking { inset: auto; left: 7%; bottom: 8%; width: 86%; height: 60%; object-fit: contain; }
+#stage #a6-end-intro { position: absolute; box-sizing: border-box; height: 30%; border: 4px solid white; border-radius: 45%; box-shadow: 0 0 0 2px #303038; background: white; }
+#stage #a6-end-intro::after { content: ''; position: absolute; right: 9%; bottom: -10%; width: 12%; height: 18%; border-radius: 50%; background: white; box-shadow: 8px 14px 0 -4px white; }
+#stage #a6-end-intro-crop { border-radius: inherit; object-fit: cover; object-position: 50% 48%; }
+
+/* Chapter 8 uses one shared forest plate across its airborne scenes. */
+#a8-air-background { display: none; }
+#stage.a8-preview #a8-air-background, #stage.a8-end-preview #a8-air-background { display: block; opacity: 1; }

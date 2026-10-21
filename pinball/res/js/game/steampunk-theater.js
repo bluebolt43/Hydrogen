@@ -184,7 +184,8 @@ $('daynight').onclick=changeBackground;setBackground(levels[level-1].background|
 window.SteampunkTheater={attack,reset,pause,state,changeBackground,choose};
 reset();
 const sources=['img/theater-curtain-right.png','img/health-heart.svg',...Object.values(art).map(n=>'img/steampunk/'+n+'.png'),...new Set(levels.flatMap(config=>[...config.ships,...(config.damageStates||[]),...(config.damageStatesByShip||[]).flat().filter(Boolean)].map(name=>'img/steampunk/'+name))),...backgrounds.map(name=>'img/steampunk/steampunk-theater-background-'+name+'.png'),'img/steampunk/steampunk-theater-cloud.png'];
-const ready=Promise.all(sources.map(src=>{const im=new Image();im.src=src;return im.decode();})).then(async()=>{if(!embedded)await enter();loaded=true;draw();}).catch(()=>{$('status').textContent='素材載入失敗';});
+const ready=Promise.all(sources.map(src=>{const im=new Image();im.src=src;return im.decode();})).then(async()=>{if(!embedded)await enter();loaded=true;draw();});
+ready.catch(()=>{$('status').textContent='素材載入失敗';});
 TheaterFrame.connect({stage,ready,
  bounds(){
   const s=stage.getBoundingClientRect(),rs=[...document.querySelectorAll('#racers .hp')].map(el=>el.getBoundingClientRect()).filter(r=>r.width&&r.height);

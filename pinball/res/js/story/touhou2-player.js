@@ -1,0 +1,59 @@
+const questionBubbleSVG="<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\">\n  <path d=\"M170 70H790Q890 70 890 170V470Q890 555 805 570L850 665 700 575H170Q70 575 70 475V170Q70 70 170 70Z\" fill=\"white\" stroke=\"#303038\" stroke-width=\"14\" stroke-linejoin=\"round\"/>\n  <g transform=\"translate(480 310) scale(.65) translate(-480 -310)\">\n    <path d=\"M399 219C404 145 549 139 570 217C592 294 489 306 484 369\" fill=\"none\" stroke=\"#dc403c\" stroke-width=\"40\" stroke-linecap=\"round\"/>\n    <circle cx=\"484\" cy=\"440\" r=\"23\" fill=\"#dc403c\"/>\n  </g>\n</svg>";
+document.querySelectorAll('img[data-story-bubble="question"]').forEach(image=>{const color=/^#[0-9a-f]{6}$/i.test(image.dataset.bubbleColor||'')?image.dataset.bubbleColor:'#dc403c';image.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(questionBubbleSVG.replaceAll('#dc403c',color));});
+// Deterministic layer timeline shared by standalone chapters and main's view runtime.
+const storyData=JSON.parse(document.getElementById('story-data').textContent);
+const phone=document.getElementById('phone'),begin=document.getElementById('begin');
+const next=document.getElementById('story-next'),skip=document.getElementById('story-skip');
+const music=document.querySelector('audio'),key=`ch${storyData.chapter}-${storyData.part}`;
+const layers=storyData.layers.map(layer=>({...layer,element:document.getElementById(layer.id)}));
+let time=0,playing=false,last=0,frame=0,resumable=false,completed=false,nextTimer=0;
+const clamp=value=>Math.max(0,Math.min(1,value));
+const seen=()=>window.AppProgress?window.AppProgress.hasSeen(key):localStorage.getItem(`pinball-touhou2-story-seen-v1:${key}`)==='1';
+function render(ms){
+ time=Math.max(0,Math.min(storyData.duration,Number(ms)||0));phone.dataset.time=String(time);
+ for(const layer of layers){
+  let opacity=clamp((time-layer.start)/(layer.fade||700))*clamp((layer.end-time)/(layer.fadeOut||500));
+  if(layer.dissolveDuration)opacity*=Math.pow(1-clamp((time-layer.dissolveStart)/layer.dissolveDuration),layer.dissolvePower||3);
+  layer.element.style.opacity=String(opacity);
+  if(layer.effect==='rewind-mask')layer.element.querySelector('svg').style.opacity=String(.65+.35*(.5+.5*Math.cos((time-layer.start)/90)));
+  if(layer.zoomCrop&&layer.crop){
+   const q=clamp((time-layer.zoomCrop.start)/layer.zoomCrop.duration),ease=q*q*(3-2*q);
+   const target=layer.zoomCrop.to;
+   const cw=layer.crop[2]+(target[2]-layer.crop[2])*ease,ch=cw*layer.crop[3]/layer.crop[2];
+   const centerX=layer.crop[0]+layer.crop[2]/2+(target[0]+target[2]/2-layer.crop[0]-layer.crop[2]/2)*ease;
+   const centerY=layer.crop[1]+layer.crop[3]/2+(target[1]+target[3]/2-layer.crop[1]-layer.crop[3]/2)*ease;
+   const cx=centerX-cw/2,cy=centerY-ch/2;
+   const picture=layer.element.querySelector('img');
+   Object.assign(picture.style,{left:`${-cx/cw*100}%`,top:`${-cy/ch*100}%`,width:`${100/cw}%`,height:`${100/ch}%`});
+  }
+  const progress=clamp((time-layer.start)/Math.max(1,layer.end-layer.start));
+  const walk=layer.walk?Math.sin((time-layer.start)/190):0;
+  const x=(layer.moveX||0)*progress+walk*.8,y=(layer.enterY||0)*(1-clamp((time-layer.start)/(layer.enterDuration||900)))+(layer.moveY||0)*progress;
+  const bob=layer.bob&&opacity>0?Math.sin(time/150)*layer.bob:0;
+  const flightPhase=(time-layer.start)*Math.PI*2/(layer.floatPeriod||2000);
+  const flightY=layer.floatY?(Math.sin(flightPhase)+.3*Math.sin(flightPhase*1.7))*layer.floatY:0;
+  const sway=layer.sway?Math.sin((time-layer.start)*Math.PI*2/(layer.swayPeriod||2600))*layer.sway:0;
+  layer.element.style.transformOrigin=layer.sway||layer.walk?'50% 100%':'50% 50%';
+  layer.element.style.transform=`translate(${x}%,${y+bob+flightY}%) rotate(${sway+walk*1.4}deg) scale(${1+(layer.zoom||0)*progress})`;
+ }
+ phone.dataset.phase=storyData.cues.filter(c=>time>=c.time).at(-1)?.id||'opening';
+}
+function complete(){if(completed)return;completed=true;clearTimeout(nextTimer);next.hidden=true;window.dispatchEvent(new CustomEvent('story:complete',{detail:{chapter:key}}));}
+function stop(){playing=false;cancelAnimationFrame(frame);music?.pause();}
+function finish(skipped=false){
+ stop();render(storyData.duration);skip.hidden=true;
+ if(!skipped){if(window.AppProgress)window.AppProgress.markSeen(key);else localStorage.setItem(`pinball-touhou2-story-seen-v1:${key}`,'1');}
+ if(storyData.part==='end'){next.hidden=false;nextTimer=setTimeout(complete,10000);}else complete();
+}
+function tick(now){if(!playing)return;render(time+Math.max(0,now-last));last=now;if(time>=storyData.duration)finish();else frame=requestAnimationFrame(tick);}
+async function play(chapter=key){
+ if(chapter!==key)return false;await window.viewReady;stop();clearTimeout(nextTimer);completed=false;next.hidden=true;skip.hidden=!seen();render(0);begin.hidden=true;
+ if(music){music.currentTime=0;try{await music.play();}catch{begin.hidden=false;return false;}}
+ playing=true;last=performance.now();frame=requestAnimationFrame(tick);return true;
+}
+document.getElementById('start').onclick=()=>play();document.getElementById('replay').onclick=()=>play();
+skip.onclick=()=>{if(seen())finish(true);};next.onclick=complete;
+if(new URLSearchParams(location.search).has('embed'))document.getElementById('chapters').hidden=true;
+window.addEventListener('pagehide',()=>{stop();clearTimeout(nextTimer);});
+window.viewAPI={play,render,suspend(){resumable=playing;stop();},resume(){if(!resumable)return;resumable=false;playing=true;last=performance.now();music?.play().catch(()=>{});frame=requestAnimationFrame(tick);}};
+window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>image.decode())).then(()=>{render(0);phone.dataset.ready='true';}).catch(error=>{document.getElementById('error').hidden=false;throw error;});

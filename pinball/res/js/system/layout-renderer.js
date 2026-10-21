@@ -13,7 +13,7 @@ function applyWidthPreset(o,canvasWidth){
  o.edgeWidth=Math.min(o.edgeWidth,edgeLimit(o));
 }
 const defaults={corner:'res/img/system-frame-corner.svg',edge:'res/img/system-frame-edge.svg'};
-const buttonDefaults={label:'MAINKAN',src:'res/img/system-button.png',widthRatio:.42,minCanvasWidthRatio:.22,heightRatio:.0538,crop:[189,109,1523,574]};
+const buttonDefaults={src:'res/img/system-button.png',widthRatio:.42,minCanvasWidthRatio:.22,heightRatio:.0538,crop:[189,109,1523,574]};
 const lockDefaults={src:'res/img/system-lock.png',widthRatio:.17472,heightRatio:.080916,yOffset:0,crop:[159,159,1117,783]};
 // These pixel crops are authored against HD originals. Keep source coordinates
 // stable in saved projects while runtime textures can be rebuilt at any density.
@@ -49,7 +49,7 @@ function drawPlayTexture(ctx,image,button,r){
 }
 function edgeLimit(o){return Math.min(64,Math.floor(Math.min(o.width,o.height)/8));}
 function number(value,min,max,label){if(!Number.isFinite(value)||value<min||value>max)throw Error(label+'超出範圍');return value;}
-function asset(src){if(typeof src!=='string'||!/^res\/img\/(?:(?:pirate|steampunk)\/)?[^/\\?#]+\.(png|webp|jpg|jpeg|svg)$/i.test(src)||src.includes('..'))throw Error('素材路徑須為 res/img/ 或 res/img/pirate/ 下的檔案');return src;}
+function asset(src){if(typeof src!=='string'||!/^res\/img\/(?:(?:pirate|steampunk|touhou)\/)?[^/\\?#]+\.(png|webp|jpg|jpeg|svg)$/i.test(src)||src.includes('..'))throw Error('素材路徑須為 res/img/ 或 pirate、steampunk、touhou 子資料夾下的檔案');return src;}
 function validate(input){
  const d=JSON.parse(JSON.stringify(input));
  if(d.format!=='pinball-system-layout'||d.version!==1||!d.canvas||!Array.isArray(d.objects)||d.objects.length>200)throw Error('不是有效的系統布局 JSON');
@@ -77,6 +77,8 @@ function validate(input){
   if(o.markerText!==undefined&&(typeof o.markerText!=='string'||o.markerText.length>20))throw Error('標記文字最多 20 字');
   if(o.title){if(o.title.arc!==undefined)number(o.title.arc,-90,90,'標題文字弧度');if(o.title.textY!==undefined)number(o.title.textY,-8192,8192,'標題文字 Y');if(o.title.src!==undefined)asset(o.title.src);if(o.title.showText!==undefined&&typeof o.title.showText!=='boolean')throw Error('標題文字顯示設定不正確');if(o.title.text!==undefined&&(typeof o.title.text!=='string'||o.title.text.length>80))throw Error('標題文字最多 80 字');if(o.title.width!==undefined)number(o.title.width,8,8192,'標題寬度');if(o.title.yOffset!==undefined)number(o.title.yOffset,-8192,8192,'標題 Y');}
   o.lockImage=o.lockImage||JSON.parse(JSON.stringify(lockDefaults));asset(o.lockImage.src);
+  if(o.lockImage.badge){const badge=o.lockImage.badge;asset(badge.src);number(badge.x,-1,2,'鎖牌徽章 X');number(badge.y,-1,2,'鎖牌徽章 Y');number(badge.width,.01,2,'鎖牌徽章寬度');}
+  if(o.lockImage.kind!==undefined&&!['progress','purchase'].includes(o.lockImage.kind))throw Error('鎖牌種類不正確');
   if(o.lockImage.label!==undefined&&(typeof o.lockImage.label!=='string'||o.lockImage.label.length>80))throw Error('鎖牌文字最多 80 字');
   o.lockImage.widthRatio=o.lockImage.widthRatio??lockDefaults.widthRatio;o.lockImage.heightRatio=o.lockImage.heightRatio??lockDefaults.heightRatio;
   number(o.lockImage.widthRatio,.001,1,'鎖寬比例');number(o.lockImage.heightRatio,.001,1,'鎖高比例');
@@ -86,7 +88,7 @@ function validate(input){
   o.playButton=o.playButton||JSON.parse(JSON.stringify(buttonDefaults));
   o.playButton.heightRatio=o.playButton.heightRatio??buttonDefaults.heightRatio;number(o.playButton.heightRatio,.001,1,'按鈕高度比例');delete o.playButton.height;
   o.playButton.minCanvasWidthRatio=o.playButton.minCanvasWidthRatio??buttonDefaults.minCanvasWidthRatio;number(o.playButton.minCanvasWidthRatio,.01,1,'按鈕最小寬度比例');
-  o.playButton.label=o.playButton.label??buttonDefaults.label;if(typeof o.playButton.label!=='string'||o.playButton.label.length>80)throw Error('按鈕文字不正確');
+  if(o.playButton.label!==undefined&&(typeof o.playButton.label!=='string'||o.playButton.label.length>80))throw Error('按鈕文字不正確');
   asset(o.playButton.src);number(o.playButton.widthRatio,.1,1,'按鈕寬度比例');
   const crop=o.playButton.crop;
   if(!Array.isArray(crop)||crop.length!==4||!crop.every(Number.isFinite)||crop[0]<0||crop[1]<0||crop[2]<=crop[3]*(1+88/574)||crop[3]<=0)throw Error('按鈕裁切範圍不正確');
@@ -160,16 +162,17 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
   }
  }
  if(visible.title&&!(o.action==='endless'&&visible.lock)){const image=getImage(o.title?.src||'res/img/card-title.png');if(image){const width=o.title?.width??o.width*.8,height=width*image.naturalHeight/image.naturalWidth;const x=o.x+(o.width-width)/2,y=o.y+(o.title?.yOffset??-height/2);ctx.drawImage(image,x,y,width,height);
-   const text=o.title?.text??'';if(text&&o.title?.showText!==false)titleText(ctx,text,x+width/2,y+height*.43+(o.title?.textY??0),height*.48,width*.78,o.title?.arc??0);
+   const text=o.action==='endless'?(root.PinballI18n?.t('menu.endlessTitle')??'ENDLESS MODE'):(o.title?.text??'');if(text&&o.title?.showText!==false)titleText(ctx,text,x+width/2,y+height*.43+(o.title?.textY??0),height*.48,width*.78,o.title?.arc??0);
 }}
  if(visible.lock){
   const lock=o.lockImage||lockDefaults,image=getImage(lock.src),r=lockRect(o,canvasWidth,canvasHeight);
   if(image&&r.width>0&&r.height>0){
    ctx.save();ctx.globalAlpha=1-lockFade;ctx.translate(o.lockShake??0,0);
    drawPixelCrop(ctx,image,lock.src,lock.crop,r.x,r.y,r.width,r.height);
+   if(lock.badge){const badge=getImage(lock.badge.src),size=r.width*lock.badge.width;if(badge)ctx.drawImage(badge,r.x+r.width*lock.badge.x,r.y+r.height*lock.badge.y,size,size);}
    ctx.font='800 '+r.height*.19+'px Arial, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
    ctx.fillStyle='#fff8d9';ctx.strokeStyle='#111a23';ctx.lineWidth=Math.max(.5,r.height*.025);ctx.lineJoin='round';
-   const label=lock.label??'Locked',measured=ctx.measureText(label).width;if(measured>r.width*.8)ctx.font='800 '+(r.height*.19*r.width*.8/measured)+'px Arial, sans-serif';
+   const label=root.PinballI18n?.t(lock.kind==='purchase'?'menu.purchaseRequired':'menu.locked')??(lock.kind==='purchase'?'PURCHASE':'LOCKED'),measured=ctx.measureText(label).width;if(measured>r.width*.8)ctx.font='800 '+(r.height*.19*r.width*.8/measured)+'px Arial, sans-serif';
    ctx.strokeText(label,r.x+r.width/2,r.y+r.height*.82);
    ctx.fillText(label,r.x+r.width/2,r.y+r.height*.82);ctx.restore();
   }
@@ -178,7 +181,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
  const button=o.playButton||buttonDefaults,image=getImage(button.src),r=playButtonRect(o,canvasHeight,canvasWidth);
  if(image&&r.width>0&&r.height>0){
   drawPlayTexture(ctx,image,button,r);
-  const label=button.label??buttonDefaults.label,cx=r.x+r.width/2,cy=r.y+r.height/2;
+  const label=root.PinballI18n?.t('menu.play')??'PLAY',cx=r.x+r.width/2,cy=r.y+r.height/2;
   ctx.save();
   let fontSize=r.height*.36;ctx.font='800 '+fontSize+'px Arial, sans-serif';
   const available=Math.max(1,r.width-r.height*.6),measured=ctx.measureText(label).width;

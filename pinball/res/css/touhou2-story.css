@@ -1,0 +1,13 @@
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#000;color:white;font-family:system-ui}#phone{position:relative;width:min(100vw,56.25vh);width:min(100vw,56.25dvh);height:min(100vh,177.777778vw);height:min(100dvh,177.777778vw);margin:auto;overflow:hidden;background:#000}.layer{position:absolute;opacity:0;pointer-events:none;object-fit:contain}.background{inset:0;width:100%;height:100%;object-fit:cover}.bubble{position:absolute;display:grid;place-items:center;background:#fffdf6;border:2px solid #584438;border-radius:50%;color:#df382f;font-size:clamp(28px,9vh,58px);font-weight:bold}.bubble:after{content:'';position:absolute;bottom:-12px;left:28%;border-top:16px solid #fffdf6;border-right:16px solid transparent}#begin{position:absolute;inset:0;display:grid;place-items:center;background:#0005;z-index:30}#begin[hidden],[hidden]{display:none!important}button,a{font:inherit;color:inherit}button{cursor:pointer;border:1px solid #b99566;border-radius:8px;background:#302921dd;padding:8px 14px}#replay,#story-skip,#story-next{position:absolute;z-index:25;bottom:12px}#replay{left:12px}#story-skip,#story-next{right:12px}#chapters{position:fixed;top:8px;left:8px;z-index:40}#error{position:absolute;inset:40% 5%;z-index:50;background:#600;padding:16px}
+.crop-window{position:absolute;inset:0;overflow:hidden;clip-path:polygon(0 0,100% 0,100% 86%,64% 86%,64% 100%,44% 100%,44% 86%,0 86%)}.crop-window img{position:absolute;max-width:none;object-fit:fill}
+
+.time-stop{background:radial-gradient(ellipse at center,#e9faff44,#15356099);backdrop-filter:grayscale(1);display:grid;place-items:center}.time-stop svg{width:80%;fill:none;stroke:#c3f1ff;stroke-width:2;filter:drop-shadow(0 0 9px #b0eaff)}
+
+.cropped-panel .crop-window{clip-path:none;box-sizing:border-box;border:3px solid #fff4cf;border-radius:12px;box-shadow:0 3px 14px #000b;background:#241b1b}
+.full-photo-crop .crop-window{border:0;border-radius:0;box-shadow:none}
+.paper-photo .crop-window{border:8px solid #fff;border-bottom-width:14px;border-radius:0;box-shadow:0 3px 12px #0008;background:#fff}
+.transport-mask{display:grid;place-items:center;background:#0006}
+.transport-mask svg{width:48%;fill:#fff;filter:drop-shadow(0 3px 9px #000a)}
+.rewind-mask{background:repeating-linear-gradient(0deg,#0008 0 2px,#0004 2px 5px)}
+
+

@@ -4585,7 +4585,9 @@
           "target-011"
         ],
         "bumpers": [
-          "circle-024"
+          "circle-024",
+          "circle-025",
+          "circle-026"
         ],
         "repeatExtraBall": true
       }

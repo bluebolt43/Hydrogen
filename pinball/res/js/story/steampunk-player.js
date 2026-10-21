@@ -203,7 +203,13 @@ function paintRaceSequence(panel,layout,t){
  }
  const engineStart=layout.engine?layout.engine.start:Infinity;
  const heart=panel.querySelector('.race-heart');
- if(heart)heart.style.opacity=t<engineStart?ease((t-timing.heart)/.4):0;
+ if(heart){
+  heart.style.opacity=t<engineStart?ease((t-timing.heart)/.4):0;
+  // Match the hero's translation in background-pixel units, not bubble percent.
+  const entry=ease((t-timing.hero)/timing.heroMove);
+  const dx=-1.6*(layout.hero?.width||0)*(1-entry);
+  heart.style.transform=`translateX(${dx/camera.width*panel.clientWidth}px)`;
+ }
  if(hero&&t>=engineStart)hero.style.opacity=0;
  const engine=panel.querySelector('.race-engine');
  if(engine){
@@ -253,6 +259,7 @@ function paint(index,elapsed){
   const mask=shot.endingMask;
   panel.querySelector('.story-end-vignette').style.opacity=ease(t/mask.vignetteFade);
   panel.querySelector('.story-end-card').style.opacity=ease((t-mask.cardStart)/mask.cardFade);
+  StoryEndingText.paint(panel.querySelector('.story-ending-text'),ease(t/mask.vignetteFade));
  }
  if(shot.theater)return;
  if(shot.sequence){(shot.sequence.kind==='control-finale'?paintControlFinale:shot.sequence.kind==='rocket-ascent'?paintRocketAscent:shot.sequence.kind==='reunion'?paintRescueSequence:shot.sequence.kind==='deck-reunion'?paintDeckReunion:shot.sequence.kind==='gate-dialogue'?paintGateDialogue:shot.sequence.kind==='ruins-gate'?paintRuinsGate:shot.sequence.kind==='von-plan'?paintVonPlan:shot.sequence.kind==='lab-arrival'?paintLabArrival:shot.sequence.kind==='dragon-approach'?paintDragonApproach:shot.sequence.kind==='dragon-reward'?paintDragonReward:paintRaceSequence)(panel,shot.sequence,t);return;}

@@ -1,0 +1,5367 @@
+{
+  "theme": "sci-fi",
+  "artLayers": [
+    {
+      "id": "art-001",
+      "src": "res/img/space/space-plunger-rod.png",
+      "x": 334,
+      "y": 425,
+      "width": 30,
+      "height": 91,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        30,
+        154
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "plunger",
+      "bind": "plunger",
+      "layoutBind": "plunger-001",
+      "layoutAnchor": [
+        334.6056,
+        382.736
+      ]
+    },
+    {
+      "id": "art-002",
+      "src": "res/img/space/space-plunger-collar.png",
+      "x": 335,
+      "y": 417,
+      "width": 50,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        65,
+        38
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "layoutBind": "plunger-001",
+      "layoutAnchor": [
+        334.6056,
+        382.736
+      ]
+    },
+    {
+      "id": "art-003",
+      "src": "res/img/space/space-symbol-grandma-statue.webp",
+      "x": 149,
+      "y": 205,
+      "width": 31,
+      "height": 59,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        182,
+        348
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-005",
+      "src": "res/img/space/space-bumper-asteroid-level-1.png",
+      "x": 101,
+      "y": 139,
+      "width": 39,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        39,
+        39
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "type": "bumper",
+        "group": "space-bumpers",
+        "lv1": "res/img/space/space-bumper-asteroid-level-1.png",
+        "lv2": "res/img/space/space-bumper-asteroid-level-2.png",
+        "lv3": "res/img/space/space-bumper-asteroid-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-031"
+        }
+      }
+    },
+    {
+      "id": "art-006",
+      "src": "res/img/space/space-bumper-asteroid-level-1.png",
+      "x": 88,
+      "y": 235,
+      "width": 39,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        39,
+        39
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "type": "bumper",
+        "group": "space-bumpers",
+        "lv1": "res/img/space/space-bumper-asteroid-level-1.png",
+        "lv2": "res/img/space/space-bumper-asteroid-level-2.png",
+        "lv3": "res/img/space/space-bumper-asteroid-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-054"
+        }
+      }
+    },
+    {
+      "id": "art-007",
+      "src": "res/img/space/space-bumper-asteroid-level-1.png",
+      "x": 71,
+      "y": 190,
+      "width": 39,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        39,
+        39
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "type": "bumper",
+        "group": "space-bumpers",
+        "lv1": "res/img/space/space-bumper-asteroid-level-1.png",
+        "lv2": "res/img/space/space-bumper-asteroid-level-2.png",
+        "lv3": "res/img/space/space-bumper-asteroid-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-029"
+        }
+      }
+    },
+    {
+      "id": "art-008",
+      "src": "res/img/space/space-bumper-asteroid-level-1.png",
+      "x": 52,
+      "y": 142,
+      "width": 39,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        39,
+        39
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "type": "bumper",
+        "group": "space-bumpers",
+        "lv1": "res/img/space/space-bumper-asteroid-level-1.png",
+        "lv2": "res/img/space/space-bumper-asteroid-level-2.png",
+        "lv3": "res/img/space/space-bumper-asteroid-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-032"
+        }
+      }
+    },
+    {
+      "id": "art-009",
+      "src": "res/img/space/space-bumper-asteroid-level-1.png",
+      "x": 133,
+      "y": 198,
+      "width": 39,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        39,
+        39
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "type": "bumper",
+        "group": "space-bumpers",
+        "lv1": "res/img/space/space-bumper-asteroid-level-1.png",
+        "lv2": "res/img/space/space-bumper-asteroid-level-2.png",
+        "lv3": "res/img/space/space-bumper-asteroid-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-051"
+        }
+      }
+    },
+    {
+      "id": "art-010",
+      "src": "res/hd_img/space/space-ch1-hero-ship.png",
+      "x": 84,
+      "y": 245,
+      "width": 48,
+      "height": 48,
+      "angle": 27.146193688807294,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "target",
+          "source": "target-015-1"
+        },
+        "extraTriggers": [
+          {
+            "kind": "target",
+            "source": "target-016-1"
+          }
+        ]
+      }
+    },
+    {
+      "id": "art-011",
+      "src": "res/hd_img/space/space-flipper-concept.png",
+      "x": 153,
+      "y": 450,
+      "width": 54,
+      "height": 19,
+      "angle": 25,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "flipper-004"
+    },
+    {
+      "id": "art-012",
+      "src": "res/hd_img/space/space-flipper-concept.png",
+      "x": 228,
+      "y": 448,
+      "width": 54,
+      "height": 19,
+      "angle": -25,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "flipper-003",
+      "flipX": true
+    },
+    {
+      "id": "art-013",
+      "src": "res/hd_img/space/space-flipper-concept.png",
+      "x": 56,
+      "y": 293,
+      "width": 54,
+      "height": 19,
+      "angle": 74,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "flipper-001"
+    },
+    {
+      "id": "art-014",
+      "src": "res/hd_img/space/space-flipper-concept.png",
+      "x": 312,
+      "y": 196,
+      "width": 54,
+      "height": 19,
+      "angle": -64,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        2172,
+        724
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "flipper-002",
+      "flipX": true
+    },
+    {
+      "id": "art-015",
+      "src": "res/hd_img/space/space-king-toilet-throne-front.png",
+      "x": 187,
+      "y": 44,
+      "width": 43,
+      "height": 64,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "layer-entry",
+          "source": "oneway-001"
+        }
+      }
+    },
+    {
+      "id": "art-016",
+      "src": "res/hd_img/space/space-flag-royal-no-cookie.png",
+      "x": 143,
+      "y": 141,
+      "width": 25,
+      "height": 23,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1323,
+        1189
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "flag-002"
+    },
+    {
+      "id": "art-017",
+      "src": "res/hd_img/space/space-flag-royal-no-cookie.png",
+      "x": 223,
+      "y": 99,
+      "width": 25,
+      "height": 23,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1323,
+        1189
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "flag-001"
+    },
+    {
+      "id": "art-018",
+      "src": "res/hd_img/space/space-target-bandit-flag.png",
+      "x": 128,
+      "y": 50,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1322,
+        1190
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "target-011-1"
+    },
+    {
+      "id": "art-022",
+      "src": "res/hd_img/space/space-target-bandit-flag.png",
+      "x": 278,
+      "y": 291,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1322,
+        1190
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "target-014-1",
+      "flipX": true
+    },
+    {
+      "id": "art-023",
+      "src": "res/hd_img/space/space-target-bandit-flag.png",
+      "x": 282,
+      "y": 273,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1322,
+        1190
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "target-013-1",
+      "flipX": true
+    },
+    {
+      "id": "art-024",
+      "src": "res/hd_img/space/space-object-refugee-ship.png",
+      "x": 32,
+      "y": 224,
+      "width": 59,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "layer-entry",
+          "source": "circle-039"
+        }
+      }
+    },
+    {
+      "id": "art-025",
+      "src": "res/hd_img/space-theater-boss-5-warden-ship.png",
+      "x": 271,
+      "y": 127,
+      "width": 50,
+      "height": 37,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1448,
+        1086
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/space-theater-boss-5-warden-ship.png",
+        "on": "",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "object-hidden",
+          "source": "rect-005"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-026",
+      "src": "res/hd_img/space/space-floor-background.png",
+      "x": 189,
+      "y": 249,
+      "width": 385,
+      "height": 500,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1098,
+        1433
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-032",
+      "src": "res/img/space/space-light-star-off.png",
+      "x": 289,
+      "y": 370,
+      "width": 22,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        23,
+        22
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-star-off.png",
+        "on": "res/img/space/space-light-star-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-001"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "group": "space-rollovers"
+      }
+    },
+    {
+      "id": "art-033",
+      "src": "res/img/space/space-light-star-off.png",
+      "x": 72,
+      "y": 360,
+      "width": 22,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        23,
+        22
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-star-off.png",
+        "on": "res/img/space/space-light-star-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-002"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "group": "space-rollovers"
+      }
+    },
+    {
+      "id": "art-034",
+      "src": "res/img/space/space-light-star-off.png",
+      "x": 95,
+      "y": 360,
+      "width": 22,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        23,
+        22
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-star-off.png",
+        "on": "res/img/space/space-light-star-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-003"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "group": "space-rollovers"
+      }
+    },
+    {
+      "id": "art-035",
+      "src": "res/img/space/space-light-cookie-off.png",
+      "x": 311,
+      "y": 370,
+      "width": 22,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        22,
+        23
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/img/space/space-light-cookie-off.png",
+        "on": "res/img/space/space-light-cookie-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-639"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "group": "space-rescue"
+      }
+    },
+    {
+      "id": "art-036",
+      "src": "res/img/space/space-light-cookie-off.png",
+      "x": 47,
+      "y": 360,
+      "width": 22,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        22,
+        23
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/img/space/space-light-cookie-off.png",
+        "on": "res/img/space/space-light-cookie-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-640"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "group": "space-rescue"
+      }
+    },
+    {
+      "id": "art-037",
+      "src": "res/hd_img/space/space-ch7-spatial-rift-transparent.png",
+      "x": 303,
+      "y": 270,
+      "width": 80,
+      "height": 40,
+      "angle": 268.91498238050264,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-038",
+      "src": "res/hd_img/space/space-target-bandit-flag.png",
+      "x": 177,
+      "y": 201,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1322,
+        1190
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "targets-001-1"
+    },
+    {
+      "id": "art-039",
+      "src": "res/hd_img/space/space-target-bandit-flag.png",
+      "x": 176,
+      "y": 219,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1322,
+        1190
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "targets-001-2"
+    },
+    {
+      "id": "art-040",
+      "src": "res/hd_img/space/space-target-bandit-flag.png",
+      "x": 177,
+      "y": 235,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1322,
+        1190
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "targets-001-3"
+    },
+    {
+      "id": "art-043",
+      "src": "res/hd_img/space/space-ch7-spatial-rift-transparent.png",
+      "x": 273,
+      "y": 34,
+      "width": 104,
+      "height": 52,
+      "angle": 17.339379308104924,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-044",
+      "src": "res/hd_img/space/space-ch7-spatial-rift-transparent.png",
+      "x": 267,
+      "y": 97,
+      "width": 59,
+      "height": 29,
+      "angle": 7.392196803762857,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-045",
+      "src": "res/hd_img/space/space-theater-boss-4-bandit-ship.png",
+      "x": 120,
+      "y": 27,
+      "width": 59,
+      "height": 39,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "target-011-1",
+      "flipX": true,
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": ""
+        }
+      }
+    },
+    {
+      "id": "art-048",
+      "src": "res/img/space/space-handheld-mining-drill.png",
+      "x": 86,
+      "y": 258,
+      "width": 24,
+      "height": 24,
+      "angle": -39.256080687992466,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        24
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "target-016-1",
+      "flipY": false,
+      "flipX": true
+    },
+    {
+      "id": "art-049",
+      "src": "res/img/space/space-handheld-mining-drill.png",
+      "x": 99,
+      "y": 253,
+      "width": 24,
+      "height": 24,
+      "angle": -51.04210462710722,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        24
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "target-015-1",
+      "flipX": true
+    },
+    {
+      "id": "art-050",
+      "src": "res/hd_img/space/space-object-tax-cookie-plate.png",
+      "x": 149,
+      "y": 234,
+      "width": 51,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": "hole-012"
+        }
+      }
+    },
+    {
+      "id": "art-051",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 337,
+      "y": 177,
+      "width": 11,
+      "height": 14,
+      "angle": 269.09215230218524,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-005"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-gold-sensor-005"
+      }
+    },
+    {
+      "id": "art-052",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 337,
+      "y": 167,
+      "width": 11,
+      "height": 14,
+      "angle": 269.21744902616194,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-005"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-gold-sensor-005"
+      }
+    },
+    {
+      "id": "art-054",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 337,
+      "y": 157,
+      "width": 11,
+      "height": 14,
+      "angle": -90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-005"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-gold-sensor-005"
+      }
+    },
+    {
+      "id": "art-055",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 337,
+      "y": 187,
+      "width": 11,
+      "height": 14,
+      "angle": -90,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-005"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-gold-sensor-005"
+      }
+    },
+    {
+      "id": "art-058",
+      "src": "res/img/space/space-tower-arrows-right.png",
+      "x": 34,
+      "y": 110,
+      "width": 46,
+      "height": 46,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        46,
+        46
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-tower-arrows-right.png",
+        "on": "res/img/space/space-tower-arrows-left.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "object-hidden",
+          "source": "arc-006"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "group": "space-route-sign"
+      }
+    },
+    {
+      "id": "art-059",
+      "src": "res/img/space/space-tower-trigger-blue.png",
+      "x": 205,
+      "y": 103,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        30,
+        30
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-tower-trigger-blue.png",
+        "on": "res/img/space/space-tower-trigger-yellow.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "object-hidden",
+          "source": "arc-006"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-064",
+      "src": "res/img/space/space-light-mission-spaghetti-off.png",
+      "x": 290,
+      "y": 24,
+      "width": 28,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        29,
+        21
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-lv4-counter",
+        "off": "res/img/space/space-light-mission-spaghetti-off.png",
+        "on": "res/img/space/space-light-mission-spaghetti-on.png",
+        "complete": "res/img/space/space-light-mission-spaghetti-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "sensor-004",
+          "threshold": 1
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-065",
+      "src": "res/img/space/space-light-mission-spaghetti-off.png",
+      "x": 303,
+      "y": 45,
+      "width": 28,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        29,
+        21
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-lv4-counter",
+        "off": "res/img/space/space-light-mission-spaghetti-off.png",
+        "on": "res/img/space/space-light-mission-spaghetti-on.png",
+        "complete": "res/img/space/space-light-mission-spaghetti-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "sensor-004",
+          "threshold": 2
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-066",
+      "src": "res/img/space/space-light-mission-spaghetti-off.png",
+      "x": 317,
+      "y": 24,
+      "width": 28,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        29,
+        21
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-lv4-counter",
+        "off": "res/img/space/space-light-mission-spaghetti-off.png",
+        "on": "res/img/space/space-light-mission-spaghetti-on.png",
+        "complete": "res/img/space/space-light-mission-spaghetti-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "sensor-004",
+          "threshold": 3
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-067",
+      "src": "res/img/space/space-light-mission-spaghetti-off.png",
+      "x": 344,
+      "y": 24,
+      "width": 28,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        29,
+        21
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-lv4-counter",
+        "off": "res/img/space/space-light-mission-spaghetti-off.png",
+        "on": "res/img/space/space-light-mission-spaghetti-on.png",
+        "complete": "res/img/space/space-light-mission-spaghetti-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "sensor-004",
+          "threshold": 5
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-068",
+      "src": "res/img/space/space-light-mission-spaghetti-off.png",
+      "x": 331,
+      "y": 45,
+      "width": 28,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        29,
+        21
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-lv4-counter",
+        "off": "res/img/space/space-light-mission-spaghetti-off.png",
+        "on": "res/img/space/space-light-mission-spaghetti-on.png",
+        "complete": "res/img/space/space-light-mission-spaghetti-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "sensor-004",
+          "threshold": 4
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-069",
+      "src": "res/img/space/space-light-guide-blue-off.png",
+      "x": 265,
+      "y": 256,
+      "width": 24,
+      "height": 16,
+      "angle": 40.6731088286384,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-blue",
+        "off": "res/img/space/space-light-guide-blue-off.png",
+        "on": "res/img/space/space-light-guide-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-070",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 188,
+      "y": 89,
+      "width": 24,
+      "height": 16,
+      "angle": -87.91590284117663,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-071",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 157,
+      "y": 105,
+      "width": 24,
+      "height": 16,
+      "angle": 232.63995142188526,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-072",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 254,
+      "y": 111,
+      "width": 24,
+      "height": 16,
+      "angle": -69.23584595122603,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-073",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 290,
+      "y": 235,
+      "width": 24,
+      "height": 16,
+      "angle": 28.18174301734102,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-074",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 151,
+      "y": 259,
+      "width": 24,
+      "height": 16,
+      "angle": -87.91590284117663,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-075",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 254,
+      "y": 293,
+      "width": 24,
+      "height": 16,
+      "angle": 1.2962890195672827,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-076",
+      "src": "res/img/space/space-light-guide-gold-off.png",
+      "x": 198,
+      "y": 217,
+      "width": 24,
+      "height": 16,
+      "angle": 179.57370879361275,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-gold",
+        "off": "res/img/space/space-light-guide-gold-off.png",
+        "on": "res/img/space/space-light-guide-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-077",
+      "src": "res/img/space/space-light-guide-blue-off.png",
+      "x": 196,
+      "y": 200,
+      "width": 24,
+      "height": 16,
+      "angle": 179.3696930617263,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-blue",
+        "off": "res/img/space/space-light-guide-blue-off.png",
+        "on": "res/img/space/space-light-guide-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-078",
+      "src": "res/img/space/space-light-guide-blue-off.png",
+      "x": 148,
+      "y": 94,
+      "width": 24,
+      "height": 16,
+      "angle": 235.15407753575494,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        24,
+        16
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "space-guide-blue",
+        "off": "res/img/space/space-light-guide-blue-off.png",
+        "on": "res/img/space/space-light-guide-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.6,
+          "offSeconds": 2.4
+        }
+      }
+    },
+    {
+      "id": "art-079",
+      "src": "res/img/space/space-light-arrow-blue-off.png",
+      "x": 212,
+      "y": 61,
+      "width": 11,
+      "height": 14,
+      "angle": 257.3459504809382,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-blue-off.png",
+        "on": "res/img/space/space-light-arrow-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-001"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-blue-flag-001"
+      }
+    },
+    {
+      "id": "art-080",
+      "src": "res/img/space/space-light-arrow-blue-off.png",
+      "x": 215,
+      "y": 70,
+      "width": 11,
+      "height": 14,
+      "angle": 257.4998115589543,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-blue-off.png",
+        "on": "res/img/space/space-light-arrow-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-001"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-blue-flag-001"
+      }
+    },
+    {
+      "id": "art-081",
+      "src": "res/img/space/space-light-arrow-blue-off.png",
+      "x": 218,
+      "y": 79,
+      "width": 11,
+      "height": 14,
+      "angle": 257.559392230999,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-blue-off.png",
+        "on": "res/img/space/space-light-arrow-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-001"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-blue-flag-001"
+      }
+    },
+    {
+      "id": "art-082",
+      "src": "res/img/space/space-light-arrow-blue-off.png",
+      "x": 117,
+      "y": 110,
+      "width": 11,
+      "height": 14,
+      "angle": 233.21700016230668,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-blue-off.png",
+        "on": "res/img/space/space-light-arrow-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-002"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-blue-flag-002"
+      }
+    },
+    {
+      "id": "art-083",
+      "src": "res/img/space/space-light-arrow-blue-off.png",
+      "x": 122,
+      "y": 116,
+      "width": 11,
+      "height": 14,
+      "angle": 233.21700016230668,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-blue-off.png",
+        "on": "res/img/space/space-light-arrow-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-002"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-blue-flag-002"
+      }
+    },
+    {
+      "id": "art-084",
+      "src": "res/img/space/space-light-arrow-blue-off.png",
+      "x": 127,
+      "y": 122,
+      "width": 11,
+      "height": 14,
+      "angle": 233.21700016230668,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-blue-off.png",
+        "on": "res/img/space/space-light-arrow-blue-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-002"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.8
+        },
+        "impactFlash": false,
+        "group": "space-blue-flag-002"
+      }
+    },
+    {
+      "id": "art-085",
+      "src": "res/img/space/space-light-mission-crown-off.png",
+      "x": 276,
+      "y": 142,
+      "width": 21,
+      "height": 17,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        22,
+        17
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-mission-crown-off.png",
+        "on": "res/img/space/space-light-mission-crown-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "object-hidden",
+          "source": "rect-005"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-086",
+      "src": "res/img/space/space-light-crystal-off.png",
+      "x": 27,
+      "y": 189,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        20
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-crystal-off.png",
+        "on": "res/img/space/space-light-crystal-on.png",
+        "defaultState": "on",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-032",
+          "threshold": 1
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/img/space/space-light-crystal-off.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "group": "space-bumper-levels"
+      }
+    },
+    {
+      "id": "art-087",
+      "src": "res/img/space/space-light-crystal-off.png",
+      "x": 27,
+      "y": 173,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        20
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-crystal-off.png",
+        "on": "res/img/space/space-light-crystal-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-032",
+          "threshold": 2
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/img/space/space-light-crystal-off.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "group": "space-bumper-levels"
+      }
+    },
+    {
+      "id": "art-088",
+      "src": "res/img/space/space-light-crystal-off.png",
+      "x": 27,
+      "y": 156,
+      "width": 20,
+      "height": 20,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        20,
+        20
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-crystal-off.png",
+        "on": "res/img/space/space-light-crystal-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-032",
+          "threshold": 3
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/img/space/space-light-crystal-off.png",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "group": "space-bumper-levels"
+      }
+    },
+    {
+      "id": "art-090",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 262,
+      "y": 183,
+      "width": 11,
+      "height": 14,
+      "angle": 196.33259797753445,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flipper",
+          "source": "flipper-002"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "group": "space-gold-flipper-002"
+      }
+    },
+    {
+      "id": "art-091",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 270,
+      "y": 185,
+      "width": 11,
+      "height": 14,
+      "angle": 196.33259797753445,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flipper",
+          "source": "flipper-002"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "group": "space-gold-flipper-002"
+      }
+    },
+    {
+      "id": "art-092",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 278,
+      "y": 187,
+      "width": 11,
+      "height": 14,
+      "angle": 196.33259797753445,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flipper",
+          "source": "flipper-002"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "group": "space-gold-flipper-002"
+      }
+    },
+    {
+      "id": "art-093",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 98,
+      "y": 290,
+      "width": 11,
+      "height": 14,
+      "angle": -13.893886924461484,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flipper",
+          "source": "flipper-001"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "group": "space-gold-flipper-001"
+      }
+    },
+    {
+      "id": "art-094",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 106,
+      "y": 288,
+      "width": 11,
+      "height": 14,
+      "angle": -13.893886924461484,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flipper",
+          "source": "flipper-001"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "group": "space-gold-flipper-001"
+      }
+    },
+    {
+      "id": "art-095",
+      "src": "res/img/space/space-light-arrow-gold-off.png",
+      "x": 114,
+      "y": 286,
+      "width": 11,
+      "height": 14,
+      "angle": -13.893886924461484,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        12,
+        14
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/img/space/space-light-arrow-gold-off.png",
+        "on": "res/img/space/space-light-arrow-gold-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "flipper",
+          "source": "flipper-001"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "group": "space-gold-flipper-001"
+      }
+    },
+    {
+      "id": "art-096",
+      "src": "res/img/space/space-symbol-grandma-statue.webp",
+      "x": 189,
+      "y": 461,
+      "width": 22,
+      "height": 13,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        20,
+        0,
+        145,
+        90
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "center-post",
+      "bind": "centerPost-001"
+    }
+  ],
+  "gameplay": {
+    "ballImage": "res/img/space/space-ball-cookie.png",
+    "spaceConstellation": {
+      "object": "circle-056",
+      "threshold": 10,
+      "holes": [
+        "hole-012",
+        "hole-013",
+        "hole-014"
+      ],
+      "spinSeconds": 4.5,
+      "winFlashSeconds": 1.2,
+      "rewards": [
+        {
+          "kind": "enemy",
+          "value": 0
+        },
+        {
+          "kind": "score",
+          "value": 1000
+        },
+        {
+          "kind": "score",
+          "value": 2500
+        },
+        {
+          "kind": "score",
+          "value": 5000
+        },
+        {
+          "kind": "score",
+          "value": 10000
+        },
+        {
+          "kind": "multi",
+          "value": 2
+        },
+        {
+          "kind": "enemy",
+          "value": 0
+        },
+        {
+          "kind": "multiplier",
+          "value": 2
+        },
+        {
+          "kind": "multiplier",
+          "value": 3
+        },
+        {
+          "kind": "multiplier",
+          "value": 4
+        },
+        {
+          "kind": "ball",
+          "value": 1
+        },
+        {
+          "kind": "ball",
+          "value": 2
+        }
+      ],
+      "countSeconds": 0.8
+    }
+  },
+  "screenLayout": {
+    "width": 360,
+    "height": 640,
+    "theaterHeight": 170.5,
+    "playfieldHeight": 469.5,
+    "top": -170.5,
+    "bottom": 469.5
+  },
+  "format": "pinball-layout-editor",
+  "version": 6,
+  "canvas": {
+    "width": 360,
+    "height": 469.5,
+    "upperLimit": 469.5
+  },
+  "objects": [
+    {
+      "id": "arc-004",
+      "type": "arc",
+      "layer": "top",
+      "x1": 109,
+      "y1": 61,
+      "qx": 109,
+      "qy": 41,
+      "x2": 87,
+      "y2": 34,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-006",
+      "type": "arc",
+      "layer": "top",
+      "x1": 60.7936,
+      "y1": 167.2392,
+      "qx": 46.2312,
+      "qy": 152.632,
+      "x2": 43.876,
+      "y2": 133.2736,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-051",
+      "type": "line",
+      "layer": "upper",
+      "x1": 35,
+      "y1": 470,
+      "x2": 37,
+      "y2": 148
+    },
+    {
+      "id": "line-072",
+      "type": "line",
+      "layer": "upper",
+      "x1": 300,
+      "y1": 434,
+      "x2": 259,
+      "y2": 467
+    },
+    {
+      "id": "line-100",
+      "type": "line",
+      "layer": "top",
+      "x1": 346,
+      "y1": 148,
+      "x2": 345,
+      "y2": 471,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-144",
+      "type": "line",
+      "layer": "upper",
+      "x1": 111,
+      "y1": 470,
+      "x2": 59,
+      "y2": 435
+    },
+    {
+      "id": "line-152",
+      "type": "line",
+      "layer": "top",
+      "x1": 324.0528,
+      "y1": 469.456,
+      "x2": 326,
+      "y2": 142,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-157",
+      "type": "line",
+      "layer": "upper",
+      "x1": 108.2528,
+      "y1": 345.056,
+      "x2": 108.02,
+      "y2": 384.712
+    },
+    {
+      "id": "line-158",
+      "type": "line",
+      "layer": "upper",
+      "x1": 108.02,
+      "y1": 384.712,
+      "x2": 110.3048,
+      "y2": 387.6592
+    },
+    {
+      "id": "line-159",
+      "type": "line",
+      "layer": "upper",
+      "x1": 110.3048,
+      "y1": 387.6592,
+      "x2": 129.8528,
+      "y2": 400.256
+    },
+    {
+      "id": "line-162",
+      "type": "line",
+      "layer": "upper",
+      "x1": 258.0528,
+      "y1": 399.456,
+      "x2": 277.2528,
+      "y2": 386.656
+    },
+    {
+      "id": "line-164",
+      "type": "line",
+      "layer": "upper",
+      "x1": 279.6528,
+      "y1": 382.656,
+      "x2": 278.8528,
+      "y2": 344.256
+    },
+    {
+      "id": "line-167",
+      "type": "line",
+      "layer": "upper",
+      "x1": 277.1992,
+      "y1": 386.7912,
+      "x2": 279.7408,
+      "y2": 382.328
+    },
+    {
+      "id": "line-214",
+      "type": "line",
+      "layer": "upper",
+      "x1": 62,
+      "y1": 405,
+      "x2": 131,
+      "y2": 446
+    },
+    {
+      "id": "arc-059",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 129,
+      "y1": 446,
+      "qx": 132.32319999999999,
+      "qy": 446.288,
+      "x2": 131.2088,
+      "y2": 440.6264
+    },
+    {
+      "id": "line-215",
+      "type": "line",
+      "layer": "upper",
+      "x1": 131.2088,
+      "y1": 440.6264,
+      "x2": 132.6928,
+      "y2": 438.1512
+    },
+    {
+      "id": "arc-060",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 132.6928,
+      "y1": 438.1512,
+      "qx": 137.5224,
+      "qy": 436.34799999999996,
+      "x2": 138.408,
+      "y2": 433.5728
+    },
+    {
+      "id": "line-217",
+      "type": "line",
+      "layer": "upper",
+      "x1": 138,
+      "y1": 433,
+      "x2": 75,
+      "y2": 392
+    },
+    {
+      "id": "arc-061",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 74.6952,
+      "y1": 391.8176,
+      "qx": 64.3272,
+      "qy": 386.58,
+      "x2": 62.697599999999994,
+      "y2": 375.32
+    },
+    {
+      "id": "arc-062",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 297.84,
+      "y1": 387.2088,
+      "qx": 297.6832,
+      "qy": 394.5976,
+      "x2": 292.5632,
+      "y2": 399.4056
+    },
+    {
+      "id": "line-219",
+      "type": "line",
+      "layer": "upper",
+      "x1": 292.5632,
+      "y1": 399.4056,
+      "x2": 246,
+      "y2": 431
+    },
+    {
+      "id": "arc-063",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 245.1352,
+      "y1": 431.0952,
+      "qx": 243.2248,
+      "qy": 434.17599999999993,
+      "x2": 248.396,
+      "y2": 434.3256
+    },
+    {
+      "id": "line-220",
+      "type": "line",
+      "layer": "upper",
+      "x1": 248.396,
+      "y1": 434.3256,
+      "x2": 250.2608,
+      "y2": 436.2536
+    },
+    {
+      "id": "arc-064",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 250.2608,
+      "y1": 436.2536,
+      "qx": 251.06079999999997,
+      "qy": 441.72,
+      "x2": 254.70320000000004,
+      "y2": 442.7816
+    },
+    {
+      "id": "line-221",
+      "type": "line",
+      "layer": "upper",
+      "x1": 255,
+      "y1": 441,
+      "x2": 298,
+      "y2": 411
+    },
+    {
+      "id": "line-228",
+      "type": "line",
+      "layer": "top",
+      "x1": 84.2864,
+      "y1": 182.2088,
+      "x2": 62,
+      "y2": 168,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-092",
+      "type": "arc",
+      "layer": "top",
+      "x1": 82,
+      "y1": 60,
+      "qx": 87,
+      "qy": 66,
+      "x2": 87,
+      "y2": 79,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-093",
+      "type": "arc",
+      "layer": "top",
+      "x1": 346,
+      "y1": 148,
+      "qx": 345,
+      "qy": 102,
+      "x2": 307,
+      "y2": 78,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-339",
+      "type": "line",
+      "layer": "upper",
+      "x1": 323,
+      "y1": 470,
+      "x2": 323,
+      "y2": 336
+    },
+    {
+      "id": "arc-119",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 158,
+      "y1": 133,
+      "qx": 118,
+      "qy": 75,
+      "x2": 117.2528,
+      "y2": 46.656
+    },
+    {
+      "id": "arc-123",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 136.01600000000002,
+      "y1": 41.7632,
+      "qx": 143.04399999999998,
+      "qy": 71.5808,
+      "x2": 168,
+      "y2": 96
+    },
+    {
+      "id": "arc-124",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 294,
+      "y1": 109,
+      "qx": 294.88,
+      "qy": 94.76080000000002,
+      "x2": 284,
+      "y2": 86
+    },
+    {
+      "id": "line-369",
+      "type": "line",
+      "layer": "upper",
+      "x1": 284,
+      "y1": 86,
+      "x2": 202,
+      "y2": 47
+    },
+    {
+      "id": "arc-140",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 86,
+      "y1": 34,
+      "qx": 68,
+      "qy": 60,
+      "x2": 79,
+      "y2": 98,
+      "neonBorder": false
+    },
+    {
+      "id": "arc-152",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 71,
+      "y1": 22,
+      "qx": 44,
+      "qy": 55,
+      "x2": 58,
+      "y2": 111,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "arc-161",
+      "type": "arc",
+      "layer": "top",
+      "x1": 176,
+      "y1": 4,
+      "qx": 97,
+      "qy": -24,
+      "x2": 60,
+      "y2": 36,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-162",
+      "type": "arc",
+      "layer": "top",
+      "x1": 87,
+      "y1": 34,
+      "qx": 109,
+      "qy": 2,
+      "x2": 155,
+      "y2": 25,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-171",
+      "type": "arc",
+      "layer": "top",
+      "x1": 238.45280000000002,
+      "y1": 119.05599999999998,
+      "qx": 241,
+      "qy": 34,
+      "x2": 176,
+      "y2": 4,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-178",
+      "type": "arc",
+      "layer": "top",
+      "x1": 155,
+      "y1": 25,
+      "qx": 194,
+      "qy": 44,
+      "x2": 208,
+      "y2": 89,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-467",
+      "type": "line",
+      "layer": "top",
+      "x1": 61.4952,
+      "y1": 219.99599999999998,
+      "x2": 61,
+      "y2": 168,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-469",
+      "type": "line",
+      "layer": "top",
+      "x1": 43,
+      "y1": 121,
+      "x2": 42,
+      "y2": 218,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-471",
+      "type": "line",
+      "layer": "top",
+      "x1": 63,
+      "y1": 126,
+      "x2": 74,
+      "y2": 63,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-187",
+      "type": "arc",
+      "layer": "top",
+      "x1": 94,
+      "y1": 167,
+      "qx": 61.3056,
+      "qy": 150.62720000000002,
+      "x2": 63,
+      "y2": 126,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "circle-022",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 283.1376,
+      "cy": 103.16,
+      "r": 3.4616,
+      "neonBorder": false,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "hole-012",
+      "type": "hole",
+      "layer": "upper",
+      "x": 149.5464,
+      "y": 236.704,
+      "angle": 0,
+      "releaseMode": "fixed",
+      "releaseAngle": 90,
+      "attack": "lv1"
+    },
+    {
+      "id": "circle-029",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 71.1688,
+      "cy": 189.77840000000003,
+      "r": 11.995
+    },
+    {
+      "id": "circle-031",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 102.0904,
+      "cy": 140.1536,
+      "r": 11.998
+    },
+    {
+      "id": "circle-032",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 49.5432,
+      "cy": 142.284,
+      "r": 11.9
+    },
+    {
+      "id": "target-010",
+      "type": "target",
+      "layer": "upper",
+      "x": 207.0648,
+      "y": 110.5384,
+      "angle": 1.508,
+      "targetGroup": {
+        "id": "targetGroup-005",
+        "members": [
+          "target-010"
+        ],
+        "action": "objectControl",
+        "object": "arc-006",
+        "effect": "hide"
+      }
+    },
+    {
+      "id": "target-011",
+      "type": "target",
+      "layer": "upper",
+      "x": 126.75279999999998,
+      "y": 48.2576,
+      "angle": -15,
+      "targetGroup": {
+        "id": "targetGroup-004",
+        "members": [
+          "target-011"
+        ],
+        "action": "attack",
+        "attack": "lv3",
+        "attackCount": 1,
+        "spawnEnemyWhenIdle": true
+      }
+    },
+    {
+      "id": "plunger-001",
+      "type": "plunger",
+      "layer": "top",
+      "x": 334.6056,
+      "y": 382.736,
+      "angle": 0
+    },
+    {
+      "id": "flipper-001",
+      "type": "flipper",
+      "layer": "upper",
+      "x": 55.364000000000004,
+      "y": 293.2816,
+      "angle": 78
+    },
+    {
+      "id": "flipper-002",
+      "type": "flipper",
+      "layer": "upper",
+      "x": 313.1096,
+      "y": 197.4048,
+      "angle": -250
+    },
+    {
+      "id": "flipper-003",
+      "type": "flipper",
+      "layer": "upper",
+      "x": 227.6704,
+      "y": 449.35760000000005,
+      "angle": -209.3
+    },
+    {
+      "id": "flipper-004",
+      "type": "flipper",
+      "layer": "upper",
+      "x": 152.3352,
+      "y": 449.35760000000005,
+      "angle": 29.3
+    },
+    {
+      "id": "line-607",
+      "type": "line",
+      "layer": "upper",
+      "x1": 112,
+      "y1": 160,
+      "x2": 122,
+      "y2": 176,
+      "neonBorder": "yellow",
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "circle-039",
+      "type": "circle",
+      "layer": "top",
+      "cx": 51.4528,
+      "cy": 229.45600000000002,
+      "r": 7.582,
+      "initialSpeed": 50,
+      "mechanic": "layer-transition",
+      "fromLayer": "top",
+      "toLayer": "upper",
+      "bidirectional": false
+    },
+    {
+      "id": "ublock-001",
+      "type": "ublock",
+      "layer": "top",
+      "x": 52.2528,
+      "y": 230.25599999999997,
+      "angle": 180,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-609",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 14.4,
+      "showAboveArt": true,
+      "layer": "top",
+      "x1": 88,
+      "y1": 174,
+      "x2": 261,
+      "y2": 275
+    },
+    {
+      "id": "arc-242",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 14.4,
+      "showAboveArt": true,
+      "layer": "top",
+      "x1": 260.6528,
+      "y1": 274.656,
+      "qx": 286.2528,
+      "qy": 291.456,
+      "x2": 288.6528,
+      "y2": 316.256
+    },
+    {
+      "id": "line-610",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 14.4,
+      "showAboveArt": true,
+      "layer": "top",
+      "x1": 288.6528,
+      "y1": 315.256,
+      "x2": 289,
+      "y2": 362,
+      "ballSpeed": 0
+    },
+    {
+      "id": "line-611",
+      "type": "line",
+      "layer": "upper",
+      "x1": 117.8528,
+      "y1": 343.456,
+      "x2": 137.0528,
+      "y2": 393.856,
+      "neonBorder": "yellow",
+      "reboundStrength": "strong",
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "line-612",
+      "type": "line",
+      "layer": "upper",
+      "x1": 269.2528,
+      "y1": 342.656,
+      "x2": 251.6528,
+      "y2": 390.656,
+      "neonBorder": "yellow",
+      "reboundStrength": "strong",
+      "slingshot": true,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "circle-040",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 113.0528,
+      "cy": 344.056,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "circle-041",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 133.0528,
+      "cy": 396.256,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "circle-042",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 274.0528,
+      "cy": 342.456,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "circle-043",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 254.0528,
+      "cy": 396.256,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "line-614",
+      "type": "line",
+      "layer": "upper",
+      "x1": 44,
+      "y1": 278,
+      "x2": 55,
+      "y2": 319
+    },
+    {
+      "id": "thickline-001",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 85,
+      "y1": 347,
+      "x2": 84.6528,
+      "y2": 373.056,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-002",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 61,
+      "y1": 347,
+      "x2": 61,
+      "y2": 403,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-003",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 299,
+      "y1": 332,
+      "x2": 299,
+      "y2": 409,
+      "thickness": 5
+    },
+    {
+      "id": "line-616",
+      "type": "line",
+      "layer": "upper",
+      "x1": 325,
+      "y1": 187,
+      "x2": 309,
+      "y2": 229
+    },
+    {
+      "id": "thickline-006",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 170,
+      "y1": 22,
+      "x2": 169.6528,
+      "y2": 94.056,
+      "thickness": 5,
+      "neonBorder": false
+    },
+    {
+      "id": "line-618",
+      "type": "line",
+      "layer": "upper",
+      "x1": 207,
+      "y1": 107,
+      "x2": 203,
+      "y2": 76,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "line-619",
+      "type": "line",
+      "layer": "upper",
+      "x1": 171,
+      "y1": 39,
+      "x2": 201,
+      "y2": 47,
+      "neonBorder": false
+    },
+    {
+      "id": "circle-045",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 290.4528,
+      "cy": 109.856,
+      "r": 4,
+      "neonBorder": false,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "line-620",
+      "type": "line",
+      "layer": "upper",
+      "x1": 254,
+      "y1": 77,
+      "x2": 241,
+      "y2": 121,
+      "neonBorder": false
+    },
+    {
+      "id": "targets-001",
+      "type": "targets",
+      "layer": "upper",
+      "x": 169.4528,
+      "y": 221.856,
+      "angle": 90.388,
+      "targetGroup": {
+        "id": "targetGroup-002",
+        "members": [
+          "targets-001"
+        ],
+        "action": "attack",
+        "attack": "lv3",
+        "attackCount": 1,
+        "spawnEnemyWhenIdle": true
+      }
+    },
+    {
+      "id": "oneway-001",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 198,
+      "y1": 44,
+      "x2": 171,
+      "y2": 39,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "lower",
+      "toLayer": "upper",
+      "bidirectional": false
+    },
+    {
+      "id": "oneway-002",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 170,
+      "y1": 78,
+      "x2": 205.0528,
+      "y2": 76.656,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": true
+    },
+    {
+      "id": "oneway-003",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 208,
+      "y1": 89,
+      "x2": 236.8528,
+      "y2": 88.656,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "top",
+      "bidirectional": true
+    },
+    {
+      "id": "line-625",
+      "type": "line",
+      "layer": "upper",
+      "x1": 83,
+      "y1": 107,
+      "x2": 92,
+      "y2": 121
+    },
+    {
+      "id": "line-626",
+      "type": "line",
+      "layer": "upper",
+      "x1": 88.2528,
+      "y1": 103.256,
+      "x2": 99.4528,
+      "y2": 116.05599999999998
+    },
+    {
+      "id": "arc-243",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 135.6528,
+      "y1": 40.856,
+      "qx": 125.2528,
+      "qy": 38.656,
+      "x2": 117.2528,
+      "y2": 45.656
+    },
+    {
+      "id": "arc-245",
+      "type": "arc",
+      "layer": "top",
+      "x1": 109,
+      "y1": 61,
+      "qx": 110,
+      "qy": 87,
+      "x2": 157.2528,
+      "y2": 134.05599999999998,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "oneway-004",
+      "type": "oneway",
+      "layer": "top",
+      "x1": 86,
+      "y1": 35,
+      "x2": 78,
+      "y2": 58,
+      "direction": 1
+    },
+    {
+      "id": "oneway-005",
+      "type": "oneway",
+      "layer": "top",
+      "x1": 85.8528,
+      "y1": 33.456,
+      "x2": 54,
+      "y2": 46,
+      "direction": -1
+    },
+    {
+      "id": "oneway-006",
+      "type": "oneway",
+      "layer": "top",
+      "x1": 294.8528,
+      "y1": 363.856,
+      "x2": 280.4528,
+      "y2": 363.856,
+      "direction": -1,
+      "initialSpeed": 50,
+      "mechanic": "layer-transition",
+      "fromLayer": "top",
+      "toLayer": "upper",
+      "bidirectional": false
+    },
+    {
+      "id": "oneway-007",
+      "type": "oneway",
+      "layer": "top",
+      "x1": 301,
+      "y1": 72,
+      "x2": 324,
+      "y2": 131,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "top",
+      "toLayer": "upper",
+      "bidirectional": false
+    },
+    {
+      "id": "line-629",
+      "type": "line",
+      "layer": "upper",
+      "x1": 279.6528,
+      "y1": 84.256,
+      "x2": 275.6528,
+      "y2": 100.256,
+      "neonBorder": false
+    },
+    {
+      "id": "line-630",
+      "type": "line",
+      "layer": "upper",
+      "x1": 253.25279999999998,
+      "y1": 77.056,
+      "x2": 280.4528,
+      "y2": 84.256,
+      "neonBorder": false
+    },
+    {
+      "id": "oneway-008",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 251,
+      "y1": 92,
+      "x2": 275.6528,
+      "y2": 99.45600000000002,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "ublock-003",
+      "type": "ublock",
+      "layer": "upper",
+      "x": 265.4830448591572,
+      "y": 22,
+      "angle": 0.143,
+      "neonBorder": false
+    },
+    {
+      "id": "oneway-009",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 225,
+      "y1": 19,
+      "x2": 295,
+      "y2": 67,
+      "direction": 1,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "arc-246",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 55,
+      "y1": 319,
+      "qx": 35,
+      "qy": 328,
+      "x2": 36,
+      "y2": 351
+    },
+    {
+      "id": "arc-248",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 317,
+      "y1": 168,
+      "qx": 331,
+      "qy": 171,
+      "x2": 325,
+      "y2": 187
+    },
+    {
+      "id": "arc-249",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 56,
+      "y1": 264,
+      "qx": 42,
+      "qy": 266,
+      "x2": 44,
+      "y2": 278
+    },
+    {
+      "id": "arc-250",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 114,
+      "y1": 137,
+      "qx": 143,
+      "qy": 176,
+      "x2": 166,
+      "y2": 191,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-638",
+      "type": "line",
+      "layer": "upper",
+      "x1": 300,
+      "y1": 434,
+      "x2": 299,
+      "y2": 470
+    },
+    {
+      "id": "line-639",
+      "type": "line",
+      "layer": "upper",
+      "mechanic": "rescue-kicker",
+      "side": "right",
+      "aim": [
+        312,
+        411
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 299.5,
+      "y1": 449,
+      "x2": 324.5,
+      "y2": 449,
+      "neonBorder": "yellow"
+    },
+    {
+      "id": "line-640",
+      "type": "line",
+      "layer": "upper",
+      "mechanic": "rescue-kicker",
+      "side": "left",
+      "aim": [
+        48,
+        411
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 35.5,
+      "y1": 449,
+      "x2": 60.5,
+      "y2": 449,
+      "neonBorder": "yellow"
+    },
+    {
+      "id": "oneway-010",
+      "type": "oneway",
+      "layer": "upper",
+      "mechanic": "rescue-return",
+      "side": "left",
+      "x1": 37,
+      "y1": 418,
+      "x2": 58,
+      "y2": 433,
+      "direction": -1,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "oneway-011",
+      "type": "oneway",
+      "layer": "upper",
+      "mechanic": "rescue-return",
+      "side": "right",
+      "x1": 302.5,
+      "y1": 430.5,
+      "x2": 321,
+      "y2": 419,
+      "direction": -1,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "line-641",
+      "type": "line",
+      "layer": "upper",
+      "x1": 59,
+      "y1": 435,
+      "x2": 59,
+      "y2": 470
+    },
+    {
+      "id": "line-642",
+      "type": "line",
+      "layer": "upper",
+      "x1": 133,
+      "y1": 214,
+      "x2": 133,
+      "y2": 242
+    },
+    {
+      "id": "line-643",
+      "type": "line",
+      "layer": "upper",
+      "x1": 166,
+      "y1": 191,
+      "x2": 166,
+      "y2": 244
+    },
+    {
+      "id": "line-644",
+      "type": "line",
+      "layer": "upper",
+      "x1": 133,
+      "y1": 214,
+      "x2": 163,
+      "y2": 214,
+      "neonBorder": false
+    },
+    {
+      "id": "oneway-012",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 148,
+      "y1": 129,
+      "x2": 127,
+      "y2": 148,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "top",
+      "bidirectional": true
+    },
+    {
+      "id": "arc-251",
+      "type": "arc",
+      "layer": "top",
+      "x1": 60,
+      "y1": 36,
+      "qx": 45,
+      "qy": 54,
+      "x2": 43,
+      "y2": 121,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-252",
+      "type": "arc",
+      "layer": "top",
+      "x1": 87,
+      "y1": 79,
+      "qx": 88,
+      "qy": 114,
+      "x2": 153,
+      "y2": 182,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "arc-253",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 128,
+      "y1": 100,
+      "qx": 129,
+      "qy": 103,
+      "x2": 157,
+      "y2": 134,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "rollover-001",
+      "type": "rollover",
+      "layer": "upper",
+      "x1": 280,
+      "y1": 370,
+      "x2": 297,
+      "y2": 370,
+      "rolloverGroup": {
+        "id": "rolloverGroup-001",
+        "members": [
+          "rollover-001",
+          "rollover-003",
+          "rollover-002"
+        ],
+        "attack": "none",
+        "attackCount": 1
+      }
+    },
+    {
+      "id": "rollover-002",
+      "type": "rollover",
+      "layer": "upper",
+      "x1": 64,
+      "y1": 370,
+      "x2": 81,
+      "y2": 370
+    },
+    {
+      "id": "rollover-003",
+      "type": "rollover",
+      "layer": "upper",
+      "x1": 88,
+      "y1": 370,
+      "x2": 105,
+      "y2": 370
+    },
+    {
+      "id": "circle-051",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 134.1688,
+      "cy": 198.77840000000003,
+      "r": 11.995
+    },
+    {
+      "id": "line-649",
+      "type": "line",
+      "layer": "upper",
+      "x1": 64,
+      "y1": 240,
+      "x2": 75,
+      "y2": 235
+    },
+    {
+      "id": "centerPost-001",
+      "type": "centerPost",
+      "layer": "upper",
+      "x": 190,
+      "y": 461,
+      "angle": 0,
+      "radius": 7,
+      "triggerRollovers": [
+        "rollover-001",
+        "rollover-003",
+        "rollover-002"
+      ],
+      "hitCount": 5
+    },
+    {
+      "id": "arc-254",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 323,
+      "y1": 338,
+      "qx": 323,
+      "qy": 316,
+      "x2": 300,
+      "y2": 305
+    },
+    {
+      "id": "arc-257",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 238.45280000000002,
+      "y1": 121.05599999999998,
+      "qx": 238,
+      "qy": 79,
+      "x2": 232,
+      "y2": 66,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "thickline-008",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 201,
+      "y1": 47,
+      "x2": 205,
+      "y2": 77,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-009",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 170,
+      "y1": 24,
+      "x2": 169.6528,
+      "y2": 94.056,
+      "thickness": 5
+    },
+    {
+      "id": "line-652",
+      "type": "line",
+      "layer": "upper",
+      "x1": 208,
+      "y1": 88,
+      "x2": 208,
+      "y2": 106,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "flag-001",
+      "type": "flag",
+      "layer": "upper",
+      "x1": 211,
+      "y1": 103,
+      "x2": 234,
+      "y2": 103
+    },
+    {
+      "id": "flag-002",
+      "type": "flag",
+      "layer": "upper",
+      "x1": 153,
+      "y1": 138,
+      "x2": 136,
+      "y2": 153
+    },
+    {
+      "id": "arc-260",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 318,
+      "y1": 167,
+      "qx": 348,
+      "qy": 101,
+      "x2": 295,
+      "y2": 67
+    },
+    {
+      "id": "line-655",
+      "type": "line",
+      "layer": "upper",
+      "x1": 169,
+      "y1": 18,
+      "x2": 217,
+      "y2": 34,
+      "neonBorder": false
+    },
+    {
+      "id": "sensor-001",
+      "type": "sensor",
+      "layer": "lower",
+      "x1": 245,
+      "y1": 111,
+      "x2": 268,
+      "y2": 118,
+      "objectEffect": {
+        "action": "restore",
+        "object": "rect-005"
+      }
+    },
+    {
+      "id": "sensor-002",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 206,
+      "y1": 32,
+      "x2": 205,
+      "y2": 46,
+      "attack": "lv2"
+    },
+    {
+      "id": "circle-052",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 231,
+      "cy": 193,
+      "r": 46.002,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "line-656",
+      "type": "line",
+      "layer": "upper",
+      "x1": 56,
+      "y1": 264,
+      "x2": 50,
+      "y2": 246
+    },
+    {
+      "id": "line-657",
+      "type": "line",
+      "layer": "upper",
+      "x1": 50,
+      "y1": 246,
+      "x2": 37,
+      "y2": 233
+    },
+    {
+      "id": "line-658",
+      "type": "line",
+      "layer": "upper",
+      "x1": 72,
+      "y1": 249,
+      "x2": 64,
+      "y2": 240
+    },
+    {
+      "id": "circle-054",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 88.1688,
+      "cy": 235.77840000000003,
+      "r": 11.985
+    },
+    {
+      "id": "line-659",
+      "type": "line",
+      "layer": "upper",
+      "x1": 74,
+      "y1": 260,
+      "x2": 72,
+      "y2": 249
+    },
+    {
+      "id": "line-662",
+      "type": "line",
+      "layer": "upper",
+      "x1": 300,
+      "y1": 305,
+      "x2": 327,
+      "y2": 238,
+      "neonBorder": false
+    },
+    {
+      "id": "line-663",
+      "type": "line",
+      "layer": "upper",
+      "x1": 309,
+      "y1": 228,
+      "x2": 328,
+      "y2": 237,
+      "neonBorder": false
+    },
+    {
+      "id": "line-664",
+      "type": "line",
+      "layer": "upper",
+      "x1": 74,
+      "y1": 260,
+      "x2": 108,
+      "y2": 245,
+      "neonBorder": false
+    },
+    {
+      "id": "line-665",
+      "type": "line",
+      "layer": "upper",
+      "x1": 110,
+      "y1": 245,
+      "x2": 101,
+      "y2": 238,
+      "neonBorder": false
+    },
+    {
+      "id": "target-013",
+      "type": "target",
+      "layer": "upper",
+      "x": 286,
+      "y": 276,
+      "angle": -68.144
+    },
+    {
+      "id": "target-014",
+      "type": "target",
+      "layer": "upper",
+      "x": 280,
+      "y": 290,
+      "angle": -65.391,
+      "targetGroup": {
+        "id": "targetGroup-001",
+        "members": [
+          "target-014",
+          "target-013"
+        ],
+        "action": "attack",
+        "attack": "lv3",
+        "attackCount": 1,
+        "spawnEnemyWhenIdle": true
+      }
+    },
+    {
+      "id": "line-667",
+      "type": "line",
+      "layer": "upper",
+      "x1": 58,
+      "y1": 111,
+      "x2": 53,
+      "y2": 131,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "hole-013",
+      "type": "hole",
+      "layer": "lower",
+      "x": 260,
+      "y": 128,
+      "angle": 0,
+      "exitHole": "hole-015",
+      "objectEffect": {
+        "action": "restore",
+        "object": "rect-005"
+      }
+    },
+    {
+      "id": "hole-014",
+      "type": "hole",
+      "layer": "upper",
+      "x": 297,
+      "y": 286,
+      "angle": 0,
+      "exitHole": "hole-015",
+      "attack": "none"
+    },
+    {
+      "id": "hole-015",
+      "type": "hole",
+      "layer": "upper",
+      "x": 265,
+      "y": 24,
+      "angle": 0,
+      "releaseMode": "fixed",
+      "releaseAngle": 95.509
+    },
+    {
+      "id": "oneway-013",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 216,
+      "y1": 34,
+      "x2": 231,
+      "y2": 60,
+      "direction": -1
+    },
+    {
+      "id": "rect-005",
+      "type": "rect",
+      "layer": "upper",
+      "x": 271.4528,
+      "y": 130.45600000000002,
+      "angle": 190,
+      "width": 35.64374694528174,
+      "height": 3.5607806813560288,
+      "neonBorder": false
+    },
+    {
+      "id": "rect-006",
+      "type": "rect",
+      "layer": "lower",
+      "x": 260,
+      "y": 107,
+      "angle": 15.083,
+      "width": 27.19968072053047,
+      "height": 54.81037646925263,
+      "neonBorder": false
+    },
+    {
+      "id": "circle-055",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 240,
+      "cy": 120,
+      "r": 2,
+      "mechanic": "pachinko-pin"
+    },
+    {
+      "id": "arc-261",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 133,
+      "y1": 241,
+      "qx": 135,
+      "qy": 228,
+      "x2": 143,
+      "y2": 227,
+      "neonBorder": false
+    },
+    {
+      "id": "arc-262",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 155,
+      "y1": 226,
+      "qx": 165,
+      "qy": 235,
+      "x2": 166,
+      "y2": 243,
+      "neonBorder": false
+    },
+    {
+      "id": "line-668",
+      "type": "line",
+      "layer": "upper",
+      "x1": 143,
+      "y1": 226,
+      "x2": 154,
+      "y2": 226,
+      "neonBorder": false
+    },
+    {
+      "id": "oneway-014",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 309,
+      "y1": 230,
+      "x2": 282,
+      "y2": 296,
+      "direction": -1
+    },
+    {
+      "id": "target-015",
+      "type": "target",
+      "layer": "upper",
+      "x": 103,
+      "y": 251,
+      "angle": -26.051
+    },
+    {
+      "id": "oneway-015",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 276,
+      "y1": 120,
+      "x2": 243,
+      "y2": 118,
+      "direction": -1
+    },
+    {
+      "id": "sensor-003",
+      "type": "sensor",
+      "layer": "top",
+      "x1": 43,
+      "y1": 199,
+      "x2": 61,
+      "y2": 199,
+      "objectEffect": {
+        "action": "restore",
+        "object": "arc-006"
+      }
+    },
+    {
+      "id": "sensor-004",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 276,
+      "y1": 37,
+      "x2": 259,
+      "y2": 37,
+      "attack": "lv4",
+      "attackCount": 5
+    },
+    {
+      "id": "target-016",
+      "type": "target",
+      "layer": "upper",
+      "x": 87,
+      "y": 258,
+      "angle": -22.926,
+      "targetGroup": {
+        "id": "targetGroup-003",
+        "action": "upgrade",
+        "members": [
+          "target-016",
+          "target-015"
+        ],
+        "hole": "blockhole-001",
+        "bumpers": [
+          "circle-032",
+          "circle-031",
+          "circle-054",
+          "circle-051",
+          "circle-029"
+        ],
+        "repeatExtraBall": true
+      }
+    },
+    {
+      "id": "line-669",
+      "type": "line",
+      "layer": "upper",
+      "x1": 292,
+      "y1": 271,
+      "x2": 282,
+      "y2": 296
+    },
+    {
+      "id": "circle-056",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 192,
+      "cy": 343,
+      "r": 54.011,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "target-017",
+      "type": "target",
+      "layer": "upper",
+      "x": 271,
+      "y": 134,
+      "angle": 2.556,
+      "targetGroup": {
+        "id": "targetGroup-006",
+        "members": [
+          "target-017"
+        ],
+        "action": "objectControl",
+        "object": "rect-005",
+        "effect": "hide"
+      }
+    },
+    {
+      "id": "circle-057",
+      "type": "circle",
+      "layer": "upper",
+      "cx": 157,
+      "cy": 134,
+      "r": 2,
+      "mechanic": "pachinko-pin"
+    },
+    {
+      "id": "arc-263",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 129,
+      "y1": -9,
+      "qx": 91,
+      "qy": -6,
+      "x2": 71,
+      "y2": 22
+    },
+    {
+      "id": "arc-264",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 130,
+      "y1": -9,
+      "qx": 165,
+      "qy": -13,
+      "x2": 225,
+      "y2": 19
+    },
+    {
+      "id": "arc-265",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 130,
+      "y1": 11,
+      "qx": 102.75,
+      "qy": 12,
+      "x2": 87,
+      "y2": 33,
+      "neonBorder": false
+    },
+    {
+      "id": "arc-266",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 131,
+      "y1": 11,
+      "qx": 146,
+      "qy": 11,
+      "x2": 169,
+      "y2": 18,
+      "neonBorder": false
+    },
+    {
+      "id": "arc-267",
+      "type": "arc",
+      "layer": "top",
+      "x1": 82,
+      "y1": 60,
+      "qx": 77,
+      "qy": 57,
+      "x2": 74,
+      "y2": 63,
+      "neonBorder": "blue"
+    },
+    {
+      "id": "line-670",
+      "type": "line",
+      "layer": "upper",
+      "x1": 203,
+      "y1": 77,
+      "x2": 199,
+      "y2": 47,
+      "neonBorder": false
+    },
+    {
+      "id": "line-671",
+      "type": "line",
+      "layer": "upper",
+      "x1": 169,
+      "y1": 97,
+      "x2": 172,
+      "y2": 40
+    },
+    {
+      "id": "arc-268",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 171,
+      "y1": 19,
+      "qx": 126,
+      "qy": 2,
+      "x2": 98,
+      "y2": 21,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "arc-269",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 98,
+      "y1": 21,
+      "qx": 68,
+      "qy": 42,
+      "x2": 78,
+      "y2": 96,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "circle-058",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 52,
+      "cy": 230,
+      "r": 7.246,
+      "neonBorder": "blue",
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "line-672",
+      "type": "line",
+      "layer": "upper",
+      "x1": 241,
+      "y1": 121,
+      "x2": 249,
+      "y2": 94
+    },
+    {
+      "id": "sensor-005",
+      "type": "sensor",
+      "layer": "top",
+      "x1": 327,
+      "y1": 200,
+      "x2": 345,
+      "y2": 199
+    },
+    {
+      "id": "arc-270",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 88,
+      "y1": 103,
+      "qx": 82,
+      "qy": 100,
+      "x2": 83,
+      "y2": 107
+    },
+    {
+      "id": "arc-271",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 92,
+      "y1": 121,
+      "qx": 95,
+      "qy": 125,
+      "x2": 99,
+      "y2": 123
+    },
+    {
+      "id": "arc-272",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 100,
+      "y1": 117,
+      "qx": 102,
+      "qy": 121,
+      "x2": 99,
+      "y2": 123
+    },
+    {
+      "id": "arc-273",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 122,
+      "y1": 176,
+      "qx": 125,
+      "qy": 180,
+      "x2": 129,
+      "y2": 178
+    },
+    {
+      "id": "arc-274",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 131,
+      "y1": 172,
+      "qx": 132,
+      "qy": 176,
+      "x2": 129,
+      "y2": 178
+    },
+    {
+      "id": "line-673",
+      "type": "line",
+      "layer": "upper",
+      "x1": 131,
+      "y1": 172,
+      "x2": 121,
+      "y2": 155
+    },
+    {
+      "id": "arc-275",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 121,
+      "y1": 155,
+      "qx": 117,
+      "qy": 150,
+      "x2": 113,
+      "y2": 153
+    },
+    {
+      "id": "arc-276",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 112,
+      "y1": 160,
+      "qx": 110,
+      "qy": 156,
+      "x2": 113,
+      "y2": 153
+    }
+  ],
+  "gravityRegions": [
+    {
+      "id": "gravityZone-001",
+      "type": "gravityZone",
+      "layer": "upper",
+      "x": 100.5,
+      "y": 12,
+      "angle": 0,
+      "width": 59,
+      "height": 42,
+      "outline": [
+        [
+          0.4830508474576271,
+          -0.5
+        ],
+        [
+          0.4568894316633606,
+          -0.49683663552884705
+        ],
+        [
+          0.430982147269146,
+          -0.4931774459054759
+        ],
+        [
+          0.4053289942749845,
+          -0.48902243112988636
+        ],
+        [
+          0.37992997268087464,
+          -0.48437159120207846
+        ],
+        [
+          0.3547850824868169,
+          -0.47922492612205236
+        ],
+        [
+          0.3298943236928115,
+          -0.47358243588980775
+        ],
+        [
+          0.30525769629885874,
+          -0.46744412050534506
+        ],
+        [
+          0.28087520030495783,
+          -0.4608099799686639
+        ],
+        [
+          0.25674683571110907,
+          -0.4536800142797644
+        ],
+        [
+          0.23287260251731293,
+          -0.44605422343864665
+        ],
+        [
+          0.2092525007235684,
+          -0.4379326074453105
+        ],
+        [
+          0.1858865303298765,
+          -0.429315166299756
+        ],
+        [
+          0.16277469133623698,
+          -0.42020190000198326
+        ],
+        [
+          0.13991698374264983,
+          -0.41059280855199226
+        ],
+        [
+          0.11731340754911454,
+          -0.4004878919497828
+        ],
+        [
+          0.09496396275563188,
+          -0.38988715019535514
+        ],
+        [
+          0.07286864936220085,
+          -0.37879058328870907
+        ],
+        [
+          0.05102746736882267,
+          -0.3671981912298447
+        ],
+        [
+          0.02944041677549589,
+          -0.35510997401876204
+        ],
+        [
+          0.008107497582221963,
+          -0.342525931655461
+        ],
+        [
+          -0.012971290211000077,
+          -0.3294460641399417
+        ],
+        [
+          -0.03379594660416975,
+          -0.315870371472204
+        ],
+        [
+          -0.054366471597286574,
+          -0.301798853652248
+        ],
+        [
+          -0.07468286519035151,
+          -0.2872315106800738
+        ],
+        [
+          -0.09474512738336432,
+          -0.2721683425556811
+        ],
+        [
+          -0.11455325817632502,
+          -0.2566093492790702
+        ],
+        [
+          -0.13410725756923308,
+          -0.24055453085024106
+        ],
+        [
+          -0.1534071255620893,
+          -0.22400388726919343
+        ],
+        [
+          -0.1724528621548931,
+          -0.2069574185359275
+        ],
+        [
+          -0.1912444673476448,
+          -0.18941512465044327
+        ],
+        [
+          -0.20978194114034415,
+          -0.17137700561274072
+        ],
+        [
+          -0.2280652835329911,
+          -0.1528430614228199
+        ],
+        [
+          -0.24609449452558618,
+          -0.1338132920806807
+        ],
+        [
+          -0.2638695741181289,
+          -0.11428769758632315
+        ],
+        [
+          -0.28139052231061923,
+          -0.09426627793974729
+        ],
+        [
+          -0.2986573391030575,
+          -0.07374903314095317
+        ],
+        [
+          -0.31567002449544335,
+          -0.05273596318994075
+        ],
+        [
+          -0.33242857848777707,
+          -0.03122706808670994
+        ],
+        [
+          -0.3489330010800584,
+          -0.009222347831260799
+        ],
+        [
+          -0.36518329227228763,
+          0.013278197576406681
+        ],
+        [
+          -0.3811794520644645,
+          0.03627456813629246
+        ],
+        [
+          -0.3969214804565895,
+          0.059766763848396444
+        ],
+        [
+          -0.41240937744866185,
+          0.08375478471271881
+        ],
+        [
+          -0.4276431430406821,
+          0.1082386307292597
+        ],
+        [
+          -0.44262277723265026,
+          0.1332183018980187
+        ],
+        [
+          -0.45734828002456596,
+          0.15869379821899612
+        ],
+        [
+          -0.4718196514164296,
+          0.18466511969219163
+        ],
+        [
+          -0.48603689140824086,
+          0.21113226631760573
+        ],
+        [
+          -0.5,
+          0.23809523809523808
+        ],
+        [
+          -0.2288135593220339,
+          0.5
+        ],
+        [
+          -0.2138326532747436,
+          0.4725896531452086
+        ],
+        [
+          -0.19855095208202553,
+          0.4459141681363903
+        ],
+        [
+          -0.18296845574387943,
+          0.4199735449735449
+        ],
+        [
+          -0.1670851642603055,
+          0.39476778365667253
+        ],
+        [
+          -0.1509010776313036,
+          0.3702968841857731
+        ],
+        [
+          -0.13441619585687384,
+          0.3465608465608466
+        ],
+        [
+          -0.1176305189370161,
+          0.323559670781893
+        ],
+        [
+          -0.10054404687173053,
+          0.30129335684891234
+        ],
+        [
+          -0.08315677966101695,
+          0.27976190476190477
+        ],
+        [
+          -0.06546871730487533,
+          0.2589653145208701
+        ],
+        [
+          -0.047479859803306164,
+          0.2389035861258083
+        ],
+        [
+          -0.029190207156308958,
+          0.21957671957671956
+        ],
+        [
+          -0.010599759363883724,
+          0.20098471487360375
+        ],
+        [
+          0.008291483573969303,
+          0.183127572016461
+        ],
+        [
+          0.027483521657250362,
+          0.16600529100529107
+        ],
+        [
+          0.046976354885959214,
+          0.14961787184009412
+        ],
+        [
+          0.0667699832600961,
+          0.1339653145208701
+        ],
+        [
+          0.08686440677966102,
+          0.11904761904761904
+        ],
+        [
+          0.10725962544465373,
+          0.10486478542034103
+        ],
+        [
+          0.12795563925507447,
+          0.09141681363903587
+        ],
+        [
+          0.14895244821092252,
+          0.07870370370370365
+        ],
+        [
+          0.17025005231219933,
+          0.06672545561434452
+        ],
+        [
+          0.19184845155890345,
+          0.05548206937095822
+        ],
+        [
+          0.21374764595103607,
+          0.04497354497354503
+        ],
+        [
+          0.235947635488596,
+          0.03519988242210466
+        ],
+        [
+          0.25844842017158426,
+          0.026161081716637283
+        ],
+        [
+          0.28125,
+          0.017857142857142856
+        ],
+        [
+          0.3043523749738438,
+          0.010288065843621382
+        ],
+        [
+          0.3277555450931156,
+          0.003453850676072898
+        ],
+        [
+          0.35145951035781575,
+          -0.0026455026455026362
+        ],
+        [
+          0.37546427076794364,
+          -0.008009994121105177
+        ],
+        [
+          0.3997698263234986,
+          -0.012639623750734897
+        ],
+        [
+          0.4243761770244821,
+          -0.016534391534391624
+        ],
+        [
+          0.44928332287089334,
+          -0.019694297472075274
+        ],
+        [
+          0.47449126386273244,
+          -0.022119341563785973
+        ],
+        [
+          0.5,
+          -0.023809523809523808
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            -0.5,
+            0.23809523809523808
+          ],
+          [
+            -0.2288135593220339,
+            0.5
+          ]
+        ],
+        [
+          [
+            0.5,
+            -0.023809523809523808
+          ],
+          [
+            0.4830508474576271,
+            -0.5
+          ]
+        ]
+      ],
+      "gravityDirection": "left",
+      "gravityStrength": 5
+    },
+    {
+      "id": "gravityZone-002",
+      "type": "gravityZone",
+      "layer": "upper",
+      "x": 177.5,
+      "y": 12.278197857592943,
+      "angle": 0,
+      "width": 95,
+      "height": 43.443604284814114,
+      "outline": [
+        [
+          -0.08947368421052632,
+          0.13170643266371745
+        ],
+        [
+          0.41578947368421054,
+          0.5
+        ],
+        [
+          0.5,
+          0.1547247806222351
+        ],
+        [
+          0.48174863750428354,
+          0.1335484806730003
+        ],
+        [
+          0.4636078223283478,
+          0.11272028428457463
+        ],
+        [
+          0.44557755447219194,
+          0.09224019145695851
+        ],
+        [
+          0.42765783393581625,
+          0.07210820219015154
+        ],
+        [
+          0.4098486607192207,
+          0.052324316484154025
+        ],
+        [
+          0.3921500348224057,
+          0.032888534338965734
+        ],
+        [
+          0.3745619562453708,
+          0.013800855754586994
+        ],
+        [
+          0.3570844249881164,
+          -0.004938719268982485
+        ],
+        [
+          0.3397174410506418,
+          -0.023330190731742702
+        ],
+        [
+          0.3224610044329477,
+          -0.04137355863369349
+        ],
+        [
+          0.30531511513503345,
+          -0.05906882297483507
+        ],
+        [
+          0.2882797731568997,
+          -0.07641598375516717
+        ],
+        [
+          0.2713549784985461,
+          -0.09341504097468993
+        ],
+        [
+          0.2545407311599733,
+          -0.11006599463340347
+        ],
+        [
+          0.23783703114118027,
+          -0.12636884473130752
+        ],
+        [
+          0.22124387844216717,
+          -0.1423235912684024
+        ],
+        [
+          0.2047612730629345,
+          -0.1579302342446878
+        ],
+        [
+          0.18838921500348235,
+          -0.173188773660164
+        ],
+        [
+          0.17212770426381033,
+          -0.18809920951483067
+        ],
+        [
+          0.15597674084391847,
+          -0.2026615418086881
+        ],
+        [
+          0.13993632474380618,
+          -0.21687577054173618
+        ],
+        [
+          0.12400645596347527,
+          -0.23074189571397488
+        ],
+        [
+          0.10818713450292392,
+          -0.24425991732540434
+        ],
+        [
+          0.09247836036215301,
+          -0.2574298353760244
+        ],
+        [
+          0.07688013354116228,
+          -0.27025164986583516
+        ],
+        [
+          0.06139245403995203,
+          -0.28272536079483646
+        ],
+        [
+          0.04601532185852163,
+          -0.29485096816302847
+        ],
+        [
+          0.030748736996871397,
+          -0.30662847197041126
+        ],
+        [
+          0.01559269945500163,
+          -0.3180578722169845
+        ],
+        [
+          0.0005472092329120259,
+          -0.32913916890274864
+        ],
+        [
+          -0.014387733669397412,
+          -0.33987236202770327
+        ],
+        [
+          -0.029212129251926386,
+          -0.3502574515918485
+        ],
+        [
+          -0.043925977514675196,
+          -0.3602944375951846
+        ],
+        [
+          -0.058529278457643844,
+          -0.3699833200377112
+        ],
+        [
+          -0.07302203208083202,
+          -0.3793240989194286
+        ],
+        [
+          -0.08740423838424033,
+          -0.38831677424033645
+        ],
+        [
+          -0.10167589736786849,
+          -0.39696134600043514
+        ],
+        [
+          -0.11583700903171618,
+          -0.4052578141997244
+        ],
+        [
+          -0.12988757337578338,
+          -0.4132061788382045
+        ],
+        [
+          -0.14382759040007076,
+          -0.42080643991587496
+        ],
+        [
+          -0.15765706010457795,
+          -0.4280585974327363
+        ],
+        [
+          -0.17137598248930436,
+          -0.43496265138878815
+        ],
+        [
+          -0.18498435755425094,
+          -0.44151860178403074
+        ],
+        [
+          -0.19848218529941763,
+          -0.447726448618464
+        ],
+        [
+          -0.21186946572480356,
+          -0.4535861918920879
+        ],
+        [
+          -0.225146198830409,
+          -0.4590978316049025
+        ],
+        [
+          -0.23831238461623522,
+          -0.46426136775690774
+        ],
+        [
+          -0.2513680230822807,
+          -0.46907680034810356
+        ],
+        [
+          -0.26431311422854536,
+          -0.4735441293784901
+        ],
+        [
+          -0.27714765805503017,
+          -0.4776633548480673
+        ],
+        [
+          -0.2898716545617354,
+          -0.48143447675683515
+        ],
+        [
+          -0.30248510374865956,
+          -0.48485749510479365
+        ],
+        [
+          -0.31498800561580387,
+          -0.4879324098919428
+        ],
+        [
+          -0.3273803601631674,
+          -0.49065922111828275
+        ],
+        [
+          -0.3396621673907517,
+          -0.4930379287838133
+        ],
+        [
+          -0.35183342729855493,
+          -0.49506853288853436
+        ],
+        [
+          -0.3638941398865786,
+          -0.49675103343244614
+        ],
+        [
+          -0.3758443051548215,
+          -0.49808543041554865
+        ],
+        [
+          -0.3876839231032842,
+          -0.4990717238378418
+        ],
+        [
+          -0.39941299373196676,
+          -0.4997099136993256
+        ],
+        [
+          -0.41103151704086915,
+          -0.5
+        ],
+        [
+          -0.4225394930299917,
+          -0.4999419827398652
+        ],
+        [
+          -0.43393692169933346,
+          -0.4995358619189209
+        ],
+        [
+          -0.4452238030488951,
+          -0.4987816375371673
+        ],
+        [
+          -0.4564001370786765,
+          -0.49767930959460444
+        ],
+        [
+          -0.4674659237886778,
+          -0.49622887809123223
+        ],
+        [
+          -0.4784211631788986,
+          -0.49443034302705047
+        ],
+        [
+          -0.4892658552493395,
+          -0.4922837044020596
+        ],
+        [
+          -0.5,
+          -0.48978896221625934
+        ],
+        [
+          -0.48947368421052634,
+          -0.029422003045906163
+        ],
+        [
+          -0.47766226265251605,
+          -0.029200976385124783
+        ],
+        [
+          -0.4656198108439822,
+          -0.028537896402780642
+        ],
+        [
+          -0.45334632878492526,
+          -0.027432763098873825
+        ],
+        [
+          -0.440841816475345,
+          -0.025885576473404125
+        ],
+        [
+          -0.4281062739152404,
+          -0.023896336526371704
+        ],
+        [
+          -0.41513970110461346,
+          -0.021465043257776567
+        ],
+        [
+          -0.40194209804346287,
+          -0.01859169666761875
+        ],
+        [
+          -0.38851346473178827,
+          -0.01527629675589805
+        ],
+        [
+          -0.3748538011695904,
+          -0.011518843522614633
+        ],
+        [
+          -0.36096310735686943,
+          -0.007319336967768495
+        ],
+        [
+          -0.3468413832936251,
+          -0.0026777770913595975
+        ],
+        [
+          -0.33248862897985715,
+          0.0024058361066120596
+        ],
+        [
+          -0.3179048444155656,
+          0.007931502626146518
+        ],
+        [
+          -0.30309002960075065,
+          0.013899222467243653
+        ],
+        [
+          -0.28804418453541264,
+          0.02030899562990359
+        ],
+        [
+          -0.27276730921955106,
+          0.027160822114126286
+        ],
+        [
+          -0.2572594036531661,
+          0.0344547019199117
+        ],
+        [
+          -0.24152046783625744,
+          0.04219063504725988
+        ],
+        [
+          -0.22555050176882518,
+          0.05036862149617086
+        ],
+        [
+          -0.20934950545087017,
+          0.05898866126664451
+        ],
+        [
+          -0.19291747888239122,
+          0.06805075435868096
+        ],
+        [
+          -0.1762544220633889,
+          0.07755490077228018
+        ],
+        [
+          -0.15936033499386326,
+          0.08750110050744211
+        ],
+        [
+          -0.14223521767381397,
+          0.09788935356416681
+        ],
+        [
+          -0.12487907010324163,
+          0.10871965994245426
+        ],
+        [
+          -0.10729189228214595,
+          0.1199920196423044
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            0.41578947368421054,
+            0.5
+          ],
+          [
+            0.5,
+            0.1547247806222351
+          ]
+        ],
+        [
+          [
+            -0.5,
+            -0.48978896221625934
+          ],
+          [
+            -0.48947368421052634,
+            -0.029422003045906163
+          ]
+        ]
+      ],
+      "gravityDirection": "right",
+      "gravityStrength": 5
+    },
+    {
+      "id": "gravityZone-003",
+      "type": "gravityZone",
+      "layer": "upper",
+      "x": 226.5,
+      "y": 52,
+      "angle": 0,
+      "width": 115,
+      "height": 68,
+      "outline": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          -0.21304347826086956,
+          -0.07352941176470588
+        ],
+        [
+          -0.4826086956521739,
+          -0.19117647058823528
+        ],
+        [
+          -0.5,
+          -0.5
+        ],
+        [
+          -0.08260869565217391,
+          -0.2647058823529412
+        ],
+        [
+          0.0391304347826087,
+          0.11764705882352941
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            -0.4826086956521739,
+            -0.19117647058823528
+          ],
+          [
+            -0.5,
+            -0.5
+          ]
+        ],
+        [
+          [
+            0.0391304347826087,
+            0.11764705882352941
+          ],
+          [
+            0.5,
+            0.5
+          ]
+        ]
+      ],
+      "gravityDirection": "right",
+      "gravityStrength": 30
+    }
+  ],
+  "lockedLayout": [],
+  "upperLayout": [],
+  "topLayout": [],
+  "templates": {
+    "hole": {
+      "label": "Hole",
+      "width": 12,
+      "height": 12,
+      "source": "現有 capture 半徑 5.5。",
+      "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><circle r=\"3.4\" stroke-dasharray=\"1 1\"/>"
+    },
+    "target": {
+      "label": "單顆 target",
+      "width": 13,
+      "height": 3,
+      "source": "三連 target 的單顆元件，保留原尺寸。",
+      "markup": "<polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "plunger": {
+      "label": "發球區",
+      "width": 20,
+      "height": 8,
+      "source": "固定大小；上緣中心為推球點，發球方向向上。",
+      "markup": "<rect x=\"-10\" y=\"-4\" width=\"20\" height=\"8\" fill=\"#b78a43\"/><path d=\"M0 3V-3M-2 -1L0 -3L2 -1\" fill=\"none\"/>"
+    },
+    "flipper": {
+      "label": "Flipper",
+      "width": 50.72938359896286,
+      "height": 14.061202228069305,
+      "source": "現有 space-355 軸距與頭尾半徑。",
+      "markup": "<path d=\"M-18.33409068544678 -6.530601114034653 L20.805223887761155 -4.059467911720276 A4.059467911720276 4.059467911720276 0 0 1 20.805223887761155 4.059467911720276 L-18.33409068544678 6.530601114034653 A6.530601114034653 6.530601114034653 0 0 1 -18.33409068544678 -6.530601114034653 Z\" fill=\"#355b73\"/><circle cx=\"-18.33409068544678\" cy=\"0\" r=\"1.8\" fill=\"#79cafa\"/>"
+    },
+    "ublock": {
+      "label": "ㄇ形阻擋物",
+      "width": 25,
+      "height": 23,
+      "source": "工具預設：24 × 22，厚度 3，開口朝下。",
+      "markup": "<path d=\"M-12 11V-11H12V11H9V-8H-9V11Z\" fill=\"#455e6b\"/>"
+    },
+    "targets": {
+      "label": "三連 target",
+      "width": 43,
+      "height": 3.000000000000014,
+      "source": "現有 island-target-1～3，保留原尺寸與間距。",
+      "markup": "<polygon points=\"-21.0000,0.6000 -21.0000,-0.6000 -20.9991,-0.6273 -20.9963,-0.6545 -20.9916,-0.6814 -20.9852,-0.7079 -20.9769,-0.7340 -20.9669,-0.7594 -20.9552,-0.7840 -20.9418,-0.8078 -20.9268,-0.8307 -20.9103,-0.8524 -20.8923,-0.8730 -20.8730,-0.8923 -20.8524,-0.9103 -20.8307,-0.9268 -20.8078,-0.9418 -20.7840,-0.9552 -20.7594,-0.9669 -20.7340,-0.9769 -20.7079,-0.9852 -20.6814,-0.9916 -20.6545,-0.9963 -20.6273,-0.9991 -20.6000,-1.0000 -9.4000,-1.0000 -9.3727,-0.9991 -9.3455,-0.9963 -9.3186,-0.9916 -9.2921,-0.9852 -9.2660,-0.9769 -9.2406,-0.9669 -9.2160,-0.9552 -9.1922,-0.9418 -9.1693,-0.9268 -9.1476,-0.9103 -9.1270,-0.8923 -9.1077,-0.8730 -9.0897,-0.8524 -9.0732,-0.8307 -9.0582,-0.8078 -9.0448,-0.7840 -9.0331,-0.7594 -9.0231,-0.7340 -9.0148,-0.7079 -9.0084,-0.6814 -9.0037,-0.6545 -9.0009,-0.6273 -9.0000,-0.6000 -9.0000,0.6000 -9.0009,0.6273 -9.0037,0.6545 -9.0084,0.6814 -9.0148,0.7079 -9.0231,0.7340 -9.0331,0.7594 -9.0448,0.7840 -9.0582,0.8078 -9.0732,0.8307 -9.0897,0.8524 -9.1077,0.8730 -9.1270,0.8923 -9.1476,0.9103 -9.1693,0.9268 -9.1922,0.9418 -9.2160,0.9552 -9.2406,0.9669 -9.2660,0.9769 -9.2921,0.9852 -9.3186,0.9916 -9.3455,0.9963 -9.3727,0.9991 -9.4000,1.0000 -20.6000,1.0000 -20.6273,0.9991 -20.6545,0.9963 -20.6814,0.9916 -20.7079,0.9852 -20.7340,0.9769 -20.7594,0.9669 -20.7840,0.9552 -20.8078,0.9418 -20.8307,0.9268 -20.8524,0.9103 -20.8730,0.8923 -20.8923,0.8730 -20.9103,0.8524 -20.9268,0.8307 -20.9418,0.8078 -20.9552,0.7840 -20.9669,0.7594 -20.9769,0.7340 -20.9852,0.7079 -20.9916,0.6814 -20.9963,0.6545 -20.9991,0.6273 -21.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"9.0000,0.6000 9.0000,-0.6000 9.0009,-0.6273 9.0037,-0.6545 9.0084,-0.6814 9.0148,-0.7079 9.0231,-0.7340 9.0331,-0.7594 9.0448,-0.7840 9.0582,-0.8078 9.0732,-0.8307 9.0897,-0.8524 9.1077,-0.8730 9.1270,-0.8923 9.1476,-0.9103 9.1693,-0.9268 9.1922,-0.9418 9.2160,-0.9552 9.2406,-0.9669 9.2660,-0.9769 9.2921,-0.9852 9.3186,-0.9916 9.3455,-0.9963 9.3727,-0.9991 9.4000,-1.0000 20.6000,-1.0000 20.6273,-0.9991 20.6545,-0.9963 20.6814,-0.9916 20.7079,-0.9852 20.7340,-0.9769 20.7594,-0.9669 20.7840,-0.9552 20.8078,-0.9418 20.8307,-0.9268 20.8524,-0.9103 20.8730,-0.8923 20.8923,-0.8730 20.9103,-0.8524 20.9268,-0.8307 20.9418,-0.8078 20.9552,-0.7840 20.9669,-0.7594 20.9769,-0.7340 20.9852,-0.7079 20.9916,-0.6814 20.9963,-0.6545 20.9991,-0.6273 21.0000,-0.6000 21.0000,0.6000 20.9991,0.6273 20.9963,0.6545 20.9916,0.6814 20.9852,0.7079 20.9769,0.7340 20.9669,0.7594 20.9552,0.7840 20.9418,0.8078 20.9268,0.8307 20.9103,0.8524 20.8923,0.8730 20.8730,0.8923 20.8524,0.9103 20.8307,0.9268 20.8078,0.9418 20.7840,0.9552 20.7594,0.9669 20.7340,0.9769 20.7079,0.9852 20.6814,0.9916 20.6545,0.9963 20.6273,0.9991 20.6000,1.0000 9.4000,1.0000 9.3727,0.9991 9.3455,0.9963 9.3186,0.9916 9.2921,0.9852 9.2660,0.9769 9.2406,0.9669 9.2160,0.9552 9.1922,0.9418 9.1693,0.9268 9.1476,0.9103 9.1270,0.8923 9.1077,0.8730 9.0897,0.8524 9.0732,0.8307 9.0582,0.8078 9.0448,0.7840 9.0331,0.7594 9.0231,0.7340 9.0148,0.7079 9.0084,0.6814 9.0037,0.6545 9.0009,0.6273 9.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "centerPost": {
+      "label": "Center post",
+      "width": 10,
+      "height": 10,
+      "source": "可調半徑的升降救球柱；指定 Rollover 線集滿後升起，依設定碰撞次數收回。",
+      "markup": "<circle r=\"5\" fill=\"#263945\"/><circle r=\"3.3\" fill=\"none\"/><path d=\"M-2 0H2M0 -2V2\"/>"
+    },
+    "flag": {
+      "label": "旗幟線",
+      "width": 14,
+      "height": 2,
+      "source": "固定長度 14；可拖曳旋轉控制點或輸入角度。穿越感應線，不阻擋球。",
+      "markup": "<line x1=\"-7\" y1=\"0\" x2=\"7\" y2=\"0\" fill=\"none\" stroke=\"#e6a5ea\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>"
+    }
+  }
+}

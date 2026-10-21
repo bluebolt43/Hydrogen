@@ -1,0 +1,17 @@
+html,body{margin:0;width:100%;height:100%;min-height:0;overflow:hidden;background:#000}
+body{display:grid;place-items:center}
+[hidden]{display:none!important}
+#phone.layout{position:relative;display:block;width:min(100%,56.25dvh);max-width:none;aspect-ratio:9/16;height:auto;padding:0;overflow:hidden;background:#000}
+#phone aside,#phone .timeline,#phone #status{display:none}
+#phone .player{width:100%;height:100%}
+#phone #stage{width:100%;height:100%;border:0;border-radius:0;box-shadow:none}
+#phone .controls{position:absolute;inset:0;pointer-events:none}
+#phone .buttons{display:contents}
+#phone .controls button{display:none}
+#phone #replay{display:block;position:absolute;left:12px;bottom:12px;z-index:30;pointer-events:auto}
+#begin{position:absolute;inset:0;z-index:40;display:grid;place-items:center;background:#0004}
+#begin button,#story-next,#story-skip{padding:12px 18px;border:1px solid #fff9;border-radius:24px;background:#102c3ee6;color:#fff;font:16px system-ui;cursor:pointer}
+#story-next,#story-skip{position:absolute;right:12px;bottom:12px;z-index:35}
+#error{position:absolute;inset:40% 10% auto;background:#321b16;color:#fff;z-index:50;padding:12px}
+#chapters{position:fixed;top:12px;left:12px;z-index:50}
+#chapters a{padding:8px;background:#102c3ecc;color:#fff}
