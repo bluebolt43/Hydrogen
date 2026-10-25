@@ -10,7 +10,7 @@ function resetCh7Eyes(){
 }
 resetCh7Eyes();
 function renderCh7Third(ms){
- const camera=ch7Layout.camera, scale=phone.clientWidth/camera.width;
+ const camera=ch7Layout.camera, scale=storyWidth/camera.width;
  const world=document.querySelector('#ch7-third-world');
  world.style.width=ch7Layout.background.width+'px';world.style.height=ch7Layout.background.height+'px';
  const attackTime=ms-9900;
@@ -20,10 +20,10 @@ function renderCh7Third(ms){
  const riseTime=ms-4300;
  const quake=riseTime>=0 && riseTime<3000
   ? Math.min(riseTime/180,1,(3000-riseTime)/250) : 0;
- const quakeX=(Math.sin(ms*.091)+Math.sin(ms*.163)*.5)*phone.clientWidth*.012*quake;
- const quakeY=(Math.cos(ms*.117)+Math.sin(ms*.193)*.5)*phone.clientHeight*.009*quake;
- const centeredX=phone.clientWidth*(1-zoom)/2+quakeX;
- const centeredY=phone.clientHeight*(1-zoom)/2+quakeY;
+ const quakeX=(Math.sin(ms*.091)+Math.sin(ms*.163)*.5)*storyWidth*.012*quake;
+ const quakeY=(Math.cos(ms*.117)+Math.sin(ms*.193)*.5)*storyHeight*.009*quake;
+ const centeredX=storyWidth*(1-zoom)/2+quakeX;
+ const centeredY=storyHeight*(1-zoom)/2+quakeY;
  world.style.transform=`translate(${centeredX-camera.x*scale*zoom}px,${centeredY-camera.y*scale*zoom}px) scale(${scale*zoom})`;
  const t=ms-1500;
  document.querySelectorAll('.ch7-eye').forEach((eye,index)=>{
@@ -62,10 +62,10 @@ function render(elapsed){document.querySelector('#ch7-story').hidden=false;
     document.querySelector('#ch7-composition').hidden=secondMs>=1500;
     document.querySelector('#ch7-whirlpool').style.animationPlayState=secondMs>=1500?'paused':'running';
     const travel=clamp(secondMs/12000,0,1);
-    const scale=Math.max(phone.clientWidth/second.naturalWidth,phone.clientHeight/second.naturalHeight)*1.75;
+    const scale=Math.max(storyWidth/second.naturalWidth,storyHeight/second.naturalHeight)*1.75;
     const width=second.naturalWidth*scale,height=second.naturalHeight*scale;
     second.style.width=`${width}px`;second.style.height=`${height}px`;
-    second.style.transform=`translate(${(phone.clientWidth-width)*travel}px,${(phone.clientHeight-height)*(1-travel)}px)`;
+    second.style.transform=`translate(${(storyWidth-width)*travel}px,${(storyHeight-height)*(1-travel)}px)`;
     document.querySelector('#ch7-third').style.opacity=clamp((ch7Ms-33000)/1500,0,1);
     renderCh7Third(ch7Ms-33000);
     phone.dataset.phase=ch7Ms<1000?'stage7-black':ch7Ms<2500?'stage7-1-fade':ch7Ms<16500?'stage7-whirlpool':ch7Ms<28500?'stage7-2-pan':ch7Ms<30500?'stage7-2-hold':ch7Ms<32000?'stage7-fade-black':ch7Ms<33000?'stage7-black-hold':'stage7-3-fade';

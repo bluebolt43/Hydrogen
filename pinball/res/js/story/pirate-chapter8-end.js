@@ -1,5 +1,5 @@
 function renderCh8End(ms){
-  const scale=phone.clientWidth/940;
+  const scale=storyWidth/940;
   document.querySelector('#ch8-end-world').style.transform=`scale(${scale})`;
   const fadeIn=clamp((ms-2600)/1100,0,1);
   document.querySelector('#ch8-end-third').style.opacity=fadeIn;
@@ -30,8 +30,8 @@ function renderCh8End(ms){
   const shake=Math.max(...[1000,1800,2600].map(at=>{
     const age=ms-at;return age>=0&&age<1100?1.4*(1-age/1100):0;
   }));
-  const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*phone.clientWidth*.024*shake;
-  const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*phone.clientHeight*.012*shake;
+  const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*storyWidth*.024*shake;
+  const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*storyHeight*.012*shake;
   document.querySelector('#ch8-end-shake').style.transform=`translate(${x}px,${y}px) scale(${1+shake*.08})`;
   document.querySelectorAll('.ch8-end-blast').forEach((smoke,index)=>{
     const t=(ms-1000-index*800)/1100;

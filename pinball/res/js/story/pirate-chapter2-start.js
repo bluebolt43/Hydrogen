@@ -13,8 +13,8 @@ function renderFinale(elapsed) {
     shot = finaleShots.smoke; phase = 'explosion';
     const t = (elapsed - 3000) / 1000;
     const strength = Math.pow(1 - t / 1.8, 1.5);
-    dx = (Math.sin(t * 83 + 1) + .45 * Math.sin(t * 137)) * .04 * strength * phone.clientWidth;
-    dy = (Math.cos(t * 97) + .4 * Math.sin(t * 151)) * .022 * strength * phone.clientHeight;
+    dx = (Math.sin(t * 83 + 1) + .45 * Math.sin(t * 137)) * .04 * strength * storyWidth;
+    dy = (Math.cos(t * 97) + .4 * Math.sin(t * 151)) * .022 * strength * storyHeight;
   } else if (elapsed >= 4800) {
     shot = finaleShots.ship; phase = 'ship';
     if (elapsed >= 6300) {
@@ -22,8 +22,8 @@ function renderFinale(elapsed) {
       phase = elapsed < 9300 ? 'angry-zoom' : 'angry';
     }
   }
-  const h = phone.clientHeight, w = h * scene5.naturalWidth / scene5.naturalHeight;
-  const x = clamp(phone.clientWidth / 2 - shot.x * w * shot.scale + dx, phone.clientWidth - w * shot.scale, 0);
+  const h = storyHeight, w = h * scene5.naturalWidth / scene5.naturalHeight;
+  const x = clamp(storyWidth / 2 - shot.x * w * shot.scale + dx, storyWidth - w * shot.scale, 0);
   const y = clamp(h / 2 - shot.y * h * shot.scale + dy, h - h * shot.scale, 0);
   scene5.style.transform = `translate(${x}px, ${y}px) scale(${shot.scale})`;
   phone.dataset.phase = phase;

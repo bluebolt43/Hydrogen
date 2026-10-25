@@ -399,7 +399,8 @@ const stage = document.querySelector('#stage');
     looping = !looping;
     event.currentTarget.setAttribute('aria-pressed', String(looping));
   };
-  requestAnimationFrame(syncTimeline);
+  // Chapter pages have their own player; the preview controls are hidden.
+  if (!hostedChapter) requestAnimationFrame(syncTimeline);
   function play() {
     if (!ready) return;
     a2Bgm.pause();
@@ -1127,7 +1128,7 @@ const stage = document.querySelector('#stage');
     endAnimations[0].finished.then(() => {
       if (run !== currentRun || !stage.classList.contains('a8-end-preview')) return;
       if (looping) return playA8End();
-      paused = true; pause.textContent = '播放'; status.textContent = 'To be continue';
+      paused = true; pause.textContent = '播放'; status.textContent = globalThis.PinballI18n?.t('story.toBeContinued') || '未完待續';
     }).catch(() => {});
     seekInput.max = 44; pause.textContent = '暫停'; status.textContent = '';
   }
@@ -1223,7 +1224,7 @@ const stage = document.querySelector('#stage');
       else await stage.requestFullscreen();
     } catch { status.textContent = '此瀏覽器無法開啟全螢幕'; }
   };
-  const storyImagesReady = Promise.all([...a8EndScenes.map(decodeStoryScene), ...a8Scenes.map(decodeStoryScene), document.querySelector('#a8-air-background').decode(), ...a7EndScenes.map(decodeStoryScene), wide.decode(), near.decode(), box.decode(), reimuBack.decode(), discovery.decode(), suspect.decode(), lake.decode(), fairyPlay.decode(), reimuQuestion.decode(), cirnoTalk.decode(), cirnoAngry.decode(), boxBubble.decode(), endSearch.decode(), moneyBubble.decode(), ayaThought.decode(), a2Mountain.decode(), a2Reimu.decode(), a2Aya.decode(), a2ReimuAngry.decode(), a2Info.decode(), a2Payment.decode(), a2EndAya.decode(), a3Hands.decode(), a3Sanae.decode(), a3Shrine.decode(), a3Sweeping.decode(), a3Talk.decode(), a3Reply.decode(), a3Gohei.decode(), a3Reimu.decode(), a3BoxBubble.decode(), a3EndEmpty.decode(), a4Hands.decode(), a4Youmu.decode(), a4Hakugyokurou.decode(), a4Question.decode(), a4Explain.decode(), a4Concern.decode(), a4Rear.decode(), a4Advance.decode(), a4Protect.decode(), a4EndFertilizer.decode(), a4EndBack.decode(), a4EndBloom.decode(), a4EndWatch.decode(), a4EndReimu.decode(), a5Hands.decode(), a5Reisen.decode(), a5Eientei.decode(), a5ReimuTalk.decode(), a5ReimuAngry.decode(), a5ReisenTalk.decode(), a5BoxBubble.decode(), a5OrderBubble.decode(), a5EndReimu.decode(), a5EndReisen.decode(), a5EndMemory.decode(), a6Bamboo.decode(), a6Mokou.decode(), a6ReimuBack.decode(), a6ReimuTalk.decode(), a6MokouTalk.decode(), a6MokouAngry.decode(), a6Gohei.decode(), a6QuestionBubble.decode(), a6QuestionMark.decode(), a6EndReimu.decode(), a6EndMokou.decode(), decodeStoryScene(a6EndIntro), a6EndEscort.decode(), a6EndReward.decode(), a6EndPayment.decode(), a6EndSighting.decode(), a6EndLook.decode(), a4EndYuyuko.decode(), a7Bg.decode(), a7Reimu.decode(), a7Yukari.decode(), a7Evasive.decode(), a7Witness.decode(), a7Box.decode(), a7Refusal.decode(), a7Gohei.decode(), a4Ready.decode()]).then(() => {
+  const storyImagesReady = Promise.all(hostedChapter ? [...document.querySelectorAll('img[data-story-required]')].map(decodeStoryScene) : [...a8EndScenes.map(decodeStoryScene), ...a8Scenes.map(decodeStoryScene), document.querySelector('#a8-air-background').decode(), ...a7EndScenes.map(decodeStoryScene), wide.decode(), near.decode(), box.decode(), reimuBack.decode(), discovery.decode(), suspect.decode(), lake.decode(), fairyPlay.decode(), reimuQuestion.decode(), cirnoTalk.decode(), cirnoAngry.decode(), boxBubble.decode(), endSearch.decode(), moneyBubble.decode(), ayaThought.decode(), a2Mountain.decode(), a2Reimu.decode(), a2Aya.decode(), a2ReimuAngry.decode(), a2Info.decode(), a2Payment.decode(), a2EndAya.decode(), a3Hands.decode(), a3Sanae.decode(), a3Shrine.decode(), a3Sweeping.decode(), a3Talk.decode(), a3Reply.decode(), a3Gohei.decode(), a3Reimu.decode(), a3BoxBubble.decode(), a3EndEmpty.decode(), a4Hands.decode(), a4Youmu.decode(), a4Hakugyokurou.decode(), a4Question.decode(), a4Explain.decode(), a4Concern.decode(), a4Rear.decode(), a4Advance.decode(), a4Protect.decode(), a4EndFertilizer.decode(), a4EndBack.decode(), a4EndBloom.decode(), a4EndWatch.decode(), a4EndReimu.decode(), a5Hands.decode(), a5Reisen.decode(), a5Eientei.decode(), a5ReimuTalk.decode(), a5ReimuAngry.decode(), a5ReisenTalk.decode(), a5BoxBubble.decode(), a5OrderBubble.decode(), a5EndReimu.decode(), a5EndReisen.decode(), a5EndMemory.decode(), a6Bamboo.decode(), a6Mokou.decode(), a6ReimuBack.decode(), a6ReimuTalk.decode(), a6MokouTalk.decode(), a6MokouAngry.decode(), a6Gohei.decode(), a6QuestionBubble.decode(), a6QuestionMark.decode(), a6EndReimu.decode(), a6EndMokou.decode(), decodeStoryScene(a6EndIntro), a6EndEscort.decode(), a6EndReward.decode(), a6EndPayment.decode(), a6EndSighting.decode(), a6EndLook.decode(), a4EndYuyuko.decode(), a7Bg.decode(), a7Reimu.decode(), a7Yukari.decode(), a7Evasive.decode(), a7Witness.decode(), a7Box.decode(), a7Refusal.decode(), a7Gohei.decode(), a4Ready.decode()]).then(() => {
     ready = true;
     document.querySelectorAll('button[disabled], input[disabled]').forEach(element => element.disabled = false);
     if (!hostedChapter) play();

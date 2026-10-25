@@ -36,7 +36,10 @@ function paint(canvas,alpha){
   watch(state.redraw);
   if(root.ResizeObserver){const observer=new root.ResizeObserver(state.redraw);observer.observe(canvas);root.addEventListener?.('pagehide',()=>observer.disconnect(),{once:true});}
  }
- state.alpha=Math.max(0,Math.min(1,alpha));state.redraw();
+ // Opacity changes do not invalidate glyph geometry. ResizeObserver and locale
+ // changes redraw the text; avoid a forced layout read on every animation frame.
+ state.alpha=Math.max(0,Math.min(1,alpha));canvas.style.opacity=String(state.alpha);
+ if(!state.signature)state.redraw();
 }
 const api={draw,paint,watch};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.StoryEndingText=api;

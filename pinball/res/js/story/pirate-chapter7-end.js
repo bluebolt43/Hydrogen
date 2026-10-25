@@ -1,6 +1,6 @@
 const ch7EndLayout={"version":1,"coordinateSystem":"background-pixels","background":{"src":"../img/pirate/pirate-story-kraken-cave.png","width":1672,"height":941},"camera":{"x":560,"y":22,"width":500,"height":888.89,"aspectRatio":"9:16"},"objects":[{"id":"stage7-4-1","asset":"stage7-4","src":"../img/pirate/pirate-story-kraken-defeated.png","x":450,"y":173,"width":700,"height":583.33,"zIndex":1},{"id":"stage7-3-boss-2","asset":"stage7-3-boss","src":"../img/pirate/pirate-story-kraken-body.png","x":470,"y":356,"width":700,"height":393.96,"zIndex":2},{"id":"stage7-4-3","asset":"stage7-4","src":"../img/pirate/pirate-story-kraken-defeated.png","x":850,"y":300,"width":100,"height":83.33,"zIndex":3},{"id":"stage7-5-4","asset":"stage7-5","src":"../img/pirate/pirate-story-treasure-cave.png","x":596.2,"y":219.35,"width":435.99,"height":245.38,"zIndex":4}]};
 function renderCh7End(ms){
- const camera=ch7EndLayout.camera,scale=phone.clientWidth/camera.width;
+ const camera=ch7EndLayout.camera,scale=storyWidth/camera.width;
  const world=document.querySelector('#ch7-end-world');
  world.style.width=ch7EndLayout.background.width+'px';world.style.height=ch7EndLayout.background.height+'px';
  world.style.transform=`translate(${-camera.x*scale}px,${-camera.y*scale}px) scale(${scale})`;
@@ -15,8 +15,8 @@ function renderCh7End(ms){
  const shake=Math.max(...[1000,1800,2600].map(at=>{
   const age=ms-at;return age>=0&&age<1100?1.4*(1-age/1100):0;
  }));
- const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*phone.clientWidth*.024*shake;
- const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*phone.clientHeight*.012*shake;
+ const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*storyWidth*.024*shake;
+ const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*storyHeight*.012*shake;
  document.querySelector('#ch7-end-shake').style.transform=`translate(${x}px,${y}px) scale(${1+shake*.08})`;
  document.querySelectorAll('.ch7-end-blast').forEach((smoke,index)=>{
   const t=(ms-1000-index*800)/1100;

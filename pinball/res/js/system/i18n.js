@@ -3,7 +3,7 @@
 'use strict';
 if(root.PinballI18n)return;
 function create(catalogs,storage){
- const fallback='zh-Hant',listeners=new Set(),supported=Object.freeze(['zh-Hant','en']);
+ const fallback='zh-Hant',listeners=new Set(),supported=Object.freeze(['zh-Hant','en','ja']);
  const normalize=value=>supported.includes(value)?value:fallback;
  let locale=fallback;
  try{locale=normalize(storage?.getItem('pinball-language'));}catch{}

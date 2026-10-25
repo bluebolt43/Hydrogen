@@ -3,16 +3,16 @@ function renderNight(ms) {
   // 直幅鋪滿並留晃動邊界，海上漂浮 2 秒後花 5 秒靠近島嶼。
   const t = clamp((ms - 2000) / 5000, 0, 1), ease = t*t*(3-2*t);
   const ratio = nightIsland.naturalWidth / nightIsland.naturalHeight;
-  const w = Math.max(phone.clientWidth, phone.clientHeight * ratio), h = w / ratio;
+  const w = Math.max(storyWidth, storyHeight * ratio), h = w / ratio;
   nightIsland.style.width = `${w}px`;
   nightIsland.style.height = `${h}px`;
   const scale = 1.06 + 1.44*ease;
   const drift = 1 - .65*ease;
-  const swayX = Math.sin(ms/1150)*phone.clientWidth*.012*drift;
-  const swayY = Math.sin(ms/780)*phone.clientHeight*.006*drift;
+  const swayX = Math.sin(ms/1150)*storyWidth*.012*drift;
+  const swayY = Math.sin(ms/780)*storyHeight*.006*drift;
   const roll = Math.sin(ms/1400)*.45*drift;
   const cx = .63 + .12*ease, cy = .5 + .10*ease;
-  nightIsland.style.transform = `translate(${phone.clientWidth/2+swayX}px,${phone.clientHeight/2+swayY}px) rotate(${roll}deg) translate(${-cx*w*scale}px,${-cy*h*scale}px) scale(${scale})`;
+  nightIsland.style.transform = `translate(${storyWidth/2+swayX}px,${storyHeight/2+swayY}px) rotate(${roll}deg) translate(${-cx*w*scale}px,${-cy*h*scale}px) scale(${scale})`;
 }
 const stage4Story=document.querySelector('#stage4-story');
 const scopeMaskFrame=document.querySelector('#scope-mask-frame');
@@ -20,10 +20,10 @@ const grin=document.querySelector('#stage4-grin'), scopeScene=document.querySele
 const mouthTop=document.querySelector('#mouth-top'),mouthBottom=document.querySelector('#mouth-bottom'),mapView=document.querySelector('#map-view'),stage4Black=document.querySelector('#stage4-black');
 function stage4Camera(image, shot) {
   const ratio=image.naturalWidth/image.naturalHeight;
-  const w=Math.max(phone.clientWidth,phone.clientHeight*ratio),h=w/ratio;
+  const w=Math.max(storyWidth,storyHeight*ratio),h=w/ratio;
   image.style.width=`${w}px`;image.style.height=`${h}px`;
-  const x=clamp(phone.clientWidth/2-shot.x*w*shot.scale,phone.clientWidth-w*shot.scale,0);
-  const y=clamp(phone.clientHeight/2-shot.y*h*shot.scale,phone.clientHeight-h*shot.scale,0);
+  const x=clamp(storyWidth/2-shot.x*w*shot.scale,storyWidth-w*shot.scale,0);
+  const y=clamp(storyHeight/2-shot.y*h*shot.scale,storyHeight-h*shot.scale,0);
   image.style.transform=`translate(${x}px,${y}px) scale(${shot.scale})`;
 }
 function renderStage4(ms) {

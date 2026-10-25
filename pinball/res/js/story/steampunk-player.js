@@ -1,3 +1,15 @@
+// Reuse each screen's pixel buffer instead of allocating one on every noise frame.
+const recordNoiseBuffers=new WeakMap();
+function paintRecordNoise(canvas,frame){
+ const ctx=canvas.getContext('2d');
+ let pixels=recordNoiseBuffers.get(canvas);
+ if(!pixels||pixels.width!==canvas.width||pixels.height!==canvas.height){
+  pixels=ctx.createImageData(canvas.width,canvas.height);recordNoiseBuffers.set(canvas,pixels);
+ }
+ let seed=frame+1;
+ for(let i=0;i<pixels.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)|0;const v=seed>>>24;pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=v;pixels.data[i+3]=255;}
+ ctx.putImageData(pixels,0,0);
+}
 function paintControlFinale(panel,layout,t){
  const tm=layout.timing,get=id=>panel.querySelector(`[data-race-id="${id}"]`);
  const windowAlpha=ease((t-tm.panel)/tm.panelFade);
@@ -298,8 +310,7 @@ function paint(index,elapsed){
   scratches.style.opacity=recording?.22+.12*Math.sin(t*37):0;
   const frame=Math.floor(t*18);
   if(noiseOn&&noise.dataset.frame!==String(frame)){
-   noise.dataset.frame=String(frame);const ctx=noise.getContext('2d'),pixels=ctx.createImageData(noise.width,noise.height);let seed=frame+1;
-   for(let i=0;i<pixels.data.length;i+=4){seed=(Math.imul(seed,1664525)+1013904223)|0;const v=seed>>>24;pixels.data[i]=pixels.data[i+1]=pixels.data[i+2]=v;pixels.data[i+3]=255;}ctx.putImageData(pixels,0,0);
+   noise.dataset.frame=String(frame);paintRecordNoise(noise,frame);
   }
   scratches.style.transform=`translate(${Math.sin(frame*7)*2}%,${Math.cos(frame*3)*1.5}%)`;
   footage.style.transform='none';
@@ -393,13 +404,17 @@ function paint(index,elapsed){
  }
  if(shot.effect==='activation'){fx.textContent='バルス';fx.style.opacity=ease((t-1)/1.5);}
 }
+let visibleStoryPanels=new Set();
 function render(elapsed){
  const ms=clamp(elapsed,0,duration-.01);let index=offsets.length-1;
  while(index>0&&ms<offsets[index])index--;
- for(const panel of panels)panel.hidden=true;
  const local=ms-offsets[index];
  const transition=STORY_SHOTS[index].transitionDuration??550;
- if(index>0&&local<transition&&!STORY_SHOTS[index].cut){paint(index-1,STORY_SHOTS[index-1].duration);paint(index,local);panels[index].style.opacity=ease(local/transition);}
+ const crossfade=index>0&&local<transition&&!STORY_SHOTS[index].cut;
+ const visible=new Set(crossfade?[index-1,index]:[index]);
+ for(const previous of visibleStoryPanels)if(!visible.has(previous))panels[previous].hidden=true;
+ visibleStoryPanels=visible;
+ if(crossfade){paint(index-1,STORY_SHOTS[index-1].duration);paint(index,local);panels[index].style.opacity=ease(local/transition);}
  else paint(index,local);
  phone.dataset.shot=String(index+1);phone.dataset.phase=STORY_SHOTS[index].title;
 }

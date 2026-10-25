@@ -5,7 +5,7 @@ const storyData=JSON.parse(document.getElementById('story-data').textContent);
 const phone=document.getElementById('phone'),begin=document.getElementById('begin');
 const next=document.getElementById('story-next'),skip=document.getElementById('story-skip');
 const music=document.querySelector('audio'),key=`ch${storyData.chapter}-${storyData.part}`;
-const layers=storyData.layers.map(layer=>({...layer,element:document.getElementById(layer.id)}));
+const layers=storyData.layers.map(layer=>({...layer,element:document.getElementById(layer.id),visible:false}));
 let time=0,playing=false,last=0,frame=0,resumable=false,completed=false,nextTimer=0;
 const clamp=value=>Math.max(0,Math.min(1,value));
 const seen=()=>window.AppProgress?window.AppProgress.hasSeen(key):localStorage.getItem(`pinball-touhou2-story-seen-v1:${key}`)==='1';
@@ -14,7 +14,11 @@ function render(ms){
  for(const layer of layers){
   let opacity=clamp((time-layer.start)/(layer.fade||700))*clamp((layer.end-time)/(layer.fadeOut||500));
   if(layer.dissolveDuration)opacity*=Math.pow(1-clamp((time-layer.dissolveStart)/layer.dissolveDuration),layer.dissolvePower||3);
+  // Hidden layers need one exit update, not an entire transform/crop pass per frame.
+  if(opacity===0&&!layer.visible)continue;
+  layer.visible=opacity>0;
   layer.element.style.opacity=String(opacity);
+  if(!layer.visible)continue;
   if(layer.effect==='rewind-mask')layer.element.querySelector('svg').style.opacity=String(.65+.35*(.5+.5*Math.cos((time-layer.start)/90)));
   if(layer.zoomCrop&&layer.crop){
    const q=clamp((time-layer.zoomCrop.start)/layer.zoomCrop.duration),ease=q*q*(3-2*q);

@@ -37,7 +37,7 @@ const PirateTutorial={
  overlay.innerHTML='<canvas id="tutorialSpotlight" aria-hidden="true"></canvas><section id="tutorialPanel"><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><p id="tutorialHint" hidden>點擊進入下一步</p></section>';
  document.body.append(overlay);
  const text=value=>typeof value==='function'?value():PinballI18n.t(value);
- let step=0,waiting=false,pointer=null,heldKey=null,heartOnly=false,narrationReady=replay,demo=null,demoElapsed=0;
+ let flightTime=0,step=0,waiting=false,pointer=null,heldKey=null,heartOnly=false,narrationReady=replay,demo=null,demoElapsed=0;
  const info=PirateTutorial.describe(G,artLayers),{bounds,artBounds}=info;
  function flipper(side){const f=game.flippers.find(f=>(f.control||f.side)===side&&(f.layer||'lower')==='lower')||game.flippers.filter(f=>(f.control||f.side)===side).sort((a,b)=>b.pivot[1]-a.pivot[1])[0]||game.flippers[side==='left'?0:1];return bounds({points:[f.pivot,P.add(f.pivot,[Math.cos(f.rest)*f.length,Math.sin(f.rest)*f.length])]});}
  const holes=attack=>info.attack({ball:'lv1',barrel:'lv2'}[attack]);
@@ -104,8 +104,8 @@ const PirateTutorial={
  function keyboard(e){if(replay){stop(e);return;}if(waiting)return;const k=e.key.toLowerCase(),control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':k===' '?'launch':null;stop(e);if(!allowed(control)||game.paused||game.theaterFrozen)return;if(e.type==='keydown'){if(e.repeat||heldKey)return;heldKey={k,control};if(control==='launch')launch(true);else game.input[control]=true;}else if(heldKey?.k===k){heldKey=null;if(control==='launch')launch(false);else{game.input[control]=false;used(control);}}}
  const listeners=[['pointerdown',down],['pointermove',move],['pointerup',up],['pointercancel',up],['keydown',keyboard],['keyup',keyboard]];for(const [name,fn]of listeners)addEventListener(name,fn,{capture:true});
  const observer=new ResizeObserver(position);observer.observe(canvas);
- guide={refresh:render,allowed,used,demoFrozen:false,onEvent(e){if(tutorialMode){if(demo==='vortex'&&e.type==='release')demoDone();return;}if(e.type==='launch'&&step===2){waiting=true;render();}else if(waiting&&['ready','ball-save-ready'].includes(e.type)){waiting=false;step=2;render();}else if(waiting&&(e.type==='rollover'||!lesson&&e.type==='sensor')){waiting=false;step=3;heartOnly=true;game.paused=true;clearTouchControls();theater.update(0,game);narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});render();}}};
- if(lesson&&!tutorialMode){let flightTime=0;guide.tick=dt=>{if(!waiting||game.paused||game.theaterFrozen||game.enemyIntroPending)return;flightTime+=dt;if(flightTime>=2)guide.onEvent({type:'rollover'});};}
+ guide={refresh:render,allowed,used,demoFrozen:false,onEvent(e){if(tutorialMode){if(demo==='vortex'&&e.type==='release')demoDone();return;}if(e.type==='launch'&&step===2){flightTime=0;waiting=true;render();}else if(waiting&&['ready','ball-save-ready'].includes(e.type)){waiting=false;step=2;render();}else if(waiting&&(e.type==='rollover'||!lesson&&e.type==='sensor')){waiting=false;step=3;heartOnly=true;game.paused=true;clearTouchControls();theater.update(0,game);narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});render();}}};
+ if(!tutorialMode){guide.tick=dt=>{if(!waiting||game.paused||game.theaterFrozen||game.enemyIntroPending)return;flightTime+=dt;if(flightTime>=2)guide.onEvent({type:'rollover'});};}
  function finish(){if(!replay){if(window.AppProgress)window.AppProgress.completeTutorial();else localStorage.setItem(lesson?.storageKey||'pinball-pirate-first-play-tutorial-v1','1');}onFinish();theater.onTutorialBounds=null;theater.onCommandComplete=null;observer.disconnect();for(const [name,fn]of listeners)removeEventListener(name,fn,{capture:true});overlay.remove();canvas.tabIndex=0;canvas.focus();clearTouchControls();if(replay){if(window.AppControls?.exitGame)window.AppControls.exitGame();else location.href=new URL('res/main.html',document.baseURI).href;return;}game.paused=false;theater.update(0,game);}
  function theaterBounds(){if(step!==3||waiting)return;narrationReady=true;render();}
  theater.onTutorialBounds=theaterBounds;
@@ -122,15 +122,20 @@ const PirateTutorial={
 };
 
 const TableTutorial=PirateTutorial;
+const TOUHOU_GAMEPLAY_DEFAULTS={"touhouGap": {"sensor": "sensor-003", "hole": "hole-008", "passes": 1, "locks": 3, "autoLaunch": true, "keepOpenUntilFull": true, "readySeconds": 1.5}, "indicatorCounters": ["sensor-001"], "touhouBagua": {"object": "blockhole-001", "radius": 68, "threshold": 8, "spinSeconds": 4.5, "winFlashSeconds": 1.2, "rewards": [{"kind": "score", "value": 1000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-1000.png", "crop": [0, 0, 20, 9]}}, {"kind": "score", "value": 2500, "art": {"src": "res/img/steampunk/steampunk-bonus-score-2500.png", "crop": [0, 0, 20, 7]}}, {"kind": "score", "value": 5000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-5000.png", "crop": [0, 0, 20, 8]}}, {"kind": "multiplier", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-2.png", "crop": [0, 0, 16, 12]}}, {"kind": "multiplier", "value": 3, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-3.png", "crop": [0, 0, 14, 12]}}, {"kind": "ball", "value": 1, "art": {"src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png", "crop": [0, 0, 18, 9]}}, {"kind": "multi", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiball.png", "crop": [0, 0, 19, 18]}}, {"kind": "enemy", "value": 0, "art": {"src": "res/img/steampunk/steampunk-bonus-enemy.png", "crop": [0, 0, 13, 13]}}], "yinYang": {"fadeSeconds": 0.8}, "attackArt": {"src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png", "duration": 1.55}}, "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"};
 /* Editor JSON -> physics geometry. Shared by editor previews and built games. */
 (function(root){
 'use strict';
 const SlopeRegions=typeof module!=='undefined'&&module.exports?require('./slope-regions.js'):root.SlopeRegions;
+// Shared shape references for main, editor previews and Node tests.
+const FLIPPER_REFERENCE={"left":{"pivot":[127.73488354682922,407.82425594329834],"tip":[159.8123854994774,430.25012969970703],"raised":[159.8123854994774,385.6379671096802],"radii":[6.530601114034653,4.059467911720276]},"right":{"pivot":[232.26900172233582,407.82425594329834],"tip":[200.18100053071976,430.25012969970703],"raised":[200.18100053071976,385.6379671096802],"radii":[6.530601114034653,4.059467911720276]}};
+const SHOOTER_FLOOR_ORIGIN=[316.5,448];
+const LEGACY_CENTER_POST={"id":"test-post-center","kind":"test-post","center":[180,435],"radius":6.5,"layer":"lower","mechanic":"rollover_post"};
 function compileLayout(layout,base){
  const copy=v=>JSON.parse(JSON.stringify(v)),rad=v=>(v||0)*Math.PI/180,dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
  if(layout?.format!=='pinball-layout-editor'||!Array.isArray(layout.objects)||!Array.isArray(layout.lockedLayout))throw Error('不是有效的布局 JSON');
- for(const art of layout.artLayers||[])if(art.state!=='ball-layer'&&(!/^res\/(?:img|hd_img)\/(?:(?:pirate|steampunk|space)\/)?[^/\\?#]+\.(png|webp|jpg|jpeg)$/i.test(art.src||'')||art.src.includes('..')))throw Error('請指定 res/img 中的圖片：'+art.id);
- const g=copy(base),source=copy(base);
+ for(const art of layout.artLayers||[])if(art.state!=='ball-layer'&&(!/^res\/(?:img|hd_img)\/(?:(?:pirate|steampunk|space|touhou)\/)?[^/\\?#]+\.(png|webp|jpg|jpeg)$/i.test(art.src||'')||art.src.includes('..')))throw Error('請指定 res/img 或 res/hd_img 中的圖片：'+art.id);
+ const g=copy(base);
  g.layout_preview=true;g.artLayers=copy(layout.artLayers||[]);g.art_layout_objects=copy(layout.objects);g.art_layout_templates=copy(layout.templates||{});g.gameplay=copy(layout.gameplay||{});
  if(g.gameplay.ballImage!==undefined&&(typeof g.gameplay.ballImage!=='string'||!/^res\/(?:img|hd_img)\/(?:[\w-]+\/)*[\w.-]+\.(?:png|webp|jpe?g)$/i.test(g.gameplay.ballImage)||g.gameplay.ballImage.includes('..')))throw Error('球圖片必須指定 res/img 或 res/hd_img 中的圖片');
  for(const art of g.artLayers)if((art.src||'').endsWith('/plunger-rod.png')&&(art.state||'static')==='static')Object.assign(art,{state:'plunger',bind:'plunger'});
@@ -139,14 +144,14 @@ function compileLayout(layout,base){
  const wells=layout.objects.filter(o=>o.mechanic==='gravity-well');
  for(const art of g.artLayers)if((art.src||'').endsWith('/pirate-whirlpool.png')&&wells.length){const w=wells.find(w=>w.id===art.bind)||wells.reduce((a,b)=>Math.hypot(a.cx-art.x,a.cy-art.y)<=Math.hypot(b.cx-art.x,b.cy-art.y)?a:b);Object.assign(art,{state:'vortex',bind:w.id})}
  const rules={};for(const rule of g.gameplay.target_rules||[])for(const id of rule.objects)rules[id]=rule.id;
- const center=copy(g.lower.find(o=>o.id==='test-post-center'));
+ const center=copy(LEGACY_CENTER_POST);
  g.lower=copy(layout.lockedLayout.filter(o=>!['main-perimeter','left-approach-outer-wall','shooter-divider'].includes(o.id)));
  if((layout.version||1)<6&&!g.lower.some(o=>o.id===center.id))g.lower.push(center);
  const topParts=copy(layout.topLayout||[]);
  let destination=g.lower;
  function poly(id,points,kind='wall',closed=false,extra={}){if(closed&&JSON.stringify(points[0])!==JSON.stringify(points.at(-1)))points=[...points,points[0]];const o={id,kind,points,closed,...extra};destination.push(o);return o}
  const transform=(o,[x,y])=>{const a=rad(o.angle);return[o.x+x*Math.cos(a)-y*Math.sin(a),o.y+x*Math.sin(a)+y*Math.cos(a)]};
- const floor=layout.lockedLayout.find(o=>o.id==='shooter-floor'),oldFloor=source.lower.find(o=>o.id==='shooter-floor'),offset=floor?floor.points[0].map((v,i)=>v-oldFloor.points[0][i]):[0,0];g.lower_offset=offset;
+ const floor=layout.lockedLayout.find(o=>o.id==='shooter-floor'),offset=floor?floor.points[0].map((v,i)=>v-SHOOTER_FLOOR_ORIGIN[i]):[0,0];g.lower_offset=offset;
  Object.assign(g.plunger,{launch_min:0,charge_seconds:2.5,charge_step_seconds:.025,launch_max:2100});
  for(const k of ['x','left','right'])g.plunger[k]+=offset[0];for(const k of ['rest_y','base_y'])g.plunger[k]+=offset[1];
  const rod=g.artLayers.find(o=>o.state==='plunger'&&!o.hidden);
@@ -204,7 +209,7 @@ function compileLayout(layout,base){
   else if(t==='sensor')poly(key,points(),'sensor',false,{layer,collision:false});
   else if(t==='thickline'){if(o.thickness!==5)throw Error('Invalid thick line: '+key);poly(key,points(),'rail',false,{thickness:5})}
   else if(t==='flipper'){
-   const original=source.lower.find(f=>f.id==='space-355'),[ra,rb]=original.radii,length=dist(original.pivot,original.tip),local=-(length+ra+rb)/2+ra,pivot=transform(o,[local,0]),tip=transform(o,[local+length,0]),side=tip[0]>pivot[0]?'left':'right',src=source.lower.find(f=>f.id===(side==='left'?'space-355':'space-363'));
+   const original=FLIPPER_REFERENCE.left,[ra,rb]=original.radii,length=dist(original.pivot,original.tip),local=-(length+ra+rb)/2+ra,pivot=transform(o,[local,0]),tip=transform(o,[local+length,0]),side=tip[0]>pivot[0]?'left':'right',src=FLIPPER_REFERENCE[side];
    const rest=Math.atan2(src.tip[1]-src.pivot[1],src.tip[0]-src.pivot[0]),raised=Math.atan2(src.raised[1]-src.pivot[1],src.raised[0]-src.pivot[0]),a=rad(o.angle)+Math.atan2(Math.sin(raised-rest),Math.cos(raised-rest));destination.push({id:key,kind:'flipper',pivot,tip,raised:[pivot[0]+length*Math.cos(a),pivot[1]+length*Math.sin(a)],radii:[ra,rb],control:side,profile:'tapered'});
   }else if(t==='oneway'){const dx=o.x2-o.x1,dy=o.y2-o.y1,length=Math.hypot(dx,dy);if(length<.5||![-1,1].includes(o.direction))throw Error('Invalid one-way line: '+key);const n=[-dy/length*o.direction,dx/length*o.direction];poly(key,points(),'rail',false,{pass_normal:n});if(o.initialSpeed>0)g.oneway_speeds.push({id:key,points:points(),n,layer:layer==='upper'?'tavern':layer,stopOnEntry:o.stopOnEntry,initialSpeed:o.initialSpeed});}
   else if(t==='arc'){const n=Math.max(8,Math.ceil((Math.hypot(o.qx-o.x1,o.qy-o.y1)+Math.hypot(o.x2-o.qx,o.y2-o.qy))/1.5));poly(key,Array.from({length:n+1},(_,i)=>{const t=i/n;return[(1-t)**2*o.x1+2*(1-t)*t*o.qx+t*t*o.x2,(1-t)**2*o.y1+2*(1-t)*t*o.qy+t*t*o.y2]}),'rail')}
@@ -377,6 +382,22 @@ function prepare(layout,g){
  for(const o of objects.filter(o=>o.type==='rollover')){const part=parts(g).find(p=>p.id===o.id);
  if(part)part.kind='rollover-line';
  }
+ const gap=layout.gameplay?.touhouGap;
+ if(gap){
+  const sensor=objects.find(o=>o.id===gap.sensor&&o.type==='sensor'),hole=objects.find(o=>o.id===gap.hole&&o.type==='hole');
+  if(!sensor||!hole||floor(sensor)!==floor(hole)||!hole.exitHole||!objects.some(o=>o.id===hole.exitHole&&o.type==='hole'))throw Error('隙間需要同層偵測線、收球洞與有效出口洞');
+  if(!Number.isInteger(gap.passes??2)||(gap.passes??2)<1)throw Error('隙間偵測次數設定不合法');
+  if((gap.passes??2)>1&&!objects.some(o=>o.id===gap.routeExit&&o.mechanic==='layer-transition'&&o.fromLayer===sensor.layer&&o.toLayer!==sensor.layer))throw Error('隙間需要指定完成軌道的出口線');
+  if(gap.locks!==3)throw Error('隙間需要累積三次收球');
+  if(gap.readySeconds!==undefined&&(!Number.isFinite(gap.readySeconds)||gap.readySeconds<0))throw Error('隙間準備時間不合法');
+ }
+ const bagua=layout.gameplay?.touhouBagua;
+ if(bagua){
+  const marker=objects.find(o=>o.id===bagua.object&&o.type==='blockhole');
+  if(!marker||!Number.isInteger(bagua.threshold)||bagua.threshold<1||bagua.threshold>99||!Number.isFinite(bagua.radius)||bagua.radius<=0||!(bagua.spinSeconds>0)||!(bagua.winFlashSeconds>0)||!Array.isArray(bagua.rewards)||bagua.rewards.length!==8||bagua.rewards.every(r=>r.kind==='enemy'))throw Error('八卦需要位置物件、累積門檻與八個獎項');
+  for(const r of bagua.rewards)if(!['score','multiplier','ball','multi','enemy'].includes(r.kind)||!Number.isInteger(r.value)||(r.kind==='enemy'?r.value!==0:r.value<=0)||!r.art?.src)throw Error('八卦獎項設定不合法');
+  for(const key of ['lower','upper_parts','top_parts'])g[key]=g[key].filter(p=>p.id!==bagua.object);
+ }
  // Compile object-owned rules.
  for(const part of parts(g))if(part.kind==='target')delete part.target_group;
  delete g.gameplay.target_rules;
@@ -437,7 +458,7 @@ function prepare(layout,g){
   if(!entrance||!exit||o.id===o.exitHole)throw Error('出口洞設定不合法：'+o.id);
   entrance.exit_hole=o.exitHole;
  }
- for(const o of objects.filter(o=>['hole','blockhole'].includes(o.type)&&o.attractionRadius!==undefined)){
+ for(const o of objects.filter(o=>['hole','blockhole'].includes(o.type)&&o.attractionRadius!==undefined&&o.id!==bagua?.object)){
   if(!Number.isFinite(o.attractionRadius)||o.attractionRadius<0)throw Error('吸引範圍不合法：'+o.id);
   if(o.attractionRadius>0)g[o.layer==='top'?'top_parts':o.layer==='upper'?'upper_parts':'lower'].push({id:o.id+':attraction',kind:'field',mechanic:'gravity-well',owner:o.id,center:[o.x,o.y],radius:o.attractionRadius,layer:floor(o),collision:false});
  }
@@ -533,7 +554,9 @@ function drawPostCounts(game,ctx,plane,color='#fff5bb'){
   ctx.restore();
  }
 }
-function status(game){return [...(game.configuredPosts?.values()||[])].map(p=>'Center post '+p.id+'：'+(p.raised?'剩 '+p.left+' 次':p.collected.size+'/'+p.sensors.length)).join(' · ');
+function status(game){const items=[...(game.configuredPosts?.values()||[])].map(p=>'Center post '+p.id+'：'+(p.raised?'剩 '+p.left+' 次':p.collected.size+'/'+p.sensors.length));
+ if(game.gapLock){const gap=game.gapLock;items.push('隙間 '+(gap.active?'多球中':gap.count+'/3 · '+(gap.armed?'開啟':gap.routePending?'首趟進行中':gap.passes?'首趟完成，待再次進入':'待首趟完成')));}
+ return items.join(' · ');
  }
 function groupStatus(game){return [...[...(game.attackRemaining||[])].filter(([id])=>game.g.mechanisms.attacks[id]&&game.g.mechanisms.attacks[id]!=='none'||game.rolloverGroups?.some(g=>g.id===id&&g.attack!=='none')).map(([id,n])=>id+' 攻擊倒數 '+n),...(game.configuredGroups||[]).map(g=>g.id+' '+(g.action==='unblock'?'解除阻擋 '+g.unlocked+'/'+g.blockers.length+' · Target '+g.collected.size+'/'+g.targets.length:g.collected.size+'/'+g.targets.length)),...(game.rolloverGroups||[]).map(g=>g.id+' '+g.collected.size+'/'+g.members.length)].join(' · ');
  }
@@ -549,7 +572,40 @@ const api={draw,drawPostCounts,status,groupStatus};
 const layout=typeof module!=='undefined'?require('./mechanism-layout.js'):root.MechanismLayout;
 const view=typeof module!=='undefined'?require('./mechanism-view.js'):root.MechanismView;
 function createGame(Base,P){return class ConfiguredGame extends Base{
+  reset(){this.gapLock=null;super.reset();}
+  gapBusy(){return this.gapLock?.active||this.freeBallQueue>0||this.balls.filter(b=>b.state!=='drained').length>1;}
+  awardGapMultiball(count){
+   const gap=this.g.gameplay.touhouGap,state=this.gapLock;
+   const room=Math.max(0,3-this.balls.filter(b=>b.state!=='drained').length-this.freeBallQueue-state.pending),added=Math.min(count,room);
+   if(!added)return;
+   if(!state.active){
+    const delay=gap.readySeconds??1.5;
+    Object.assign(state,{count:0,active:true,readyAt:this.time,releaseStartedAt:null,nextReleaseAt:this.time+delay});
+    if(this.held?.id===gap.hole)this.held.remaining=delay;
+   }
+   state.pending+=added;this.multiballAwards+=added;
+   this.emit('multiball-awarded',{count:this.multiballAwards});
+   this.emit('gap-multiball',{id:gap.hole,balls:this.balls.filter(b=>b.state!=='drained').length+state.pending});
+  }
+  releaseGapBall(){
+   const state=this.gapLock,gap=this.g.gameplay?.touhouGap;
+   if(!state?.pending||this.time<state.nextReleaseAt||this.balls.some(b=>b.state==='captured'&&b.held?.id===gap.hole))return;
+   const entrance=this.socketsById.get(gap.hole),exit=this.socketsById.get(entrance.exit_hole),p=exit.release;
+   if(this.balls.filter(b=>b.state!=='drained').length+this.freeBallQueue>=3)return;
+   if(this.balls.some(b=>b.state!=='drained'&&b.layer===exit.layer&&P.len(P.sub(b.p,p))<this.physics.ballRadius*2+3))return;
+   const previous=this.ball,b={p:[...exit.center],v:[0,0],layer:exit.layer,z:0,state:'captured',immunity:0,trail:[],free:true};
+   this.balls.push(b);this.ball=b;this.held={id:exit.id,remaining:0,speed:0,release:[...exit.release],layer:exit.layer,direction:exit.release_direction};
+   this.release();state.releaseStartedAt??=this.time;state.pending--;state.nextReleaseAt=this.time+.5;
+   this.emit('free-ball-launch',{id:exit.id,position:[...b.p],layer:b.layer});this.ball=previous;
+  }
   // Physics integration: flippers, portals and guided tracks.
+  enterGuidedTrack(track){
+   const previous=[...this.ball.p],layer=this.ball.layer;
+   super.enterGuidedTrack(track);
+   // Snapping to an entrance can cross a sensor before guided motion skips afterBallStep.
+   // Connected guided segments have no free-ball entrance movement to count.
+   if(layer!=='guided')this.crossConfiguredSensors(previous,layer);
+  }
   collide(dt){
    if(this.config.physicsModel!=='legacy'){super.collide(dt);return;}
    const Cadet=typeof module!=='undefined'?require('./game/space-cadet-flipper.js'):root.SpaceCadetFlipper;
@@ -574,7 +630,19 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    }
    super.collide(dt);
   }
- emit(type,data={}){if(type==='configured-attack'){this.attackVisualAt??=new Map();
+ emit(type,data={}){
+  const gap=this.g.gameplay?.touhouGap,state=this.gapLock;
+  if(gap&&state&&type==='multiball-awarded'&&(!gap.keepOpenUntilFull||state.active)){state.armed=false;state.passes=0;state.routePending=false;this.armedHoles.delete(gap.hole);}
+  if(gap&&state&&type==='drain')state.routePending=false;
+  if(gap&&state&&type==='layer'&&data.id===gap.routeExit&&state.routePending&&!this.gapBusy()){
+   state.routePending=false;state.passes++;super.emit('gap-route-completed',{id:gap.routeExit,passes:state.passes});
+  }
+  if(gap&&state&&type==='sensor'&&data.id===gap.sensor&&!state.armed&&!state.routePending&&!this.gapBusy()){
+   if(state.passes>=(gap.passes??2)-1){state.passes=0;state.armed=true;this.armedHoles.add(gap.hole);super.emit('gap-opened',{id:gap.hole,locked:state.count});}
+   else state.routePending=true;
+  }
+  if(type==='gap-ball-ready'){this.gapLaunchAt??=new Map();this.gapLaunchAt.set(data.id,this.time);}
+  if(type==='configured-attack'){this.attackVisualAt??=new Map();
  this.attackVisualAt.set(data.kind,this.time);
  }return super.emit(type,data);
  }
@@ -646,7 +714,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    this.emit('object-effect',{source,object:rule.object,action:rule.action});
   }
  }
- capture(...args){const playing=this.ball.state==='playing',start=this.events.length;super.capture(...args);if(playing&&this.ball.state==='captured'&&this.held?.id===args[0]&&!this.events.slice(start).some(e=>e.type==='object-effect'&&e.source===args[0]))this.applyObjectEffect(args[0]);}
+ capture(...args){if(args[0]===this.g.gameplay?.touhouGap?.hole&&(!this.gapLock?.armed||this.gapBusy()))return;const playing=this.ball.state==='playing',start=this.events.length;super.capture(...args);if(playing&&this.ball.state==='captured'&&this.held?.id===args[0]&&!this.events.slice(start).some(e=>e.type==='object-effect'&&e.source===args[0]))this.applyObjectEffect(args[0]);}
  // Rule state.
  resetTargets(){
  for(const part of this.objectGeometryOriginal?.keys()||[])this.restoreObjectGeometry(part);
@@ -660,7 +728,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  this.targetGroups.push(group);
  }group.targets=[...r.targets];
  }this.configuredBumpers=new Map();
- this.armedHoles=new Set();
+ this.armedHoles=new Set();this.gapLaunchAt=new Map();
  this.holeExpiresAt=new Map();
  if(this.configuredGroups.some(r=>r.action==='blackHole')){this.vortexActive=false;
  this.vortexActivatedAt=null;
@@ -699,13 +767,16 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   this.sensorsByLayer.set(layer,list.filter(part=>['sensor','rollover-line'].includes(part.kind)));
  }
 
+ const gap=this.g.gameplay?.touhouGap;
+ if(gap){const armed=!!gap.keepOpenUntilFull&&!!this.gapLock?.armed;this.gapLock??={count:0,passes:0,routePending:false,armed:false,active:false,pending:0,nextReleaseAt:0};this.gapLock.armed=armed;if(armed)this.armedHoles.add(gap.hole);this.gapLock.passes=0;this.gapLock.routePending=false;this.controlledHoles.add(gap.hole);}
+
  }
  // Attack counters and grouped rollover completion.
  fireObjectAttack(objectId){
   const group=this.rolloverByMember.get(objectId);
   const id=group?.id||objectId;
   const kind=group?group.attack:this.g.mechanisms?.attacks?.[id];
-  if(!kind||kind==='none')return;
+  if(!kind||kind==='none'&&!this.g.gameplay?.indicatorCounters?.includes(id))return;
   if(this.time-(this.objectAttackAt.get(id)??-Infinity)<.3)return;
 
   if(group){
@@ -723,10 +794,18 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
 
   this.attackCompletedAt.set(id,this.time);
   // Table feedback is independent of enemy presence; the theater guards damage.
-  this.emit('configured-attack',{kind,id,position:[...this.ball.p]});
+  if(kind!=='none')this.emit('configured-attack',{kind,id,position:[...this.ball.p]});
  }
  // Hole release, activation and expiry.
  release(){
+   const gap=this.g.gameplay?.touhouGap,state=this.gapLock;
+   if(gap&&this.held?.id===gap.hole&&state.count>0&&!state.active){
+    const b=this.ball,p=this.g.plunger;
+    Object.assign(b,{p:[p.x,p.rest_y-this.physics.ballRadius],v:[0,0],layer:this.launchLayer(),z:this.launchHeight(),state:'ready',immunity:0,trail:[],launchGuard:false});
+    delete b.held;delete b.track;this.charge=this.chargeElapsed=0;this.input.launch=false;
+    const gate=this.gates.find(g=>g.id==='shooter-return');if(gate){gate.closed=false;gate.pending=false;gate.pendingBall=null;}
+    this.emit('gap-ball-ready',{id:gap.hole,locked:state.count});if(gap.autoLaunch)this.launch(1);return;
+   }
   const h=this.held,entrance=this.socketsById.get(h?.id),socket=this.socketsById.get(entrance?.exit_hole)||entrance,releaseStart=[...this.ball.p],remote=socket!==entrance;
  if(!socket?.release_mode)return super.release();
   // Space Cadet angular and speed variation.
@@ -742,6 +821,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  b.immunity=this.time+.5;
  this.held=null;
  this.limitSpeed();
+ if(gap&&h.id===gap.hole&&state.active&&state.pending>0){state.releaseStartedAt=this.time;state.nextReleaseAt=this.time+.5;}
  this.emit('release',{id:h.id,speed:P.len(b.v)});
  // Scan only the exit's local ejection segment, never the teleport between holes.
  if(!socket.remote_release)this.crossConfiguredSensors(remote?socket.center:releaseStart,b.layer);
@@ -765,9 +845,17 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  }}
  tickRules(){this.updateTargetGroups();
  this.expireHoles();
+ this.releaseGapBall();
  }
- onCapture(id){this.fireObjectAttack(id);
- this.consumeHole(id);
+ onCapture(id){
+ const gap=this.g.gameplay?.touhouGap,state=this.gapLock;
+ if(gap&&id===gap.hole){
+  state.count++;state.armed=!!gap.keepOpenUntilFull&&state.count<gap.locks;if(!state.armed)this.armedHoles.delete(id);
+  this.emit('gap-ball-locked',{id,locked:state.count});
+  if(state.count===gap.locks){const delay=gap.readySeconds??1.5;state.count=0;state.active=true;state.pending=2;state.readyAt=this.time;state.releaseStartedAt=null;state.nextReleaseAt=this.time+delay;if(this.held)this.held.remaining=delay;this.multiballAwards++;this.emit('multiball-awarded',{count:this.multiballAwards});this.emit('gap-multiball',{id,balls:3});}
+ }
+ this.fireObjectAttack(id);
+ if(!gap?.keepOpenUntilFull||id!==gap.hole||!state.armed)this.consumeHole(id);
  }
  // Rollover display and center-post collection.
  recordRolloverLight(id){
@@ -848,6 +936,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   }
  }
  afterSubstep(){this.updateRolloverLaneChange();this.spawnFreeBall();
+ if(this.gapLock?.active&&!this.gapLock.pending&&!this.freeBallQueue&&this.balls.filter(b=>b.state!=='drained').length<=1)this.gapLock.active=false;
  for(const p of this.configuredPosts.values())for(const b of p.contacts)if(b.state!=='playing'||b.layer!==p.layer||P.len(P.sub(b.p,p.center))>p.radius+this.physics.ballRadius+.3)p.contacts.delete(b);
  }
  afterBallStep(previous,layer,dt){
@@ -870,7 +959,8 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    const delta=P.sub(sensor.points[0],previous);
    const alongMovement=P.cross(delta,axis)/denominator;
    const alongSensor=P.cross(delta,movement)/denominator;
-   if(alongMovement<0||alongMovement>1||alongSensor<0||alongSensor>1)continue;
+   // Count arrival at the line, excluding departure from a shared step endpoint.
+   if(alongMovement<=0||alongMovement>1||alongSensor<0||alongSensor>1)continue;
 
    if(sensor.kind==='sensor'){this.sensorHitAt.set(sensor.id,this.time);this.emit('sensor',{id:sensor.id,layer,position:[...this.ball.p]});}
    else{
@@ -923,7 +1013,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  if(max&&r.repeatExtraBall&&this.awardExtraLife('bumper-max'))for(const id of r.bumpers)this.bumperRewardAt.set(id,this.time);
  this.emit('bumper-upgraded',{level:Math.max(...r.bumpers.map(id=>this.bumperLevel(id)))});
  }
-  if(r.action==='boss'){if(this.enemyActive){if(this.storyMode===true)this.awardExtraLife('boss-target');
+  if(r.action==='boss'){if(this.enemyActive){if(!this.disableBossTargetLife&&!this.spaceEndlessMode)this.awardExtraLife('boss-target');
  }else{this.enemyActive=true;
  this.emit('enemy-spawn-requested',{group:r.id});
  }}
@@ -999,7 +1089,23 @@ function presentation(o,g){
  const c=o.indicator,initial=c.defaultState||(c.type==='bumper'?'lv1':'off');
  if(!g)return {state:initial,alpha:1,on:initial==='on'};
  const attract=attractLight(g,o);if(attract!==null)return {state:c.type==='bumper'?(attract?'lv3':'lv1'):(attract?'on':'off'),alpha:1,on:false};
- if(c.type==='bumper'){const id=c.trigger?.source||o.bind;let n=g.bumperLevel(id);if((g.bumperHitUntil?.get(id)||0)>g.time)n=n%3+1;return {state:'lv'+n,alpha:1,on:false};}
+ if(c.trigger?.kind==='gap-output'){
+  const gap=g.g.gameplay?.touhouGap,lock=g.gapLock,exit=gap&&g.socketsById?.get(gap.hole)?.exit_hole;
+  if(c.trigger.source!==exit||!lock?.active||!lock.pending)return {state:'off',alpha:1,on:false};
+  const releasing=Number.isFinite(lock.releaseStartedAt),b=(releasing?c.releaseBehavior:c.behavior)||{};
+  const on=b.onSeconds||(releasing?.1:.6),off=b.offSeconds||(releasing?.1:.6),age=Math.max(0,g.time-(releasing?lock.releaseStartedAt:lock.readyAt));
+  const lit=age%(on+off)<on;return {state:lit?'on':'off',alpha:1,on:lit};
+ }
+ if(c.trigger?.kind==='enemy-target'){
+  const id=c.trigger.source,rule=g.targetRuleById?.get(id),completed=rule?.last;
+  const b=c.behavior||{},on=b.onSeconds||.3,off=b.offSeconds||.3;
+  const finish=c.completion||{},flashOn=finish.onSeconds||.15,flashOff=finish.offSeconds||.15;
+  const age=g.time-completed,duration=(flashOn+flashOff)*(finish.cycles||3);
+  const lit=Number.isFinite(completed)&&age<duration?age%(flashOn+flashOff)<flashOn:
+   g.targetHits?.has(id)||(!g.enemyActive&&!g.enemyIntroPending&&g.time%(on+off)<on);
+  return {state:lit?'on':'off',alpha:1,on:!!lit};
+ }
+ if(c.type==='bumper'){const id=c.trigger?.source||o.bind;let n=g.bumperLevel(id);if(!c.keepLevelOnHit&&(g.bumperHitUntil?.get(id)||0)>g.time)n=n%3+1;return {state:'lv'+n,alpha:1,on:false};}
  let cache=visualStates.get(g);if(!cache||cache.epoch!==g.attackRemaining){cache={epoch:g.attackRemaining,items:new Map()};visualStates.set(g,cache)}
  let v=cache.items.get(o);if(!v){v={active:false,start:null,stamp:undefined,lastOn:false,alpha:0,time:g.time};cache.items.set(o,v)}
  const triggers=[c.trigger||{},...(c.extraTriggers||[])],inputs=triggers.map(t=>signal(o,g,t));
@@ -1175,8 +1281,8 @@ function createImpactPresentation(game,artLayers,renderer){
   for(const q of particles){if(q.plane!==floor)continue;const age=game.time-q.at;ctx.save();ctx.globalAlpha=1-age/q.life;ctx.translate(q.p[0]+q.v[0]*age,q.p[1]+q.v[1]*age+18*age*age);ctx.rotate(q.angle+age*5);ctx.fillStyle=q.color;ctx.fillRect(-q.size,-q.size*.4,q.size*2,q.size*.8);ctx.restore();}
   for(const s of swings){if(s.plane!==floor)continue;const age=game.time-s.at;if(age>.18)continue;ctx.globalAlpha=1-age/.18;ctx.strokeStyle='#fff0bb';ctx.lineWidth=2*(1-age/.18);ctx.beginPath();ctx.arc(...s.p,5+age*45,s.angle+Math.PI-.9,s.angle+Math.PI+.9);ctx.stroke();}
   for(const [id,q] of lampPulses){const a=artById.get(id);if(!a||a.hidden||a.plane!==floor)continue;const age=game.time-q.at;if(age<0)continue;
-   const c=a.indicator,src=c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
-   ctx.save();ctx.translate(a.x,a.y);ctx.rotate((a.angle||0)*Math.PI/180);ctx.globalAlpha=.65*fade;ctx.shadowColor=q.color;ctx.shadowBlur=6;
+   const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
+   ctx.save();ctx.translate(a.x,a.y);ctx.rotate((a.angle||0)*Math.PI/180);ctx.scale(a.flipX?-1:1,a.flipY?-1:1);ctx.globalAlpha=.65*fade;ctx.shadowColor=q.color;ctx.shadowBlur=6;
    if(img.complete&&img.naturalWidth)ctx.drawImage(img,...a.crop,-a.width/2,-a.height/2,a.width,a.height);
    ctx.restore();
   }
@@ -1223,10 +1329,13 @@ function startPreview(PIRATE_GEOMETRY){
 const tutorialMode=!!TableTutorial&&new URLSearchParams(location.search).get('tutorial')==='1';
 const requestedBossStage=Number(new URLSearchParams(location.search).get('bossStage'));
 const bossStage=Number.isInteger(requestedBossStage)&&requestedBossStage>=1&&requestedBossStage<=8?requestedBossStage:0;
-const G=PIRATE_GEOMETRY,P=PiratePhysics,Game=ConfiguredMechanisms.createGame(EditorLayers.createGame(P),P),game=new (PLAYTEST_THEME==='steampunk'?SteampunkBonus.createGame(Game):G.gameplay?.spaceConstellation?SpaceConstellation.createGame(Game):Game)(G),canvas=document.getElementById('table'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
+const G=PIRATE_GEOMETRY,P=PiratePhysics,Game=ConfiguredMechanisms.createGame(EditorLayers.createGame(P),P),game=new (PLAYTEST_THEME==='steampunk'?SteampunkBonus.createGame(Game):G.gameplay?.spaceConstellation?SpaceConstellation.createGame(Game):G.gameplay?.touhouBagua?TouhouBagua.createGame(Game):Game)(G),canvas=document.getElementById('table'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
 try{localStorage.setItem('pinball-physics-model','legacy');}catch{}
 game.config.physicsModel='legacy';
 game.storyMode=!!bossStage&&!tutorialMode;
+game.spaceEndlessMode=['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME)&&!bossStage&&!tutorialMode&&!new URLSearchParams(location.search).has('editor');
+game.disableBossTargetLife=['touhou1','touhou2'].includes(PLAYTEST_THEME);
+game.targetRehitRequiresExit=PLAYTEST_THEME==='touhou1';
 game.preserveTableOnDrain=!!bossStage;
 game.scoringEnabled=!bossStage;
 window.layoutGame=game;
@@ -1247,7 +1356,7 @@ $('geometryToggle').checked=!window.AppControls;
 // Ignore legacy frame entries in saved drafts; the chrome has one shared owner.
 artLayers=artLayers.filter(a=>!PlayFrame.isFrameArt(a));
 const [topArt,soundArt,settingsArt,backArt]=PinballArt.validate(PlayFrame.createArt(PLAYTEST_THEME));
-const topBallImage=artRenderer.image(G.gameplay?.ballImage||(['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME)?'res/img/space/space-ball-cookie.png':'res/img/top-ball.png'));
+const topBallImage=artRenderer.image(G.gameplay?.ballImage||(['touhou1','touhou2','touhou-horrors','touhou-black-knight-2000'].includes(PLAYTEST_THEME)?'res/img/touhou/touhou-ball-yin-yang.png':['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME)?'res/img/space/space-ball-cookie.png':'res/img/top-ball.png'));
 const topItems=new Set([topArt,soundArt,settingsArt,backArt]);
 const artByPlane=new Map(PinballArt.planes.map(plane=>[plane,artLayers.filter(o=>o.plane===plane&&!topItems.has(o))]));
 const ballMarkerPlanes=new Set([...artByPlane].filter(([,items])=>items.some(o=>o.state==='ball-layer')).map(([plane])=>plane));
@@ -1264,12 +1373,14 @@ function topOffset(){
 }
 const spaceTheme=['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME);
 const soundBank=new PinballSound({...PirateMap.sounds,...(spaceTheme?{'space-magic':{src:'res/audio/space/space-magic.ogg',volume:1,voices:3}}:{}),...(PLAYTEST_THEME==='steampunk'?SteampunkSounds:{})},{synth:theater.theme==='space'});theater.soundBank=soundBank;
-for(const event of ['pointerdown','keydown'])addEventListener(event,()=>soundBank.unlock(),{capture:true});
+const bossPresentation=['touhou1','touhou2'].includes(theater.theme)?new TouhouBossPresentation(game,theater.theme):null;
+if(bossPresentation){bossPresentation.choose(bossStage);theater.bossPresentation=bossPresentation;theater.onBossChanged=stage=>bossPresentation.choose(stage||bossStage);theater.onBossDefeated=()=>bossPresentation.defeat();bossPresentation.requestOrigin=()=>theater.send({command:'boss-origin'});theater.onBossOrigin=(stage,origin)=>bossPresentation.cast(stage,origin);addEventListener('pagehide',()=>bossPresentation.destroy(),{once:true});}
+for(const event of ['pointerdown','keydown'])addEventListener(event,()=>{soundBank.unlock();bossPresentation?.syncMusic(soundBank,true);},{capture:true});
 let soundEnabled=localStorage.getItem('pinball-sound')!=='off';
 function syncSound(){soundBank.setEnabled(soundEnabled);document.querySelectorAll('audio,video').forEach(a=>a.muted=!soundEnabled);}
 syncSound();
 const settings=document.createElement('dialog');settings.style.cssText='background:#30251e;color:#fff0cc;border:2px solid #b89051;border-radius:12px;padding:24px';
-settings.innerHTML='<p><label><span data-i18n="settings.language">語言</span> <select id="tableLanguage"><option value="zh-Hant">繁體中文</option><option value="en">English</option></select></label></p><h2 data-i18n="settings.title">設定</h2><p><label><span data-i18n="settings.physics">球物理</span> <select id="physicsModel"><option value="legacy" data-i18n="settings.legacy">原本物理</option></select></label></p>'+[['artToggle','table.art'],['geometryToggle','table.geometry'],['upper','table.upper']].map(([id,label])=>`<p><label><input type="checkbox" data-setting="${id}"> <span data-i18n="${label}">${PinballI18n.t(label)}</span></label></p>`).join('')+'<p hidden><label>畫面比例 <select id="playAspect"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label></p><p><label><span data-i18n="settings.launch">發射模式</span> <select id="launchMode"><option value="hold" data-i18n="settings.holdCharge">按住蓄力</option><option value="drag" data-i18n="settings.dragDown">向下拖曳</option></select></label></p><button id="testImpactSound" data-i18n="table.testSound">測試碰撞音效</button><button id="closeSettings" data-i18n="common.close">關閉</button><button id="mobileRestart" data-i18n="common.restart">重新開始</button>';
+settings.innerHTML='<p><label><span data-i18n="settings.language">語言</span> <select id="tableLanguage"><option value="zh-Hant">繁體中文</option><option value="en">English</option><option value="ja">日本語</option></select></label></p><h2 data-i18n="settings.title">設定</h2><p><label><span data-i18n="settings.physics">球物理</span> <select id="physicsModel"><option value="legacy" data-i18n="settings.legacy">原本物理</option></select></label></p>'+[['artToggle','table.art'],['geometryToggle','table.geometry'],['upper','table.upper']].map(([id,label])=>`<p><label><input type="checkbox" data-setting="${id}"> <span data-i18n="${label}">${PinballI18n.t(label)}</span></label></p>`).join('')+'<p hidden><label>畫面比例 <select id="playAspect"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label></p><p><label><span data-i18n="settings.launch">發射模式</span> <select id="launchMode"><option value="hold" data-i18n="settings.holdCharge">按住蓄力</option><option value="drag" data-i18n="settings.dragDown">向下拖曳</option></select></label></p><button id="testImpactSound" data-i18n="table.testSound">測試碰撞音效</button><button id="closeSettings" data-i18n="common.close">關閉</button><button id="mobileRestart" data-i18n="common.restart">重新開始</button>';
 document.body.append(settings);$('physicsModel').value=game.config.physicsModel;$('physicsModel').onchange=()=>applyPhysicsModel($('physicsModel').value);$('launchMode').value=launchMode;$('launchMode').onchange=()=>{clearTouchControls();launchMode=$('launchMode').value;localStorage.setItem('pinball-launch-mode',launchMode);};let settingsWasPaused=false;
 settings.onchange=e=>{const id=e.target.dataset.setting;if(id){$(id).checked=e.target.checked;draw();}};
 $('closeSettings').onclick=()=>settings.close();$('testImpactSound').onclick=()=>{soundEnabled=true;localStorage.setItem('pinball-sound','on');syncSound();soundBank.unlock();soundBank.setPaused(false);soundBank.play('metal');};$('mobileRestart').onclick=()=>{settings.close();reset();};settings.onclose=()=>{game.paused=settingsWasPaused;};
@@ -1293,7 +1404,7 @@ const spaceNeon=SpaceNeonBorders.createRenderer(SpaceNeonBorders.entries(G.art_l
 function artWithBalls(plane){
  const layers=artByPlane.get(plane);
  if($('artToggle').checked&&SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay))spaceNeon.draw(ctx,game,G.gameplay,plane);
- if($('artToggle').checked&&game.bonus?.config.object&&plane==='lower')game.bonus.draw(ctx);
+ if($('artToggle').checked&&game.bonus?.config.object&&plane===(game.bonus.geometry?.layer||'lower'))game.bonus.draw(ctx,artRenderer);
  // Right ramp balls are drawn separately, just below the right boundary art.
  const drawBalls=()=>{reboundEffects.draw(ctx,plane);for(const b of game.balls){if(b.layer==='right_upper')continue;const track=b.state==='guided'?game.guidedTracks.find(t=>t.id===b.track.id):null;const visualPlane=track?(track.layer==='tavern'?'upper':track.layer||'lower'):game.visualPlane(b);if(visualPlane===plane)drawBall(b);}};
  if(!ballMarkerPlanes.has(plane))drawBalls();
@@ -1390,7 +1501,7 @@ function endGame(){
  try{localStorage.setItem('pinball-high-scores-v1',JSON.stringify(rows));}catch{}
  gameOverOverlay=PirateMap.showGameOver(document,game.score,rows,id,()=>{gameOverOverlay=null;if(bossStage)window.dispatchEvent(new CustomEvent('pinball:boss-exit',{detail:{stage:bossStage}}));else reset();},bossStage?PinballI18n.t('table.leave'):'重新開始');
 }
-game.onEvent=e=>{artRenderer.onEvent?.(e);firstPlayGuide?.onEvent(e);updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;}if(e.type==='ball-saved')notice(PinballI18n.t('table.ballSaved'));if(e.type==='ball-save-ready'){launchStartedAt=null;notice(PinballI18n.t('table.relaunch'));}if(e.type==='sound')soundBank.play(e.name);if(e.type==='release'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice(PinballI18n.t('table.enemyWait'));window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice(PinballI18n.t('table.extraBall',{source:e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':PinballI18n.t('table.vortex')}));if(e.type==='vortex-activated')notice(PinballI18n.t('table.vortexActive'));if(e.type==='target-bonus')notice(PinballI18n.t('table.targetBonus'));if(e.type==='bumper-upgraded')notice(PinballI18n.t('table.bumperLevel',{level:e.level}));if(e.type==='center-post-up')notice(PinballI18n.t('table.postUp'));if(e.type==='multiball-awarded')notice(PinballI18n.t('table.multiball'));if(e.type==='free-ball-launch')notice(PinballI18n.t('table.multiballLaunch'));if(e.type==='kickback-lane')notice(e.side==='left'?PinballI18n.t('table.kickLeft'):PinballI18n.t('table.kickRight'));if(e.type==='capture'){if(spaceTheme)soundBank.play('space-magic');notice(PinballI18n.t('table.capture'));}if(e.type==='release')notice(PinballI18n.t('table.release'));if(e.type==='drain')notice(PinballI18n.t('table.drain'));if(e.type==='ready')notice(PinballI18n.t('table.launchShort'));if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to==='top'?PinballI18n.t('table.enterTop'):e.to!=='lower'?PinballI18n.t('table.enterMiddle'):PinballI18n.t('table.enterLower'));if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?PinballI18n.t('table.singleTarget'):PinballI18n.t('table.targetSet'));};
+game.onEvent=e=>{bossPresentation?.onEvent(e);artRenderer.onEvent?.(e);firstPlayGuide?.onEvent(e);updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;}if(e.type==='ball-saved')notice(PinballI18n.t('table.ballSaved'));if(e.type==='ball-save-ready'){launchStartedAt=null;notice(PinballI18n.t('table.relaunch'));}if(e.type==='sound')soundBank.play(e.name);if(e.type==='release'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice(PinballI18n.t('table.enemyWait'));window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice(PinballI18n.t('table.extraBall',{source:e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':PinballI18n.t('table.vortex')}));if(e.type==='vortex-activated')notice(PinballI18n.t('table.vortexActive'));if(e.type==='target-bonus')notice(PinballI18n.t('table.targetBonus'));if(e.type==='bumper-upgraded')notice(PinballI18n.t('table.bumperLevel',{level:e.level}));if(e.type==='center-post-up')notice(PinballI18n.t('table.postUp'));if(e.type==='multiball-awarded')notice(PinballI18n.t('table.multiball'));if(e.type==='free-ball-launch')notice(PinballI18n.t('table.multiballLaunch'));if(e.type==='kickback-lane')notice(e.side==='left'?PinballI18n.t('table.kickLeft'):PinballI18n.t('table.kickRight'));if(e.type==='capture'){if(spaceTheme)soundBank.play('space-magic');notice(PinballI18n.t('table.capture'));}if(e.type==='release')notice(PinballI18n.t('table.release'));if(e.type==='drain')notice(PinballI18n.t('table.drain'));if(e.type==='ready')notice(PinballI18n.t('table.launchShort'));if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to==='top'?PinballI18n.t('table.enterTop'):e.to!=='lower'?PinballI18n.t('table.enterMiddle'):PinballI18n.t('table.enterLower'));if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?PinballI18n.t('table.singleTarget'):PinballI18n.t('table.targetSet'));};
 theater.game=game;
 function startBoss(){
  if(!Number.isInteger(bossStage)||bossStage<1||bossStage>8)return;
@@ -1398,7 +1509,7 @@ function startBoss(){
  theater.onEvent({type:'enemy-spawn-requested',eventId:bossStage});
  notice(PinballI18n.t('table.enemyWait'));
 }
-if(bossStage&&(!tutorialMode||['steampunk','space'].includes(PLAYTEST_THEME)))startBoss();
+if(bossStage&&(!tutorialMode||['steampunk','space','touhou1'].includes(PLAYTEST_THEME)))startBoss();
 function path(points,fill,stroke,width=1,closed=false){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));if(closed)ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}}
 function circle(p,r,fill,stroke){ctx.beginPath();ctx.arc(...p,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=.65;ctx.stroke()}}
 function object(o,upper=false,outline=upper?'#dfa6ff':'#83bdd0'){if(ConfiguredMechanisms.draw(o,game,ctx,circle))return;
@@ -1453,6 +1564,7 @@ function draw(){
  artWithBalls('lower');
  artWithBalls('upper');artWithBalls('top');
  art('foreground');
+ bossPresentation?.draw(ctx,theater);
  if(spaceTheme)for(const plane of ['lower','upper','top'])ConfiguredMechanisms.drawPostCounts(game,ctx,plane,'#000');
  if($('artToggle').checked&&playAspect!=='landscape'){ctx.save();ctx.translate(0,topOffset());for(const plane of PinballArt.planes)artRenderer.draw(ctx,[...topItems],plane,game);ctx.restore();}
  if(theater.customScore){ctx.save();ctx.translate(topArt.x,topArt.y+topOffset());ctx.rotate(topArt.angle*Math.PI/180);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffe6a3';ctx.shadowColor='#201209';ctx.shadowBlur=4;ctx.font='bold 15px monospace';if(bossStage)theater.drawAttackMessage(ctx,topArt.width*(118/370-.5),topArt.height*(54/124-.5),topArt.width*134/370,topArt.height*18/124,game.time);else ctx.fillText(String(game.score).padStart(12,'0'),0,0,topArt.width*.48);
@@ -1521,7 +1633,7 @@ function frame(now){
  if(canvas.style.translate!==screenTranslate){canvas.style.translate=screenTranslate;theater.frame.style.translate=screenTranslate;}
  const dt=Math.min(.05,(now-previous)/1000);previous=now;firstPlayGuide?.tick?.(dt);if(firstPlayGuidePending&&!game.paused&&!game.enemyIntroPending&&!theater.curtainClosing&&!game.theaterFrozen){firstPlayGuidePending=false;firstPlayGuide=TableTutorial.start({game,theater,canvas,G,P,artLayers,view,getView:()=>view,soundBank,clearTouchControls,launch,notice,
 controls:{get launchMode(){return launchMode},get launchDrag(){return launchDrag},set launchDrag(value){launchDrag=value}},
-onFinish(){firstPlayGuide=null;}});}theater.update(leaveDialog.open?0:dt,game);game.bonus?.update(dt);soundBank.setPaused(game.paused&&!settings.open);if(!game.paused&&!game.theaterFrozen&&!game.bonusFrozen&&!firstPlayGuide?.demoFrozen){accumulator+=dt;while(accumulator>=game.physics.step){game.step();accumulator-=game.physics.step;if(game.theaterFrozen||game.bonusFrozen||game.paused){accumulator=0;break;}}}else accumulator=0;syncLaunchCharge(now);if(!game.paused&&!game.theaterFrozen||screenDimAlpha>0||now-lastDrawAt>=100){draw();lastDrawAt=now;}requestAnimationFrame(frame)}
+onFinish(){firstPlayGuide=null;}});}theater.update(leaveDialog.open?0:dt,game);game.bonus?.update(dt);bossPresentation?.update(dt,soundBank,game.paused&&(!theater.bossDefeated||settings.open||leaveDialog.open||suspendedGameState!==null));soundBank.setPaused(game.paused&&!settings.open);if(!game.paused&&!game.theaterFrozen&&!game.bonusFrozen&&!firstPlayGuide?.demoFrozen){accumulator+=dt;while(accumulator>=game.physics.step){game.step();accumulator-=game.physics.step;if(game.theaterFrozen||game.bonusFrozen||game.paused){accumulator=0;break;}}}else accumulator=0;syncLaunchCharge(now);if(!game.paused&&!game.theaterFrozen||screenDimAlpha>0||now-lastDrawAt>=100){draw();lastDrawAt=now;}requestAnimationFrame(frame)}
 let launchStartedAt=null;
 function syncLaunchCharge(now=performance.now()){
  if(launchDrag)return;
@@ -1544,7 +1656,7 @@ function suspendGame(){
 function resumeGame(){if(suspendedGameState===null)return;game.paused=suspendedGameState;suspendedGameState=null;soundBank.setPaused(game.paused);}
 function applyPhysicsModel(value){value='legacy';game.config.physicsModel=value;game.vpxRemainder=game.arcadeRemainder=0;for(const f of game.flippers){f.angle=f.rest;f.omega=0;delete f.cadet;VpxFlipper.reset(f);}for(const ball of game.balls){ball.spin=0;delete ball.rollingSpin;delete ball.vpxLastSlingEventPosition;delete ball.slingshotContacts;delete ball.arcadeActiveContacts;delete ball.arcadeFlipperContacts;}for(const input of document.querySelectorAll('[data-physics-owner]'))input.disabled=input.dataset.physicsOwner!=='shared'&&input.dataset.physicsOwner!==value;$('physicsModel').value=value;localStorage.setItem('pinball-physics-model',value);}
 function applyAppSettings(values){if(values.physicsModel&&values.physicsModel!==game.config.physicsModel)applyPhysicsModel(values.physicsModel);if(values.playAspect)applyPlayAspect('portrait');soundEnabled=values.sound;launchMode=values.launchMode; $('launchMode').value=launchMode;syncSound();}
-function reset(){gameOverOverlay?.cancel();gameOverOverlay=null;clearTouchControls();launchStartedAt=null;game.reset();accumulator=0;if(bossStage&&(!tutorialMode||['steampunk','space'].includes(PLAYTEST_THEME)))startBoss();else notice(PinballI18n.t('table.launchShort'))}
+function reset(){gameOverOverlay?.cancel();gameOverOverlay=null;clearTouchControls();launchStartedAt=null;game.reset();accumulator=0;if(bossStage&&(!tutorialMode||['steampunk','space','touhou1'].includes(PLAYTEST_THEME)))startBoss();else notice(PinballI18n.t('table.launchShort'))}
 $('settings').onclick=openSettings;$('restart').onclick=reset;$('nudge').onclick=()=>game.nudge();
 function setupPhysicsDebug(){
  const panel=$('debugPanel');if(!panel)return;
@@ -1674,6 +1786,16 @@ async function loadPiratePreview(layout){
  if(previewStarted)return;
  previewStarted=true;
  try{
+  layout=window.PinballRuntimeImages?.toRuntime(layout)||layout;
+  if(['touhou1','touhou2'].includes(previewTheme))layout={...layout,gameplay:{...layout.gameplay,ballImage:'res/img/touhou/touhou-ball-yin-yang.png'}};
+  // Table-owned Touhou rules come from formal config, even when an editor
+  // draft predates them. This preview copy never changes the saved document.
+  if(editorPreview&&previewTheme==='touhou1'){
+   const gameplay={...layout.gameplay},objects=layout.objects||[],defaults=TOUHOU_GAMEPLAY_DEFAULTS;
+   if(objects.some(o=>o.id===defaults.touhouBagua?.object&&o.type==='blockhole'))gameplay.touhouBagua=structuredClone(defaults.touhouBagua);
+   if(objects.some(o=>o.id===defaults.touhouGap?.hole&&o.type==='hole'))gameplay.touhouGap=structuredClone(defaults.touhouGap);
+   layout={...layout,gameplay};
+  }
   const geometry=ConfiguredMechanisms.compile(layout,PIRATE_GEOMETRY,compileLayout);
   // Decode referenced art before starting, so missing assets produce a useful error.
   const sources=new Set([geometry.gameplay?.ballImage||'res/img/top-ball.png']);
@@ -1681,7 +1803,7 @@ async function loadPiratePreview(layout){
    if(typeof value==='string'&&/^res\/(?:img|hd_img)\/.+\.(?:png|jpe?g|webp|svg)$/i.test(value))sources.add(value);
    else if(value&&typeof value==='object')Object.values(value).forEach(collectImages);
   }
-  collectImages(geometry.artLayers);collectImages(PlayFrame.createArt(previewTheme));
+  collectImages(geometry.gameplay?.touhouBagua);collectImages(geometry.artLayers);collectImages(PlayFrame.createArt(previewTheme));
   await Promise.all([...sources].map(async src=>{
    const image=new Image();image.src=src;
    try{await image.decode();}catch{throw Error('圖片載入失敗：'+src);}

@@ -14,6 +14,17 @@ let hostTimeline = [], hostTime = 0, hostPlaying = false, hostLast = 0;
 let hostFrame = 0, hostNextTimer = 0, hostCompleted = false, hostSerial = 0;
 let hostResume = false, hostMusicStarted = false;
 
+// Let Web Animations advance on the browser timeline instead of seeking every RAF.
+function runHostTimeline() {
+  hostTimeline.forEach(animation => {
+    animation.play();
+    animation.startTime = animation.timeline.currentTime - hostTime;
+  });
+}
+function pauseHostTimeline() {
+  hostTimeline.forEach(animation => { animation.pause(); animation.currentTime = hostTime; });
+}
+
 function hostSeen() {
   if (window.AppProgress) return window.AppProgress.hasSeen(hostKey);
   return localStorage.getItem('pinball-touhou1-story-seen-v1:' + hostKey) === '1';
@@ -55,7 +66,7 @@ function completeHostChapter() {
 }
 function finishHostChapter(skipped = false) {
   hostPlaying = false; paused = true;
-  cancelAnimationFrame(hostFrame); hostStopAudio();
+  cancelAnimationFrame(hostFrame); pauseHostTimeline(); hostStopAudio();
   renderHostChapter(hostDuration); hostSkip.hidden = true;
   if (!skipped) hostMarkSeen();
   if (hostPart === 'end') {
@@ -67,9 +78,8 @@ function hostTick(now) {
   if (!hostPlaying) return;
   const nextTime = Math.min(hostDuration, hostTime + Math.max(0, now - hostLast));
   hostLast = now;
-  // Do not seek the audio every frame; only advance the existing visual timeline.
+  // Visuals and audio advance independently; seek only for explicit scrubbing.
   hostTime = nextTime;
-  hostTimeline.forEach(animation => { animation.currentTime = hostTime; });
   hostPhone.dataset.time = String(hostTime);
   if (hostPart === 'start' && hostTime >= hostMusicStart && !hostMusicStarted) {
     hostMusicStarted = true;
@@ -100,6 +110,7 @@ async function playHostChapter(key = hostKey) {
   if (serial !== hostSerial) return false;
   hostBegin.hidden = true; hostSkip.hidden = !hostSeen();
   paused = false; hostPlaying = true; hostLast = performance.now();
+  runHostTimeline();
   hostFrame = requestAnimationFrame(hostTick);
   return true;
 }
@@ -117,12 +128,13 @@ window.viewAPI = {
   render: renderHostChapter,
   suspend() {
     hostResume = hostPlaying; hostPlaying = false; paused = true;
-    cancelAnimationFrame(hostFrame); hostStopAudio();
+    cancelAnimationFrame(hostFrame); pauseHostTimeline(); hostStopAudio();
   },
   resume() {
     if (!hostResume) return;
     hostResume = false; hostPlaying = true; paused = false;
     hostLast = performance.now(); hostMusicStarted = false;
+    runHostTimeline();
     hostFrame = requestAnimationFrame(hostTick);
   }
 };

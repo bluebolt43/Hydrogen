@@ -31,7 +31,7 @@ window.TheaterFrame.connect=function({stage,ready,reset,enemy,attack,state,bound
   if(e.source!==parent||e.data?.channel!=='pinball-theater')return;
   const {command,id}=e.data;
   if(command==='pause'){pause(e.data.paused);return;}
-  if(command==='warning-complete')return;
+  if(command==='warning-complete'||command==='boss-origin')return;
   if(command==='tutorial-bounds'){if(bounds)report('tutorial-bounds',{bounds:bounds()});return;}
   if(command==='reset')pause(false);
   const token=command==='reset'?++generation:generation;
@@ -40,7 +40,7 @@ window.TheaterFrame.connect=function({stage,ready,reset,enemy,attack,state,bound
    if(command==='reset'){pause(false);await reset();}
    else if(command==='enemy')await enemy(e.data);
    else if(command==='story-victory')await storyVictory?.();
-   else await attack(command);
+   else await attack(command,e.data);
    if(token===generation)report('complete',{id,...state()});
   }).catch(error=>report('error',{id,message:String(error)}));
  });

@@ -23,15 +23,15 @@ function renderFish(elapsed) {
   const t = clamp((elapsed - 7200) / 2000, 0, 1);
   const flight = 1 - Math.pow(1 - t, 3);
   // 從左上畫面外飛入，旋轉一圈後停在畫面中央。
-  const x = -phone.clientWidth * 1.1 * (1 - flight);
-  const y = -phone.clientHeight * .8 * (1 - flight);
+  const x = -storyWidth * 1.1 * (1 - flight);
+  const y = -storyHeight * .8 * (1 - flight);
   flyingFish.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px) rotate(${-360 * (1 - flight)}deg) scale(${.6 + .4 * flight})`;
   // 魚落地稍停，再讓手與袖子由右下方伸入，接到下一幕海賊拿魚。
   pirateHand.hidden = elapsed < 9900;
   pirateHand.style.display = elapsed < 9900 ? 'none' : 'block';
   const reach = clamp((elapsed - 9900) / 2200, 0, 1);
   const reachEase = reach * reach * (3 - 2 * reach);
-  pirateHand.style.transform = `translate(${phone.clientWidth * (1.05 - .48 * reachEase)}px, ${phone.clientHeight * .52}px)`;
+  pirateHand.style.transform = `translate(${storyWidth * (1.05 - .48 * reachEase)}px, ${storyHeight * .52}px)`;
   phone.dataset.phase = elapsed < 4000 ? 'fish-hooked' : elapsed < 6000 ? 'line-snapped' : elapsed < 7200 ? 'floor-fade' : elapsed < 9200 ? 'fish-flying' : 'fish-landed';
   if (elapsed >= 9900) phone.dataset.phase = 'pirate-hand-reach';
 }

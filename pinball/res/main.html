@@ -12,13 +12,13 @@
 <div id="screen" tabindex="0" hidden></div>
 <div id="scene-transition" aria-hidden="true" hidden></div>
 <div id="table-loading" role="status" aria-live="polite" hidden><span class="loading-ball" aria-hidden="true"></span><p data-i18n="loading.title">加載中...</p></div>
-<button id="open-settings" type="button" aria-label="開啟設定" data-i18n-aria-label="menu.settings"><img src="img/system-marker-settings.png" alt=""></button>
+<button id="open-settings" type="button" aria-label="開啟設定" data-i18n-aria-label="menu.settings"><img src="img/system-marker-settings.runtime.webp" alt=""></button>
 <section id="unlock-dialog" role="dialog" aria-modal="true" aria-label="Unlock Table" hidden><canvas id="unlock-art" aria-hidden="true"></canvas><div id="unlock-actions"></div><p id="unlock-status" role="status"></p></section>
 <section id="app-settings" aria-labelledby="settings-title" hidden>
-<button id="close-settings" type="button" aria-label="返回" data-i18n-aria-label="common.back"><img src="img/system-marker-back.png" alt=""></button>
+<button id="close-settings" type="button" aria-label="返回" data-i18n-aria-label="common.back"><img src="img/system-marker-back.runtime.webp" alt=""></button>
 <h1 id="settings-title" data-i18n="settings.title">設定</h1>
 <div id="settings-content">
-<label class="setting-row" for="language-setting"><span data-i18n="settings.language">語言</span><select id="language-setting"><option value="zh-Hant">繁體中文</option><option value="en">English</option></select></label>
+<label class="setting-row" for="language-setting"><span data-i18n="settings.language">語言</span><select id="language-setting"><option value="zh-Hant">繁體中文</option><option value="en">English</option><option value="ja">日本語</option></select></label>
 <label class="setting-row" for="sound-setting"><span data-i18n="settings.sound">聲音</span><input id="sound-setting" type="checkbox"></label>
 <div class="setting-row"><label for="volume-setting" data-i18n="settings.volume">音量</label><input id="volume-setting" type="range" min="0" max="100" step="1" value="100"><output id="volume-value" for="volume-setting">100%</output></div>
 <label class="setting-row" for="aspect-setting">試玩畫面比例<select id="aspect-setting"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label>
@@ -38,6 +38,7 @@
 </section>
 <p id="load-error" role="alert" hidden></p>
 </main>
+<script src="js/runtime-image-variants.js"></script>
 <script src="js/system/layout-renderer.js"></script><script src="js/system/unlock-renderer.js"></script>
 <script src="js/system/menu-music.js"></script>
 <script src="js/system/menu-transition.js"></script>

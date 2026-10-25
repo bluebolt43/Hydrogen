@@ -3,7 +3,10 @@
 // 每章依 start / end 增補分鏡；時間單位為毫秒。
 const chapterNames=SAGA_STORY.chapterNames;
 const chapters=SAGA_STORY.chapters;
-const $=id=>document.getElementById(id),delivery=$('delivery'),loadedImages=new Map();let scene=$('scene');
+const storyNodes=new Map();
+const $=id=>{if(!storyNodes.has(id))storyNodes.set(id,document.getElementById(id));return storyNodes.get(id);};
+const setStoryText=(element,text)=>{if(element.textContent!==text)element.textContent=text;};
+const delivery=$('delivery'),loadedImages=new Map();let scene=$('scene');
 // Ch2 六鏡重用同一張礁岸底圖；站位由此處固定，換動作不重畫背景。
 const ch2Layers=SAGA_STORY.layers.ch2;
 const ch2Images=ch2Layers.map(layer=>{const im=new Image();im.dataset.src=layer.src;im.className=layer.kind;im.alt=layer.alt;im.hidden=true;$('ch2-world').append(im);return im});
@@ -38,7 +41,7 @@ function renderRaven(s,local){
 }
 const villages=[[650,1420],[255,1220],[670,980],[270,735],[675,490],[250,280]],ns='http://www.w3.org/2000/svg';
 const paths=[...document.querySelectorAll('#map-paths path')].reverse(),lengths=paths.map(p=>p.getTotalLength());
-const stones=villages.map(()=>{const g=document.createElementNS(ns,'g'),im=document.createElementNS(ns,'image');for(const [k,v] of Object.entries({href:'img/saga/story/saga-story-shadow-stone-obsidian.png',x:-23,y:-34,width:46,height:46}))im.setAttribute(k==='href'?'data-src':k,v);const halo=document.createElementNS(ns,'circle');halo.setAttribute('r',110);halo.setAttribute('cy',-10);halo.setAttribute('fill','#47e7ee');halo.setAttribute('filter','url(#stone-light)');g.append(halo,im);$('map-stones').append(g);return g});
+const stones=villages.map(()=>{const g=document.createElementNS(ns,'g'),im=document.createElementNS(ns,'image');for(const [k,v] of Object.entries({href:window.PinballRuntimeImages?.resolve('img/saga/saga-story-shadow-stone-obsidian.png')||'img/saga/saga-story-shadow-stone-obsidian.png',x:-23,y:-34,width:46,height:46}))im.setAttribute(k==='href'?'data-src':k,v);const halo=document.createElementNS(ns,'circle');halo.setAttribute('r',110);halo.setAttribute('cy',-10);halo.setAttribute('fill','#47e7ee');halo.setAttribute('filter','url(#stone-light)');g.append(halo,im);$('map-stones').append(g);return g});
 function drawMap(ms){
  const segment=Math.min(5,Math.floor(ms/4500)),local=ms-segment*4500;
  let p={x:villages[segment][0],y:villages[segment][1]},walking=false;
@@ -57,7 +60,7 @@ function stagedCamera(s,local){
 }
 function cameraFrame(s,local){const stage=$('stage'),world=$('camera'),w=stage.clientWidth,h=stage.clientHeight,t=Math.max(0,Math.min(1,(local-(s.fade||800)-(s.motionDelay||0))/(s.duration-(s.fade||800)-(s.motionDelay||0)-800-(s.holdEnd||0)))),ease=t*t*(3-2*t),a=s.cameraStages?stagedCamera(s,local):(s.camera?.[0]||[.5,.5,1]),b=s.cameraStages?a:(s.camera?.[1]||a),z=a[2]+(b[2]-a[2])*ease,ww=s.portrait?h*9/16:h*1672/941,x=a[0]+(b[0]-a[0])*ease,y=a[1]+(b[1]-a[1])*ease;world.style.width=ww+'px';world.style.height=h+'px';const tx=Math.min(0,Math.max(w-ww*z,w/2-ww*x*z)),ty=Math.min(0,Math.max(h-h*z,h/2-h*y*z));world.style.transform='translate('+tx+'px,'+ty+'px) scale('+z+')';world.style.opacity=s.ch2==='joy'?Math.min(1,local/1000):s.ch2||s.layered||s.ch5||s.ch6?1:Math.min(1,s.cutIn?1:local/(s.fade||800),s.cutOut?1:Math.max(0,(s.duration-local)/800));const glow=$('stone-glow');glow.hidden=!s.glow;if(s.glow){glow.style.left=s.glow[0]*100+'%';glow.style.top=s.glow[1]*100+'%';glow.style.opacity=(.94+.06*Math.sin(local/550))*Math.max(0,Math.min(1,(local-(s.glowStart||0))/(s.glowRise||1)));glow.style.width=((s.glowSize||150)*(1+.107*Math.sin(local/550)))+'%'}}
 let chapter=1,part='start',shots=[],total=0,elapsed=0,current=-1,running=false,ready=false,last=null;
-function select(n,p){chapter=n;part=p;shots=chapters[n+'-'+p]||[];total=shots.reduce((sum,s)=>sum+s.duration,0);elapsed=0;current=-1;running=false;$('chapter-title').textContent='ch'+n+' '+p+' · '+chapterNames[n-1];$('shots').replaceChildren();shots.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+' · '+s.title;b.onclick=()=>jump(i);$('shots').append(b)});document.querySelectorAll('[data-chapter]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.chapter===n&&b.dataset.part===p)));$('placeholder').hidden=!!shots.length;$('placeholder').textContent='ch'+n+' '+p+'\n尚未製作';for(const id of ['play','next','previous','replay','seek'])$(id).disabled=!shots.length||!ready;const u=new URL(location.href);u.searchParams.set('chapter',n);u.searchParams.set('part',p);if(!window.AppProgress)history.replaceState(null,'',u);completionSent=false;syncSkip();render()}
+function select(n,p){chapter=n;part=p;shots=chapters[n+'-'+p]||[];total=shots.reduce((sum,s)=>sum+s.duration,0);elapsed=0;current=-1;running=false;stopStoryFrame();$('chapter-title').textContent='ch'+n+' '+p+' · '+chapterNames[n-1];$('shots').replaceChildren();shots.forEach((s,i)=>{const b=document.createElement('button');b.textContent=(i+1)+' · '+s.title;b.onclick=()=>jump(i);$('shots').append(b)});document.querySelectorAll('[data-chapter]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.chapter===n&&b.dataset.part===p)));$('placeholder').hidden=!!shots.length;$('placeholder').textContent='ch'+n+' '+p+'\n尚未製作';for(const id of ['play','next','previous','replay','seek'])$(id).disabled=!shots.length||!ready;const u=new URL(location.href);u.searchParams.set('chapter',n);u.searchParams.set('part',p);if(!window.AppProgress)history.replaceState(null,'',u);completionSent=false;syncSkip();render()}
 function shotAt(ms){let start=0;for(let i=0;i<shots.length;i++){if(ms<start+shots[i].duration||i===shots.length-1)return {i,local:ms-start};start+=shots[i].duration}return {i:-1,local:0}}
 const ch6Layers=SAGA_STORY.layers.ch6;
 const ch6Images=ch6Layers.map(layer=>{const im=new Image();im.dataset.src=layer.src;im.alt=layer.alt||layer.kind;im.className=layer.kind;im.hidden=true;$('ch6-world').append(im);return im});
@@ -107,15 +110,18 @@ function renderEnding(s,local){
  curtain.style.opacity=s.endCover?Math.max(0,Math.min(1,local/1600)):1;
  StoryEndingText.paint($('ending-text'),s.endCard?Math.max(0,1-local/1500):1);
 }
-function render(){const {i,local}=shotAt(elapsed),s=shots[i],activeSrc=s?.ravenSequence&&local>=2200?s.afterSrc:s?.src;renderRaven(s,local);renderCh2(s,local);renderCh3(s,local);renderShell(s,local);renderCh4(s,local);renderCh5(s,local);renderCh6(s,local);renderEnding(s,local);$('stage').style.background=s?.bookBridge||s?.fromBook?'#f3dfb9':'#000';$('camera').hidden=!s||s.type==='map'||s.type==='black';delivery.toggleAttribute('hidden',!s||s.type!=='map'||!!(s.blackTail&&local>=s.duration-s.blackTail));if(s&&(i!==current||(activeSrc&&scene.getAttribute('src')!==activeSrc))){current=i;if(activeSrc){const next=loadedImages.get(activeSrc);if(next&&next!==scene){scene.removeAttribute('id');scene.replaceWith(next);scene=next;scene.id='scene'}scene.alt=s.title}for(const [j,b] of [...$('shots').children].entries())b.setAttribute('aria-pressed',String(i===j))}if(s?.type==='map'){delivery.style.opacity=Math.min(1,local/800);drawMap(local);}else if(s&&s.type!=='black'){cameraFrame(s,local);renderQuake(s,local)}$('play').textContent=running?'暫停':'播放';$('seek').value=total?elapsed/total*100:0;$('position').textContent=s?(i+1)+' / '+shots.length+' · '+s.title+' · '+Math.floor(elapsed/1000)+' / '+Math.ceil(total/1000)+' 秒':'';$('previous').disabled=!ready||i<=0;$('next').disabled=!ready||i<0||i>=shots.length-1}
+function render(){const {i,local}=shotAt(elapsed),s=shots[i],activeSrc=s?.ravenSequence&&local>=2200?s.afterSrc:s?.src;renderRaven(s,local);renderCh2(s,local);renderCh3(s,local);renderShell(s,local);renderCh4(s,local);renderCh5(s,local);renderCh6(s,local);renderEnding(s,local);$('stage').style.background=s?.bookBridge||s?.fromBook?'#f3dfb9':'#000';$('camera').hidden=!s||s.type==='map'||s.type==='black';delivery.toggleAttribute('hidden',!s||s.type!=='map'||!!(s.blackTail&&local>=s.duration-s.blackTail));if(s&&(i!==current||(activeSrc&&scene.getAttribute('src')!==activeSrc))){current=i;if(activeSrc){const next=loadedImages.get(activeSrc);if(next&&next!==scene){scene.removeAttribute('id');scene.replaceWith(next);scene=next;scene.id='scene'}scene.alt=s.title}for(const [j,b] of [...$('shots').children].entries())b.setAttribute('aria-pressed',String(i===j))}if(s?.type==='map'){delivery.style.opacity=Math.min(1,local/800);drawMap(local);}else if(s&&s.type!=='black'){cameraFrame(s,local);renderQuake(s,local)}setStoryText($('play'),running?'暫停':'播放');$('seek').value=total?elapsed/total*100:0;setStoryText($('position'),s?(i+1)+' / '+shots.length+' · '+s.title+' · '+Math.floor(elapsed/1000)+' / '+Math.ceil(total/1000)+' 秒':'');$('previous').disabled=!ready||i<=0;$('next').disabled=!ready||i<0||i>=shots.length-1}
 function jump(i){if(i<0||i>=shots.length)return;elapsed=shots.slice(0,i).reduce((sum,s)=>sum+s.duration,0);render()}
-$('play').onclick=()=>{if(!ready||!shots.length)return;if(elapsed>=total)elapsed=0;running=!running;render()};
+$('play').onclick=()=>{if(!ready||!shots.length)return;if(elapsed>=total)elapsed=0;running=!running;stopStoryFrame();scheduleStoryFrame();render()};
 $('replay').onclick=()=>play();
 $('previous').onclick=()=>jump(current-1);$('next').onclick=()=>jump(current+1);
 $('seek').oninput=e=>{elapsed=Number(e.target.value)/100*total;render()};
-function frame(now){if(last!==null&&running&&!document.hidden){elapsed=Math.min(total,elapsed+now-last);if(elapsed===total){running=false;completeStory()}render()}last=now;requestAnimationFrame(frame)}
+let storyFrame=0;
+function stopStoryFrame(){cancelAnimationFrame(storyFrame);storyFrame=0;last=null;}
+function scheduleStoryFrame(){if(running&&!document.hidden&&!storyFrame)storyFrame=requestAnimationFrame(frame);}
+function frame(now){storyFrame=0;if(last!==null&&running&&!document.hidden){elapsed=Math.min(total,elapsed+now-last);if(elapsed===total){running=false;completeStory()}render()}last=now;scheduleStoryFrame()}
 window.addEventListener('resize',render);
-document.addEventListener('visibilitychange',()=>{last=null});
+document.addEventListener('visibilitychange',()=>{stopStoryFrame();scheduleStoryFrame()});
 
 const hosted=!!window.AppProgress;
 const pageChapter=Number(document.body.dataset.storyChapter),pagePart=document.body.dataset.storyPart;
@@ -125,19 +131,19 @@ const hasSeen=()=>hosted?window.AppProgress.hasSeen(chapterId()):localStorage.ge
 function syncSkip(){$('story-skip').hidden=!hosted||!ready||!hasSeen()||completionSent||playbackFinished;}
 function emitCompletion(skipped=false){
  if(completionSent)return;
- completionSent=true;running=false;clearTimeout(nextTimer);$('story-next').hidden=true;syncSkip();
+ completionSent=true;running=false;stopStoryFrame();clearTimeout(nextTimer);$('story-next').hidden=true;syncSkip();
  window.dispatchEvent(new CustomEvent('story:complete',{detail:{chapter:chapterId(),skipped}}));
 }
 function completeStory(skipped=false){
  if(completionSent||playbackFinished)return;
- playbackFinished=true;running=false;syncSkip();
+ playbackFinished=true;running=false;stopStoryFrame();syncSkip();
  if(!skipped){if(hosted)window.AppProgress.markSeen(chapterId());else localStorage.setItem('pinball-saga-story-seen-v1:'+chapterId(),'1');}
  if(part==='end'){$('story-next').hidden=false;nextTimer=setTimeout(()=>emitCompletion(skipped),10000);}
  else emitCompletion(skipped);
 }
 function showLoadError(error){$('loading').hidden=true;$('error').hidden=false;$('error').textContent='劇情載入失敗：'+error.message;}
 async function loadChapter(n,p){
- const version=++loadVersion;ready=false;running=false;last=null;
+ const version=++loadVersion;ready=false;running=false;stopStoryFrame();
  $('phone').dataset.ready='false';$('loading').hidden=false;$('error').hidden=true;select(n,p);
  const dependencies=SAGA_STORY.imageDependencies[n+'-'+p];
  if(!dependencies)throw Error('不存在的章節：'+n+'-'+p);
@@ -151,7 +157,7 @@ async function loadChapter(n,p){
  await Promise.all(layers.map(async im=>{
   const src=new URL(im.dataset.src,document.baseURI).href;
   if(!urls.has(src))return;
-  if(im.namespaceURI===ns)im.setAttribute('href',src);
+  if(im.namespaceURI===ns)im.setAttribute('href',window.PinballRuntimeImages?.resolve(src)||src);
   else{im.src=src;await im.decode();}
  }));
  if(version!==loadVersion)return;
@@ -161,12 +167,14 @@ async function play(id=`ch${pageChapter}-${pagePart}`){
  await window.viewReady;
  const match=/^ch([1-8])-(start|end)$/.exec(id);
  if(!match||Number(match[1])!==pageChapter||match[2]!==pagePart)return false;
- clearTimeout(nextTimer);$('story-next').hidden=true;elapsed=0;last=null;completionSent=false;playbackFinished=false;running=true;$('begin').hidden=true;syncSkip();render();return true;
+ clearTimeout(nextTimer);$('story-next').hidden=true;elapsed=0;last=null;completionSent=false;playbackFinished=false;running=true;$('begin').hidden=true;syncSkip();render();scheduleStoryFrame();return true;
 }
 $('start').onclick=()=>play();
 $('story-next').onclick=()=>emitCompletion();
 $('story-skip').onclick=()=>{if(hasSeen())completeStory(true)};
 window.viewAPI={play,render(seconds){elapsed=Math.max(0,Math.min(total,seconds*1000));render()},suspend(){last=null},resume(){last=null},get duration(){return total/1000},get chapter(){return chapterId()},hasSettingsControl:false};
 const params=new URLSearchParams(location.search);if(params.has('embed'))document.body.classList.add('embed');
-window.viewReady=loadChapter(pageChapter,pagePart).then(()=>{$('begin').hidden=hosted;requestAnimationFrame(frame)});
+window.viewReady=loadChapter(pageChapter,pagePart).then(()=>{$('begin').hidden=hosted;});
 window.viewReady.catch(showLoadError);
+
+window.addEventListener('pagehide',()=>{running=false;++loadVersion;stopStoryFrame();clearTimeout(nextTimer);});

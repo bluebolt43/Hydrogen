@@ -3,12 +3,18 @@
 const secondPart=document.body.dataset.touhouPart==='2',part=secondPart?2:1;
 const theaterData=secondPart?TOUHOU2_THEATER:TOUHOU1_THEATER;
 TheaterFrame.mountControls({title:'東方賽銭録 '+(secondPart?'その弐':'その壱')+' · 戰鬥劇場',attacks:{lv1:'Lv1 靈符',lv2:'Lv2 陰陽玉',lv3:'Lv3 封魔陣',lv4:'Lv4 夢想封印'}});
-if(!secondPart){const link=document.createElement('a');link.href=new URL('touhou1-spellcards.html',location.href).href;link.target='_blank';link.textContent='Boss 符卡遮罩設計';document.querySelector('.controls').append(link);}
+{const link=document.createElement('a');link.href=new URL('touhou'+part+'-spellcards.html',location.href).href;link.target='_blank';link.textContent='Boss 符卡遮罩設計';document.querySelector('.controls').append(link);}
 const $=id=>document.getElementById(id),stage=$('stage'),enemies=$('enemies'),enemy=$('enemy'),boss=$('boss'),background=$('background'),effects=$('effects');
 const params=new URLSearchParams(location.search),embedded=params.has('embed'),running=new Set();
 const soundBank=embedded?null:new PinballSound(Object.fromEntries(Object.entries(PirateMap.sounds).map(([name,clip])=>[name,{...clip,src:new URL('../'+clip.src,document.baseURI).href}])));
 if(soundBank)for(const event of ['pointerdown','keydown'])addEventListener(event,()=>soundBank.unlock(),{capture:true});
+function bossStage(stage,defeated=false){if(embedded)parent.postMessage({channel:'pinball-theater',type:'boss-stage',stage,defeated},'*');}
 function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',type:'sound',name},'*');else soundBank.play(name);}
+if(embedded)addEventListener('message',e=>{
+ if(e.source!==parent||e.data?.channel!=='pinball-theater'||e.data.command!=='boss-origin')return;
+ const r=boss.getBoundingClientRect(),s=stage.getBoundingClientRect();
+ if(hp>0&&r.width&&r.height&&s.width&&s.height)parent.postMessage({channel:'pinball-theater',type:'boss-origin',stage:level,origin:{x:(r.left+r.width/2-s.left)/s.width,y:(r.top+r.height/2-s.top)/s.height}},'*');
+});
 const levels=theaterData.bosses,damages={lv1:1,lv2:2,lv3:3,lv4:4};
 const attackFrames={
  lv1:{approach:[{opacity:0,scale:1},{opacity:1,scale:1}],impact:[{opacity:1,scale:1},{opacity:0,scale:1.8}]},
@@ -55,7 +61,7 @@ function pause(value){
 function resetScene(){
  generation++;for(const animation of running)animation.cancel();running.clear();effects.replaceChildren();
  for(const animation of enemy.getAnimations())animation.cancel();
- soundBank?.stop();pause(false);hp=config().health;busy=false;
+ bossStage(0);soundBank?.stop();pause(false);hp=config().health;busy=false;
  boss.src=config().src;boss.alt=config().name+'・戰鬥';background.src=config().background;background.alt=config().name+'的戰鬥場景';
  stage.style.setProperty('--background-position',config().position||'50% 50%');
  TheaterFrame.renderHealth($('health'),hp);$('status').textContent='Boss '+level+' · '+config().name;draw();
@@ -65,7 +71,7 @@ async function enter(skipWarning=false){
  await Promise.all([background.decode(),boss.decode()]);if(token!==generation)return;
  if(!skipWarning)await TheaterFrame.warning(stage);if(token!==generation)return;
  await frame.curtains(true);if(token!==generation)return;
- enemies.hidden=false;await frame.curtains(false);if(token!==generation)return;
+ enemies.hidden=false;bossStage(level);await frame.curtains(false);if(token!==generation)return;
  busy=false;draw();
 }
 async function choose(next,skipWarning=false){
@@ -74,16 +80,18 @@ async function choose(next,skipWarning=false){
 }
 async function reset(){resetScene();enemies.hidden=true;await frame.curtains(true);}
 async function defeat(token){
- sound('explosion');await animate(enemy,[{opacity:1,translate:'0 0'},{opacity:0,translate:'0 15%'}],650);
+ bossStage(level,true);sound('explosion');await animate(enemy,[{opacity:1,translate:'0 0'},{opacity:0,translate:'0 15%'}],650);
  if(token===generation)enemies.hidden=true;
 }
-async function attack(command){
+async function attack(command,options={}){
  const kind={ball:'lv1',barrel:'lv2',airdrop:'lv3',kraken:'lv4'}[command]||command;
  if(!damages[kind])throw Error('Unknown Touhou '+part+' attack: '+command);
- if(!loaded||busy||isPaused()||hp===0)return false;
+ const empty=kind==='lv4'&&options.allowEmpty===true;
+ if(!loaded||busy||isPaused()||hp===0&&!empty)return false;
  busy=true;draw();const token=generation,previous=hp,effect=TOUHOU_ATTACK_EFFECTS[kind];
  const impact=document.createElement('img');impact.className='attack-effect';impact.dataset.attack=kind;impact.dataset.phase='approach';impact.src=effect.src;impact.alt='';impact.style.width=effect.width+'%';effects.append(impact);
  try{
+  if(empty){enemies.hidden=true;impact.style.opacity='0';await frame.curtains(false);if(token!==generation)return false;}
   await animate(impact,attackFrames[kind].approach,effect.approachDuration);
   if(token!==generation)return false;
   if(effect.holdDuration>0){
@@ -92,16 +100,16 @@ async function attack(command){
    if(token!==generation)return false;
   }
   const explodes=kind==='lv1';
-  hp=Math.max(0,hp-damages[kind]);impact.dataset.phase='impact';sound(explodes?'explosion':'metal');
-  await Promise.all([TheaterFrame.renderHealth($('health'),hp,previous),
-   animate(enemy,[{filter:'brightness(2)',translate:'-2% 0'},{filter:'brightness(1)',translate:'0 0'}],250),
+  if(!empty)hp=Math.max(0,hp-damages[kind]);impact.dataset.phase='impact';sound(explodes?'explosion':'metal');
+  await Promise.all([...(empty?[]:[TheaterFrame.renderHealth($('health'),hp,previous),
+   animate(enemy,[{filter:'brightness(2)',translate:'-2% 0'},{filter:'brightness(1)',translate:'0 0'}],250)]),
    animate(impact,attackFrames[kind].impact,effect.impactDuration),
    ...(explodes?[burst(effect.impactDuration)]:[])]);
   if(token!==generation)return false;
-  if(hp===0)await defeat(token);
+  if(!empty&&hp===0)await defeat(token);
   if(token!==generation)return false;
-  $('status').textContent=hp?'剩餘 '+hp+' / '+config().health+' 顆心':'Boss '+level+' 完成';return true;
- }finally{if(token===generation){effects.replaceChildren();busy=false;draw();}}
+  $('status').textContent=empty?'Lv4 夢想封印':hp?'剩餘 '+hp+' / '+config().health+' 顆心':'Boss '+level+' 完成';return true;
+ }finally{if(token===generation){effects.replaceChildren();if(empty)await frame.curtains(true);if(token===generation){busy=false;draw();}}}
 }
 $('enemy-type').replaceChildren(...levels.map(item=>{const option=document.createElement('option');option.value=item.stage;option.textContent='Boss '+item.stage+' · '+item.name;return option;}));
 $('enemy-type').onchange=e=>choose(Number(e.target.value)).catch(error=>{$('status').textContent=error.message;});

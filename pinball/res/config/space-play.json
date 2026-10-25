@@ -533,7 +533,7 @@
     },
     {
       "id": "art-025",
-      "src": "res/hd_img/space-theater-boss-5-warden-ship.png",
+      "src": "res/hd_img/space/space-theater-boss-5-warden-ship.png",
       "x": 271,
       "y": 127,
       "width": 50,
@@ -552,7 +552,7 @@
       "state": "static",
       "bind": "",
       "indicator": {
-        "off": "res/hd_img/space-theater-boss-5-warden-ship.png",
+        "off": "res/hd_img/space/space-theater-boss-5-warden-ship.png",
         "on": "",
         "defaultState": "off",
         "trigger": {

@@ -10,8 +10,8 @@ document.querySelector("#ch6-story").hidden=false;
     const shake=Math.max(...[1000,1800,2600].map(at=>{
       const age=endMs-at;return age>=0 && age<1100?1.4*(1-age/1100):0;
     }));
-    const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*phone.clientWidth*.024*shake;
-    const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*phone.clientHeight*.012*shake;
+    const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*storyWidth*.024*shake;
+    const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*storyHeight*.012*shake;
     document.querySelector('#ch6-composition').style.transform=`translate(${x}px,${y}px) scale(${1+shake*.08})`;
     document.querySelectorAll('.ch6-blast').forEach((smoke,index)=>{
       const t=(endMs-1000-index*800)/1100;

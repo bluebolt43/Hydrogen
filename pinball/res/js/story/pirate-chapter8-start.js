@@ -9,7 +9,7 @@ const ch8Dialogue=[
 ];
 let ch8LastReactionBeat=-1;
 function renderCh8(ms){
-  const scale=phone.clientWidth/940;
+  const scale=storyWidth/940;
   document.querySelector('#ch8-world').style.transform=`scale(${scale})`;
   const panel=document.querySelector('#ch8-panel');
   panel.hidden=ms<2000;

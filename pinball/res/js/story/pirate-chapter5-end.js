@@ -3,16 +3,16 @@ function render(elapsed){
  const ms=elapsed-ch5Start,endMs=elapsed-ch5Stop;
  const fade=clamp((endMs-2600)/1500,0,1);
  const establishing=document.querySelector('#ch5-establishing');
- const zoom=Math.min(phone.clientWidth/establishing.naturalWidth,phone.clientHeight/establishing.naturalHeight);
+ const zoom=Math.min(storyWidth/establishing.naturalWidth,storyHeight/establishing.naturalHeight);
  establishing.style.width=`${establishing.naturalWidth*zoom}px`;
  establishing.style.height=`${establishing.naturalHeight*zoom}px`;
- establishing.style.left=`${(phone.clientWidth-establishing.naturalWidth*zoom)*.5}px`;
- establishing.style.top=`${(phone.clientHeight-establishing.naturalHeight*zoom)*.5}px`;
+ establishing.style.left=`${(storyWidth-establishing.naturalWidth*zoom)*.5}px`;
+ establishing.style.top=`${(storyHeight-establishing.naturalHeight*zoom)*.5}px`;
  document.querySelector('#ch5-reveal').style.opacity=1-fade;
  document.querySelector('#ch5-defeated').style.opacity=fade;
  const intensity=Math.max(...[1000,1800,2600].map(at=>{const age=endMs-at;return age>=0&&age<1100?1.4*(1-age/1100):0;}));
- const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*phone.clientWidth*.024*intensity;
- const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*phone.clientHeight*.012*intensity;
+ const x=(Math.sin(ms*.083)+Math.sin(ms*.137)*.5)*storyWidth*.024*intensity;
+ const y=(Math.cos(ms*.107)+Math.sin(ms*.173)*.5)*storyHeight*.012*intensity;
  document.querySelector('#ch5-composition').style.transform=`translate(${x}px,${y}px) scale(${1+intensity*.08})`;
     document.querySelectorAll('.ch5-blast').forEach((smoke,index)=>{
       const t=(endMs-1000-index*800)/1100;
