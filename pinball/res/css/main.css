@@ -9,8 +9,15 @@ body{display:grid;place-items:center}
 #table-loading{position:fixed;inset:0;z-index:45;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;color:#fff;font-family:system-ui,sans-serif}
 #table-loading[hidden]{display:none}
 #table-loading p{margin:16px 0 0}
-.loading-ball{width:42px;height:42px;border:2px solid #ffffff40;border-top-color:#fff;border-radius:50%;animation:table-loading-spin 1s linear infinite}
+.loading-ball{display:block;width:42px;height:42px;border:2px solid #ffffff40;border-top-color:#fff;border-radius:50%;animation:table-loading-spin 1s linear infinite}
 @keyframes table-loading-spin{to{transform:rotate(360deg)}}
+.loading-prayer{display:none;width:160px;height:160px;background:url('../img/touhou/touhou-loading-suika.webp') center/contain no-repeat}
+#table-loading[data-theme="touhou"] .loading-ball{display:none}
+#table-loading[data-theme="touhou"] .loading-prayer{display:block;animation:touhou-loading-prayer 1.2s step-end infinite}
+#table-loading[data-theme="touhou"] p{margin-top:4px;color:#f5ead4;font-family:Georgia,"Noto Serif CJK TC",serif;font-size:24px;letter-spacing:.14em}
+@keyframes touhou-loading-prayer{0%,100%{transform:scaleX(1)}50%{transform:scaleX(-1)}}
+@media(prefers-reduced-motion:reduce){#table-loading[data-theme="touhou"] .loading-prayer{animation:none}}
+
 @media(prefers-reduced-motion:reduce){.loading-ball{animation:none;border-color:#fff}}
 #theme-menu{position:absolute;inset:0;container-type:inline-size;display:flex;flex-direction:column;justify-content:center;padding:10%;color:#f3e6ce;font-family:system-ui,sans-serif;background:radial-gradient(ellipse at 20% 0,#254653 0,transparent 65%),linear-gradient(160deg,#132934,#09141e 75%)}
 #theme-menu::before{content:"";position:absolute;inset:3%;border:1px solid #b9955538;pointer-events:none}

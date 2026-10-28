@@ -6,13 +6,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pinball Tales</title>
 <link rel="stylesheet" href="css/main.css">
+<link rel="preload" as="image" href="img/touhou/touhou-loading-suika.webp">
 </head>
 <body>
 <main id="main-frame" aria-label="彈珠台主畫面">
 <section id="theme-menu" aria-label="主題選擇"><canvas id="menu-art" aria-hidden="true"></canvas><div id="menu-animation" hidden></div><div id="menu-actions"></div></section>
 <div id="screen" tabindex="0" hidden></div>
 <div id="scene-transition" aria-hidden="true" hidden></div>
-<div id="table-loading" role="status" aria-live="polite" hidden><span class="loading-ball" aria-hidden="true"></span><p data-i18n="loading.title">加載中...</p></div>
+<div id="table-loading" role="status" aria-live="polite" hidden><span class="loading-icon" aria-hidden="true"><span class="loading-ball"></span><span class="loading-prayer"></span></span><p id="loading-title" data-i18n="loading.title">加載中...</p></div>
 <button id="open-settings" type="button" aria-label="開啟設定" data-i18n-aria-label="menu.settings"><img src="img/system-marker-settings.runtime.webp" alt=""></button>
 <section id="unlock-dialog" role="dialog" aria-modal="true" aria-label="Unlock Table" hidden><canvas id="unlock-art" aria-hidden="true"></canvas><div id="unlock-actions"></div><p id="unlock-status" role="status"></p></section>
 <section id="app-settings" aria-labelledby="settings-title" hidden>

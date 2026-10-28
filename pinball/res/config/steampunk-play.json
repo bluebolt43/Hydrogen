@@ -19,7 +19,8 @@
       "plane": "background",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-floor-background.png"
     },
     {
       "id": "art-007",
@@ -52,7 +53,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rollover-off.png"
     },
     {
       "id": "art-008",
@@ -85,7 +87,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rollover-off.png"
     },
     {
       "id": "art-060",
@@ -105,7 +108,8 @@
       "plane": "background",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-table-frame-theme.png"
     },
     {
       "id": "art-061",
@@ -119,13 +123,14 @@
       "crop": [
         0.0,
         0.0,
-        73.0,
-        216.0225225225
+        72.9779005525,
+        216.0142725599
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-mine-laboratory.png"
     },
     {
       "id": "art-062",
@@ -139,13 +144,14 @@
       "crop": [
         0.0,
         0.0,
-        94.7872340426,
-        128.7692307692
+        94.7439252336,
+        128.7551020408
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-airship-dock.png"
     },
     {
       "id": "art-063",
@@ -165,7 +171,8 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-village.png"
     },
     {
       "id": "art-064",
@@ -185,7 +192,8 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-race-venue.png"
     },
     {
       "id": "art-065",
@@ -219,7 +227,8 @@
           "onSeconds": 0.28
         },
         "group": "3"
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-sling-left-idle.png"
     },
     {
       "id": "art-066",
@@ -253,7 +262,8 @@
           "onSeconds": 0.28
         },
         "group": "3"
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-sling-right-idle.png"
     },
     {
       "id": "art-067",
@@ -273,7 +283,8 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-return-left.png"
     },
     {
       "id": "art-068",
@@ -293,11 +304,12 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-return-right.png"
     },
     {
       "id": "art-123",
-      "src": "res/img/plunger-rod.png",
+      "src": "res/hd_img/plunger-rod.png",
       "x": 310,
       "y": 428,
       "width": 30,
@@ -307,8 +319,8 @@
       "crop": [
         0,
         0,
-        31,
-        91
+        40,
+        121
       ],
       "plane": "lower",
       "frames": 1,
@@ -319,7 +331,8 @@
       "layoutAnchor": [
         309.896,
         386.688
-      ]
+      ],
+      "runtimeSource": "res/img/plunger-rod.png"
     },
     {
       "id": "art-105",
@@ -353,7 +366,8 @@
         },
         "group": "2"
       },
-      "bind": "thickline-003"
+      "bind": "thickline-003",
+      "runtimeSource": "res/img/steampunk/steampunk-rollover-off.png"
     },
     {
       "id": "art-098",
@@ -387,11 +401,12 @@
         },
         "group": "2"
       },
-      "bind": "thickline-003"
+      "bind": "thickline-003",
+      "runtimeSource": "res/img/steampunk/steampunk-rollover-off.png"
     },
     {
       "id": "art-124",
-      "src": "res/img/plunger-collar.png",
+      "src": "res/hd_img/plunger-collar.png",
       "x": 311,
       "y": 420,
       "width": 50,
@@ -401,8 +416,8 @@
       "crop": [
         0,
         0,
-        51,
-        38
+        56,
+        42
       ],
       "plane": "lower",
       "frames": 1,
@@ -413,7 +428,8 @@
       "layoutAnchor": [
         309.896,
         386.688
-      ]
+      ],
+      "runtimeSource": "res/img/plunger-collar.png"
     },
     {
       "id": "art-001",
@@ -445,7 +461,8 @@
           "kind": "level",
           "source": "circle-001"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-bumper-furnace-level-1.png"
     },
     {
       "id": "art-002",
@@ -477,7 +494,8 @@
           "kind": "level",
           "source": "circle-002"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-bumper-furnace-level-1.png"
     },
     {
       "id": "art-003",
@@ -509,7 +527,8 @@
           "kind": "level",
           "source": "circle-003"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-bumper-furnace-level-1.png"
     },
     {
       "id": "art-004",
@@ -530,7 +549,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flipper-001"
+      "bind": "flipper-001",
+      "runtimeSource": "res/img/steampunk/steampunk-flipper.png"
     },
     {
       "id": "art-005",
@@ -551,7 +571,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flipper-002"
+      "bind": "flipper-002",
+      "runtimeSource": "res/img/steampunk/steampunk-flipper.png"
     },
     {
       "id": "art-006",
@@ -572,7 +593,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flipper-003"
+      "bind": "flipper-003",
+      "runtimeSource": "res/img/steampunk/steampunk-flipper.png"
     },
     {
       "id": "art-085",
@@ -584,10 +606,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        17.0,
-        1.0,
-        56.0,
-        91.0
+        16.9746724891,
+        0.9745269287,
+        56.031441048,
+        91.0058224163
       ],
       "plane": "top",
       "frames": 1,
@@ -614,7 +636,8 @@
             "source": "hole-002"
           }
         ]
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-steam-tower-off.png"
     },
     {
       "id": "art-014",
@@ -635,7 +658,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flag-001"
+      "bind": "flag-001",
+      "runtimeSource": "res/img/steampunk/steampunk-flag.png"
     },
     {
       "id": "art-015",
@@ -656,7 +680,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flag-002"
+      "bind": "flag-002",
+      "runtimeSource": "res/img/steampunk/steampunk-flag.png"
     },
     {
       "id": "art-016",
@@ -677,7 +702,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flag-003"
+      "bind": "flag-003",
+      "runtimeSource": "res/img/steampunk/steampunk-flag.png"
     },
     {
       "id": "art-018",
@@ -707,7 +733,8 @@
           "kind": "rebound",
           "source": "line-051"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-019",
@@ -737,7 +764,8 @@
           "kind": "rebound",
           "source": "line-052"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-020",
@@ -767,7 +795,8 @@
           "kind": "rebound",
           "source": "line-053"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-021",
@@ -798,7 +827,8 @@
           "source": "line-054"
         }
       },
-      "flipY": true
+      "flipY": true,
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-022",
@@ -828,7 +858,8 @@
           "kind": "rebound",
           "source": "line-055"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-024",
@@ -858,7 +889,8 @@
           "kind": "rebound",
           "source": "line-056"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-025",
@@ -888,7 +920,8 @@
           "kind": "rebound",
           "source": "line-057"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rebound.png"
     },
     {
       "id": "art-029",
@@ -922,7 +955,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-030",
@@ -956,7 +990,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-031",
@@ -990,7 +1025,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-032",
@@ -1011,7 +1047,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-002-1"
+      "bind": "targets-002-1",
+      "runtimeSource": "res/img/steampunk/steampunk-target-bullseye.png"
     },
     {
       "id": "art-033",
@@ -1032,7 +1069,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-002-2"
+      "bind": "targets-002-2",
+      "runtimeSource": "res/img/steampunk/steampunk-target-bullseye.png"
     },
     {
       "id": "art-034",
@@ -1053,7 +1091,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-002-3"
+      "bind": "targets-002-3",
+      "runtimeSource": "res/img/steampunk/steampunk-target-bullseye.png"
     },
     {
       "id": "art-035",
@@ -1087,7 +1126,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-036",
@@ -1121,7 +1161,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-037",
@@ -1155,7 +1196,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-038",
@@ -1189,7 +1231,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-039",
@@ -1223,7 +1266,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-040",
@@ -1257,7 +1301,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-target-gear-standing-off.png"
     },
     {
       "id": "art-069",
@@ -1277,7 +1322,8 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-gear.png"
     },
     {
       "id": "art-104",
@@ -1298,7 +1344,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-target-sign-blackhole.png"
     },
     {
       "id": "art-070",
@@ -1318,7 +1365,8 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-pressure-gauge.png"
     },
     {
       "id": "art-071",
@@ -1338,7 +1386,8 @@
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-pressure-needle.png"
     },
     {
       "id": "art-074",
@@ -1369,7 +1418,8 @@
           "kind": "multiball",
           "source": ""
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-rescue-bar.png"
     },
     {
       "id": "art-076",
@@ -1390,7 +1440,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "return-gate",
-      "bind": "oneway-008"
+      "bind": "oneway-008",
+      "runtimeSource": "res/img/steampunk/steampunk-rescue-bar.png"
     },
     {
       "id": "art-080",
@@ -1410,7 +1461,8 @@
       "plane": "upper",
       "frames": 1,
       "frameAxis": "x",
-      "state": "static"
+      "state": "static",
+      "runtimeSource": "res/img/steampunk/steampunk-upper-deck.png"
     },
     {
       "id": "art-102",
@@ -1469,7 +1521,8 @@
         },
         "screenMask": true,
         "group": "7"
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-crystal-off.png"
     },
     {
       "id": "art-090",
@@ -1481,10 +1534,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        1.0,
-        29.0,
-        187.0,
-        61.0
+        0.9537767756,
+        29.0372040586,
+        187.0462232244,
+        61.0417136415
       ],
       "plane": "top",
       "frames": 1,
@@ -1500,7 +1553,8 @@
           "kind": "sensor",
           "source": "sensor-004"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-enemy-battleship.png"
     },
     {
       "id": "art-077",
@@ -1521,7 +1575,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "arc-046"
+      "bind": "arc-046",
+      "runtimeSource": "res/img/steampunk/steampunk-blocker.png"
     },
     {
       "id": "art-078",
@@ -1542,7 +1597,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "arc-045"
+      "bind": "arc-045",
+      "runtimeSource": "res/img/steampunk/steampunk-blocker.png"
     },
     {
       "id": "art-089",
@@ -1554,10 +1610,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        1.0,
-        14.0,
-        129.0,
-        47.0
+        1.0259301015,
+        13.9966178129,
+        128.9740698985,
+        46.9729425028
       ],
       "plane": "top",
       "frames": 1,
@@ -1574,7 +1630,8 @@
           "kind": "sensor",
           "source": "sensor-005"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-enemy-carrier.png"
     },
     {
       "id": "art-092",
@@ -1586,10 +1643,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        17.0,
-        1.0,
-        56.0,
-        91.0
+        16.9746724891,
+        0.9745269287,
+        56.031441048,
+        91.0058224163
       ],
       "plane": "top",
       "frames": 1,
@@ -1616,7 +1673,8 @@
             "source": "hole-001"
           }
         ]
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-steam-tower-off.png"
     },
     {
       "id": "art-091",
@@ -1630,8 +1688,8 @@
       "crop": [
         0.0,
         0.0,
-        360.99999999949864,
-        181.00000000050278
+        71.99999999994132,
+        36.00000000005082
       ],
       "plane": "upper",
       "frames": 1,
@@ -1647,7 +1705,8 @@
           "kind": "hole-capture",
           "source": "hole-003"
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-enemy-airship.png"
     },
     {
       "id": "art-093",
@@ -1661,14 +1720,15 @@
       "crop": [
         0.0,
         0.0,
-        54.490566037737786,
-        81.30000000000001
+        361.0,
+        542.0
       ],
       "plane": "top",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-rocket.png"
     },
     {
       "id": "art-012",
@@ -1701,7 +1761,8 @@
           "mode": "keep"
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-unlock-lights-0.png"
     },
     {
       "id": "art-097",
@@ -1722,11 +1783,12 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-table-dragon.png"
     },
     {
       "id": "art-099",
-      "src": "res/img/plunger-rod.png",
+      "src": "res/hd_img/plunger-rod.png",
       "x": 310,
       "y": 428,
       "width": 30,
@@ -1736,8 +1798,8 @@
       "crop": [
         0,
         0,
-        31,
-        91
+        40,
+        121
       ],
       "plane": "lower",
       "frames": 1,
@@ -1748,11 +1810,12 @@
       "layoutAnchor": [
         309.896,
         386.688
-      ]
+      ],
+      "runtimeSource": "res/img/plunger-rod.png"
     },
     {
       "id": "art-100",
-      "src": "res/img/plunger-collar.png",
+      "src": "res/hd_img/plunger-collar.png",
       "x": 311,
       "y": 420,
       "width": 50,
@@ -1762,8 +1825,8 @@
       "crop": [
         0,
         0,
-        51,
-        38
+        56,
+        42
       ],
       "plane": "lower",
       "frames": 1,
@@ -1774,7 +1837,8 @@
       "layoutAnchor": [
         309.896,
         386.688
-      ]
+      ],
+      "runtimeSource": "res/img/plunger-collar.png"
     },
     {
       "id": "art-103",
@@ -1817,7 +1881,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-low-ramp.png"
     },
     {
       "id": "art-122",
@@ -1838,7 +1903,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-bonus-ring-background.png"
     },
     {
       "id": "art-101",
@@ -1881,7 +1947,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-upper-ramp.png"
     },
     {
       "id": "art-106",
@@ -1902,7 +1969,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/steampunk/steampunk-target-sign-upgrade.png"
     },
     {
       "id": "art-109",
@@ -1923,7 +1991,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "center-post",
-      "bind": "centerPost-001"
+      "bind": "centerPost-001",
+      "runtimeSource": "res/img/steampunk/steampunk-center-post.png"
     },
     {
       "id": "art-115",
@@ -1958,7 +2027,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-116",
@@ -1993,7 +2063,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-117",
@@ -2028,7 +2099,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-118",
@@ -2063,7 +2135,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-119",
@@ -2098,7 +2171,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-120",
@@ -2133,7 +2207,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-121",
@@ -2168,7 +2243,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-125",
@@ -2203,7 +2279,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-126",
@@ -2238,7 +2315,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-127",
@@ -2273,7 +2351,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-128",
@@ -2308,7 +2387,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     },
     {
       "id": "art-129",
@@ -2343,7 +2423,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/steampunk/steampunk-mission-arrow-off.png"
     }
   ],
   "gameplay": {
@@ -2371,7 +2452,7 @@
           "kind": "enemy",
           "value": 0,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-enemy.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-enemy.png",
             "crop": [
               0,
               0,
@@ -2390,7 +2471,7 @@
           "kind": "score",
           "value": 1000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-1000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-1000.png",
             "crop": [
               0,
               0,
@@ -2409,7 +2490,7 @@
           "kind": "score",
           "value": 2500,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-2500.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-2500.png",
             "crop": [
               0,
               0,
@@ -2428,7 +2509,7 @@
           "kind": "score",
           "value": 5000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-5000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-5000.png",
             "crop": [
               0,
               0,
@@ -2447,7 +2528,7 @@
           "kind": "score",
           "value": 10000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-10000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-10000.png",
             "crop": [
               0,
               0,
@@ -2466,7 +2547,7 @@
           "kind": "multi",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiball.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiball.png",
             "crop": [
               0,
               0,
@@ -2485,7 +2566,7 @@
           "kind": "enemy",
           "value": 0,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-enemy.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-enemy.png",
             "crop": [
               0,
               0,
@@ -2504,7 +2585,7 @@
           "kind": "multiplier",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-2.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-2.png",
             "crop": [
               0,
               0,
@@ -2523,7 +2604,7 @@
           "kind": "multiplier",
           "value": 3,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-3.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-3.png",
             "crop": [
               0,
               0,
@@ -2542,7 +2623,7 @@
           "kind": "multiplier",
           "value": 4,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-4.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-4.png",
             "crop": [
               0,
               0,
@@ -2561,7 +2642,7 @@
           "kind": "ball",
           "value": 1,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-ball-plus-1.png",
             "crop": [
               0,
               0,
@@ -2580,7 +2661,7 @@
           "kind": "ball",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-ball-plus-2.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-ball-plus-2.png",
             "crop": [
               0,
               0,
@@ -2595,9 +2676,9 @@
           }
         }
       ],
-      "sphere": "res/img/steampunk/steampunk-attack-electric-sphere.png",
+      "sphere": "res/hd_img/steampunk/steampunk-attack-electric-sphere.png",
       "mine": {
-        "src": "res/img/steampunk/steampunk-tesla-mine.png",
+        "src": "res/hd_img/steampunk/steampunk-tesla-mine.png",
         "crop": [
           1,
           1,
@@ -2659,33 +2740,6 @@
       "qy": 433.479,
       "x2": 118.217,
       "y2": 430.924
-    },
-    {
-      "id": "line-001",
-      "type": "line",
-      "layer": "lower",
-      "x1": 118.217,
-      "y1": 430.924,
-      "x2": 103.757,
-      "y2": 420.648
-    },
-    {
-      "id": "line-002",
-      "type": "line",
-      "layer": "lower",
-      "x1": 103.757,
-      "y1": 420.651,
-      "x2": 85.166,
-      "y2": 407.636
-    },
-    {
-      "id": "line-003",
-      "type": "line",
-      "layer": "lower",
-      "x1": 85.166,
-      "y1": 407.636,
-      "x2": 78.221,
-      "y2": 402.707
     },
     {
       "id": "arc-004",
@@ -4362,6 +4416,7 @@
       "x": 186,
       "y": 147,
       "angle": 28.062,
+      "spacing": 16.422,
       "targetGroup": {
         "id": "targetGroup-002",
         "members": [
@@ -4369,8 +4424,7 @@
         ],
         "action": "boss",
         "repeatExtraBall": true
-      },
-      "spacing": 16.422
+      }
     },
     {
       "id": "targets-003",
@@ -4379,6 +4433,7 @@
       "x": 122,
       "y": 79,
       "angle": 269.605,
+      "spacing": 17.506,
       "targetGroup": {
         "id": "targetGroup-003",
         "members": [
@@ -4391,8 +4446,7 @@
           "circle-003"
         ],
         "repeatExtraBall": true
-      },
-      "spacing": 17.506
+      }
     },
     {
       "id": "targets-004",
@@ -4401,6 +4455,7 @@
       "x": 120,
       "y": 196,
       "angle": -77.508,
+      "spacing": 18.2,
       "targetGroup": {
         "id": "targetGroup-004",
         "members": [
@@ -4414,8 +4469,7 @@
         "resetSensors": [
           "sensor-003"
         ]
-      },
-      "spacing": 18.2
+      }
     },
     {
       "id": "oneway-009",
@@ -4426,11 +4480,11 @@
       "x2": 318,
       "y2": 81,
       "direction": 1,
+      "stopOnEntry": true,
       "mechanic": "layer-transition",
       "fromLayer": "upper",
       "toLayer": "lower",
-      "bidirectional": false,
-      "stopOnEntry": true
+      "bidirectional": false
     },
     {
       "id": "rollover-001",
@@ -4558,6 +4612,15 @@
       "x2": 266,
       "y2": 151,
       "thickness": 5
+    },
+    {
+      "id": "line-066",
+      "type": "line",
+      "layer": "lower",
+      "x1": 119.21699999999998,
+      "y1": 429.924,
+      "x2": 77,
+      "y2": 402
     }
   ],
   "gravityRegions": [],
@@ -4569,49 +4632,42 @@
       "label": "Hole",
       "width": 12,
       "height": 12,
-      "source": "現有 capture 半徑 5.5。",
       "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><circle r=\"3.4\" stroke-dasharray=\"1 1\"/>"
     },
     "flag": {
       "label": "旗幟線",
       "width": 14,
       "height": 2,
-      "source": "固定長度 14；可拖曳旋轉控制點或輸入角度。穿越感應線，不阻擋球。",
       "markup": "<line x1=\"-7\" y1=\"0\" x2=\"7\" y2=\"0\" fill=\"none\" stroke=\"#e6a5ea\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>"
     },
     "plunger": {
       "label": "發球區",
       "width": 20,
       "height": 8,
-      "source": "固定大小；上緣中心為推球點，發球方向向上。",
       "markup": "<rect x=\"-10\" y=\"-4\" width=\"20\" height=\"8\" fill=\"#b78a43\"/><path d=\"M0 3V-3M-2 -1L0 -3L2 -1\" fill=\"none\"/>"
     },
     "flipper": {
       "label": "Flipper",
       "width": 50.72938359896286,
       "height": 14.061202228069305,
-      "source": "現有 space-355 軸距與頭尾半徑。",
       "markup": "<path d=\"M-18.33409068544678 -6.530601114034653 L20.805223887761155 -4.059467911720276 A4.059467911720276 4.059467911720276 0 0 1 20.805223887761155 4.059467911720276 L-18.33409068544678 6.530601114034653 A6.530601114034653 6.530601114034653 0 0 1 -18.33409068544678 -6.530601114034653 Z\" fill=\"#355b73\"/><circle cx=\"-18.33409068544678\" cy=\"0\" r=\"1.8\" fill=\"#79cafa\"/>"
     },
     "targets": {
       "label": "三連 target",
       "width": 43,
       "height": 3.000000000000014,
-      "source": "現有 island-target-1～3，保留原尺寸與間距。",
       "markup": "<polygon points=\"-21.0000,0.6000 -21.0000,-0.6000 -20.9991,-0.6273 -20.9963,-0.6545 -20.9916,-0.6814 -20.9852,-0.7079 -20.9769,-0.7340 -20.9669,-0.7594 -20.9552,-0.7840 -20.9418,-0.8078 -20.9268,-0.8307 -20.9103,-0.8524 -20.8923,-0.8730 -20.8730,-0.8923 -20.8524,-0.9103 -20.8307,-0.9268 -20.8078,-0.9418 -20.7840,-0.9552 -20.7594,-0.9669 -20.7340,-0.9769 -20.7079,-0.9852 -20.6814,-0.9916 -20.6545,-0.9963 -20.6273,-0.9991 -20.6000,-1.0000 -9.4000,-1.0000 -9.3727,-0.9991 -9.3455,-0.9963 -9.3186,-0.9916 -9.2921,-0.9852 -9.2660,-0.9769 -9.2406,-0.9669 -9.2160,-0.9552 -9.1922,-0.9418 -9.1693,-0.9268 -9.1476,-0.9103 -9.1270,-0.8923 -9.1077,-0.8730 -9.0897,-0.8524 -9.0732,-0.8307 -9.0582,-0.8078 -9.0448,-0.7840 -9.0331,-0.7594 -9.0231,-0.7340 -9.0148,-0.7079 -9.0084,-0.6814 -9.0037,-0.6545 -9.0009,-0.6273 -9.0000,-0.6000 -9.0000,0.6000 -9.0009,0.6273 -9.0037,0.6545 -9.0084,0.6814 -9.0148,0.7079 -9.0231,0.7340 -9.0331,0.7594 -9.0448,0.7840 -9.0582,0.8078 -9.0732,0.8307 -9.0897,0.8524 -9.1077,0.8730 -9.1270,0.8923 -9.1476,0.9103 -9.1693,0.9268 -9.1922,0.9418 -9.2160,0.9552 -9.2406,0.9669 -9.2660,0.9769 -9.2921,0.9852 -9.3186,0.9916 -9.3455,0.9963 -9.3727,0.9991 -9.4000,1.0000 -20.6000,1.0000 -20.6273,0.9991 -20.6545,0.9963 -20.6814,0.9916 -20.7079,0.9852 -20.7340,0.9769 -20.7594,0.9669 -20.7840,0.9552 -20.8078,0.9418 -20.8307,0.9268 -20.8524,0.9103 -20.8730,0.8923 -20.8923,0.8730 -20.9103,0.8524 -20.9268,0.8307 -20.9418,0.8078 -20.9552,0.7840 -20.9669,0.7594 -20.9769,0.7340 -20.9852,0.7079 -20.9916,0.6814 -20.9963,0.6545 -20.9991,0.6273 -21.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"9.0000,0.6000 9.0000,-0.6000 9.0009,-0.6273 9.0037,-0.6545 9.0084,-0.6814 9.0148,-0.7079 9.0231,-0.7340 9.0331,-0.7594 9.0448,-0.7840 9.0582,-0.8078 9.0732,-0.8307 9.0897,-0.8524 9.1077,-0.8730 9.1270,-0.8923 9.1476,-0.9103 9.1693,-0.9268 9.1922,-0.9418 9.2160,-0.9552 9.2406,-0.9669 9.2660,-0.9769 9.2921,-0.9852 9.3186,-0.9916 9.3455,-0.9963 9.3727,-0.9991 9.4000,-1.0000 20.6000,-1.0000 20.6273,-0.9991 20.6545,-0.9963 20.6814,-0.9916 20.7079,-0.9852 20.7340,-0.9769 20.7594,-0.9669 20.7840,-0.9552 20.8078,-0.9418 20.8307,-0.9268 20.8524,-0.9103 20.8730,-0.8923 20.8923,-0.8730 20.9103,-0.8524 20.9268,-0.8307 20.9418,-0.8078 20.9552,-0.7840 20.9669,-0.7594 20.9769,-0.7340 20.9852,-0.7079 20.9916,-0.6814 20.9963,-0.6545 20.9991,-0.6273 21.0000,-0.6000 21.0000,0.6000 20.9991,0.6273 20.9963,0.6545 20.9916,0.6814 20.9852,0.7079 20.9769,0.7340 20.9669,0.7594 20.9552,0.7840 20.9418,0.8078 20.9268,0.8307 20.9103,0.8524 20.8923,0.8730 20.8730,0.8923 20.8524,0.9103 20.8307,0.9268 20.8078,0.9418 20.7840,0.9552 20.7594,0.9669 20.7340,0.9769 20.7079,0.9852 20.6814,0.9916 20.6545,0.9963 20.6273,0.9991 20.6000,1.0000 9.4000,1.0000 9.3727,0.9991 9.3455,0.9963 9.3186,0.9916 9.2921,0.9852 9.2660,0.9769 9.2406,0.9669 9.2160,0.9552 9.1922,0.9418 9.1693,0.9268 9.1476,0.9103 9.1270,0.8923 9.1077,0.8730 9.0897,0.8524 9.0732,0.8307 9.0582,0.8078 9.0448,0.7840 9.0331,0.7594 9.0231,0.7340 9.0148,0.7079 9.0084,0.6814 9.0037,0.6545 9.0009,0.6273 9.0000,0.6000\" fill=\"#3e6373\"/>"
     },
     "centerPost": {
       "label": "Center post",
       "width": 10,
       "height": 10,
-      "source": "可調半徑的升降救球柱；指定 Rollover 線集滿後升起，依設定碰撞次數收回。",
       "markup": "<circle r=\"5\" fill=\"#263945\"/><circle r=\"3.3\" fill=\"none\"/><path d=\"M-2 0H2M0 -2V2\"/>"
     },
     "blockhole": {
       "label": "Blockhole（水渦中心）",
       "width": 12,
       "height": 12,
-      "source": "水渦專用捕球中心，不走一般 Hole 的進洞流程。",
       "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><path d=\"M-4 0a4 4 0 1 1 4 4a2.5 2.5 0 1 1 2.5-2.5a1 1 0 1 1-1-1\" fill=\"none\"/>"
     }
   }

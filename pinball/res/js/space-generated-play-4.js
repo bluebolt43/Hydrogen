@@ -644,17 +644,19 @@ class TouhouBossPresentation{
   this.elapsed+=dt;
   if(this.elapsed>=this.data.interval){this.elapsed%=this.data.interval;if(this.requestOrigin)this.requestOrigin(this.stage);else this.cast(this.stage);}
  }
- draw(ctx,theater){
-  for(const mask of [...this.previousMasks,this.mask])mask.canvas.hidden=!mask.active;
+ draw(ctx,theater,viewport=null){
+  const masks=[...this.previousMasks,this.mask];
+  for(const mask of masks){const hidden=!mask.active;if(mask.canvas.hidden!==hidden)mask.canvas.hidden=hidden;}
   if(!theater)return;
-  const r=ctx.canvas.getBoundingClientRect(),m=ctx.getTransform(),sy=r.height/ctx.canvas.height;
+  const r=viewport?.rect??ctx.canvas.getBoundingClientRect(),m=viewport?.transform??ctx.getTransform(),sy=r.height/ctx.canvas.height;
   const left=parseFloat(theater.frame.style.left),top=parseFloat(theater.frame.style.top),width=parseFloat(theater.frame.style.width),stageHeight=parseFloat(theater.frame.style.height),height=r.top+(m.d*469.5+m.f)*sy-top;
   if(!(width>0&&height>0))return;
   this.layout={height,stageHeight};
   const ball=this.game.balls.find(b=>b.state==='playing');
   if(ball?.p){const [x,y]=ball.p;this.target={x:(r.left+(m.a*x+m.c*y+m.e)*r.width/ctx.canvas.width-left)/width,y:(r.top+(m.b*x+m.d*y+m.f)*sy-top)/height};}
   const pixels=Math.round(360*height/width);
-  for(const mask of [...this.previousMasks,this.mask]){const c=mask.canvas;if(c.height!==pixels)c.height=pixels;Object.assign(c.style,{left:left+'px',top:top+'px',width:width+'px',height:height+'px'});}
+  const style={left:left+'px',top:top+'px',width:width+'px',height:height+'px'};
+  for(const mask of masks){const c=mask.canvas;if(c.height!==pixels)c.height=pixels;for(const key in style)if(c.style[key]!==style[key])c.style[key]=style[key];}
   if(this.origin)this.mask.origin=this.mapOrigin();
  }
 
@@ -764,8 +766,10 @@ class LayoutTheater{
   for(const [key,value] of Object.entries(position))if(this.frame.style[key]!==value)this.frame.style[key]=value;
   // Reveal the theater iframe beneath the table artwork.
   ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
-  if(this.customScore)return;
+  const viewport={rect:r,transform:m};
+  if(this.customScore)return viewport;
   ctx.save();ctx.fillStyle='#36251e';ctx.fillRect(0,top,360,scoreH);ctx.strokeStyle='#ba9456';ctx.lineWidth=1;ctx.strokeRect(1,top+1,358,scoreH-2);ctx.fillStyle='#ffe5a6';ctx.textAlign='left';ctx.font='bold 12px monospace';if(this.bossStage)this.drawAttackMessage(ctx,12,top+6,220,20,game.time);else ctx.fillText('SCORE '+String(game.score).padStart(12,'0'),12,top+20);ctx.textAlign='right';ctx.font='bold 10px monospace';ctx.fillText('BALL '+game.ballNumber+' / 3',348,top+20);ctx.restore();
+  return viewport;
  }
 }
 if(typeof module!=='undefined'&&module.exports)module.exports=LayoutTheater;else root.LayoutTheater=LayoutTheater;

@@ -5,7 +5,9 @@
 function signal(o,g,t){
  const id=t.source||o.bind;
  switch(t.kind){
+ case 'game-started':return {active:!!g.hasLaunchedOnce};
  case 'gap-launch':return {stamp:g.gapLaunchAt?.get(id)};
+ case 'hole-count':return {active:(g.holeCaptureCounts?.get(id)||0)>=(t.threshold||2)};
  case 'hole-active':return {active:!!g.armedHoles?.has(id)};
  case 'gap-count':return {active:id===g.g.gameplay?.touhouGap?.hole&&(g.gapLock?.count||0)>=(t.threshold||1)};
  case 'count':{const n=g.g.mechanisms.attackCounts[id];return {active:n-(g.attackRemaining.get(id)??n)>=(t.threshold||1),stamp:(t.threshold||1)===n&&(g.attackRemaining.get(id)??n)===n?g.attackCompletedAt.get(id):undefined};}
@@ -37,8 +39,8 @@ const api={signal};if(typeof module!=='undefined')module.exports=api;else root.A
 'use strict';
 const {signal}=typeof module!=='undefined'&&module.exports?require('./art-events.js'):root.ArtEvents;
 const games=new WeakMap();
-function offset(o,g){
- const a=o.animation;if(!g||!a?.enabled||a.effect!=='shake')return [0,0];
+function age(o,g){
+ const a=o.animation;if(!g||!a?.enabled)return Infinity;
  let cache=games.get(g);if(!cache||cache.epoch!==g.attackRemaining){cache={epoch:g.attackRemaining,items:new Map()};games.set(g,cache);}
  let v=cache.items.get(o);if(!v){v={start:-Infinity,stamp:-Infinity,active:[]};cache.items.set(o,v);}
  const inputs=[a.trigger||{},...(a.extraTriggers||[])].map(t=>signal(o,g,t));
@@ -46,12 +48,23 @@ function offset(o,g){
  if(stamp!==v.stamp){v.start=stamp;v.stamp=stamp;}
  if(inputs.some((input,i)=>input.active&&!v.active[i]))v.start=g.time;
  v.active=inputs.map(input=>!!input.active);
- const age=g.time-v.start,duration=a.duration??.75,amplitude=a.amplitude??2.5;
- if(age<0||age>=duration)return [0,0];
- const fade=Math.min(1,(duration-age)/.25);
- return [Math.sin(age*55)*amplitude*fade,Math.cos(age*47)*amplitude*.6*fade];
+ return g.time-v.start;
 }
-const api={offset};if(typeof module!=='undefined')module.exports=api;else root.ArtAnimation=api;
+function offset(o,g){
+ const a=o.animation;if(a?.effect!=='shake')return [0,0];
+ const elapsed=age(o,g),duration=a.duration??.75,amplitude=a.amplitude??2.5;
+ if(elapsed<0||elapsed>=duration)return [0,0];
+ const fade=Math.min(1,(duration-elapsed)/.25);
+ return [Math.sin(elapsed*55)*amplitude*fade,Math.cos(elapsed*47)*amplitude*.6*fade];
+}
+function flipScale(o,g){
+ const a=o.animation;if(a?.effect!=='flip')return 1;
+ const elapsed=age(o,g),duration=a.duration??1.5;
+ if(elapsed<0||elapsed>=duration)return 1;
+ const t=elapsed/duration,progress=1-(1-t)**2;
+ return Math.cos(progress*(a.turns??3)*Math.PI*2);
+}
+const api={offset,flipScale};if(typeof module!=='undefined')module.exports=api;else root.ArtAnimation=api;
 })(globalThis);
 
 /* Shared image-layer renderer. Coordinates use the layout's world units. */
@@ -64,10 +77,10 @@ function compactIndicator(o){
  if(!o.indicator)return o;
  const c={...o.indicator},t={...(c.trigger||{kind:'default'})},b={...(c.behavior||{mode:'keep'})};
  const triggers=[t,...(c.extraTriggers||[]).map(t=>({...t}))];
- for(const trigger of triggers){if(c.type==='bumper'||!['count','level','gap-count'].includes(trigger.kind))delete trigger.threshold;if(['default','multiball','enemy-active','enemy-idle'].includes(trigger.kind))delete trigger.source;}
+ for(const trigger of triggers){if(c.type==='bumper'||!['count','level','gap-count','hole-count'].includes(trigger.kind))delete trigger.threshold;if(['default','multiball','enemy-active','enemy-idle','game-started'].includes(trigger.kind))delete trigger.source;}
  c.trigger=t;
  if(c.type==='bumper'||triggers.length===1)delete c.extraTriggers;else c.extraTriggers=triggers.slice(1);
- if(!triggers.some(t=>['count','rollover','level','enemy-target'].includes(t.kind))){delete c.complete;delete c.completion;}
+ if(!triggers.some(t=>['count','rollover','kickback','level','enemy-target','hole-count'].includes(t.kind))){delete c.complete;delete c.completion;}
  if(c.completion){c.completion={...c.completion};if(c.completion.mode==='keep'){delete c.completion.onSeconds;delete c.completion.offSeconds;}else if(c.completion.mode==='once')delete c.completion.offSeconds;if(c.completion.mode!=='burst')delete c.completion.cycles;}
  if(c.type==='bumper'){delete c.off;delete c.on;delete c.behavior;delete c.fade;delete c.screenMask;}
  else{delete c.lv1;delete c.lv2;delete c.lv3;if(c.type==='binary')delete c.type;
@@ -82,6 +95,13 @@ function validateIndicator(c){
  if(!c||typeof c!=='object'||Array.isArray(c))throw Error('燈號設定不合法');
  if(c.keepLevelOnHit!==undefined&&typeof c.keepLevelOnHit!=='boolean')throw Error('Bumper 碰撞等級設定不合法');
  if(c.halo!==undefined&&typeof c.halo!=='boolean')throw Error('燈號光暈設定不合法');
+ if(c.attractState!==undefined&&(!['on','complete'].includes(c.attractState)||c.attractState==='complete'&&!c.complete))throw Error('跑馬燈亮燈狀態不合法');
+ if(c.glow){
+  if(c.glow.attractUseOff!==undefined&&typeof c.glow.attractUseOff!=='boolean')throw Error('跑馬燈底圖設定不合法');
+  for(const key of ['on','complete'])if(c.glow[key]!==undefined&&!/^#[0-9a-f]{6}$/i.test(c.glow[key]))throw Error('燈號發光顏色不合法');
+  for(const seconds of Object.values(c.glow.pulse||{}))if(!Number.isFinite(seconds)||seconds<=0)throw Error('燈號發光週期必須大於零');
+  if(c.glow.preview){const p=c.glow.preview;if(!p.trigger||!/^#[0-9a-f]{6}$/i.test(p.color)||!Number.isFinite(p.pulseSeconds)||p.pulseSeconds<=0)throw Error('燈號預覽設定不合法');validateIndicator({trigger:p.trigger});}
+ }
  if(c.impactFlash!==undefined&&typeof c.impactFlash!=='boolean')throw Error('命中／Combo 閃光設定不合法');
  const states=c.type==='bumper'?['lv1','lv2','lv3']:['off','on'];
  if(c.type!==undefined&&!['binary','bumper'].includes(c.type))throw Error('燈號類型不合法');
@@ -91,8 +111,9 @@ function validateIndicator(c){
  if(c.extraTriggers!==undefined&&(!Array.isArray(c.extraTriggers)||c.extraTriggers.length>7||c.extraTriggers.some(t=>!t)))throw Error('關聯組數需為 1～8');
  for(const t of [c.trigger,...(c.extraTriggers||[])])if(t){
   if(typeof t!=='object'||Array.isArray(t)||t.source!==undefined&&typeof t.source!=='string')throw Error('燈號關聯來源不合法');
-  if(!['default','gap-output','gap-launch','hole-active','gap-count','enemy-target','count','count-complete','hole-capture','hole-release','attack','multiball','rebound','sensor','rollover','enemy-active','enemy-idle','kickback','post','level','object-hidden','flipper','flag','target','layer-entry'].includes(t.kind))throw Error('燈號觸發條件不合法');
+  if(!['default','game-started','hole-count','gap-output','gap-launch','hole-active','gap-count','enemy-target','count','count-complete','hole-capture','hole-release','attack','multiball','rebound','sensor','rollover','enemy-active','enemy-idle','kickback','post','level','object-hidden','flipper','flag','target','layer-entry'].includes(t.kind))throw Error('燈號觸發條件不合法');
   if(t.threshold!==undefined&&(!Number.isInteger(t.threshold)||t.threshold<1||t.threshold>99))throw Error('燈號計數門檻不合法');
+  if(t.kind==='hole-count'&&t.threshold!==undefined&&t.threshold<2)throw Error('進洞三階段門檻至少 2 次');
  }
  for(const b of [c.behavior,c.completion,c.releaseBehavior])if(b){if(!['keep','once','repeat','burst'].includes(b.mode))throw Error('燈號播放方式不合法');for(const k of ['onSeconds','offSeconds'])if(b[k]!==undefined&&(!Number.isFinite(b[k])||b[k]<=0))throw Error('燈號時間必須大於零');if(b.cycles!==undefined&&(!Number.isInteger(b.cycles)||b.cycles<1||b.cycles>99))throw Error('閃爍次數需為 1～99');}
  if(c.fade)for(const k of ['inSeconds','outSeconds'])if(c.fade[k]!==undefined&&(!Number.isFinite(c.fade[k])||c.fade[k]<0))throw Error('淡入淡出時間不合法');
@@ -107,10 +128,12 @@ function validate(items){
   if(o.width<=0||o.height<=0||o.width>5000||o.height>5000||o.opacity<0||o.opacity>1||!planes.includes(o.plane))throw Error('圖片大小、透明度或圖層不合法');
   if(!Array.isArray(o.crop)||o.crop.length!==4||!o.crop.every(Number.isFinite)||o.crop[0]<0||o.crop[1]<0||o.crop[2]<=0||o.crop[3]<=0)throw Error('裁切範圍不合法');
   if(o.frameStride!==undefined&&(!Number.isFinite(o.frameStride)||o.frameStride<=0))throw Error('換圖間距必須大於 0');
+  if(o.blendMode!==undefined&&!['source-over','multiply'].includes(o.blendMode))throw Error('圖片混合模式不合法');
   if(o.indicator!==undefined)validateIndicator(o.indicator);
   if(o.animation!==undefined){
    const a=o.animation;
-   if(!a||a.effect!=='shake'||typeof a.enabled!=='boolean'||!Number.isFinite(a.duration)||a.duration<=0||!Number.isFinite(a.amplitude)||a.amplitude<0)throw Error('美術動畫設定不合法');
+   if(!a||!['shake','flip'].includes(a.effect)||typeof a.enabled!=='boolean'||!Number.isFinite(a.duration)||a.duration<=0||!Number.isFinite(a.amplitude)||a.amplitude<0)throw Error('美術動畫設定不合法');
+   if(a.effect==='flip'&&a.turns!==undefined&&(!Number.isInteger(a.turns)||a.turns<1||a.turns>20))throw Error('翻轉圈數需為 1～20');
    validateIndicator({trigger:a.trigger,extraTriggers:a.extraTriggers});
   }
   const count=o.frames??1;
@@ -121,21 +144,25 @@ function validate(items){
 class Renderer{
  constructor(base='',map=defaultMap()){this.map=map;this.base=base;this.cache=new Map();}
  image(src){if(!this.cache.has(src)){const img=new Image();if(src)img.src=src.startsWith('blob:')?src:this.base+src;this.cache.set(src,img);}return this.cache.get(src);}
+ imageKey(img){
+  this.imageKeys??=new WeakMap();const src=img.src;let key=this.imageKeys.get(img);
+  if(!key||key.src!==src){key={src,id:this.imageKeySerial=(this.imageKeySerial||0)+1};this.imageKeys.set(img,key);}
+  return key.id;
+ }
  // Gameplay opts in; editors retain original pixels. Cache only raster content,
  // so transforms, light state, opacity and animation still update every frame.
  drawRaster(ctx,img,sx,sy,sw,sh,width,height){
   if(!this.rasterCacheEnabled){ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);return;}
   const t=ctx.getTransform(),scale=Math.ceil(Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))*2)/2;
   const w=Math.max(1,Math.min(2048,Math.ceil(width*scale))),h=Math.max(1,Math.min(2048,Math.ceil(height*scale)));
-  const brightness=this.brightness??1,key=JSON.stringify([img.src,sx,sy,sw,sh,w,h,brightness]);
+  const brightness=this.brightness??1,key=JSON.stringify([this.imageKey(img),sx,sy,sw,sh,w,h,brightness]);
   this.rasters??=new Map();this.rasterPixels??=0;
   let entry=this.rasters.get(key);
-  if(entry&&entry.image!==img){this.rasterPixels-=entry.pixels;this.rasters.delete(key);entry=null;}
   if(!entry){
    const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
    const c=canvas.getContext('2d');c.drawImage(img,sx,sy,sw,sh,0,0,w,h);
    if(brightness<1){c.globalCompositeOperation='source-atop';c.fillStyle=`rgba(0,0,0,${1-brightness})`;c.fillRect(0,0,w,h);}
-   entry={image:img,canvas,pixels:w*h};
+   entry={canvas,pixels:w*h};
    // Bound prepared pixels to 64 MiB, including obsolete viewport sizes.
    while(this.rasterPixels+entry.pixels>16777216&&this.rasters.size){const oldest=this.rasters.keys().next().value;this.rasterPixels-=this.rasters.get(oldest).pixels;this.rasters.delete(oldest);}
    this.rasterPixels+=entry.pixels;
@@ -143,7 +170,48 @@ class Renderer{
   this.rasters.delete(key);this.rasters.set(key,entry);
   ctx.drawImage(entry.canvas,-width/2,-height/2,width,height);
  }
+ // Cache the colored silhouette and soft edge once, rather than filtering each frame.
+ drawGlow(ctx,img,sx,sy,sw,sh,width,height,glow){
+  this.glows??=new Map();
+  const t=ctx.getTransform(),scale=Math.max(2,Math.ceil(Math.hypot(t.a,t.b))),w=Math.ceil(width*scale),h=Math.ceil(height*scale),pad=Math.max(4,Math.ceil(scale*2));
+  const key=JSON.stringify([this.imageKey(img),sx,sy,sw,sh,w,h,glow.color]);let canvas=this.glows.get(key);
+  if(!canvas){
+   const mask=document.createElement('canvas');mask.width=w;mask.height=h;const m=mask.getContext('2d');
+   m.drawImage(img,sx,sy,sw,sh,0,0,w,h);m.globalCompositeOperation='source-in';m.fillStyle=glow.color;m.fillRect(0,0,w,h);
+   canvas=document.createElement('canvas');canvas.width=w+pad*2;canvas.height=h+pad*2;const c=canvas.getContext('2d');
+   c.shadowColor=glow.color;c.shadowBlur=pad*.7;c.globalAlpha=.7;c.drawImage(mask,pad,pad);c.shadowBlur=0;
+   c.globalCompositeOperation='destination-out';c.globalAlpha=1;c.drawImage(mask,pad,pad);
+   c.globalCompositeOperation='source-over';c.globalAlpha=.48;c.drawImage(mask,pad,pad);
+   if(this.glows.size>=128)this.glows.delete(this.glows.keys().next().value);this.glows.set(key,canvas);
+  }
+  ctx.save();ctx.globalAlpha*=glow.alpha;ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);ctx.restore();
+ }
+ // Reuse a static prefix; indicator/animated art stays live above it.
+ drawStaticCache(ctx,items,plane,game){
+  let count=0;
+  while(count<items.length){const a=items[count];if(a.plane!==plane||a.hidden||a.indicator||a.animation?.enabled||a.bind||a.frames>1||a.blendMode&&a.blendMode!=='source-over'||a.state&&a.state!=='static')break;count++;}
+  if(count<2)return false;
+  const batch=items.slice(0,count),images=batch.map(a=>this.image(a.src)),t=ctx.getTransform();
+  if(t.b||t.c||t.a<=0||t.d<=0||ctx.globalAlpha!==1||ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur>0||ctx.filter&&ctx.filter!=='none'||!images.every(i=>i.complete&&i.naturalWidth))return false;
+  this.staticCaches??=new Map();const slot=plane+':'+batch[0].id;
+  const key=JSON.stringify([t.a,t.d,this.brightness,ctx.imageSmoothingEnabled,ctx.imageSmoothingQuality,batch]);let cached=this.staticCaches.get(slot);
+  if(!cached||cached.key!==key||images.some((im,i)=>im!==cached.images[i])){
+   let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+   for(const a of batch){const angle=a.angle*Math.PI/180,c=Math.abs(Math.cos(angle)),s=Math.abs(Math.sin(angle)),w=(a.width*c+a.height*s)/2,h=(a.width*s+a.height*c)/2;x0=Math.min(x0,a.x-w);x1=Math.max(x1,a.x+w);y0=Math.min(y0,a.y-h);y1=Math.max(y1,a.y+h);}
+   const left=Math.floor(x0*t.a+t.e),top=Math.floor(y0*t.d+t.f),width=Math.ceil(x1*t.a+t.e)-left,height=Math.ceil(y1*t.d+t.f)-top;
+   if(width*height>4194304)return false;
+   const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+   const c=canvas.getContext('2d');c.setTransform(t.a,0,0,t.d,t.e-left,t.f-top);c.imageSmoothingEnabled=ctx.imageSmoothingEnabled;c.imageSmoothingQuality=ctx.imageSmoothingQuality;
+   this.buildingBackground=true;try{Renderer.prototype.draw.call(this,c,batch,plane,game);}finally{this.buildingBackground=false;}
+   this.staticCaches.delete(slot);
+   while([...this.staticCaches.values()].reduce((n,c)=>n+c.canvas.width*c.canvas.height,0)+width*height>4194304)this.staticCaches.delete(this.staticCaches.keys().next().value);
+   cached={key,images,canvas,left,top,e:t.e,f:t.f};this.staticCaches.set(slot,cached);
+  }else for(const a of batch)this.beforeDraw?.(ctx,a);
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(cached.canvas,cached.left+t.e-cached.e,cached.top+t.f-cached.f);ctx.restore();
+  Renderer.prototype.draw.call(this,ctx,items.slice(count),plane,game);return true;
+ }
  draw(ctx,items,plane,game=null){
+  if(!this.buildingBackground&&(this.backgroundCacheEnabled&&plane==='background'||this.staticCacheEnabled&&plane==='lower')&&this.drawStaticCache(ctx,items,plane,game))return;
   for(const o of items){if(o.state==='ball-layer'||o.plane!==plane||o.hidden)continue;
    this.beforeDraw?.(ctx,o);
    const targetId=game&&o.bind&&(game.targetGroups?.some(g=>g.targets.includes(o.bind))?o.bind:game.targetGroups?.some(g=>g.targets.includes(o.bind+'-1'))?o.bind+'-1':null);
@@ -156,6 +224,7 @@ class Renderer{
    const ready=(image,x,y)=>image.complete&&image.naturalWidth&&x+sw<=image.naturalWidth+.01&&y+sh<=image.naturalHeight+.01;
    if(!ready(baseImage,o.crop[0],o.crop[1])&&!ready(img,sx,sy))continue;
    ctx.save();ctx.globalAlpha*=o.opacity*targetAlpha*(state.alpha??1);
+   if(o.blendMode)ctx.globalCompositeOperation=o.blendMode;
    if(o.state==='guide-arrow'){const time=game?game.time:performance.now()/1000;ctx.globalAlpha*=.3+.7*(.5+.5*Math.cos(time*Math.PI*3));}
    const f=game&&game.flippers.find(f=>f.id===o.bind);
    if(f){ctx.translate(...f.pivot);ctx.rotate(f.angle-f.rest);ctx.translate(-f.pivot[0],-f.pivot[1]);}
@@ -190,6 +259,7 @@ class Renderer{
     ctx.translate(...center);ctx.rotate(Math.min(vortexAge,15)*Math.PI/3);ctx.translate(-center[0],-center[1]);
    }
    ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway);ctx.scale(o.flipX?-1:1,o.flipY?-1:1);
+   if(o.animation?.effect==='flip'){ctx.translate(0,-o.height/2);ctx.scale(1,animation().flipScale(o,game));ctx.translate(0,o.height/2);}
    if(o.indicator?.halo&&src===o.indicator.on){
     const radius=Math.min(o.width,o.height)*.75,glow=ctx.createRadialGradient(0,0,0,0,0,radius);
     glow.addColorStop(0,'rgba(255,219,155,0)');glow.addColorStop(.55,'rgba(255,219,155,0)');
@@ -199,6 +269,7 @@ class Renderer{
    // Keep the default image underneath every state/frame overlay.
    if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height);
    if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height);
+   if(state.glow?.alpha>0&&ready(img,sx,sy))this.drawGlow(ctx,img,sx,sy,sw,sh,o.width,o.height,state.glow);
    ctx.restore();
   }
  }
@@ -367,7 +438,11 @@ class Controller{
  reset(){this.count=0;this.phase='idle';this.winner=-1;this.phaseAt=this.clock;this.attackAge=Infinity;}
  event(type,data){
   if(type==='new-game'){this.multiplier=1;this.reset();}
-  if(type!=='configured-attack'||data.kind!=='lv1'||this.game.gameOver)return;
+  if(this.config.trigger==='circle-entry'||type!=='configured-attack'||data.kind!=='lv1'||this.game.gameOver)return;
+  this.progress();
+ }
+ progress(){
+  if(this.game.gameOver)return;
   if(this.phase==='settled'){this.phase='idle';this.winner=-1;}
   this.count++;this.game.emit('bagua-progress',{count:this.count,total:this.config.threshold});
   if(this.phase==='idle'||this.phase==='settled')this.start();
@@ -377,8 +452,9 @@ class Controller{
   this.count-=this.config.threshold;this.phase='spin';this.phaseAt=this.clock;this.winner=-1;
   this.available=this.availableRewards();
   this.target=this.pick();this.attackAge=0;
-  this.game.emit('configured-attack',{kind:'lv4',id:'touhou-bagua',position:[this.geometry.x,this.geometry.y]});
+  if(this.config.trigger!=='circle-entry')this.game.emit('configured-attack',{kind:'lv4',id:'touhou-bagua',position:[this.geometry.x,this.geometry.y]});
   this.game.emit('bagua-spin',{total:this.config.threshold});
+  if(this.config.spinSound)this.game.emit('sound',{name:'runic-spin'});
  }
  pick(){const random=Math.max(0,Math.min(.999999,(this.game.random||Math.random)()));return this.available[Math.floor(random*this.available.length)];}
  availableRewards(){
@@ -393,7 +469,10 @@ class Controller{
   if(r.kind==='score')g.scoreHit('touhou-bagua-reward',r.value,0);
   if(r.kind==='multiplier')this.multiplier=r.value;
   if(r.kind==='ball')for(let i=0;i<r.value;i++)g.awardExtraLife('bagua');
-  if(r.kind==='multi')g.awardGapMultiball(r.value);
+  if(r.kind==='multi'){
+   if(g.g.gameplay?.touhouGap)g.awardGapMultiball(r.value);
+   else for(let i=0,n=Math.min(r.value,Math.max(0,3-g.balls.filter(b=>b.state!=='drained').length-g.freeBallQueue));i<n;i++)g.awardMultiball([this.geometry.cx??this.geometry.x,this.geometry.cy??this.geometry.y],this.geometry.layer==='upper'?'tavern':this.geometry.layer||'lower');
+  }
   if(r.kind==='enemy'&&!g.enemyActive&&!g.enemyIntroPending){g.enemyActive=true;g.emit('enemy-spawn-requested',{group:'touhou-bagua'});}
   g.emit('bonus-awarded',{source:'touhou-bagua',position:this.winner+1,kind:r.kind,value:r.value,multiplier:this.multiplier});
  }
@@ -402,7 +481,7 @@ class Controller{
   this.clock+=dt;this.attackAge+=dt;const age=this.clock-this.phaseAt;
   if(this.phase==='spin'){
    this.available=this.availableRewards();
-   if(!this.available.includes(this.target))this.target=this.pick();
+   if(!this.available.includes(this.target))this.target=this.pick(true);
    if(age>=this.config.spinSeconds&&!this.game.theaterFrozen&&!this.game.enemyIntroPending){this.winner=this.target;this.phase='winflash';this.phaseAt=this.clock;this.reward();}
   }else if(this.phase==='winflash'&&age>=this.config.winFlashSeconds&&!this.game.theaterFrozen&&!this.game.enemyIntroPending){this.phase='settled';this.start();}
  }
@@ -449,8 +528,57 @@ class Controller{
   ctx.restore();
  }
 }
+// Same prize rules as bagua, with a passable circle and a flat stone presentation.
+const runePaths=['M0 -12 V12 M0 -3 L-9 -11 M0 -3 L9 -11','M-6 -12 V12 M-6 -10 L7 -2 L-6 5','M-6 -12 V12 M-6 -10 L7 -2 M-6 0 L7 10','M-7 -12 L7 12 M7 -12 L-7 12','M-6 12 V-12 L7 0 L-6 8','M-6 -12 V12 M6 -12 V12 M-6 -3 L6 3','M-7 -12 V12 M-7 -12 L8 -4 M-7 0 L5 6','M0 -12 V12 M0 -12 L-8 -3 M0 -12 L8 -3'];
+class RunicController extends Controller{
+ pick(replacement=false){
+  let random=Math.max(0,Math.min(.999999,(this.game.random||Math.random)())),reserved=0;
+  const rewards=this.config.rewards,common=this.available.filter(i=>rewards[i].probability===undefined);
+  // Fixed probabilities remain absolute when Boss or ball capacity excludes a prize.
+  // An invalidated result only falls back to common prizes, never rerolls rare ones.
+  if(!replacement)for(const i of this.available){const chance=rewards[i].probability;if(chance===undefined)continue;if(random<chance)return i;random-=chance;reserved+=chance;}
+  return common[Math.min(common.length-1,Math.floor(random/(1-reserved)*common.length))];
+ }
+ progress(){
+  if(this.phase==='spin'||this.phase==='winflash')return;
+  super.progress();
+ }
+ event(type,data){
+  super.event(type,data);
+  if(type==='drain'&&!this.game.storyMode&&!this.game.freeBallQueue&&this.game.balls.every(b=>b.state==='drained')){this.multiplier=1;this.reset();}
+ }
+ crossCircle(ball,previous,layer){
+  const o=this.geometry,countLayer=this.config.countLayer||o.layer,expected=countLayer==='upper'?'tavern':countLayer||'lower';
+  if(this.game.paused||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
+  const a=[previous[0]-o.cx,previous[1]-o.cy],v=[ball.p[0]-previous[0],ball.p[1]-previous[1]],r=o.r;
+  if(a[0]*a[0]+a[1]*a[1]<=r*r)return;
+  const length=v[0]*v[0]+v[1]*v[1];if(!length)return;
+  const t=Math.max(0,Math.min(1,-(a[0]*v[0]+a[1]*v[1])/length));
+  if((a[0]+t*v[0])**2+(a[1]+t*v[1])**2<r*r)this.progress();
+ }
+ draw(ctx,renderer){
+  const o=this.geometry,r=this.config.radius,age=Math.min(this.config.spinSeconds,this.clock-this.phaseAt),spin=this.phase==='spin';
+  // Rotation is evaluated from elapsed time; the central reward stays upright.
+  const elapsed=spin?age:this.phase==='idle'?0:this.config.spinSeconds;
+  const angle=(295*elapsed-125*elapsed*elapsed/this.config.spinSeconds)*Math.PI/180;
+  const bitmap=(art,size)=>{const im=renderer.image(art.src);if(!im.complete||!im.naturalWidth)return;const uv=art.uv||[0,0,1,1],w=im.naturalWidth,h=im.naturalHeight;ctx.drawImage(im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-size/2,-size/2,size,size);};
+  ctx.save();ctx.translate(o.cx,o.cy);ctx.scale(r/100,r/100);
+  ctx.save();ctx.rotate(angle);bitmap(this.config.rotorArt,136);
+  ctx.scale(.68,.68);ctx.lineCap='round';ctx.lineJoin='round';
+  const paths=this.runeShapes||(this.runeShapes=runePaths.map(d=>new Path2D(d)));
+  for(let i=0;i<8;i++){
+   const a=i*Math.PI/4-Math.PI/2;ctx.save();ctx.translate(65*Math.cos(a),65*Math.sin(a));ctx.rotate(i*Math.PI/4);
+   const lit=spin||i<this.count;ctx.lineWidth=4.5;ctx.strokeStyle=lit?'#9df7e6':'#302c24';ctx.stroke(paths[i]);ctx.restore();
+  }
+  ctx.beginPath();ctx.arc(0,0,29,0,Math.PI*2);ctx.lineWidth=1.3;ctx.strokeStyle='#514938';ctx.stroke();ctx.restore();
+  bitmap(this.config.ringArt,200);
+  if(this.winner>=0){ctx.save();ctx.globalAlpha*=this.visual().prizeOpacity;const art=this.config.rewards[this.winner].art,im=renderer.image(art.src);if(im.complete&&im.naturalWidth){const uv=art.uv,w=im.naturalWidth,h=im.naturalHeight,ratio=uv[2]*w/(uv[3]*h),dw=38*Math.min(1,ratio),dh=38*Math.min(1,1/ratio);ctx.drawImage(im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-dw/2,-dh/2,dw,dh);}ctx.restore();}
+  ctx.restore();
+ }
+}
 function createGame(Base){return class extends Base{
- constructor(g){super(g);if(g.gameplay?.touhouBagua)this.bonus=new Controller(this,g.gameplay.touhouBagua);}
+ constructor(g){super(g);if(g.gameplay?.touhouBagua||g.gameplay?.runicTurntable)this.bonus=new (g.gameplay.runicTurntable?RunicController:Controller)(this,g.gameplay.runicTurntable||g.gameplay.touhouBagua);}
+ afterBallStep(previous,layer,dt){super.afterBallStep?.(previous,layer,dt);this.bonus?.crossCircle?.(this.ball,previous,layer);}
  emit(type,data={}){const result=super.emit(type,data);this.bonus?.event(type,data);return result;}
  scoreHit(id,points,cooldown){return super.scoreHit(id,points*(this.bonus?.multiplier||1),cooldown);}
 };}
@@ -600,7 +728,7 @@ class Renderer extends Art.Renderer{
   if(e.type==='blocker-unlocked'&&e.id==='targetGroup-004'&&e.total>0&&e.count===e.total){this.launchAt=e.time;this.resetAt=null;}
   if(e.type==='blockers-reset'&&e.id==='targetGroup-004')this.resetAt=e.time;
  }
- draw(ctx,items,plane,game){for(const o of items){if(o.id===game?.bonus?.config.artId){if(!o.hidden&&o.plane===plane)game.bonus.draw(ctx,o,this);}else this.drawItems(ctx,[o],plane,game);}}
+ draw(ctx,items,plane,game){let batch=[];for(const o of items){if(o.id===game?.bonus?.config.artId){if(batch.length){this.drawItems(ctx,batch,plane,game);batch=[];}if(!o.hidden&&o.plane===plane)game.bonus.draw(ctx,o,this);}else batch.push(o);}if(batch.length)this.drawItems(ctx,batch,plane,game);}
  drawItems(ctx,items,plane,game){super.draw(ctx,game?items.map(o=>pose(missionArt(unlockArt(o,game),game),game.time,this.launchAt,this.resetAt)):items,plane,game);}
 }
 const api={Renderer,pose,unlockArt,missionArt};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.SteampunkArt=api;

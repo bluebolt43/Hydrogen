@@ -51,12 +51,14 @@ window.TheaterFrame.connect=function({stage,ready,reset,enemy,attack,state,bound
 TheaterFrame.heartSource=new URL('img/health-heart.svg',location.href).href;
 TheaterFrame.renderHealth=function(container,hp,previous=hp){
  const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ const balanceRows=count=>{const limit=Number(container.dataset.balancedRows);if(limit>0)container.style.setProperty('--heart-columns',Math.max(1,count>limit?Math.ceil(count/2):count));};
+ balanceRows(reduced?hp:previous);
  container.replaceChildren(...Array.from({length:reduced?hp:previous},(_,i)=>{
   const heart=document.createElement('img');heart.className='heart'+(i>=hp?' lost':'');heart.src=TheaterFrame.heartSource;heart.alt='';return heart;
  }));
  return Promise.all([...container.querySelectorAll('.lost')].map(async heart=>{
   await Promise.all(heart.getAnimations().map(a=>a.finished.catch(()=>{})));heart.remove();
- }));
+ })).then(()=>balanceRows(hp));
 };
 
 TheaterFrame.warning=function(stage){

@@ -30,6 +30,13 @@ class SoundBank {
   voice.token++;voice.audio.pause();voice.audio.currentTime=0;voice.audio.volume=clip.volume??1;
   Promise.resolve(voice.audio.play()).catch(()=>{});return true;
  }
+ // Keep a finite mechanism recording aligned to its animation, including resume.
+ sync(name,position,active){
+  const clip=this.clips.get(name);if(!clip)return;
+  const voice=clip.voices[0],audio=voice.audio;
+  if(!active||!this.enabled||this.paused||!this.unlocked){if(!audio.paused){voice.token++;audio.pause();}return;}
+  if(audio.paused||Math.abs(audio.currentTime-position)>.15){voice.token++;audio.currentTime=position;audio.volume=clip.volume??1;Promise.resolve(audio.play()).catch(()=>{});}
+ }
  playBeam(){
   const context=this.synthContext;if(!context||!this.enabled||this.paused||!this.unlocked)return false;
   const at=context.currentTime,oscillator=context.createOscillator(),gain=context.createGain(),filter=context.createBiquadFilter();

@@ -1,0 +1,5344 @@
+{
+  "theme": "norse",
+  "artLayers": [
+    {
+      "id": "art-044",
+      "src": "res/hd_img/saga/saga-table-background.png",
+      "runtimeSource": "res/img/saga/saga-table-background.png",
+      "x": 180,
+      "y": 239,
+      "width": 420,
+      "height": 496,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1680,
+        1984
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-007",
+      "src": "res/hd_img/saga/saga-table-frame.png",
+      "x": 180,
+      "y": 241,
+      "width": 360,
+      "height": 480,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1440,
+        1920
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-table-frame.png"
+    },
+    {
+      "id": "art-040",
+      "src": "res/hd_img/saga/saga-world-tree-background.png",
+      "runtimeSource": "res/img/saga/saga-world-tree-background.png",
+      "x": 169,
+      "y": 87,
+      "width": 270,
+      "height": 174,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "background",
+      "state": "static",
+      "bind": "",
+      "frames": 1,
+      "frameAxis": "x"
+    },
+    {
+      "id": "art-011",
+      "src": "res/hd_img/saga/saga-catapult-ready.png",
+      "x": 39,
+      "y": 440,
+      "width": 34,
+      "height": 34,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-catapult-ready.png",
+        "on": "res/hd_img/saga/saga-catapult-fired.png",
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-1107"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/saga/saga-catapult-ready.png",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.5,
+        "amplitude": 1.3,
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-1107"
+        }
+      }
+    },
+    {
+      "id": "art-012",
+      "src": "res/hd_img/saga/saga-catapult-ready.png",
+      "x": 300,
+      "y": 440,
+      "width": 34,
+      "height": 34,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-catapult-ready.png",
+        "on": "res/hd_img/saga/saga-catapult-fired.png",
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-1106"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/saga/saga-catapult-ready.png",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.5,
+        "amplitude": 1.3,
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-1106"
+        }
+      }
+    },
+    {
+      "id": "art-013",
+      "src": "res/hd_img/saga/saga-rescue-gate.png",
+      "x": 37,
+      "y": 425,
+      "width": 26,
+      "height": 6,
+      "angle": 35.5377,
+      "opacity": 1,
+      "crop": [
+        173,
+        149,
+        1829,
+        414
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "oneway-021",
+      "runtimeSource": "res/img/saga/saga-rescue-gate.png"
+    },
+    {
+      "id": "art-014",
+      "src": "res/hd_img/saga/saga-rescue-gate.png",
+      "x": 301,
+      "y": 425,
+      "width": 22,
+      "height": 5,
+      "angle": -31.866,
+      "opacity": 1,
+      "crop": [
+        173,
+        149,
+        1829,
+        414
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "oneway-022",
+      "runtimeSource": "res/img/saga/saga-rescue-gate.png"
+    },
+    {
+      "id": "art-016",
+      "src": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
+      "x": 310,
+      "y": 223,
+      "width": 48,
+      "height": 108,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        192,
+        432
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
+        "on": "res/hd_img/saga/saga-ground-spikes-right-retracted.png",
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-003"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "defaultState": "off"
+      },
+      "runtimeSource": "res/img/saga/saga-ground-spikes-right-raised.png"
+    },
+    {
+      "id": "art-015",
+      "src": "res/hd_img/saga/saga-ground-spikes-left-raised.png",
+      "x": 37,
+      "y": 203,
+      "width": 27,
+      "height": 45,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        108,
+        180
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-ground-spikes-left-raised.png",
+        "on": "res/hd_img/saga/saga-ground-spikes-left-retracted.png",
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-004"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "defaultState": "off"
+      },
+      "runtimeSource": "res/img/saga/saga-ground-spikes-left-raised.png"
+    },
+    {
+      "id": "art-017",
+      "src": "res/hd_img/saga/saga-slingshot-left-off.png",
+      "x": 112,
+      "y": 370,
+      "width": 30,
+      "height": 62,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        2048
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-slingshot-left-off.png",
+        "on": "res/hd_img/saga/saga-slingshot-left-on.png",
+        "trigger": {
+          "kind": "rebound",
+          "source": "line-1103"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.18
+        },
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/saga/saga-slingshot-left-off.png"
+    },
+    {
+      "id": "art-018",
+      "src": "res/hd_img/saga/saga-slingshot-right-off.png",
+      "x": 253,
+      "y": 369,
+      "width": 31,
+      "height": 64,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        2048
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-slingshot-right-off.png",
+        "on": "res/hd_img/saga/saga-slingshot-right-on.png",
+        "trigger": {
+          "kind": "rebound",
+          "source": "line-1104"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.18
+        },
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/saga/saga-slingshot-right-off.png"
+    },
+    {
+      "id": "art-019",
+      "src": "res/hd_img/saga/saga-bumper-level-1.png",
+      "x": 270,
+      "y": 90,
+      "width": 26,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/saga/saga-bumper-level-1.png",
+        "lv2": "res/hd_img/saga/saga-bumper-level-2.png",
+        "lv3": "res/hd_img/saga/saga-bumper-level-3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-016"
+        },
+        "impactFlash": true
+      },
+      "runtimeSource": "res/img/saga/saga-bumper-level-1.png"
+    },
+    {
+      "id": "art-020",
+      "src": "res/hd_img/saga/saga-bumper-level-1.png",
+      "x": 196,
+      "y": 83,
+      "width": 26,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/saga/saga-bumper-level-1.png",
+        "lv2": "res/hd_img/saga/saga-bumper-level-2.png",
+        "lv3": "res/hd_img/saga/saga-bumper-level-3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-017"
+        },
+        "impactFlash": true
+      },
+      "runtimeSource": "res/img/saga/saga-bumper-level-1.png"
+    },
+    {
+      "id": "art-021",
+      "src": "res/hd_img/saga/saga-bumper-level-1.png",
+      "x": 231,
+      "y": 144,
+      "width": 26,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/saga/saga-bumper-level-1.png",
+        "lv2": "res/hd_img/saga/saga-bumper-level-2.png",
+        "lv3": "res/hd_img/saga/saga-bumper-level-3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-018"
+        },
+        "impactFlash": true
+      },
+      "runtimeSource": "res/img/saga/saga-bumper-level-1.png"
+    },
+    {
+      "id": "art-022",
+      "src": "res/hd_img/saga/saga-flipper.png",
+      "x": 217,
+      "y": 449,
+      "width": 51,
+      "height": 11,
+      "angle": -209.3,
+      "opacity": 1,
+      "crop": [
+        82,
+        253,
+        1818,
+        293
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "flipper",
+      "bind": "flipper-005",
+      "runtimeSource": "res/img/saga/saga-flipper.png"
+    },
+    {
+      "id": "art-023",
+      "src": "res/hd_img/saga/saga-flipper.png",
+      "x": 141,
+      "y": 449,
+      "width": 51,
+      "height": 11,
+      "angle": 29.3,
+      "opacity": 1,
+      "crop": [
+        82,
+        253,
+        1818,
+        293
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "flipper",
+      "bind": "flipper-006",
+      "runtimeSource": "res/img/saga/saga-flipper.png"
+    },
+    {
+      "id": "art-024",
+      "src": "res/hd_img/saga/saga-center-post.png",
+      "x": 179,
+      "y": 465,
+      "width": 14,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        367,
+        235,
+        520,
+        794
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "center-post",
+      "bind": "centerPost-002",
+      "runtimeSource": "res/img/saga/saga-center-post.png"
+    },
+    {
+      "id": "art-025",
+      "src": "res/hd_img/saga/saga-plunger.png",
+      "x": 322,
+      "y": 419,
+      "width": 14,
+      "height": 130,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        425,
+        10,
+        98,
+        1556
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "plunger",
+      "bind": "plunger",
+      "layoutBind": "plunger-002",
+      "layoutAnchor": [
+        321.72,
+        378.762
+      ],
+      "runtimeSource": "res/img/saga/saga-plunger.png",
+      "flipY": false
+    },
+    {
+      "id": "art-026",
+      "src": "res/hd_img/saga/saga-item-shop.png",
+      "x": 157,
+      "y": 146,
+      "width": 16,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        26,
+        23,
+        1246,
+        1169
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-item-shop.png",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.65,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "target",
+          "source": "target-004"
+        }
+      }
+    },
+    {
+      "id": "art-027",
+      "src": "res/hd_img/saga/saga-inn.png",
+      "x": 113,
+      "y": 155,
+      "width": 16,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        67,
+        27,
+        1226,
+        1140
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-inn.png",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.65,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "target",
+          "source": "target-005"
+        }
+      }
+    },
+    {
+      "id": "art-028",
+      "src": "res/hd_img/saga/saga-quest-house.png",
+      "x": 74,
+      "y": 260,
+      "width": 16,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        52,
+        76,
+        1234,
+        1067
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-quest-house.png",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.65,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "target",
+          "source": "target-006"
+        }
+      }
+    },
+    {
+      "id": "art-029",
+      "src": "res/hd_img/saga/saga-dwarf-workshop.png",
+      "x": 129,
+      "y": 100,
+      "width": 30,
+      "height": 28,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        158,
+        40,
+        1126,
+        1049
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "hole-005",
+      "runtimeSource": "res/img/saga/saga-dwarf-workshop.png",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": "hole-005"
+        }
+      }
+    },
+    {
+      "id": "art-030",
+      "src": "res/hd_img/saga/saga-shield-off.png",
+      "x": 207,
+      "y": 163,
+      "width": 12,
+      "height": 12,
+      "angle": 21.953,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-shield-off.png",
+        "on": "res/hd_img/saga/saga-shield-on.png",
+        "trigger": {
+          "kind": "game-started"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "defaultState": "off"
+      },
+      "runtimeSource": "res/img/saga/saga-shield-off.png",
+      "bind": "targets-001-1"
+    },
+    {
+      "id": "art-031",
+      "src": "res/hd_img/saga/saga-shield-off.png",
+      "x": 221,
+      "y": 169,
+      "width": 12,
+      "height": 12,
+      "angle": 21.953,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-shield-off.png",
+        "on": "res/hd_img/saga/saga-shield-on.png",
+        "trigger": {
+          "kind": "game-started"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "defaultState": "off"
+      },
+      "runtimeSource": "res/img/saga/saga-shield-off.png",
+      "bind": "targets-001-2"
+    },
+    {
+      "id": "art-032",
+      "src": "res/hd_img/saga/saga-shield-off.png",
+      "x": 235,
+      "y": 175,
+      "width": 12,
+      "height": 12,
+      "angle": 21.953,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-shield-off.png",
+        "on": "res/hd_img/saga/saga-shield-on.png",
+        "trigger": {
+          "kind": "game-started"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "defaultState": "off"
+      },
+      "runtimeSource": "res/img/saga/saga-shield-off.png",
+      "bind": "targets-001-3"
+    },
+    {
+      "id": "art-033",
+      "src": "res/hd_img/saga/saga-middle-rainbow-ramp.png",
+      "x": 238,
+      "y": 93,
+      "width": 114,
+      "height": 188,
+      "angle": 0,
+      "opacity": 0.7,
+      "crop": [
+        40,
+        24,
+        904,
+        1518
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-middle-rainbow-ramp.png"
+    },
+    {
+      "id": "art-034",
+      "src": "res/hd_img/saga/saga-palace.png",
+      "x": 312,
+      "y": 13,
+      "width": 94,
+      "height": 61,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        3,
+        1294,
+        1196
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-palace.png"
+    },
+    {
+      "id": "art-037",
+      "src": "res/hd_img/saga/saga-upper-left-vine-rail.png",
+      "x": 38,
+      "y": 217,
+      "width": 72,
+      "height": 259,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        60,
+        47,
+        629,
+        2083
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-upper-left-vine-rail.png"
+    },
+    {
+      "id": "art-038",
+      "src": "res/hd_img/saga/saga-upper-right-vine-rail.png",
+      "x": 267,
+      "y": 206,
+      "width": 176,
+      "height": 305,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        35,
+        81,
+        911,
+        1478
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-upper-right-vine-rail.png"
+    },
+    {
+      "id": "art-039",
+      "src": "res/hd_img/saga/saga-upper-left-cloud.png",
+      "x": 57,
+      "y": 89,
+      "width": 105,
+      "height": 168,
+      "angle": 0,
+      "opacity": 0.65,
+      "crop": [
+        63,
+        97,
+        889,
+        1391
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-upper-left-cloud.png"
+    },
+    {
+      "id": "art-041",
+      "src": "res/hd_img/saga/saga-flag-panel.png",
+      "x": 89,
+      "y": 158,
+      "width": 23,
+      "height": 17,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        105,
+        140,
+        913,
+        1126
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/saga/saga-flag-panel.png",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "flip",
+        "turns": 3,
+        "duration": 1.5,
+        "amplitude": 0,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-001"
+        }
+      }
+    },
+    {
+      "id": "art-035",
+      "src": "res/hd_img/saga/saga-flag-frame.png",
+      "x": 89,
+      "y": 157,
+      "width": 36,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        107,
+        110,
+        1114,
+        977
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/saga/saga-flag-frame.png",
+      "bind": ""
+    },
+    {
+      "id": "art-042",
+      "src": "res/hd_img/saga/saga-flag-panel.png",
+      "x": 259,
+      "y": 177,
+      "width": 21,
+      "height": 17,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        105,
+        140,
+        913,
+        1126
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/saga/saga-flag-panel.png",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "flip",
+        "turns": 3,
+        "duration": 1.5,
+        "amplitude": 0,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-002"
+        }
+      }
+    },
+    {
+      "id": "art-036",
+      "src": "res/hd_img/saga/saga-flag-frame.png",
+      "x": 259,
+      "y": 176,
+      "width": 33,
+      "height": 21,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        107,
+        110,
+        1114,
+        977
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/saga/saga-flag-frame.png",
+      "bind": ""
+    },
+    {
+      "id": "art-004",
+      "src": "res/hd_img/plunger-collar.png",
+      "x": 323,
+      "y": 413,
+      "width": 50,
+      "height": 38,
+      "angle": 0,
+      "opacity": 0,
+      "crop": [
+        0,
+        0,
+        56,
+        42
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "layoutBind": "plunger-002",
+      "layoutAnchor": [
+        321.72,
+        378.762
+      ],
+      "runtimeSource": "res/img/plunger-collar.png"
+    },
+    {
+      "id": "art-046",
+      "src": "res/hd_img/saga/saga-deer-idle.png",
+      "x": 39,
+      "y": 385,
+      "width": 20,
+      "height": 19,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        403,
+        384
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-deer-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-deer-idle.png",
+        "on": "res/hd_img/saga/saga-deer-idle.png",
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-1107"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/saga/saga-deer-action.png",
+        "completion": {
+          "mode": "once",
+          "onSeconds": 1.2
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "complete": "#ffd05a",
+          "pulse": {
+            "complete": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-047",
+      "src": "res/hd_img/saga/saga-deer-idle.png",
+      "x": 298,
+      "y": 385,
+      "width": 20,
+      "height": 19,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        403,
+        384
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "runtimeSource": "res/img/saga/saga-deer-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-deer-idle.png",
+        "on": "res/hd_img/saga/saga-deer-idle.png",
+        "trigger": {
+          "kind": "kickback",
+          "source": "line-1106"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/saga/saga-deer-action.png",
+        "completion": {
+          "mode": "once",
+          "onSeconds": 1.2
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "complete": "#ffd05a",
+          "pulse": {
+            "complete": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-045",
+      "src": "res/hd_img/saga/saga-boar-idle.png",
+      "x": 116,
+      "y": 171,
+      "width": 19,
+      "height": 16,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        466,
+        386
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "runtimeSource": "res/img/saga/saga-boar-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-boar-idle.png",
+        "on": "res/hd_img/saga/saga-boar-action.png",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          },
+          "attractUseOff": true
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-055",
+      "src": "res/hd_img/saga/saga-boar-idle.png",
+      "x": 158,
+      "y": 162,
+      "width": 19,
+      "height": 16,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        466,
+        386
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "runtimeSource": "res/img/saga/saga-boar-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-boar-idle.png",
+        "on": "res/hd_img/saga/saga-boar-action.png",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          },
+          "attractUseOff": true
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-048",
+      "src": "res/hd_img/saga/saga-boar-idle.png",
+      "x": 89,
+      "y": 275,
+      "width": 19,
+      "height": 16,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        466,
+        386
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "runtimeSource": "res/img/saga/saga-boar-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-boar-idle.png",
+        "on": "res/hd_img/saga/saga-boar-action.png",
+        "trigger": {
+          "kind": "enemy-idle"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          },
+          "attractUseOff": true
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-050",
+      "src": "res/hd_img/saga/saga-eagle-idle.png",
+      "x": 19,
+      "y": 83,
+      "width": 25,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        430,
+        379
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-eagle-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-eagle-idle.png",
+        "on": "res/hd_img/saga/saga-eagle-action.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          }
+        },
+        "impactFlash": false,
+        "group": "saga-animals"
+      },
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-002"
+        }
+      }
+    },
+    {
+      "id": "art-051",
+      "src": "res/hd_img/saga/saga-eagle-idle.png",
+      "x": 197,
+      "y": 53,
+      "width": 25,
+      "height": 22,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        430,
+        379
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-eagle-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-eagle-idle.png",
+        "on": "res/hd_img/saga/saga-eagle-action.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          }
+        },
+        "impactFlash": false,
+        "group": "saga-animals"
+      },
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-001"
+        }
+      }
+    },
+    {
+      "id": "art-054",
+      "src": "res/hd_img/saga/saga-goat-idle.png",
+      "x": 63,
+      "y": 366,
+      "width": 23,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        461,
+        394
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-goat-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-goat-idle.png",
+        "on": "res/hd_img/saga/saga-goat-idle.png",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-007"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/saga/saga-goat-action.png",
+        "completion": {
+          "mode": "once",
+          "onSeconds": 1.2
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "complete": "#ffd05a",
+          "pulse": {
+            "complete": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-056",
+      "src": "res/hd_img/saga/saga-goat-idle.png",
+      "x": 86,
+      "y": 366,
+      "width": 23,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        461,
+        394
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-goat-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-goat-idle.png",
+        "on": "res/hd_img/saga/saga-goat-idle.png",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-008"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/saga/saga-goat-action.png",
+        "completion": {
+          "mode": "once",
+          "onSeconds": 1.2
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "complete": "#ffd05a",
+          "pulse": {
+            "complete": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-057",
+      "src": "res/hd_img/saga/saga-goat-idle.png",
+      "x": 276,
+      "y": 368,
+      "width": 23,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        461,
+        394
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "runtimeSource": "res/img/saga/saga-goat-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-goat-idle.png",
+        "on": "res/hd_img/saga/saga-goat-idle.png",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-006"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/saga/saga-goat-action.png",
+        "completion": {
+          "mode": "once",
+          "onSeconds": 1.2
+        },
+        "glow": {
+          "on": "#ffd05a",
+          "complete": "#ffd05a",
+          "pulse": {
+            "complete": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-052",
+      "src": "res/hd_img/saga/saga-wolf-idle.png",
+      "x": 225,
+      "y": 51,
+      "width": 24,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        458,
+        385
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": false,
+      "runtimeSource": "res/img/saga/saga-wolf-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-wolf-idle.png",
+        "on": "res/hd_img/saga/saga-wolf-idle.png",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-001"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#62caff",
+          "preview": {
+            "trigger": {
+              "kind": "enemy-active"
+            },
+            "color": "#ffd05a",
+            "pulseSeconds": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-053",
+      "src": "res/hd_img/saga/saga-wolf-idle.png",
+      "x": 255,
+      "y": 51,
+      "width": 24,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        458,
+        385
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "runtimeSource": "res/img/saga/saga-wolf-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-wolf-idle.png",
+        "on": "res/hd_img/saga/saga-wolf-idle.png",
+        "trigger": {
+          "kind": "rollover",
+          "source": "rollover-002"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#62caff",
+          "preview": {
+            "trigger": {
+              "kind": "enemy-active"
+            },
+            "color": "#ffd05a",
+            "pulseSeconds": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-058",
+      "src": "res/hd_img/saga/saga-wolf-idle.png",
+      "x": 81,
+      "y": 176,
+      "width": 24,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        458,
+        385
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": false,
+      "runtimeSource": "res/img/saga/saga-wolf-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-wolf-idle.png",
+        "on": "res/hd_img/saga/saga-wolf-action.png",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-059",
+      "src": "res/hd_img/saga/saga-wolf-idle.png",
+      "x": 251,
+      "y": 197,
+      "width": 24,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        458,
+        385
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": false,
+      "runtimeSource": "res/img/saga/saga-wolf-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-wolf-idle.png",
+        "on": "res/hd_img/saga/saga-wolf-action.png",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    },
+    {
+      "id": "art-061",
+      "src": "res/hd_img/saga/saga-bumper-level-1.png",
+      "x": 189,
+      "y": 108,
+      "width": 13,
+      "height": 13,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-bumper-level-1.png"
+    },
+    {
+      "id": "art-062",
+      "src": "res/hd_img/saga/saga-bumper-level-1.png",
+      "x": 287,
+      "y": 279,
+      "width": 13,
+      "height": 13,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/saga/saga-bumper-level-1.png"
+    },
+    {
+      "id": "art-063",
+      "src": "res/hd_img/saga/saga-thor-hammer.png",
+      "x": 17,
+      "y": 12,
+      "width": 63,
+      "height": 65,
+      "angle": 30.544202152232934,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1217,
+        1293
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.2,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-002"
+        }
+      },
+      "runtimeSource": "res/img/saga/saga-thor-hammer.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-thor-hammer.png",
+        "on": "res/hd_img/saga/saga-thor-hammer-glowing.png",
+        "complete": "res/hd_img/saga/saga-thor-hammer-lightning.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "count",
+          "source": "sensor-002",
+          "threshold": 1
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "completion": {
+          "mode": "once",
+          "onSeconds": 1.2
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-064",
+      "src": "res/hd_img/saga/saga-gold-spoon.png",
+      "x": 22,
+      "y": 468,
+      "width": 69,
+      "height": 106,
+      "angle": 9.043877325475123,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": true,
+      "flipY": false,
+      "runtimeSource": "res/img/saga/saga-gold-spoon.png"
+    },
+    {
+      "id": "art-065",
+      "src": "",
+      "needsAsset": true,
+      "state": "ball-layer",
+      "plane": "lower",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "frames": 1,
+      "frameAxis": "x",
+      "bind": ""
+    },
+    {
+      "id": "art-069",
+      "src": "res/hd_img/saga/saga-world-tree-mask.png",
+      "runtimeSource": "res/img/saga/saga-world-tree-mask.png",
+      "x": 169,
+      "y": 87,
+      "width": 270,
+      "height": 174,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "lower",
+      "state": "static",
+      "bind": "",
+      "frames": 1,
+      "frameAxis": "x"
+    },
+    {
+      "id": "art-060",
+      "src": "res/hd_img/saga/saga-raven-nest-progress-0.png",
+      "x": 162,
+      "y": 64,
+      "width": 36,
+      "height": 36,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-raven-nest-progress-0.png",
+        "on": "res/hd_img/saga/saga-raven-nest-progress-1.png",
+        "complete": "res/hd_img/saga/saga-raven-nest-progress-2.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "hole-count",
+          "source": "hole-006",
+          "threshold": 2
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "group": "saga-animals",
+        "attractState": "complete"
+      },
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 1.8,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": "hole-006"
+        }
+      },
+      "runtimeSource": "res/img/saga/saga-raven-nest-progress-0.png"
+    },
+    {
+      "id": "art-066",
+      "src": "",
+      "needsAsset": true,
+      "state": "ball-layer",
+      "plane": "upper",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "frames": 1,
+      "frameAxis": "x",
+      "bind": ""
+    },
+    {
+      "id": "art-067",
+      "src": "",
+      "needsAsset": true,
+      "state": "ball-layer",
+      "plane": "top",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "frames": 1,
+      "frameAxis": "x",
+      "bind": ""
+    },
+    {
+      "id": "art-068",
+      "src": "res/hd_img/saga/saga-wolf-idle.png",
+      "x": 137,
+      "y": 156,
+      "width": 24,
+      "height": 20,
+      "angle": 0,
+      "opacity": 0.8,
+      "crop": [
+        0,
+        0,
+        458,
+        385
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "flipX": false,
+      "runtimeSource": "res/img/saga/saga-wolf-idle.png",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-wolf-idle.png",
+        "on": "res/hd_img/saga/saga-wolf-action.png",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "glow": {
+          "on": "#ffd05a",
+          "pulse": {
+            "on": 2
+          }
+        },
+        "group": "saga-animals"
+      }
+    }
+  ],
+  "gameplay": {
+    "ballImage": "res/hd_img/saga/saga-ball.png",
+    "ballEffects": false,
+    "runicTurntable": {
+      "object": "circle-028",
+      "radius": 64.408,
+      "threshold": 8,
+      "spinSeconds": 4.5,
+      "winFlashSeconds": 1.2,
+      "yinYang": {
+        "fadeSeconds": 0.8
+      },
+      "ringArt": {
+        "src": "res/hd_img/saga/saga-turntable-ring.png",
+        "uv": [
+          0.03907496012759171,
+          0.028708133971291867,
+          0.9218500797448166,
+          0.9274322169059012
+        ]
+      },
+      "rotorArt": {
+        "src": "res/hd_img/saga/saga-turntable-rotor.png",
+        "uv": [
+          0.06501547987616099,
+          0.031198686371100164,
+          0.8699690402476781,
+          0.9252873563218391
+        ]
+      },
+      "rewards": [
+        {
+          "kind": "score",
+          "value": 1000,
+          "art": {
+            "src": "res/hd_img/saga/saga-runic-reward-score-1000.png",
+            "uv": [
+              0.08286358511837655,
+              0.1995490417136415,
+              0.8416009019165727,
+              0.6031567080045096
+            ]
+          }
+        },
+        {
+          "kind": "score",
+          "value": 2500,
+          "art": {
+            "src": "res/hd_img/saga/saga-runic-reward-score-2500.png",
+            "uv": [
+              0.04114994363021421,
+              0.18602029312288612,
+              0.9250281848928974,
+              0.6437429537767756
+            ]
+          }
+        },
+        {
+          "kind": "score",
+          "value": 5000,
+          "art": {
+            "src": "res/hd_img/saga/saga-runic-reward-score-5000.png",
+            "uv": [
+              0.0496054114994363,
+              0.19616685456595265,
+              0.9047350620067643,
+              0.6054114994363021
+            ]
+          }
+        },
+        {
+          "kind": "multiplier",
+          "value": 2,
+          "art": {
+            "src": "res/hd_img/saga/saga-runic-reward-multiplier-2.png",
+            "uv": [
+              0.091796875,
+              0.1328125,
+              0.8255208333333334,
+              0.705078125
+            ]
+          }
+        },
+        {
+          "kind": "multiplier",
+          "value": 3,
+          "art": {
+            "src": "res/hd_img/saga/saga-runic-reward-multiplier-3.png",
+            "uv": [
+              0.10546875,
+              0.1474609375,
+              0.7981770833333334,
+              0.7236328125
+            ]
+          }
+        },
+        {
+          "kind": "ball",
+          "value": 1,
+          "art": {
+            "src": "res/hd_img/saga/saga-reward-extra-life.png",
+            "uv": [
+              0.05502392344497608,
+              0.2886762360446571,
+              0.8835725677830941,
+              0.44577352472089316
+            ]
+          },
+          "probability": 0.05
+        },
+        {
+          "kind": "multi",
+          "value": 2,
+          "art": {
+            "src": "res/hd_img/saga/saga-reward-multiball.png",
+            "uv": [
+              0.07496012759170653,
+              0.08373205741626795,
+              0.8564593301435407,
+              0.8189792663476874
+            ]
+          },
+          "probability": 0.05
+        },
+        {
+          "kind": "enemy",
+          "value": 0,
+          "art": {
+            "src": "res/hd_img/saga/saga-runic-reward-enemy.png",
+            "uv": [
+              0.07097288676236045,
+              0.049441786283891544,
+              0.8580542264752791,
+              0.9066985645933014
+            ]
+          }
+        }
+      ],
+      "spinSound": "res/audio/saga/saga-turntable-spin.ogg",
+      "trigger": "circle-entry",
+      "countLayer": "lower",
+      "displayPlane": "background"
+    },
+    "comboHud": {
+      "color": "#ffdf70",
+      "outline": "#4b3925",
+      "barColor": "#efbf46",
+      "barHeight": 1
+    },
+    "ballOutline": false
+  },
+  "screenLayout": {
+    "width": 360,
+    "height": 640,
+    "theaterHeight": 170.5,
+    "playfieldHeight": 469.5,
+    "top": -170.5,
+    "bottom": 469.5
+  },
+  "format": "pinball-layout-editor",
+  "version": 6,
+  "canvas": {
+    "width": 360,
+    "height": 469.5,
+    "upperLimit": 469.5
+  },
+  "objects": [
+    {
+      "id": "line-037",
+      "type": "line",
+      "layer": "lower",
+      "x1": 117.264,
+      "y1": 95.96700000000001,
+      "x2": 119,
+      "y2": 161
+    },
+    {
+      "id": "line-281",
+      "type": "line",
+      "layer": "lower",
+      "x1": 72,
+      "y1": 169,
+      "x2": 69,
+      "y2": 105
+    },
+    {
+      "id": "line-285",
+      "type": "line",
+      "layer": "lower",
+      "x1": 138,
+      "y1": 95,
+      "x2": 152,
+      "y2": 155
+    },
+    {
+      "id": "hole-005",
+      "type": "hole",
+      "layer": "lower",
+      "x": 128.882,
+      "y": 110.74700000000001,
+      "angle": 0,
+      "releaseMode": "fixed",
+      "releaseAngle": 90,
+      "attractionRadius": 10,
+      "attack": "lv1"
+    },
+    {
+      "id": "target-004",
+      "type": "target",
+      "layer": "lower",
+      "x": 156.775,
+      "y": 154.135,
+      "angle": -7,
+      "targetGroup": {
+        "id": "targetGroup-005",
+        "members": [
+          "target-004"
+        ],
+        "action": "boss"
+      }
+    },
+    {
+      "id": "target-005",
+      "type": "target",
+      "layer": "lower",
+      "x": 113.299,
+      "y": 162.771,
+      "angle": -7,
+      "targetGroup": {
+        "id": "targetGroup-003",
+        "members": [
+          "target-005"
+        ],
+        "action": "boss"
+      }
+    },
+    {
+      "id": "line-569",
+      "type": "line",
+      "layer": "lower",
+      "x1": 90,
+      "y1": 71,
+      "x2": 107.249,
+      "y2": 163.594
+    },
+    {
+      "id": "line-986",
+      "type": "line",
+      "layer": "lower",
+      "x1": 311,
+      "y1": 228,
+      "x2": 312,
+      "y2": 469
+    },
+    {
+      "id": "line-988",
+      "type": "line",
+      "layer": "lower",
+      "x1": 331,
+      "y1": 469,
+      "x2": 330,
+      "y2": 121
+    },
+    {
+      "id": "flag-001",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 74,
+      "y1": 167,
+      "x2": 104,
+      "y2": 162
+    },
+    {
+      "id": "arc-010",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 197,
+      "y1": 5,
+      "qx": 331,
+      "qy": 0,
+      "x2": 330,
+      "y2": 122
+    },
+    {
+      "id": "line-991",
+      "type": "line",
+      "layer": "lower",
+      "x1": 137,
+      "y1": 93,
+      "x2": 117,
+      "y2": 96
+    },
+    {
+      "id": "arc-015",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 100,
+      "y1": 55,
+      "qx": 148,
+      "qy": 23,
+      "x2": 210,
+      "y2": 38
+    },
+    {
+      "id": "arc-018",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 195,
+      "y1": 5,
+      "qx": 61,
+      "qy": 7,
+      "x2": 28,
+      "y2": 117
+    },
+    {
+      "id": "arc-020",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 101,
+      "y1": 54,
+      "qx": 49,
+      "qy": 102,
+      "x2": 71,
+      "y2": 169
+    },
+    {
+      "id": "arc-026",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 145,
+      "y1": 50,
+      "qx": 152,
+      "qy": 74,
+      "x2": 162,
+      "y2": 152
+    },
+    {
+      "id": "targets-001",
+      "type": "targets",
+      "layer": "lower",
+      "x": 221,
+      "y": 174,
+      "angle": 21.953,
+      "targetGroup": {
+        "id": "targetGroup-002",
+        "members": [
+          "targets-001"
+        ],
+        "action": "upgrade",
+        "bumpers": [
+          "circle-016",
+          "circle-017",
+          "circle-018"
+        ],
+        "repeatExtraBall": true
+      }
+    },
+    {
+      "id": "oneway-002",
+      "type": "oneway",
+      "layer": "top",
+      "x1": 72,
+      "y1": 353,
+      "x2": 51,
+      "y2": 353,
+      "direction": -1,
+      "initialSpeed": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "top",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "oneway-003",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 70,
+      "y1": 111,
+      "x2": 95,
+      "y2": 107,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "lower",
+      "toLayer": "top",
+      "bidirectional": true
+    },
+    {
+      "id": "line-1020",
+      "type": "line",
+      "layer": "top",
+      "x1": 6.184000000000001,
+      "y1": 49.259,
+      "x2": 6.558,
+      "y2": 97.336
+    },
+    {
+      "id": "line-1021",
+      "type": "line",
+      "layer": "top",
+      "x1": 25.277,
+      "y1": 97.336,
+      "x2": 26,
+      "y2": 51
+    },
+    {
+      "id": "line-1022",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 15,
+      "y1": 88,
+      "x2": 15,
+      "y2": 204
+    },
+    {
+      "id": "line-1023",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 61,
+      "y1": 307,
+      "x2": 61,
+      "y2": 347
+    },
+    {
+      "id": "arc-047",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 15,
+      "y1": 205,
+      "qx": 27,
+      "qy": 242,
+      "x2": 44,
+      "y2": 253
+    },
+    {
+      "id": "arc-048",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 44,
+      "y1": 254,
+      "qx": 64,
+      "qy": 282,
+      "x2": 62,
+      "y2": 307
+    },
+    {
+      "id": "arc-049",
+      "type": "arc",
+      "layer": "top",
+      "x1": 81,
+      "y1": 28,
+      "qx": 62,
+      "qy": -4,
+      "x2": 28,
+      "y2": 11
+    },
+    {
+      "id": "arc-050",
+      "type": "arc",
+      "layer": "top",
+      "x1": 28,
+      "y1": 11,
+      "qx": 8,
+      "qy": 25,
+      "x2": 6,
+      "y2": 49
+    },
+    {
+      "id": "arc-051",
+      "type": "arc",
+      "layer": "top",
+      "x1": 67,
+      "y1": 57,
+      "qx": 64,
+      "qy": 25,
+      "x2": 42,
+      "y2": 28
+    },
+    {
+      "id": "arc-052",
+      "type": "arc",
+      "layer": "top",
+      "x1": 41,
+      "y1": 28,
+      "qx": 27,
+      "qy": 32,
+      "x2": 26,
+      "y2": 51
+    },
+    {
+      "id": "oneway-009",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 288,
+      "y1": 274,
+      "x2": 332,
+      "y2": 183,
+      "direction": -1
+    },
+    {
+      "id": "oneway-010",
+      "type": "oneway",
+      "layer": "top",
+      "x1": 268,
+      "y1": 356,
+      "x2": 290,
+      "y2": 356,
+      "direction": 1,
+      "initialSpeed": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "top",
+      "toLayer": "lower",
+      "bidirectional": false
+    },
+    {
+      "id": "rollover-001",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 214,
+      "y1": 50,
+      "x2": 239,
+      "y2": 50,
+      "rolloverGroup": {
+        "id": "rolloverGroup-001",
+        "members": [
+          "rollover-001",
+          "rollover-002"
+        ],
+        "attack": "lv3",
+        "attackCount": 1,
+        "laneChange": true
+      }
+    },
+    {
+      "id": "rollover-002",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 245,
+      "y1": 50,
+      "x2": 270,
+      "y2": 50
+    },
+    {
+      "id": "line-1030",
+      "type": "line",
+      "layer": "lower",
+      "x1": 189.64,
+      "y1": 107.481,
+      "x2": 209.115,
+      "y2": 70.03
+    },
+    {
+      "id": "line-1031",
+      "type": "line",
+      "layer": "lower",
+      "x1": 209.115,
+      "y1": 70.03,
+      "x2": 212,
+      "y2": 42
+    },
+    {
+      "id": "line-1032",
+      "type": "line",
+      "layer": "lower",
+      "x1": 280,
+      "y1": 166,
+      "x2": 242.32999999999998,
+      "y2": 145.345
+    },
+    {
+      "id": "line-1033",
+      "type": "line",
+      "layer": "lower",
+      "x1": 242.32999999999998,
+      "y1": 145.345,
+      "x2": 234.972,
+      "y2": 139.958
+    },
+    {
+      "id": "line-1034",
+      "type": "line",
+      "layer": "lower",
+      "x1": 234.972,
+      "y1": 139.958,
+      "x2": 217.026,
+      "y2": 138.038
+    },
+    {
+      "id": "line-1035",
+      "type": "line",
+      "layer": "lower",
+      "x1": 217.026,
+      "y1": 138.038,
+      "x2": 202,
+      "y2": 161
+    },
+    {
+      "id": "line-1036",
+      "type": "line",
+      "layer": "lower",
+      "x1": 271.554,
+      "y1": 47.969,
+      "x2": 266.707,
+      "y2": 82.401
+    },
+    {
+      "id": "line-1037",
+      "type": "line",
+      "layer": "lower",
+      "x1": 266.707,
+      "y1": 82.401,
+      "x2": 259,
+      "y2": 111
+    },
+    {
+      "id": "line-1038",
+      "type": "line",
+      "layer": "lower",
+      "x1": 258.566,
+      "y1": 110.70500000000001,
+      "x2": 288.458,
+      "y2": 124.493
+    },
+    {
+      "id": "line-1039",
+      "type": "line",
+      "layer": "lower",
+      "x1": 288.458,
+      "y1": 124.493,
+      "x2": 293.985,
+      "y2": 100.274
+    },
+    {
+      "id": "line-1040",
+      "type": "line",
+      "layer": "lower",
+      "x1": 294,
+      "y1": 102,
+      "x2": 292.172,
+      "y2": 72.916
+    },
+    {
+      "id": "line-1041",
+      "type": "line",
+      "layer": "lower",
+      "x1": 292.172,
+      "y1": 72.916,
+      "x2": 287.941,
+      "y2": 60.111999999999995
+    },
+    {
+      "id": "line-1042",
+      "type": "line",
+      "layer": "lower",
+      "x1": 287.941,
+      "y1": 60.111999999999995,
+      "x2": 282.683,
+      "y2": 50.902
+    },
+    {
+      "id": "line-1043",
+      "type": "line",
+      "layer": "lower",
+      "x1": 282.683,
+      "y1": 50.902,
+      "x2": 278.52,
+      "y2": 46.27
+    },
+    {
+      "id": "line-1044",
+      "type": "line",
+      "layer": "lower",
+      "x1": 278.52,
+      "y1": 46.27,
+      "x2": 271.554,
+      "y2": 47.969
+    },
+    {
+      "id": "circle-016",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 269.978,
+      "cy": 90.023,
+      "r": 12.933,
+      "bumperStrength": "strong"
+    },
+    {
+      "id": "circle-017",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 195.614,
+      "cy": 82.871,
+      "r": 12.933,
+      "bumperStrength": "strong"
+    },
+    {
+      "id": "thickline-001",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 272,
+      "y1": 51,
+      "x2": 270,
+      "y2": 66,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-002",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 243,
+      "y1": 43,
+      "x2": 241,
+      "y2": 61,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-003",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 212,
+      "y1": 41,
+      "x2": 211,
+      "y2": 56,
+      "thickness": 5
+    },
+    {
+      "id": "line-1045",
+      "type": "line",
+      "layer": "lower",
+      "x1": 203,
+      "y1": 159,
+      "x2": 245,
+      "y2": 176
+    },
+    {
+      "id": "line-1046",
+      "type": "line",
+      "layer": "top",
+      "x1": 82,
+      "y1": 30,
+      "x2": 107,
+      "y2": 164
+    },
+    {
+      "id": "line-1047",
+      "type": "line",
+      "layer": "top",
+      "x1": 67,
+      "y1": 59,
+      "x2": 72,
+      "y2": 172
+    },
+    {
+      "id": "line-1049",
+      "type": "line",
+      "layer": "lower",
+      "x1": 190,
+      "y1": 108,
+      "x2": 164,
+      "y2": 41
+    },
+    {
+      "id": "oneway-013",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 213,
+      "y1": 37,
+      "x2": 210,
+      "y2": 11,
+      "direction": 1
+    },
+    {
+      "id": "oneway-014",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 281,
+      "y1": 23,
+      "x2": 274,
+      "y2": 45,
+      "direction": 1
+    },
+    {
+      "id": "line-1054",
+      "type": "line",
+      "layer": "lower",
+      "x1": 279,
+      "y1": 165,
+      "x2": 274,
+      "y2": 186
+    },
+    {
+      "id": "arc-053",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 256,
+      "y1": 154,
+      "qx": 258,
+      "qy": 150,
+      "x2": 245,
+      "y2": 176
+    },
+    {
+      "id": "oneway-015",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 249,
+      "y1": 175,
+      "x2": 271,
+      "y2": 182,
+      "direction": -1,
+      "mechanic": "layer-transition",
+      "fromLayer": "lower",
+      "toLayer": "upper",
+      "bidirectional": true
+    },
+    {
+      "id": "arc-054",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 239,
+      "y1": -1,
+      "qx": 297,
+      "qy": 7,
+      "x2": 291,
+      "y2": 80
+    },
+    {
+      "id": "arc-055",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 240,
+      "y1": -1,
+      "qx": 180,
+      "qy": 0,
+      "x2": 183,
+      "y2": 68
+    },
+    {
+      "id": "arc-056",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 237,
+      "y1": 19,
+      "qx": 198,
+      "qy": 19,
+      "x2": 201,
+      "y2": 69
+    },
+    {
+      "id": "arc-057",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 237,
+      "y1": 19,
+      "qx": 278,
+      "qy": 26,
+      "x2": 268,
+      "y2": 79
+    },
+    {
+      "id": "arc-058",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 268,
+      "y1": 78,
+      "qx": 262,
+      "qy": 151,
+      "x2": 245,
+      "y2": 176
+    },
+    {
+      "id": "arc-059",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 291,
+      "y1": 80,
+      "qx": 289,
+      "qy": 136,
+      "x2": 273,
+      "y2": 187
+    },
+    {
+      "id": "line-1055",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 279,
+      "y1": 313,
+      "x2": 279,
+      "y2": 346
+    },
+    {
+      "id": "line-1056",
+      "type": "line",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 192,
+      "y1": 67,
+      "x2": 192,
+      "y2": 128
+    },
+    {
+      "id": "arc-060",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 192,
+      "y1": 128,
+      "qx": 192,
+      "qy": 163,
+      "x2": 254,
+      "y2": 166
+    },
+    {
+      "id": "arc-061",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 254,
+      "y1": 166,
+      "qx": 340,
+      "qy": 166,
+      "x2": 342,
+      "y2": 225
+    },
+    {
+      "id": "arc-062",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 342,
+      "y1": 225,
+      "qx": 342,
+      "qy": 256,
+      "x2": 302,
+      "y2": 274
+    },
+    {
+      "id": "arc-063",
+      "type": "arc",
+      "mechanic": "guided-rail",
+      "trackWidth": 18,
+      "layer": "top",
+      "x1": 302,
+      "y1": 274,
+      "qx": 278,
+      "qy": 287,
+      "x2": 279,
+      "y2": 313
+    },
+    {
+      "id": "hole-006",
+      "type": "hole",
+      "layer": "lower",
+      "x": 161,
+      "y": 66,
+      "angle": 0
+    },
+    {
+      "id": "circle-018",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 230.763,
+      "cy": 143.53,
+      "r": 12.933,
+      "bumperStrength": "strong"
+    },
+    {
+      "id": "plunger-002",
+      "type": "plunger",
+      "layer": "lower",
+      "x": 321.72,
+      "y": 378.762,
+      "angle": 0
+    },
+    {
+      "id": "oneway-018",
+      "type": "oneway",
+      "layer": "upper",
+      "x1": 182,
+      "y1": 57,
+      "x2": 204,
+      "y2": 57,
+      "direction": 1,
+      "mechanic": "layer-transition",
+      "fromLayer": "upper",
+      "toLayer": "top",
+      "bidirectional": false
+    },
+    {
+      "id": "rect-001",
+      "type": "rect",
+      "layer": "lower",
+      "x": 275.5,
+      "y": 125.5,
+      "angle": 25.478,
+      "width": 23,
+      "height": 13
+    },
+    {
+      "id": "line-1072",
+      "type": "line",
+      "layer": "lower",
+      "x1": 25,
+      "y1": 471,
+      "x2": 25,
+      "y2": 193
+    },
+    {
+      "id": "line-1088",
+      "type": "line",
+      "layer": "lower",
+      "x1": 289,
+      "y1": 434,
+      "x2": 248,
+      "y2": 467
+    },
+    {
+      "id": "line-1089",
+      "type": "line",
+      "layer": "lower",
+      "x1": 100,
+      "y1": 470,
+      "x2": 48,
+      "y2": 435
+    },
+    {
+      "id": "line-1090",
+      "type": "line",
+      "layer": "lower",
+      "x1": 97.2528,
+      "y1": 345.056,
+      "x2": 97.02,
+      "y2": 384.712
+    },
+    {
+      "id": "line-1091",
+      "type": "line",
+      "layer": "lower",
+      "x1": 97.02,
+      "y1": 384.712,
+      "x2": 99.3048,
+      "y2": 387.6592
+    },
+    {
+      "id": "line-1092",
+      "type": "line",
+      "layer": "lower",
+      "x1": 99.3048,
+      "y1": 387.6592,
+      "x2": 118.8528,
+      "y2": 400.256
+    },
+    {
+      "id": "line-1093",
+      "type": "line",
+      "layer": "lower",
+      "x1": 247.0528,
+      "y1": 399.456,
+      "x2": 266.2528,
+      "y2": 386.656
+    },
+    {
+      "id": "line-1094",
+      "type": "line",
+      "layer": "lower",
+      "x1": 268.6528,
+      "y1": 382.656,
+      "x2": 267.8528,
+      "y2": 344.256
+    },
+    {
+      "id": "line-1095",
+      "type": "line",
+      "layer": "lower",
+      "x1": 266.1992,
+      "y1": 386.7912,
+      "x2": 268.7408,
+      "y2": 382.328
+    },
+    {
+      "id": "line-1096",
+      "type": "line",
+      "layer": "lower",
+      "x1": 51,
+      "y1": 405,
+      "x2": 120,
+      "y2": 446
+    },
+    {
+      "id": "line-1097",
+      "type": "line",
+      "layer": "lower",
+      "x1": 120.2088,
+      "y1": 440.6264,
+      "x2": 121.6928,
+      "y2": 438.1512
+    },
+    {
+      "id": "arc-069",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 121.6928,
+      "y1": 438.1512,
+      "qx": 126.5224,
+      "qy": 436.34799999999996,
+      "x2": 127.40799999999999,
+      "y2": 433.5728
+    },
+    {
+      "id": "line-1098",
+      "type": "line",
+      "layer": "lower",
+      "x1": 127,
+      "y1": 433,
+      "x2": 64,
+      "y2": 392
+    },
+    {
+      "id": "arc-070",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 63.6952,
+      "y1": 391.8176,
+      "qx": 53.327200000000005,
+      "qy": 386.58,
+      "x2": 51.697599999999994,
+      "y2": 375.32
+    },
+    {
+      "id": "arc-071",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 286.84,
+      "y1": 387.2088,
+      "qx": 286.6832,
+      "qy": 394.5976,
+      "x2": 281.5632,
+      "y2": 399.4056
+    },
+    {
+      "id": "line-1099",
+      "type": "line",
+      "layer": "lower",
+      "x1": 281.5632,
+      "y1": 399.4056,
+      "x2": 233,
+      "y2": 433
+    },
+    {
+      "id": "line-1100",
+      "type": "line",
+      "layer": "lower",
+      "x1": 235,
+      "y1": 433,
+      "x2": 239.2608,
+      "y2": 436.2536
+    },
+    {
+      "id": "arc-073",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 239.2608,
+      "y1": 436.2536,
+      "qx": 240.06079999999997,
+      "qy": 441.72,
+      "x2": 243.70320000000004,
+      "y2": 442.7816
+    },
+    {
+      "id": "line-1101",
+      "type": "line",
+      "layer": "lower",
+      "x1": 244,
+      "y1": 441,
+      "x2": 287,
+      "y2": 411
+    },
+    {
+      "id": "flipper-005",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 216.6704,
+      "y": 449.35760000000005,
+      "angle": -209.3
+    },
+    {
+      "id": "flipper-006",
+      "type": "flipper",
+      "layer": "lower",
+      "x": 141.3352,
+      "y": 449.35760000000005,
+      "angle": 29.3
+    },
+    {
+      "id": "line-1103",
+      "type": "line",
+      "layer": "lower",
+      "x1": 106.8528,
+      "y1": 343.456,
+      "x2": 126.05279999999999,
+      "y2": 393.856,
+      "neonBorder": "yellow",
+      "reboundStrength": "strong",
+      "mechanic": "active-rebound",
+      "slingshot": true
+    },
+    {
+      "id": "line-1104",
+      "type": "line",
+      "layer": "lower",
+      "x1": 258.2528,
+      "y1": 342.656,
+      "x2": 240.6528,
+      "y2": 390.656,
+      "neonBorder": "yellow",
+      "reboundStrength": "strong",
+      "slingshot": true,
+      "mechanic": "active-rebound"
+    },
+    {
+      "id": "circle-021",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 102.0528,
+      "cy": 344.056,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "circle-022",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 122.05279999999999,
+      "cy": 396.256,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "circle-023",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 263.0528,
+      "cy": 342.456,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "circle-024",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 243.0528,
+      "cy": 396.256,
+      "r": 5.1224,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "thickline-009",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 74,
+      "y1": 347,
+      "x2": 73.6528,
+      "y2": 373.056,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-010",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 50,
+      "y1": 347,
+      "x2": 50,
+      "y2": 403,
+      "thickness": 5
+    },
+    {
+      "id": "thickline-011",
+      "type": "thickline",
+      "layer": "lower",
+      "x1": 288,
+      "y1": 332,
+      "x2": 288,
+      "y2": 409,
+      "thickness": 5
+    },
+    {
+      "id": "line-1105",
+      "type": "line",
+      "layer": "lower",
+      "x1": 289,
+      "y1": 434,
+      "x2": 288,
+      "y2": 470
+    },
+    {
+      "id": "line-1106",
+      "type": "line",
+      "layer": "lower",
+      "mechanic": "rescue-kicker",
+      "side": "right",
+      "aim": [
+        301,
+        411
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 288.5,
+      "y1": 449,
+      "x2": 313.5,
+      "y2": 449,
+      "neonBorder": "yellow"
+    },
+    {
+      "id": "line-1107",
+      "type": "line",
+      "layer": "lower",
+      "mechanic": "rescue-kicker",
+      "side": "left",
+      "aim": [
+        37,
+        411
+      ],
+      "direction": [
+        0,
+        -1
+      ],
+      "speed": 600,
+      "x1": 24.5,
+      "y1": 449,
+      "x2": 49.5,
+      "y2": 449,
+      "neonBorder": "yellow"
+    },
+    {
+      "id": "oneway-021",
+      "type": "oneway",
+      "layer": "lower",
+      "mechanic": "rescue-return",
+      "side": "left",
+      "x1": 26,
+      "y1": 418,
+      "x2": 47,
+      "y2": 433,
+      "direction": -1,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "oneway-022",
+      "type": "oneway",
+      "layer": "lower",
+      "mechanic": "rescue-return",
+      "side": "right",
+      "x1": 291.5,
+      "y1": 430.5,
+      "x2": 310,
+      "y2": 419,
+      "direction": -1,
+      "neonBorder": "pink"
+    },
+    {
+      "id": "line-1108",
+      "type": "line",
+      "layer": "lower",
+      "x1": 48,
+      "y1": 435,
+      "x2": 48,
+      "y2": 470
+    },
+    {
+      "id": "rollover-006",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 269,
+      "y1": 370,
+      "x2": 286,
+      "y2": 370,
+      "rolloverGroup": {
+        "id": "rolloverGroup-003",
+        "members": [
+          "rollover-006",
+          "rollover-007",
+          "rollover-008"
+        ],
+        "attack": "none",
+        "attackCount": 1
+      }
+    },
+    {
+      "id": "rollover-007",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 53,
+      "y1": 370,
+      "x2": 70,
+      "y2": 370
+    },
+    {
+      "id": "rollover-008",
+      "type": "rollover",
+      "layer": "lower",
+      "x1": 77,
+      "y1": 370,
+      "x2": 94,
+      "y2": 370
+    },
+    {
+      "id": "centerPost-002",
+      "type": "centerPost",
+      "layer": "lower",
+      "x": 179,
+      "y": 461,
+      "angle": 0,
+      "radius": 7,
+      "triggerRollovers": [
+        "rollover-006",
+        "rollover-008",
+        "rollover-007"
+      ],
+      "hitCount": 5
+    },
+    {
+      "id": "flag-002",
+      "type": "flag",
+      "layer": "lower",
+      "x1": 246,
+      "y1": 177,
+      "x2": 272,
+      "y2": 186
+    },
+    {
+      "id": "arc-074",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 209,
+      "y1": 5,
+      "qx": 118,
+      "qy": 3,
+      "x2": 67,
+      "y2": 50
+    },
+    {
+      "id": "circle-027",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 191,
+      "cy": 110,
+      "r": 5.657,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "line-1109",
+      "type": "line",
+      "layer": "lower",
+      "x1": 162,
+      "y1": 152,
+      "x2": 152,
+      "y2": 154
+    },
+    {
+      "id": "line-1110",
+      "type": "line",
+      "layer": "lower",
+      "x1": 119,
+      "y1": 161,
+      "x2": 107,
+      "y2": 163
+    },
+    {
+      "id": "line-1111",
+      "type": "line",
+      "layer": "lower",
+      "x1": 168,
+      "y1": 52,
+      "x2": 147,
+      "y2": 57
+    },
+    {
+      "id": "ublock-001",
+      "type": "ublock",
+      "layer": "lower",
+      "x": 126,
+      "y": 93,
+      "angle": -8.486
+    },
+    {
+      "id": "ublock-002",
+      "type": "ublock",
+      "layer": "lower",
+      "x": 158,
+      "y": 54,
+      "angle": -15.368
+    },
+    {
+      "id": "circle-028",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 185,
+      "cy": 270,
+      "r": 64.408,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "line-1113",
+      "type": "line",
+      "layer": "lower",
+      "x1": 48,
+      "y1": 321,
+      "x2": 73,
+      "y2": 282
+    },
+    {
+      "id": "line-1114",
+      "type": "line",
+      "layer": "lower",
+      "x1": 73.411,
+      "y1": 281.34,
+      "x2": 73,
+      "y2": 254
+    },
+    {
+      "id": "line-1115",
+      "type": "line",
+      "layer": "lower",
+      "x1": 73,
+      "y1": 254,
+      "x2": 48.182,
+      "y2": 222.226
+    },
+    {
+      "id": "line-1116",
+      "type": "line",
+      "layer": "lower",
+      "x1": 48.182,
+      "y1": 222.226,
+      "x2": 48,
+      "y2": 321
+    },
+    {
+      "id": "thickline-012",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 50,
+      "y1": 347,
+      "x2": 50,
+      "y2": 377,
+      "thickness": 5
+    },
+    {
+      "id": "target-006",
+      "type": "target",
+      "layer": "lower",
+      "x": 74,
+      "y": 268,
+      "angle": -89.135,
+      "targetGroup": {
+        "id": "targetGroup-004",
+        "members": [
+          "target-006"
+        ],
+        "action": "boss"
+      }
+    },
+    {
+      "id": "oneway-023",
+      "type": "oneway",
+      "layer": "lower",
+      "x1": 48,
+      "y1": 222,
+      "x2": 25,
+      "y2": 194,
+      "direction": 1
+    },
+    {
+      "id": "arc-076",
+      "type": "arc",
+      "layer": "lower",
+      "x1": 40,
+      "y1": 87,
+      "qx": 21,
+      "qy": 116,
+      "x2": 25,
+      "y2": 194
+    },
+    {
+      "id": "sensor-001",
+      "type": "sensor",
+      "layer": "upper",
+      "x1": 185,
+      "y1": 48,
+      "x2": 201,
+      "y2": 48,
+      "attack": "lv2"
+    },
+    {
+      "id": "sensor-002",
+      "type": "sensor",
+      "layer": "top",
+      "x1": 25,
+      "y1": 75,
+      "x2": 9,
+      "y2": 75,
+      "attack": "lv4",
+      "attackCount": 3
+    },
+    {
+      "id": "circle-029",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 288,
+      "cy": 280,
+      "r": 5.831,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "arc-077",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 270,
+      "y1": 11,
+      "qx": 242.75,
+      "qy": -7.75,
+      "x2": 213,
+      "y2": 4
+    },
+    {
+      "id": "arc-078",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 262,
+      "y1": 32,
+      "qx": 239,
+      "qy": 11,
+      "x2": 214,
+      "y2": 25
+    },
+    {
+      "id": "arc-079",
+      "type": "arc",
+      "layer": "top",
+      "x1": 63,
+      "y1": 39,
+      "qx": 43,
+      "qy": 16,
+      "x2": 28,
+      "y2": 41
+    },
+    {
+      "id": "thickline-013",
+      "type": "thickline",
+      "x1": 288,
+      "y1": 331,
+      "x2": 288,
+      "y2": 394,
+      "thickness": 5,
+      "layer": "upper"
+    },
+    {
+      "id": "arc-080",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 286.84,
+      "y1": 387.2088,
+      "qx": 286.6832,
+      "qy": 394.5976,
+      "x2": 281.5632,
+      "y2": 399.4056
+    },
+    {
+      "id": "line-1117",
+      "type": "line",
+      "layer": "upper",
+      "x1": 281.5632,
+      "y1": 399.4056,
+      "x2": 233,
+      "y2": 433
+    },
+    {
+      "id": "line-1118",
+      "type": "line",
+      "layer": "upper",
+      "x1": 127,
+      "y1": 433,
+      "x2": 64,
+      "y2": 392
+    },
+    {
+      "id": "arc-081",
+      "type": "arc",
+      "layer": "upper",
+      "x1": 63.6952,
+      "y1": 391.8176,
+      "qx": 53.327200000000005,
+      "qy": 386.58,
+      "x2": 51.697599999999994,
+      "y2": 375.32
+    },
+    {
+      "id": "thickline-014",
+      "type": "thickline",
+      "layer": "upper",
+      "x1": 74,
+      "y1": 347,
+      "x2": 73.6528,
+      "y2": 373.056,
+      "thickness": 5
+    },
+    {
+      "id": "sensor-003",
+      "type": "sensor",
+      "x1": 290,
+      "y1": 279,
+      "x2": 331,
+      "y2": 278,
+      "layer": "lower"
+    },
+    {
+      "id": "sensor-004",
+      "type": "sensor",
+      "x1": 49,
+      "y1": 229,
+      "x2": 25,
+      "y2": 228,
+      "layer": "lower"
+    },
+    {
+      "id": "arc-082",
+      "type": "arc",
+      "layer": "top",
+      "x1": 237,
+      "y1": 19,
+      "qx": 198,
+      "qy": 19,
+      "x2": 201,
+      "y2": 69
+    },
+    {
+      "id": "arc-083",
+      "type": "arc",
+      "layer": "top",
+      "x1": 240,
+      "y1": -1,
+      "qx": 180,
+      "qy": 0,
+      "x2": 183,
+      "y2": 68
+    }
+  ],
+  "gravityRegions": [
+    {
+      "id": "gravityZone-001",
+      "type": "gravityZone",
+      "layer": "lower",
+      "x": 138.5,
+      "y": 29.959472443008124,
+      "angle": 0,
+      "width": 143,
+      "height": 50.08105511398375,
+      "outline": [
+        [
+          -0.2692307692307692,
+          0.5
+        ],
+        [
+          -0.26092783911713957,
+          0.4843661457837669
+        ],
+        [
+          -0.25259506535226706,
+          0.4690183694916774
+        ],
+        [
+          -0.24423244793615156,
+          0.4539566711237318
+        ],
+        [
+          -0.23583998686879354,
+          0.4391810506799294
+        ],
+        [
+          -0.22741768215019253,
+          0.4246915081602708
+        ],
+        [
+          -0.21896553378034847,
+          0.4104880435647561
+        ],
+        [
+          -0.21048354175926184,
+          0.39657065689338483
+        ],
+        [
+          -0.20197170608693243,
+          0.3829393481461572
+        ],
+        [
+          -0.1934300267633601,
+          0.3695941173230731
+        ],
+        [
+          -0.18485850378854488,
+          0.356534964424133
+        ],
+        [
+          -0.176257137162487,
+          0.34376188944933644
+        ],
+        [
+          -0.16762592688518616,
+          0.3312748923986833
+        ],
+        [
+          -0.15896487295664258,
+          0.31907397327217385
+        ],
+        [
+          -0.1502739753768561,
+          0.30715913206980827
+        ],
+        [
+          -0.14155323414582657,
+          0.29553036879158645
+        ],
+        [
+          -0.1328026492635547,
+          0.28418768343750783
+        ],
+        [
+          -0.12402222073003975,
+          0.27313107600757297
+        ],
+        [
+          -0.11521194854528184,
+          0.26236054650178214
+        ],
+        [
+          -0.10637183270928106,
+          0.2518760949201347
+        ],
+        [
+          -0.09750187322203784,
+          0.2416777212626307
+        ],
+        [
+          -0.08860207008355164,
+          0.23176542552927049
+        ],
+        [
+          -0.07967242329382249,
+          0.22213920772005402
+        ],
+        [
+          -0.07071293285285056,
+          0.2127990678349812
+        ],
+        [
+          -0.06172359876063578,
+          0.203745005874052
+        ],
+        [
+          -0.052704421017178336,
+          0.19497702183726628
+        ],
+        [
+          -0.04365539962247783,
+          0.18649511572462432
+        ],
+        [
+          -0.034576534576534465,
+          0.17829928753612612
+        ],
+        [
+          -0.025467825879348635,
+          0.17038953727177142
+        ],
+        [
+          -0.016329273530919744,
+          0.16276586493156034
+        ],
+        [
+          -0.007160877531247793,
+          0.15542827051549316
+        ],
+        [
+          0.002037362119666624,
+          0.14837675402356945
+        ],
+        [
+          0.011265445421823901,
+          0.14161131545578923
+        ],
+        [
+          0.02052337237522404,
+          0.1351319548121528
+        ],
+        [
+          0.02981114297986724,
+          0.1289386720926601
+        ],
+        [
+          0.039128757235753306,
+          0.12303146729731104
+        ],
+        [
+          0.04847621514288183,
+          0.11741034042610546
+        ],
+        [
+          0.057853516701253216,
+          0.1120752914790435
+        ],
+        [
+          0.06726066191086767,
+          0.10702632045612545
+        ],
+        [
+          0.07669765077172498,
+          0.10226342735735103
+        ],
+        [
+          0.08616448328382476,
+          0.09778661218272008
+        ],
+        [
+          0.09566115944716759,
+          0.09359587493223277
+        ],
+        [
+          0.10518767926175349,
+          0.08969121560588908
+        ],
+        [
+          0.11474404272758185,
+          0.08607263420368914
+        ],
+        [
+          0.12433024984465306,
+          0.08274013072563298
+        ],
+        [
+          0.13394630061296733,
+          0.0796937051717203
+        ],
+        [
+          0.1435921950325243,
+          0.07693335754195124
+        ],
+        [
+          0.1532679331033241,
+          0.07445908783632581
+        ],
+        [
+          0.16297351482536657,
+          0.07227089605484414
+        ],
+        [
+          0.1727089401986521,
+          0.0703687821975061
+        ],
+        [
+          0.18247420922318028,
+          0.06875274626431153
+        ],
+        [
+          0.19226932189895155,
+          0.06742278825526073
+        ],
+        [
+          0.20209427822596546,
+          0.0663789081703537
+        ],
+        [
+          0.21194907820422224,
+          0.06562110600959029
+        ],
+        [
+          0.22183372183372188,
+          0.0651493817729705
+        ],
+        [
+          0.23174820911446417,
+          0.06496373546049405
+        ],
+        [
+          0.24169254004644936,
+          0.06506416707216166
+        ],
+        [
+          0.25166671462967755,
+          0.06545067660797274
+        ],
+        [
+          0.26167073286414866,
+          0.06612326406792746
+        ],
+        [
+          0.2717045947498622,
+          0.06708192945202593
+        ],
+        [
+          0.28176830028681865,
+          0.0683266727602679
+        ],
+        [
+          0.2918618494750181,
+          0.0698574939926536
+        ],
+        [
+          0.30198524231446044,
+          0.07167439314918296
+        ],
+        [
+          0.31213847880514545,
+          0.07377737022985592
+        ],
+        [
+          0.3223215589470733,
+          0.07616642523467251
+        ],
+        [
+          0.332534482740244,
+          0.07884155816363274
+        ],
+        [
+          0.3427772501846576,
+          0.08180276901673658
+        ],
+        [
+          0.35304986128031385,
+          0.08505005779398418
+        ],
+        [
+          0.36335231602721296,
+          0.08858342449537542
+        ],
+        [
+          0.3736846144253551,
+          0.09240286912091027
+        ],
+        [
+          0.3840467564747402,
+          0.09650839167058875
+        ],
+        [
+          0.3944387421753677,
+          0.10089999214441099
+        ],
+        [
+          0.4048605715272382,
+          0.10557767054237671
+        ],
+        [
+          0.4153122445303514,
+          0.1105414268644862
+        ],
+        [
+          0.4257937611847075,
+          0.11579126111073917
+        ],
+        [
+          0.43630512149030687,
+          0.12132717328113606
+        ],
+        [
+          0.4468463254471485,
+          0.12714916337567642
+        ],
+        [
+          0.45741737305523333,
+          0.13325723139436055
+        ],
+        [
+          0.46801826431456045,
+          0.139651377337188
+        ],
+        [
+          0.4786489992251308,
+          0.1463316012041594
+        ],
+        [
+          0.4893095777869439,
+          0.15329790299527438
+        ],
+        [
+          0.5,
+          0.160550282710533
+        ],
+        [
+          0.493006993006993,
+          -0.49838152143960884
+        ],
+        [
+          0.481136777450866,
+          -0.49904251645511344
+        ],
+        [
+          0.46931542559981737,
+          -0.49953259455368015
+        ],
+        [
+          0.45754293745384667,
+          -0.49985175573530904
+        ],
+        [
+          0.44581931301295447,
+          -0.5000000000000001
+        ],
+        [
+          0.43414455227714027,
+          -0.4999773273477532
+        ],
+        [
+          0.42251865524640436,
+          -0.49978373777856844
+        ],
+        [
+          0.4109416219207467,
+          -0.49941923129244586
+        ],
+        [
+          0.3994134523001672,
+          -0.4988838078893854
+        ],
+        [
+          0.3879341463846662,
+          -0.4981774675693871
+        ],
+        [
+          0.37650370417424306,
+          -0.4973002103324509
+        ],
+        [
+          0.36512212566889835,
+          -0.4962520361785768
+        ],
+        [
+          0.3537894108686317,
+          -0.4950329451077649
+        ],
+        [
+          0.3425055597734435,
+          -0.4936429371200151
+        ],
+        [
+          0.3312705723833333,
+          -0.4920820122153275
+        ],
+        [
+          0.3200844486983013,
+          -0.490350170393702
+        ],
+        [
+          0.3089471887183475,
+          -0.48844741165513855
+        ],
+        [
+          0.297858792443472,
+          -0.4863737359996373
+        ],
+        [
+          0.286819259873675,
+          -0.4841291434271982
+        ],
+        [
+          0.27582859100895624,
+          -0.48171363393782124
+        ],
+        [
+          0.26488678584931513,
+          -0.4791272075315063
+        ],
+        [
+          0.25399384439475287,
+          -0.47636986420825356
+        ],
+        [
+          0.24314976664526863,
+          -0.47344160396806306
+        ],
+        [
+          0.23235455260086227,
+          -0.4703424268109345
+        ],
+        [
+          0.22160820226153433,
+          -0.46707233273686827
+        ],
+        [
+          0.21091071562728464,
+          -0.463631321745864
+        ],
+        [
+          0.20026209269811318,
+          -0.460019393837922
+        ],
+        [
+          0.18966233347402017,
+          -0.45623654901304206
+        ],
+        [
+          0.17911143795500484,
+          -0.45228278727122434
+        ],
+        [
+          0.1686094061410685,
+          -0.4481581086124686
+        ],
+        [
+          0.15815623803220963,
+          -0.44386251303677515
+        ],
+        [
+          0.14775193362842962,
+          -0.43939600054414374
+        ],
+        [
+          0.13739649292972722,
+          -0.4347585711345745
+        ],
+        [
+          0.1270899159361035,
+          -0.4299502248080673
+        ],
+        [
+          0.1168322026475576,
+          -0.42497096156462233
+        ],
+        [
+          0.10662335306409035,
+          -0.41982078140423945
+        ],
+        [
+          0.09646336718570094,
+          -0.41449968432691875
+        ],
+        [
+          0.08635224501239017,
+          -0.40900767033266017
+        ],
+        [
+          0.07628998654415706,
+          -0.40334473942146376
+        ],
+        [
+          0.06627659178100279,
+          -0.3975108915933294
+        ],
+        [
+          0.056312060722926154,
+          -0.3915061268482572
+        ],
+        [
+          0.04639639336992837,
+          -0.38533044518624715
+        ],
+        [
+          0.036529589722008225,
+          -0.3789838466072992
+        ],
+        [
+          0.026711649779166728,
+          -0.3724663311114135
+        ],
+        [
+          0.016942573541403074,
+          -0.3657778986985898
+        ],
+        [
+          0.007222361008718263,
+          -0.3589185493688283
+        ],
+        [
+          -0.002448987818889298,
+          -0.35188828312212894
+        ],
+        [
+          -0.01207147294141782,
+          -0.3446870999584916
+        ],
+        [
+          -0.021645094358868695,
+          -0.3373149998779166
+        ],
+        [
+          -0.03116985207124073,
+          -0.32977198288040355
+        ],
+        [
+          -0.04064574607853511,
+          -0.3220580489659527
+        ],
+        [
+          -0.05007277638075066,
+          -0.31417319813456396
+        ],
+        [
+          -0.05945094297788856,
+          -0.3061174303862374
+        ],
+        [
+          -0.06878024586994781,
+          -0.29789074572097296
+        ],
+        [
+          -0.07806068505692923,
+          -0.2894931441387707
+        ],
+        [
+          -0.0872922605388323,
+          -0.2809246256396305
+        ],
+        [
+          -0.09647497231565712,
+          -0.2721851902235525
+        ],
+        [
+          -0.1056088203874036,
+          -0.2632748378905365
+        ],
+        [
+          -0.11469380475407202,
+          -0.2541935686405827
+        ],
+        [
+          -0.12372992541566212,
+          -0.24494138247369115
+        ],
+        [
+          -0.13271718237217398,
+          -0.23551827938986156
+        ],
+        [
+          -0.14165557562360767,
+          -0.22592425938909425
+        ],
+        [
+          -0.15054510516996322,
+          -0.21615932247138891
+        ],
+        [
+          -0.15938577101124035,
+          -0.20622346863674587
+        ],
+        [
+          -0.1681775731474395,
+          -0.19611669788516484
+        ],
+        [
+          -0.17692051157856023,
+          -0.185839010216646
+        ],
+        [
+          -0.1856145863046028,
+          -0.17539040563118932
+        ],
+        [
+          -0.19425979732556725,
+          -0.1647708841287947
+        ],
+        [
+          -0.20285614464145343,
+          -0.1539804457094623
+        ],
+        [
+          -0.2114036282522613,
+          -0.14301909037319194
+        ],
+        [
+          -0.219902248157991,
+          -0.13188681811998373
+        ],
+        [
+          -0.22835200435864245,
+          -0.12058362894983775
+        ],
+        [
+          -0.23675289685421577,
+          -0.10910952286275383
+        ],
+        [
+          -0.24510492564471076,
+          -0.09746449985873198
+        ],
+        [
+          -0.2534080907301276,
+          -0.08564855993777234
+        ],
+        [
+          -0.26166239211046616,
+          -0.07366170309987484
+        ],
+        [
+          -0.2698678297857265,
+          -0.06150392934503955
+        ],
+        [
+          -0.2780244037559087,
+          -0.049175238673266265
+        ],
+        [
+          -0.28613211402101263,
+          -0.03667563108455519
+        ],
+        [
+          -0.29419096058103833,
+          -0.024005106578906178
+        ],
+        [
+          -0.3022009434359858,
+          -0.011163665156319308
+        ],
+        [
+          -0.31016206258585505,
+          0.0018486931832054202
+        ],
+        [
+          -0.318074318030646,
+          0.01503196843966808
+        ],
+        [
+          -0.32593770977035885,
+          0.028386160613068458
+        ],
+        [
+          -0.3337522378049935,
+          0.041911269703406695
+        ],
+        [
+          -0.34151790213454986,
+          0.055607295710683
+        ],
+        [
+          -0.34923470275902796,
+          0.06947423863489696
+        ],
+        [
+          -0.3569026396784279,
+          0.08351209847604898
+        ],
+        [
+          -0.36452171289274965,
+          0.09772087523413867
+        ],
+        [
+          -0.37209192240199307,
+          0.11210056890916627
+        ],
+        [
+          -0.3796132682061584,
+          0.1266511795011318
+        ],
+        [
+          -0.3870857503052455,
+          0.14137270701003513
+        ],
+        [
+          -0.3945093686992543,
+          0.15626515143587652
+        ],
+        [
+          -0.4018841233881849,
+          0.17132851277865557
+        ],
+        [
+          -0.40921001437203725,
+          0.18656279103837256
+        ],
+        [
+          -0.41648704165081146,
+          0.20196798621502732
+        ],
+        [
+          -0.4237152052245073,
+          0.21754409830862015
+        ],
+        [
+          -0.4308945050931251,
+          0.23329112731915064
+        ],
+        [
+          -0.4380249412566646,
+          0.2492090732466192
+        ],
+        [
+          -0.44510651371512583,
+          0.2652979360910254
+        ],
+        [
+          -0.4521392224685088,
+          0.28155771585236966
+        ],
+        [
+          -0.4591230675168137,
+          0.2979884125306517
+        ],
+        [
+          -0.4660580488600403,
+          0.3145900261258716
+        ],
+        [
+          -0.47294416649818866,
+          0.3313625566380294
+        ],
+        [
+          -0.4797814204312589,
+          0.348306004067125
+        ],
+        [
+          -0.4865698106592508,
+          0.3654203684131586
+        ],
+        [
+          -0.4933093371821645,
+          0.38270564967612974
+        ],
+        [
+          -0.5,
+          0.40016184785603914
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            0.5,
+            0.160550282710533
+          ],
+          [
+            0.493006993006993,
+            -0.49838152143960884
+          ]
+        ],
+        [
+          [
+            -0.5,
+            0.40016184785603914
+          ],
+          [
+            -0.2692307692307692,
+            0.5
+          ]
+        ]
+      ],
+      "gravityDirection": "right",
+      "gravityStrength": 50
+    },
+    {
+      "id": "gravityZone-002",
+      "type": "gravityZone",
+      "layer": "upper",
+      "x": 241.5,
+      "y": 15.73669938016529,
+      "angle": 0,
+      "width": 57,
+      "height": 32.526601239669425,
+      "outline": [
+        [
+          0.5,
+          -0.14562540196755674
+        ],
+        [
+          0.4782468827026242,
+          -0.17134338549978953
+        ],
+        [
+          0.45644845585037064,
+          -0.1960926768458747
+        ],
+        [
+          0.43460471944323625,
+          -0.2198732760058121
+        ],
+        [
+          0.41271567348122407,
+          -0.2426851829796019
+        ],
+        [
+          0.3907813179643331,
+          -0.2645283977672439
+        ],
+        [
+          0.3688016528925623,
+          -0.28540292036873816
+        ],
+        [
+          0.3467766782659137,
+          -0.30530875078408487
+        ],
+        [
+          0.3247063940843843,
+          -0.32424588901328383
+        ],
+        [
+          0.3025908003479771,
+          -0.342214335056335
+        ],
+        [
+          0.28042989705669114,
+          -0.3592140889132385
+        ],
+        [
+          0.2582236842105263,
+          -0.3752451505839943
+        ],
+        [
+          0.23597216180948222,
+          -0.3903075200686024
+        ],
+        [
+          0.21367532985355983,
+          -0.4044011973670628
+        ],
+        [
+          0.19133318834275864,
+          -0.4175261824793755
+        ],
+        [
+          0.16894573727707762,
+          -0.42968247540554055
+        ],
+        [
+          0.14651297665651733,
+          -0.44087007614555784
+        ],
+        [
+          0.12403490648107875,
+          -0.45108898469942743
+        ],
+        [
+          0.10151152675076035,
+          -0.46033920106714943
+        ],
+        [
+          0.07894283746556416,
+          -0.4686207252487236
+        ],
+        [
+          0.05632883862548865,
+          -0.4759335572441501
+        ],
+        [
+          0.03366953023053535,
+          -0.4822776970534289
+        ],
+        [
+          0.010964912280701754,
+          -0.48765314467655996
+        ],
+        [
+          -0.011785015224010147,
+          -0.4920599001135434
+        ],
+        [
+          -0.03458025228360135,
+          -0.4954979633643791
+        ],
+        [
+          -0.05742079889807185,
+          -0.49796733442906704
+        ],
+        [
+          -0.08030665506742066,
+          -0.49946801330760743
+        ],
+        [
+          -0.10323782079164825,
+          -0.5
+        ],
+        [
+          -0.12621429607075565,
+          -0.49956329450624487
+        ],
+        [
+          -0.14923608090474086,
+          -0.49815789682634204
+        ],
+        [
+          -0.17230317529360586,
+          -0.4957838069602915
+        ],
+        [
+          -0.19541557923734967,
+          -0.49244102490809327
+        ],
+        [
+          -0.21857329273597229,
+          -0.48812955066974734
+        ],
+        [
+          -0.24177631578947367,
+          -0.48284938424525375
+        ],
+        [
+          -0.2650246483978544,
+          -0.4766005256346124
+        ],
+        [
+          -0.2883182905611129,
+          -0.46938297483782343
+        ],
+        [
+          -0.31165724227925173,
+          -0.46119673185488663
+        ],
+        [
+          -0.3350415035522693,
+          -0.45204179668580224
+        ],
+        [
+          -0.35847107438016523,
+          -0.44191816933057015
+        ],
+        [
+          -0.38194595476293997,
+          -0.4308258497891903
+        ],
+        [
+          -0.40546614470059444,
+          -0.4187648380616628
+        ],
+        [
+          -0.4290316441931278,
+          -0.40573513414798756
+        ],
+        [
+          -0.45264245324053887,
+          -0.39173673804816456
+        ],
+        [
+          -0.4762985718428303,
+          -0.37676964976219396
+        ],
+        [
+          -0.5,
+          -0.3608338692900756
+        ],
+        [
+          -0.4824561403508772,
+          0.28479153267748103
+        ],
+        [
+          -0.46054824561403557,
+          0.2639432124056121
+        ],
+        [
+          -0.43868421052631573,
+          0.24443994505450875
+        ],
+        [
+          -0.41686403508771963,
+          0.22628173062417137
+        ],
+        [
+          -0.3950877192982458,
+          0.20946856911459946
+        ],
+        [
+          -0.37335526315789475,
+          0.1940004605257934
+        ],
+        [
+          -0.35166666666666696,
+          0.17987740485775305
+        ],
+        [
+          -0.3300219298245614,
+          0.1670994021104784
+        ],
+        [
+          -0.30842105263157865,
+          0.15566645228396986
+        ],
+        [
+          -0.2868640350877192,
+          0.14557855537822667
+        ],
+        [
+          -0.26535087719298245,
+          0.13683571139324932
+        ],
+        [
+          -0.2438815789473685,
+          0.12943792032903767
+        ],
+        [
+          -0.22245614035087732,
+          0.12338518218559189
+        ],
+        [
+          -0.20107456140350888,
+          0.1186774969629118
+        ],
+        [
+          -0.17973684210526325,
+          0.11531486466099744
+        ],
+        [
+          -0.15844298245614036,
+          0.11329728527984881
+        ],
+        [
+          -0.13719298245614023,
+          0.11262475881946589
+        ],
+        [
+          -0.11598684210526287,
+          0.11329728527984881
+        ],
+        [
+          -0.0948245614035088,
+          0.11531486466099744
+        ],
+        [
+          -0.07370614035087747,
+          0.1186774969629118
+        ],
+        [
+          -0.05263157894736842,
+          0.12338518218559189
+        ],
+        [
+          -0.031600877192982636,
+          0.12943792032903767
+        ],
+        [
+          -0.01061403508771912,
+          0.13683571139324932
+        ],
+        [
+          0.010328947368420634,
+          0.14557855537822656
+        ],
+        [
+          0.031228070175438615,
+          0.15566645228396964
+        ],
+        [
+          0.052083333333333336,
+          0.16709940211047852
+        ],
+        [
+          0.07289473684210529,
+          0.17987740485775316
+        ],
+        [
+          0.09366228070175446,
+          0.1940004605257934
+        ],
+        [
+          0.11438596491228038,
+          0.20946856911459935
+        ],
+        [
+          0.13506578947368403,
+          0.22628173062417126
+        ],
+        [
+          0.15570175438596492,
+          0.24443994505450875
+        ],
+        [
+          0.17629385964912353,
+          0.2639432124056121
+        ],
+        [
+          0.19684210526315887,
+          0.28479153267748114
+        ],
+        [
+          0.21734649122806995,
+          0.30698490587011573
+        ],
+        [
+          0.23780701754385927,
+          0.33052333198351624
+        ],
+        [
+          0.2582236842105263,
+          0.35540681101768257
+        ],
+        [
+          0.2785964912280711,
+          0.38163534297261464
+        ],
+        [
+          0.2989254385964921,
+          0.4092089278483124
+        ],
+        [
+          0.31921052631578933,
+          0.4381275656447757
+        ],
+        [
+          0.3394517543859648,
+          0.4683912563620049
+        ],
+        [
+          0.35964912280701755,
+          0.4999999999999999
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            -0.5,
+            -0.3608338692900756
+          ],
+          [
+            -0.4824561403508772,
+            0.28479153267748103
+          ]
+        ],
+        [
+          [
+            0.35964912280701755,
+            0.4999999999999999
+          ],
+          [
+            0.5,
+            -0.14562540196755674
+          ]
+        ]
+      ],
+      "gravityDirection": "left",
+      "gravityStrength": 50
+    },
+    {
+      "id": "gravityZone-003",
+      "type": "gravityZone",
+      "layer": "top",
+      "x": 54.5,
+      "y": 23.6064,
+      "angle": 0,
+      "width": 53,
+      "height": 34.7872,
+      "outline": [
+        [
+          0.5,
+          0.12629932848863948
+        ],
+        [
+          0.4855471698113207,
+          0.09004461411093727
+        ],
+        [
+          0.4708679245283017,
+          0.054870757060068054
+        ],
+        [
+          0.4559622641509433,
+          0.020777757336031627
+        ],
+        [
+          0.44083018867924534,
+          -0.012234385061171906
+        ],
+        [
+          0.4254716981132075,
+          -0.04416567013154265
+        ],
+        [
+          0.40988679245283,
+          -0.0750160978750805
+        ],
+        [
+          0.39407547169811313,
+          -0.10478566829178566
+        ],
+        [
+          0.37803773584905664,
+          -0.13347438138165763
+        ],
+        [
+          0.36177358490566075,
+          -0.1610822371446968
+        ],
+        [
+          0.34528301886792473,
+          -0.18760923558090328
+        ],
+        [
+          0.3285660377358491,
+          -0.2130553766902768
+        ],
+        [
+          0.3116226415094338,
+          -0.23742066047281765
+        ],
+        [
+          0.2944528301886791,
+          -0.2607050869285255
+        ],
+        [
+          0.2770566037735849,
+          -0.2829086560574004
+        ],
+        [
+          0.25943396226415066,
+          -0.3040313678594426
+        ],
+        [
+          0.24158490566037713,
+          -0.3240732223346519
+        ],
+        [
+          0.22350943396226394,
+          -0.3430342194830283
+        ],
+        [
+          0.20520754716981116,
+          -0.36091435930457183
+        ],
+        [
+          0.18667924528301896,
+          -0.3777136417992825
+        ],
+        [
+          0.1679245283018869,
+          -0.3934320669671604
+        ],
+        [
+          0.1489433962264152,
+          -0.4080696348082053
+        ],
+        [
+          0.12973584905660387,
+          -0.4216263453224175
+        ],
+        [
+          0.1103018867924529,
+          -0.4341021985097967
+        ],
+        [
+          0.0906415094339623,
+          -0.44549719437034313
+        ],
+        [
+          0.07075471698113207,
+          -0.4558113329040567
+        ],
+        [
+          0.050641509433962215,
+          -0.46504461411093745
+        ],
+        [
+          0.03030188679245273,
+          -0.4731970379909853
+        ],
+        [
+          0.009735849056603607,
+          -0.4802686045442002
+        ],
+        [
+          -0.011056603773584878,
+          -0.48625931377058235
+        ],
+        [
+          -0.03207547169811326,
+          -0.4911691656701316
+        ],
+        [
+          -0.05332075471698101,
+          -0.494998160242848
+        ],
+        [
+          -0.07479245283018865,
+          -0.4977462974887315
+        ],
+        [
+          -0.0964905660377358,
+          -0.4994135774077822
+        ],
+        [
+          -0.1184150943396227,
+          -0.5
+        ],
+        [
+          -0.14056603773584897,
+          -0.499505565265385
+        ],
+        [
+          -0.16294339622641502,
+          -0.4979302732039371
+        ],
+        [
+          -0.18554716981132083,
+          -0.49527412381565633
+        ],
+        [
+          -0.208377358490566,
+          -0.49153711710054276
+        ],
+        [
+          -0.23143396226415092,
+          -0.48671925305859626
+        ],
+        [
+          -0.25471698113207547,
+          -0.4808205316898169
+        ],
+        [
+          -0.27822641509433954,
+          -0.47384095299420487
+        ],
+        [
+          -0.30196226415094335,
+          -0.4657805169717598
+        ],
+        [
+          -0.3259245283018868,
+          -0.4566392236224819
+        ],
+        [
+          -0.35011320754716974,
+          -0.4464170729463711
+        ],
+        [
+          -0.3745283018867925,
+          -0.43511406494342747
+        ],
+        [
+          -0.39916981132075485,
+          -0.422730199613651
+        ],
+        [
+          -0.4240377358490564,
+          -0.40926547695704174
+        ],
+        [
+          -0.44913207547169803,
+          -0.39471989697359955
+        ],
+        [
+          -0.4744528301886793,
+          -0.37909345966332453
+        ],
+        [
+          -0.5,
+          -0.36238616502621657
+        ],
+        [
+          -0.5,
+          0.5
+        ],
+        [
+          -0.4857900943396226,
+          0.4649296292889339
+        ],
+        [
+          -0.47146226415094333,
+          0.4315840309079201
+        ],
+        [
+          -0.45701650943396227,
+          0.39996320485695896
+        ],
+        [
+          -0.4424528301886793,
+          0.37006715113604993
+        ],
+        [
+          -0.42777122641509435,
+          0.34189586974519365
+        ],
+        [
+          -0.4129716981132076,
+          0.3154493606843896
+        ],
+        [
+          -0.3980542452830188,
+          0.2907276239536381
+        ],
+        [
+          -0.3830188679245283,
+          0.26773065955293907
+        ],
+        [
+          -0.3678655660377359,
+          0.24645846748229233
+        ],
+        [
+          -0.35259433962264153,
+          0.2269110477416981
+        ],
+        [
+          -0.3372051886792453,
+          0.20908840033115636
+        ],
+        [
+          -0.3216981132075471,
+          0.1929905252506669
+        ],
+        [
+          -0.30607311320754726,
+          0.17861742250022997
+        ],
+        [
+          -0.2903301886792453,
+          0.16596909207984542
+        ],
+        [
+          -0.27446933962264153,
+          0.15504553398951337
+        ],
+        [
+          -0.2584905660377358,
+          0.1458467482292337
+        ],
+        [
+          -0.24239386792452824,
+          0.13837273479900655
+        ],
+        [
+          -0.22617924528301894,
+          0.1326234936988317
+        ],
+        [
+          -0.2098466981132076,
+          0.12859902492870934
+        ],
+        [
+          -0.19339622641509435,
+          0.12629932848863948
+        ],
+        [
+          -0.17682783018867917,
+          0.125724404378622
+        ],
+        [
+          -0.16014150943396208,
+          0.12687425259865706
+        ],
+        [
+          -0.14333726415094347,
+          0.12974887314874428
+        ],
+        [
+          -0.1264150943396227,
+          0.1343482660288842
+        ],
+        [
+          -0.109375,
+          0.14067243123907644
+        ],
+        [
+          -0.0922169811320754,
+          0.14872136877932116
+        ],
+        [
+          -0.07494103773584887,
+          0.15849507864961837
+        ],
+        [
+          -0.05754716981132083,
+          0.16999356084996767
+        ],
+        [
+          -0.040035377358490484,
+          0.1832168153803698
+        ],
+        [
+          -0.02240566037735849,
+          0.1981648422408242
+        ],
+        [
+          -0.0046580188679244475,
+          0.2148376414313311
+        ],
+        [
+          0.013207547169811509,
+          0.2332352129518905
+        ],
+        [
+          0.031191037735848977,
+          0.2533575568025021
+        ],
+        [
+          0.04929245283018876,
+          0.2752046729831662
+        ],
+        [
+          0.06751179245283019,
+          0.2987765614938828
+        ],
+        [
+          0.08584905660377366,
+          0.3240732223346519
+        ],
+        [
+          0.10430424528301892,
+          0.3510946555054735
+        ],
+        [
+          0.12287735849056595,
+          0.3798408610063472
+        ],
+        [
+          0.1415683962264149,
+          0.41031183883727335
+        ],
+        [
+          0.16037735849056603,
+          0.4425075889982522
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            -0.5,
+            -0.36238616502621657
+          ],
+          [
+            -0.5,
+            0.5
+          ]
+        ],
+        [
+          [
+            0.16037735849056603,
+            0.4425075889982522
+          ],
+          [
+            0.5,
+            0.12629932848863948
+          ]
+        ]
+      ],
+      "gravityDirection": "left",
+      "gravityStrength": 50
+    }
+  ],
+  "lockedLayout": [],
+  "upperLayout": [],
+  "topLayout": [],
+  "templates": {
+    "hole": {
+      "label": "Hole",
+      "width": 12,
+      "height": 12,
+      "markup": "<circle r=\"5.5\" fill=\"#08121d\"/><circle r=\"3.4\" stroke-dasharray=\"1 1\"/>"
+    },
+    "target": {
+      "label": "單顆 target",
+      "width": 13,
+      "height": 3,
+      "markup": "<polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "flag": {
+      "label": "旗幟線",
+      "width": 14,
+      "height": 2,
+      "markup": "<line x1=\"-7\" y1=\"0\" x2=\"7\" y2=\"0\" fill=\"none\" stroke=\"#e6a5ea\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>"
+    },
+    "targets": {
+      "label": "三連 target",
+      "width": 43,
+      "height": 3.000000000000014,
+      "markup": "<polygon points=\"-21.0000,0.6000 -21.0000,-0.6000 -20.9991,-0.6273 -20.9963,-0.6545 -20.9916,-0.6814 -20.9852,-0.7079 -20.9769,-0.7340 -20.9669,-0.7594 -20.9552,-0.7840 -20.9418,-0.8078 -20.9268,-0.8307 -20.9103,-0.8524 -20.8923,-0.8730 -20.8730,-0.8923 -20.8524,-0.9103 -20.8307,-0.9268 -20.8078,-0.9418 -20.7840,-0.9552 -20.7594,-0.9669 -20.7340,-0.9769 -20.7079,-0.9852 -20.6814,-0.9916 -20.6545,-0.9963 -20.6273,-0.9991 -20.6000,-1.0000 -9.4000,-1.0000 -9.3727,-0.9991 -9.3455,-0.9963 -9.3186,-0.9916 -9.2921,-0.9852 -9.2660,-0.9769 -9.2406,-0.9669 -9.2160,-0.9552 -9.1922,-0.9418 -9.1693,-0.9268 -9.1476,-0.9103 -9.1270,-0.8923 -9.1077,-0.8730 -9.0897,-0.8524 -9.0732,-0.8307 -9.0582,-0.8078 -9.0448,-0.7840 -9.0331,-0.7594 -9.0231,-0.7340 -9.0148,-0.7079 -9.0084,-0.6814 -9.0037,-0.6545 -9.0009,-0.6273 -9.0000,-0.6000 -9.0000,0.6000 -9.0009,0.6273 -9.0037,0.6545 -9.0084,0.6814 -9.0148,0.7079 -9.0231,0.7340 -9.0331,0.7594 -9.0448,0.7840 -9.0582,0.8078 -9.0732,0.8307 -9.0897,0.8524 -9.1077,0.8730 -9.1270,0.8923 -9.1476,0.9103 -9.1693,0.9268 -9.1922,0.9418 -9.2160,0.9552 -9.2406,0.9669 -9.2660,0.9769 -9.2921,0.9852 -9.3186,0.9916 -9.3455,0.9963 -9.3727,0.9991 -9.4000,1.0000 -20.6000,1.0000 -20.6273,0.9991 -20.6545,0.9963 -20.6814,0.9916 -20.7079,0.9852 -20.7340,0.9769 -20.7594,0.9669 -20.7840,0.9552 -20.8078,0.9418 -20.8307,0.9268 -20.8524,0.9103 -20.8730,0.8923 -20.8923,0.8730 -20.9103,0.8524 -20.9268,0.8307 -20.9418,0.8078 -20.9552,0.7840 -20.9669,0.7594 -20.9769,0.7340 -20.9852,0.7079 -20.9916,0.6814 -20.9963,0.6545 -20.9991,0.6273 -21.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"-6.0000,0.6000 -6.0000,-0.6000 -5.9991,-0.6273 -5.9963,-0.6545 -5.9916,-0.6814 -5.9852,-0.7079 -5.9769,-0.7340 -5.9669,-0.7594 -5.9552,-0.7840 -5.9418,-0.8078 -5.9268,-0.8307 -5.9103,-0.8524 -5.8923,-0.8730 -5.8730,-0.8923 -5.8524,-0.9103 -5.8307,-0.9268 -5.8078,-0.9418 -5.7840,-0.9552 -5.7594,-0.9669 -5.7340,-0.9769 -5.7079,-0.9852 -5.6814,-0.9916 -5.6545,-0.9963 -5.6273,-0.9991 -5.6000,-1.0000 5.6000,-1.0000 5.6273,-0.9991 5.6545,-0.9963 5.6814,-0.9916 5.7079,-0.9852 5.7340,-0.9769 5.7594,-0.9669 5.7840,-0.9552 5.8078,-0.9418 5.8307,-0.9268 5.8524,-0.9103 5.8730,-0.8923 5.8923,-0.8730 5.9103,-0.8524 5.9268,-0.8307 5.9418,-0.8078 5.9552,-0.7840 5.9669,-0.7594 5.9769,-0.7340 5.9852,-0.7079 5.9916,-0.6814 5.9963,-0.6545 5.9991,-0.6273 6.0000,-0.6000 6.0000,0.6000 5.9991,0.6273 5.9963,0.6545 5.9916,0.6814 5.9852,0.7079 5.9769,0.7340 5.9669,0.7594 5.9552,0.7840 5.9418,0.8078 5.9268,0.8307 5.9103,0.8524 5.8923,0.8730 5.8730,0.8923 5.8524,0.9103 5.8307,0.9268 5.8078,0.9418 5.7840,0.9552 5.7594,0.9669 5.7340,0.9769 5.7079,0.9852 5.6814,0.9916 5.6545,0.9963 5.6273,0.9991 5.6000,1.0000 -5.6000,1.0000 -5.6273,0.9991 -5.6545,0.9963 -5.6814,0.9916 -5.7079,0.9852 -5.7340,0.9769 -5.7594,0.9669 -5.7840,0.9552 -5.8078,0.9418 -5.8307,0.9268 -5.8524,0.9103 -5.8730,0.8923 -5.8923,0.8730 -5.9103,0.8524 -5.9268,0.8307 -5.9418,0.8078 -5.9552,0.7840 -5.9669,0.7594 -5.9769,0.7340 -5.9852,0.7079 -5.9916,0.6814 -5.9963,0.6545 -5.9991,0.6273 -6.0000,0.6000\" fill=\"#3e6373\"/><polygon points=\"9.0000,0.6000 9.0000,-0.6000 9.0009,-0.6273 9.0037,-0.6545 9.0084,-0.6814 9.0148,-0.7079 9.0231,-0.7340 9.0331,-0.7594 9.0448,-0.7840 9.0582,-0.8078 9.0732,-0.8307 9.0897,-0.8524 9.1077,-0.8730 9.1270,-0.8923 9.1476,-0.9103 9.1693,-0.9268 9.1922,-0.9418 9.2160,-0.9552 9.2406,-0.9669 9.2660,-0.9769 9.2921,-0.9852 9.3186,-0.9916 9.3455,-0.9963 9.3727,-0.9991 9.4000,-1.0000 20.6000,-1.0000 20.6273,-0.9991 20.6545,-0.9963 20.6814,-0.9916 20.7079,-0.9852 20.7340,-0.9769 20.7594,-0.9669 20.7840,-0.9552 20.8078,-0.9418 20.8307,-0.9268 20.8524,-0.9103 20.8730,-0.8923 20.8923,-0.8730 20.9103,-0.8524 20.9268,-0.8307 20.9418,-0.8078 20.9552,-0.7840 20.9669,-0.7594 20.9769,-0.7340 20.9852,-0.7079 20.9916,-0.6814 20.9963,-0.6545 20.9991,-0.6273 21.0000,-0.6000 21.0000,0.6000 20.9991,0.6273 20.9963,0.6545 20.9916,0.6814 20.9852,0.7079 20.9769,0.7340 20.9669,0.7594 20.9552,0.7840 20.9418,0.8078 20.9268,0.8307 20.9103,0.8524 20.8923,0.8730 20.8730,0.8923 20.8524,0.9103 20.8307,0.9268 20.8078,0.9418 20.7840,0.9552 20.7594,0.9669 20.7340,0.9769 20.7079,0.9852 20.6814,0.9916 20.6545,0.9963 20.6273,0.9991 20.6000,1.0000 9.4000,1.0000 9.3727,0.9991 9.3455,0.9963 9.3186,0.9916 9.2921,0.9852 9.2660,0.9769 9.2406,0.9669 9.2160,0.9552 9.1922,0.9418 9.1693,0.9268 9.1476,0.9103 9.1270,0.8923 9.1077,0.8730 9.0897,0.8524 9.0732,0.8307 9.0582,0.8078 9.0448,0.7840 9.0331,0.7594 9.0231,0.7340 9.0148,0.7079 9.0084,0.6814 9.0037,0.6545 9.0009,0.6273 9.0000,0.6000\" fill=\"#3e6373\"/>"
+    },
+    "plunger": {
+      "label": "發球區",
+      "width": 20,
+      "height": 8,
+      "markup": "<rect x=\"-10\" y=\"-4\" width=\"20\" height=\"8\" fill=\"#b78a43\"/><path d=\"M0 3V-3M-2 -1L0 -3L2 -1\" fill=\"none\"/>"
+    },
+    "flipper": {
+      "label": "Flipper",
+      "width": 50.72938359896286,
+      "height": 14.061202228069305,
+      "markup": "<path d=\"M-18.33409068544678 -6.530601114034653 L20.805223887761155 -4.059467911720276 A4.059467911720276 4.059467911720276 0 0 1 20.805223887761155 4.059467911720276 L-18.33409068544678 6.530601114034653 A6.530601114034653 6.530601114034653 0 0 1 -18.33409068544678 -6.530601114034653 Z\" fill=\"#355b73\"/><circle cx=\"-18.33409068544678\" cy=\"0\" r=\"1.8\" fill=\"#79cafa\"/>"
+    },
+    "centerPost": {
+      "label": "Center post",
+      "width": 10,
+      "height": 10,
+      "markup": "<circle r=\"5\" fill=\"#263945\"/><circle r=\"3.3\" fill=\"none\"/><path d=\"M-2 0H2M0 -2V2\"/>"
+    },
+    "ublock": {
+      "label": "ㄇ形阻擋物",
+      "width": 25,
+      "height": 23,
+      "markup": "<path d=\"M-12 11V-11H12V11H9V-8H-9V11Z\" fill=\"#455e6b\"/>"
+    }
+  }
+}
