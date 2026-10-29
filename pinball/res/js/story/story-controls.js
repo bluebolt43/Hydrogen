@@ -7,6 +7,15 @@ document.head.append(interactionStyle);
 for(const type of ['contextmenu','dragstart','selectstart'])document.addEventListener(type,event=>{
  if(document.getElementById('phone')?.contains(event.target))event.preventDefault();
 },{capture:true});
+function keyboard(event){
+ if(event.repeat||event.isComposing||event.ctrlKey||event.altKey||event.metaKey||event.target?.closest?.('input,textarea,select,[contenteditable]'))return;
+ if(['Shift','Control','Alt','Meta','CapsLock','NumLock','ScrollLock'].includes(event.key))return;
+ const ids=['story-skip','skip-intro','story-next','start'];
+ const button=ids.map(id=>document.getElementById(id)).find(button=>button&&!button.disabled&&!button.hidden&&button.getClientRects().length&&getComputedStyle(button).visibility!=='hidden');
+ if(!button)return;
+ event.preventDefault();event.stopImmediatePropagation();button.click();
+}
+document.addEventListener('keydown',keyboard,{capture:true});
 function apply(){
  for(const canvas of document.querySelectorAll('[data-story-ending-caption]')){
   if(document.body?.dataset?.storyChapter&&(document.body.dataset.storyChapter!=='8'||document.body.dataset.storyPart!=='end'))continue;
@@ -23,5 +32,5 @@ function apply(){
 }
 apply();
 const off=root.PinballI18n.onChange(apply);
-root.addEventListener('pagehide',off,{once:true});
+root.addEventListener('pagehide',()=>{off();document.removeEventListener('keydown',keyboard,{capture:true});},{once:true});
 })(window);

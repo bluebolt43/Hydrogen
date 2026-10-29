@@ -9,10 +9,10 @@
 #core-inset{position:absolute;left:5%;top:7%;width:51%;height:26%;border:4px solid #f3e8ce;background:#19222b;overflow:hidden;box-shadow:0 5px 16px #0008;pointer-events:none}#core-inset img{position:absolute;width:370%;height:auto;max-width:none;left:-181%;top:-190%}#memory-intro{position:absolute;left:10%;top:5%;width:80%;height:30%;border:4px solid white;border-radius:45%;box-shadow:0 0 0 2px #303038;background:white;transform-origin:30% 100%;pointer-events:none}#memory-intro img{width:100%;height:100%;object-fit:cover;object-position:50% 48%;border-radius:inherit}#memory-intro::after{content:'';position:absolute;left:15%;bottom:-10%;width:12%;height:18%;border-radius:50%;background:white;box-shadow:-8px 14px 0 -4px white}#memory-reveal{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none}
 #ch5-world{position:absolute;inset:0;pointer-events:none}#ch5-world img{position:absolute;display:block}#ch5-world .companions{left:1%;bottom:18%;width:48%;height:auto}#ch5-world .upright{left:51%;bottom:18%;height:38.4%;width:auto}#ch5-world .point{left:17%;bottom:16.5%;height:34.4%;width:auto}#ch5-world .complaint{left:17%;top:8%;width:77%;height:auto}
 #sack-inset{position:absolute;left:8%;top:66%;width:48%;height:23%;border:4px solid #f3e8ce;border-radius:3px;overflow:hidden;background:#12466b;box-shadow:0 5px 18px #0008;pointer-events:none}#sack-inset img{position:absolute;width:300%;height:auto;max-width:none;left:-34%;top:-350%}
-#ch6-world{position:absolute;inset:0;pointer-events:none}#ch6-world img{position:absolute;display:block;height:auto}#ch6-world .body{left:70%;top:43%;width:125%;clip-path:ellipse(100% 50% at 100% 50%)}#ch6-world .head{left:26%;top:43%;width:105%}#ch6-world .sack{left:34%;top:74%;width:24%;clip-path:inset(0 30% 0 0)}#ch6-world .hero{left:7%;bottom:13%;width:27%}#ch6-world .bun{left:44%;top:13%;width:48%}
+#ch6-world{position:absolute;inset:0;pointer-events:none}#ch6-world img{position:absolute;display:block;height:auto}#ch6-world .body{left:-10%;top:34%;width:125%}#ch6-world .head{left:26%;top:43%;width:105%}#ch6-world .sack{left:34%;top:74%;width:24%}#ch6-world .hero{left:7%;bottom:13%;width:27%}#ch6-world .bun{left:44%;top:13%;width:48%}
 #ch6-world .explanation{left:18%;top:12%;width:76%}#ch6-world .idea{left:5%;top:14%;width:81%}
 #ch6-world .shore-looking{left:0;bottom:0;width:70%}#ch6-world .raven-thought{left:38%;top:44%;width:44%}
-#ch6-world .cat{left:44%;bottom:21%;width:40%}
+#ch6-world .cat{left:51.2%;bottom:12%;width:44.5%}
 #ch6-world .smoke{left:14%;top:31%;width:120%;transform-origin:50% 60%}
 #ch6-world .rescue-scene{left:7%;bottom:13%;width:86%;height:auto}
 #ch6-world .ch8-companions{inset:0;width:100%;height:100%;object-fit:fill}
@@ -23,3 +23,25 @@ body.embed main{width:100%;height:100%;padding:0}body.embed #stage{width:100%;he
 body{display:grid;place-items:center}#phone{position:relative;width:min(100vw,56.25dvh);height:auto;aspect-ratio:9/16;padding:0;margin:0;overflow:hidden;background:#000}#stage{width:100%;height:100%;margin:0;border:0;border-radius:0;aspect-ratio:auto}#phone #begin{z-index:30}#phone #replay{z-index:25}#phone #story-next{z-index:35}#end-curtain canvas{width:100%;height:100%}
 
 #cooperation-bubble{position:absolute;left:4%;top:32%;width:62%;pointer-events:none}#cooperation-bubble img{display:block;width:100%;height:auto}
+
+#memory-intro.from-right{transform-origin:75% 100%}#memory-intro.from-right::after{left:75%}#memory-intro.from-right img{object-position:50% 78%}
+
+#trade-exchange{position:absolute;left:22%;top:5%;width:76%;aspect-ratio:4/3;pointer-events:none}#trade-exchange img{width:18%;transform:translate(-50%,-50%);z-index:1}#trade-exchange #trade-stone{width:16%}#trade-arrows{position:absolute;left:47%;top:35%;width:14%}#trade-arrows svg{display:block;width:100%;height:auto}
+
+#thought-bubble{position:absolute;left:20%;top:5%;width:65%;pointer-events:none}#thought-bubble img{display:block;width:100%;height:auto}
+
+#seal-memory{position:absolute;inset:0;overflow:hidden;pointer-events:none;background:linear-gradient(#477b89,#244e68);z-index:10}
+#seal-memory .memory-fish{position:absolute;width:24%;height:auto;transform:scaleX(-1)}
+#seal-memory .memory-seal{position:absolute;width:55%;height:auto}
+#seal-memory .memory-whale{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+#seal-memory .memory-whale img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#seal-memory.thought{inset:7% 6% auto;width:88%;height:30%;border:3px solid #fff0c9;border-radius:45%;box-sizing:border-box;box-shadow:0 0 0 2px #665231}
+#seal-memory.thought .memory-fish{width:24%}
+
+#puppy-memory{position:absolute;inset:0;pointer-events:none}
+#puppy-memory img{position:absolute;height:auto}
+#puppy-memory .puppy-curious,#puppy-memory .puppy-bite{left:4%;top:43%;width:92%}
+#puppy-memory .puppy-stone{left:69%;top:77%;width:18%;transform:translate(-50%,-50%);clip-path:polygon(0 0,100% 0,100% 49%,88% 52%,73% 48%,58% 53%,43% 49%,27% 53%,12% 50%,0 53%)}
+#puppy-memory .tooth-smile,#puppy-memory .tooth-cry{left:22%;top:4%;width:66%}
+
+#ch2-world aside.request{position:absolute;aspect-ratio:4/3;background:#fff1d8;border:2px solid #66472e;border-radius:50%;box-sizing:border-box}#ch2-world aside.request::after{content:"";position:absolute;left:19%;bottom:-10%;width:15%;height:22%;background:#fff1d8;border-right:2px solid #66472e;border-bottom:2px solid #66472e;transform:skew(-24deg) rotate(30deg)}#ch2-world aside.request img{position:absolute;left:10%;top:-18%;width:80%;height:118%;object-fit:contain;z-index:1}

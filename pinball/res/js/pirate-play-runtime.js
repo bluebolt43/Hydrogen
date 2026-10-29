@@ -91,7 +91,7 @@ const PirateTutorial={
   const preferred=rs.length?(steps[step][3]==='below'?maxY+16:minY-top>=h+24?minY-h-16:maxY+16):(top+bottom-h)/2;
   panel.style.top=Math.max(top+12,Math.min(bottom-h-12,preferred))+'px';
  }
- function render(){overlay.hidden=waiting||tutorialMode&&['enemy','ball','barrel','airdrop','kraken'].includes(demo);overlay.dataset.demo=demo||'';overlay.dataset.step=String(step+1);overlay.dataset.heartOnly=String(heartOnly);$('tutorialTitle').hidden=step>=4;$('tutorialHint').hidden=!!demo||!replay&&step<3;$('tutorialHint').textContent=PinballI18n.t('tutorial.next');$('tutorialTitle').textContent=text(step===3&&heartOnly?'tutorial.health.title':steps[step][0]);$('tutorialText').textContent=text(step===3&&heartOnly?'tutorial.health.text':steps[step][1]);position();}
+ function render(){overlay.hidden=waiting||tutorialMode&&['enemy','ball','barrel','airdrop','kraken'].includes(demo);overlay.dataset.demo=demo||'';overlay.dataset.step=String(step+1);overlay.dataset.heartOnly=String(heartOnly);$('tutorialTitle').hidden=step>=4;$('tutorialHint').hidden=!!demo||!replay&&step<3;$('tutorialHint').textContent=PinballI18n.t(window.matchMedia?.('(pointer: fine)').matches?'tutorial.nextKeyboard':'tutorial.next');$('tutorialTitle').textContent=text(step===3&&heartOnly?'tutorial.health.title':steps[step][0]);$('tutorialText').textContent=text(step===3&&heartOnly?'tutorial.health.text':steps[step][1]);position();}
  function used(control){if(waiting||step>1||control!==['left','right'][step])return;step++;render();}
  function allowed(control){return waiting||step<3&&control===['left','right','launch'][step];}
  function stop(e){e.preventDefault();e.stopImmediatePropagation();}
@@ -99,9 +99,10 @@ const PirateTutorial={
   stop(e);if(game.paused||game.theaterFrozen||game.enemyIntroPending)return;const control=['left','right','launch'][step];pointer={id:e.pointerId,control};canvas.setPointerCapture(e.pointerId);soundBank.unlock();if(control==='launch'){if(controls.launchMode==='drag'){controls.launchDrag={pointerId:e.pointerId,y:e.clientY};game.launchAiming=true;}else launch(true);}else game.input[control]=true;
  }
  function move(e){if(!pointer||pointer.id!==e.pointerId)return;stop(e);if(controls.launchDrag){game.charge=Math.max(0,Math.min(1,(e.clientY-controls.launchDrag.y)/100));game.chargeElapsed=game.charge;game.ball.p[1]=G.plunger.rest_y-G.ball_radius+G.plunger.stroke*game.charge;}}
- function up(e){if(!pointer||pointer.id!==e.pointerId)return;stop(e);const control=pointer.control;pointer=null;if(control==='next'){if(e.type==='pointerup'){if(tutorialMode&&step>=3){playDemo();}else if(step<steps.length-1){step++;if(step===3&&!tutorialMode){heartOnly=true;narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});}render();}else finish();}return;}if(control==='launch'){if(controls.launchDrag){const charge=game.charge;controls.launchDrag=null;game.launchAiming=false;if(e.type==='pointerup')game.launch(charge);}else if(e.type==='pointerup')launch(false);else clearTouchControls();}else{game.input[control]=false;if(e.type==='pointerup')used(control);}}
+ function next(){if(waiting||demo||!(replay||step>=3)||!(step<3||narrationReady))return;if(tutorialMode&&step>=3){playDemo();}else if(step<steps.length-1){step++;if(step===3&&!tutorialMode){heartOnly=true;narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});}render();}else finish();}
+ function up(e){if(!pointer||pointer.id!==e.pointerId)return;stop(e);const control=pointer.control;pointer=null;if(control==='next'){if(e.type==='pointerup')next();return;}if(control==='launch'){if(controls.launchDrag){const charge=game.charge;controls.launchDrag=null;game.launchAiming=false;if(e.type==='pointerup')game.launch(charge);}else if(e.type==='pointerup')launch(false);else clearTouchControls();}else{game.input[control]=false;if(e.type==='pointerup')used(control);}}
  // Require a fresh keypress for each tutorial step.
- function keyboard(e){if(replay){stop(e);return;}if(waiting)return;const k=e.key.toLowerCase(),control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':k===' '?'launch':null;stop(e);if(!allowed(control)||game.paused||game.theaterFrozen)return;if(e.type==='keydown'){if(e.repeat||heldKey)return;heldKey={k,control};if(control==='launch')launch(true);else game.input[control]=true;}else if(heldKey?.k===k){heldKey=null;if(control==='launch')launch(false);else{game.input[control]=false;used(control);}}}
+ function keyboard(e){if(waiting)return;const k=e.key.toLowerCase();if(replay||step>=3){stop(e);if(e.type==='keyup'){if(heldKey?.k===k){heldKey=null;next();}}else if(!e.repeat&&!heldKey&&!['shift','control','alt','meta','capslock','numlock','scrolllock'].includes(k)&&!demo&&(step<3||narrationReady))heldKey={k,control:'next'};return;}const control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':[' ','arrowdown'].includes(k)?'launch':null;stop(e);if(!allowed(control)||game.paused||game.theaterFrozen)return;if(e.type==='keydown'){if(e.repeat||heldKey)return;heldKey={k,control};if(control==='launch')launch(true);else game.input[control]=true;}else if(heldKey?.k===k){heldKey=null;if(control==='launch')launch(false);else{game.input[control]=false;used(control);}}}
  const listeners=[['pointerdown',down],['pointermove',move],['pointerup',up],['pointercancel',up],['keydown',keyboard],['keyup',keyboard]];for(const [name,fn]of listeners)addEventListener(name,fn,{capture:true});
  const observer=new ResizeObserver(position);observer.observe(canvas);
  guide={refresh:render,allowed,used,demoFrozen:false,onEvent(e){if(tutorialMode){if(demo==='vortex'&&e.type==='release')demoDone();return;}if(e.type==='launch'&&step===2){flightTime=0;waiting=true;render();}else if(waiting&&['ready','ball-save-ready'].includes(e.type)){waiting=false;step=2;render();}else if(waiting&&(e.type==='rollover'||!lesson&&e.type==='sensor')){waiting=false;step=3;heartOnly=true;game.paused=true;clearTouchControls();theater.update(0,game);narrationReady=false;theater.tutorialBounds=null;theater.send({command:'tutorial-bounds'});render();}}};
@@ -122,7 +123,7 @@ const PirateTutorial={
 };
 
 const TableTutorial=PirateTutorial;
-const TOUHOU_GAMEPLAY_DEFAULTS={"touhouGap": {"sensor": "sensor-003", "hole": "hole-008", "passes": 1, "locks": 3, "autoLaunch": true, "keepOpenUntilFull": true, "readySeconds": 1.5}, "indicatorCounters": ["sensor-001"], "touhouBagua": {"object": "blockhole-001", "radius": 68, "threshold": 8, "spinSeconds": 4.5, "winFlashSeconds": 1.2, "rewards": [{"kind": "score", "value": 1000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-1000.png", "crop": [0, 0, 20, 9]}}, {"kind": "score", "value": 2500, "art": {"src": "res/img/steampunk/steampunk-bonus-score-2500.png", "crop": [0, 0, 20, 7]}}, {"kind": "score", "value": 5000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-5000.png", "crop": [0, 0, 20, 8]}}, {"kind": "multiplier", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-2.png", "crop": [0, 0, 16, 12]}}, {"kind": "multiplier", "value": 3, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-3.png", "crop": [0, 0, 14, 12]}}, {"kind": "ball", "value": 1, "art": {"src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png", "crop": [0, 0, 18, 9]}}, {"kind": "multi", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiball.png", "crop": [0, 0, 19, 18]}}, {"kind": "enemy", "value": 0, "art": {"src": "res/img/steampunk/steampunk-bonus-enemy.png", "crop": [0, 0, 13, 13]}}], "yinYang": {"fadeSeconds": 0.8}, "attackArt": {"src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png", "duration": 1.55}}, "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"};
+const TOUHOU_GAMEPLAY_DEFAULTS={"touhouGap": {"sensor": "sensor-003", "hole": "hole-008", "passes": 1, "locks": 3, "autoLaunch": true, "keepOpenUntilFull": true, "readySeconds": 3, "captureSeconds": 3}, "indicatorCounters": ["sensor-001"], "touhouBagua": {"object": "blockhole-001", "radius": 68, "threshold": 8, "spinSeconds": 4.5, "winFlashSeconds": 1.2, "rewards": [{"kind": "score", "value": 1000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-1000.png", "crop": [0, 0, 20, 9]}}, {"kind": "score", "value": 2500, "art": {"src": "res/img/steampunk/steampunk-bonus-score-2500.png", "crop": [0, 0, 20, 7]}}, {"kind": "score", "value": 5000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-5000.png", "crop": [0, 0, 20, 8]}}, {"kind": "multiplier", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-2.png", "crop": [0, 0, 16, 12]}}, {"kind": "multiplier", "value": 3, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-3.png", "crop": [0, 0, 14, 12]}}, {"kind": "ball", "value": 1, "art": {"src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png", "crop": [0, 0, 18, 9]}}, {"kind": "multi", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiball.png", "crop": [0, 0, 19, 18]}}, {"kind": "enemy", "value": 0, "art": {"src": "res/img/steampunk/steampunk-bonus-enemy.png", "crop": [0, 0, 13, 13]}}], "yinYang": {"fadeSeconds": 0.8}, "attackArt": {"src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png", "duration": 1.55}}, "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"};
 /* Editor JSON -> physics geometry. Shared by editor previews and built games. */
 (function(root){
 'use strict';
@@ -299,6 +300,21 @@ function createGame(core){
   transition(hit){
    if(!hit.editorPortal)return super.transition(hit);
    this.ball.layer=hit.editorPortal.to;this.lastPortal=this.time;
+   // A line sensor may enter with the ball already overlapping a destination wall.
+   // Restore clearance so the next sweep can resolve that wall using normal physics.
+   if(hit.editorPortal.points)for(const edge of this.edges[this.ball.layer]||[]){
+    if(!['wall','rail'].includes(edge.kind)||edge.n||!edge.a||!this.edgeEnabled(edge))continue;
+    const offset=sub(this.ball.p,nearest(this.ball.p,edge.a,edge.b).p),distance=len(offset),radius=this.physics.ballRadius+(edge.thickness||0)/2;
+    if(distance>=radius)continue;
+    let normal;
+    if(distance>1e-9)normal=mul(offset,1/distance);
+    else {
+     const segment=sub(edge.b,edge.a),length=len(segment);if(!length)continue;
+     normal=[-segment[1]/length,segment[0]/length];
+     if(dot(normal,this.ball.v)>0)normal=mul(normal,-1);
+    }
+    this.ball.p=add(this.ball.p,mul(normal,radius-distance+.012));
+   }
    if(hit.editorPortal.initialSpeed>0)this.ball.v=mul(this.ball.v,hit.editorPortal.initialSpeed/(len(this.ball.v)||1));
    if(hit.editorPortal.stopOnEntry){this.ball.v=[0,0];this.ball.state='layer-paused';this.ball.layerResumeAt=this.time+.5;this.ball.trail=[];}
    this.emit('layer',{id:hit.editorPortal.id,to:this.ball.layer});
@@ -383,6 +399,7 @@ function prepare(layout,g){
  if(part)part.kind='rollover-line';
  }
  const holeMulti=layout.gameplay?.holeMultiball;
+ if(layout.gameplay?.multiballHole!==undefined&&!objects.some(o=>o.id===layout.gameplay.multiballHole&&o.type==='hole'))throw Error('Multiball 出球需要有效洞口');
  if(holeMulti&&(!objects.some(o=>o.id===holeMulti.hole&&o.type==='hole')||!Number.isInteger(holeMulti.hits)||holeMulti.hits<1||holeMulti.hits>99))throw Error('Multiball 需要有效洞口及 1～99 次進洞');
  const gap=layout.gameplay?.touhouGap;
  if(gap){
@@ -392,6 +409,7 @@ function prepare(layout,g){
   if((gap.passes??2)>1&&!objects.some(o=>o.id===gap.routeExit&&o.mechanic==='layer-transition'&&o.fromLayer===sensor.layer&&o.toLayer!==sensor.layer))throw Error('隙間需要指定完成軌道的出口線');
   if(gap.locks!==3)throw Error('隙間需要累積三次收球');
   if(gap.readySeconds!==undefined&&(!Number.isFinite(gap.readySeconds)||gap.readySeconds<0))throw Error('隙間準備時間不合法');
+  if(gap.captureSeconds!==undefined&&(!Number.isFinite(gap.captureSeconds)||gap.captureSeconds<=0))throw Error('隙間收球時間必須大於零');
  }
  const runic=layout.gameplay?.runicTurntable;
  const bagua=layout.gameplay?.touhouBagua||runic;
@@ -583,6 +601,18 @@ const view=typeof module!=='undefined'?require('./mechanism-view.js'):root.Mecha
 function createGame(Base,P){return class ConfiguredGame extends Base{
   reset(){this.gapLock=null;super.reset();}
   gapBusy(){return this.gapLock?.active||this.freeBallQueue>0||this.balls.filter(b=>b.state!=='drained').length>1;}
+  spawnFreeBall(){
+   const entrance=this.socketsById.get(this.g.gameplay?.multiballHole);
+   if(!entrance)return super.spawnFreeBall();
+   if(!this.freeBallQueue)return;
+   if(this.balls.filter(b=>b.state!=='drained').length>=3){this.freeBallQueue--;this.awardExtraLife('multiball',this.freeBallRewardPositions.shift()||this.ball.p);return;}
+   const exit=this.socketsById.get(entrance.exit_hole)||entrance;
+   if(this.time<(this.holeMultiballNextAt||0)||this.balls.some(b=>b.state==='captured'&&b.held?.id===exit.id||b.state!=='drained'&&b.layer===exit.layer&&P.len(P.sub(b.p,exit.release))<this.physics.ballRadius*2+3))return;
+   const previous=this.ball,b={p:[...exit.center],v:[0,0],layer:exit.layer,z:0,state:'captured',immunity:0,trail:[],free:true};
+   this.balls.push(b);this.ball=b;this.held={id:exit.id,remaining:0,speed:0,release:[...exit.release],layer:exit.layer,direction:exit.release_direction};
+   this.release();this.freeBallQueue--;this.freeBallRewardPositions.shift();this.holeMultiballNextAt=this.time+.5;
+   this.emit('free-ball-launch',{id:exit.id,position:[...b.p],layer:b.layer});this.ball=previous;
+  }
   awardGapMultiball(count){
    const gap=this.g.gameplay.touhouGap,state=this.gapLock;
    const room=Math.max(0,3-this.balls.filter(b=>b.state!=='drained').length-this.freeBallQueue-state.pending),added=Math.min(count,room);
@@ -642,7 +672,13 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  emit(type,data={}){
   const gap=this.g.gameplay?.touhouGap,state=this.gapLock;
   if(gap&&state&&type==='multiball-awarded'&&(!gap.keepOpenUntilFull||state.active)){state.armed=false;state.passes=0;state.routePending=false;this.armedHoles.delete(gap.hole);}
-  if(gap&&state&&type==='drain')state.routePending=false;
+  if(gap&&state&&type==='drain'){
+   state.routePending=false;
+   if(!this.storyMode&&!this.preserveTableOnDrain&&!this.freeBallQueue&&!state.pending&&this.balls.every(b=>b.state==='drained')){
+    Object.assign(state,{count:0,passes:0,routePending:false,armed:false,active:false,pending:0,readyAt:0,releaseStartedAt:null,nextReleaseAt:0});
+    this.armedHoles.delete(gap.hole);this.gapLaunchAt?.delete(gap.hole);this.holeCapturedAt?.delete(gap.hole);
+   }
+  }
   if(gap&&state&&type==='layer'&&data.id===gap.routeExit&&state.routePending&&!this.gapBusy()){
    state.routePending=false;state.passes++;super.emit('gap-route-completed',{id:gap.routeExit,passes:state.passes});
   }
@@ -740,6 +776,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  this.armedHoles=new Set();this.gapLaunchAt=new Map();
  this.holeExpiresAt=new Map();
  this.holeMultiballHits=0;
+ this.holeMultiballNextAt=0;
  if(this.configuredGroups.some(r=>r.action==='blackHole')){this.vortexActive=false;
  this.vortexActivatedAt=null;
  }this.attackVisualAt=new Map();
@@ -862,6 +899,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  if(multi&&id===multi.hole){this.holeMultiballHits++;if(this.holeMultiballHits>=multi.hits){this.holeMultiballHits=0;this.awardMultiball();}}
  const gap=this.g.gameplay?.touhouGap,state=this.gapLock;
  if(gap&&id===gap.hole){
+  if(gap.captureSeconds>0&&this.held)this.held.remaining=gap.captureSeconds;
   state.count++;state.armed=!!gap.keepOpenUntilFull&&state.count<gap.locks;if(!state.armed)this.armedHoles.delete(id);
   this.emit('gap-ball-locked',{id,locked:state.count});
   if(state.count===gap.locks){const delay=gap.readySeconds??1.5;state.count=0;state.active=true;state.pending=2;state.readyAt=this.time;state.releaseStartedAt=null;state.nextReleaseAt=this.time+delay;if(this.held)this.held.remaining=delay;this.multiballAwards++;this.emit('multiball-awarded',{count:this.multiballAwards});this.emit('gap-multiball',{id,balls:3});}
@@ -1102,6 +1140,10 @@ function presentation(o,g){
  if(!g)return {state:initial,alpha:1,on:initial==='on'};
  const attract=attractLight(g,o);if(attract!==null)return {state:c.type==='bumper'?(attract?'lv3':'lv1'):(attract?(c.attractState||'on'):'off'),alpha:1,on:false,attract:true};
  if(c.trigger?.kind==='hole-count'){const count=g.holeCaptureCounts?.get(c.trigger.source)||0,state=count>=(c.trigger.threshold||2)?'complete':count>0?'on':'off';return {state,alpha:1,on:state!=='off'};}
+ if(c.trigger?.kind==='hole-active'&&c.captureBehavior&&g.balls.some(ball=>ball.state==='captured'&&ball.held?.id===c.trigger.source)){
+  const b=c.captureBehavior,on=b.onSeconds||.2,off=b.offSeconds||.2,age=Math.max(0,g.time-(g.holeCapturedAt.get(c.trigger.source)??g.time)),lit=age%(on+off)<on;
+  return {state:lit?'on':'off',alpha:1,on:lit};
+ }
  if(c.trigger?.kind==='gap-output'){
   const gap=g.g.gameplay?.touhouGap,lock=g.gapLock,exit=gap&&g.socketsById?.get(gap.hole)?.exit_hole;
   if(c.trigger.source!==exit||!lock?.active||!lock.pending)return {state:'off',alpha:1,on:false};
@@ -1263,10 +1305,10 @@ function createImpactPresentation(game,artLayers,renderer){
    combo=0;lastHit=-10;game.combo={count:0,multiplier:1,expiresAt:0};recent.clear();
    if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;particles.length=rings.length=swings.length=0;lampPulses.clear();}
   }
-  if(e.type==='score'){
+  if(e.type==='score'||e.type==='score-hit'){
    hit(e.id);
    // scoreHit has already awarded base points. Add only the combo delta, before HUD/reward listeners.
-   if(game.scoringEnabled!==false&&e.points>0){const base=e.points,total=Math.round(base*multiplier(combo));game.score+=total-base;e.basePoints=base;e.points=total;e.multiplier=multiplier(combo);}
+   if(e.type==='score'&&game.scoringEnabled!==false&&e.points>0){const base=e.points,total=Math.round(base*multiplier(combo));game.score+=total-base;e.basePoints=base;e.points=total;e.multiplier=multiplier(combo);}
    pulse(e.id);
   }
   if(e.type==='rollover'||e.type==='sensor'){hit(e.id);pulse(e.id);burst(position(e),'#a1f3de',.45);}
@@ -1380,10 +1422,13 @@ $('geometryToggle').checked=!window.AppControls;
 artLayers=artLayers.filter(a=>!PlayFrame.isFrameArt(a));
 const [topArt,soundArt,settingsArt,backArt]=PinballArt.validate(PlayFrame.createArt(PLAYTEST_THEME));
 const topBallImage=artRenderer.image(G.gameplay?.ballImage||(['touhou1','touhou2','touhou-horrors','touhou-black-knight-2000'].includes(PLAYTEST_THEME)?'res/img/touhou/touhou-ball-yin-yang.png':['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME)?'res/img/space/space-ball-cookie.png':'res/img/top-ball.png'));
-const topItems=new Set([topArt,soundArt,settingsArt,backArt]);
+const topLayers=[topArt,soundArt,settingsArt,backArt],topItems=new Set(topLayers);
 const artByPlane=new Map(PinballArt.planes.map(plane=>[plane,artLayers.filter(o=>o.plane===plane&&!topItems.has(o))]));
-const ballMarkerPlanes=new Set([...artByPlane].filter(([,items])=>items.some(o=>o.state==='ball-layer')).map(([plane])=>plane));
-const maskCandidates=[...PinballArt.planes.flatMap(plane=>artByPlane.get(plane)),...PinballArt.planes.flatMap(plane=>[...topItems].filter(o=>o.plane===plane))].filter(o=>!o.hidden&&o.indicator?.screenMask);
+const artDrawPlans=new Map([...artByPlane].map(([plane,items])=>[plane,PinballArt.createDrawPlan(items)]));
+const backgroundLayers=artByPlane.get('background'),rightBoundaryIndex=backgroundLayers.findIndex(o=>o.src.endsWith('/pirate-wall-right.png'));
+const ballIndex=rightBoundaryIndex<0?backgroundLayers.length:rightBoundaryIndex;
+const backgroundBelowBall=backgroundLayers.slice(0,ballIndex),backgroundAboveBall=backgroundLayers.slice(ballIndex);
+const maskCandidates=[...PinballArt.planes.flatMap(plane=>artByPlane.get(plane)),...PinballArt.planes.flatMap(plane=>topLayers.filter(o=>o.plane===plane))].filter(o=>!o.hidden&&o.indicator?.screenMask);
 
 let topVisibleInset=null;
 function topOffset(){
@@ -1426,13 +1471,13 @@ function art(plane,layers=artByPlane.get(plane)){if($('artToggle').checked){artR
 const spaceNeon=SpaceNeonBorders.createRenderer(SpaceNeonBorders.entries(G.art_layout_objects||[],G.art_layout_templates));
 function bonusArt(plane){if($('artToggle').checked&&game.bonus?.config.object&&plane===(game.bonus.config.displayPlane||game.bonus.geometry?.layer||'lower'))game.bonus.draw(ctx,artRenderer);}
 function artWithBalls(plane){
- const layers=artByPlane.get(plane);
+ const plan=artDrawPlans.get(plane);
  if($('artToggle').checked&&SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay))spaceNeon.draw(ctx,game,G.gameplay,plane);
  bonusArt(plane);
  // Right ramp balls are drawn separately, just below the right boundary art.
  const drawBalls=()=>{reboundEffects.draw(ctx,plane);for(const b of game.balls){if(b.layer==='right_upper')continue;const track=b.state==='guided'?game.guidedTracks.find(t=>t.id===b.track.id):null;const visualPlane=track?(track.layer==='tavern'?'upper':track.layer||'lower'):game.visualPlane(b);if(visualPlane===plane)drawBall(b);}};
- if(!ballMarkerPlanes.has(plane))drawBalls();
- let drawn=false,batch=[];for(const o of layers){if(o.state==='ball-layer'){if(batch.length){art(plane,batch);batch=[];}if(!drawn){drawBalls();drawn=true;}}else batch.push(o);}if(batch.length)art(plane,batch);
+ if(!plan.hasBallMarker)drawBalls();
+ let drawn=false;for(const batch of plan.batches){if(batch)art(plane,batch);else if(!drawn){drawBalls();drawn=true;}}
  GuidedTrackGeometry.drawRails(ctx,trackOverlay,plane);
  if(!spaceTheme)ConfiguredMechanisms.drawPostCounts(game,ctx,plane);
 }
@@ -1579,19 +1624,16 @@ function draw(){
  const scale=canvas.width/view[2];ctx.setTransform(scale,0,0,scale,-view[0]*scale,-view[1]*scale);ctx.clearRect(...view);ctx.fillStyle='#13242f';ctx.fillRect(...view);
  impactPresentation.update();ctx.translate(...impactPresentation.shake());
  theater.customScore=playAspect!=='landscape'&&!!topArt&&!topArt.hidden&&$('artToggle').checked;const theaterViewport=theater.draw(ctx,game,view[1]);
- const backgroundLayers=artLayers.filter(o=>o.plane==='background');
- const rightBoundaryIndex=backgroundLayers.findIndex(o=>o.src.endsWith('/pirate-wall-right.png'));
- const ballIndex=rightBoundaryIndex<0?backgroundLayers.length:rightBoundaryIndex;
- art('background',backgroundLayers.slice(0,ballIndex));
+ art('background',backgroundBelowBall);
  for(const b of game.balls)if(b.layer==='right_upper')drawBall(b);
- art('background',backgroundLayers.slice(ballIndex));
+ art('background',backgroundAboveBall);
  bonusArt('background');
  artWithBalls('lower');
  artWithBalls('upper');artWithBalls('top');
  art('foreground');
  bossPresentation?.draw(ctx,theater,theaterViewport);
  if(spaceTheme)for(const plane of ['lower','upper','top'])ConfiguredMechanisms.drawPostCounts(game,ctx,plane,'#000');
- if($('artToggle').checked&&playAspect!=='landscape'){ctx.save();ctx.translate(0,topOffset());for(const plane of PinballArt.planes)artRenderer.draw(ctx,[...topItems],plane,game);ctx.restore();}
+ if($('artToggle').checked&&playAspect!=='landscape'){ctx.save();ctx.translate(0,topOffset());for(const plane of PinballArt.planes)artRenderer.draw(ctx,topLayers,plane,game);ctx.restore();}
  if(theater.customScore){ctx.save();ctx.translate(topArt.x,topArt.y+topOffset());ctx.rotate(topArt.angle*Math.PI/180);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#ffe6a3';ctx.shadowColor='#201209';ctx.shadowBlur=4;ctx.font='bold 15px monospace';if(bossStage)theater.drawAttackMessage(ctx,topArt.width*(118/370-.5),topArt.height*(54/124-.5),topArt.width*134/370,topArt.height*18/124,game.time);else ctx.fillText(String(game.score).padStart(12,'0'),0,0,topArt.width*.48);
   const reserve=reservePreview|| (game.gameOver?0:Math.max(0,Math.min(99,4-game.ballNumber-(game.lifeLaunched?1:0)+(game.extraLives||0))));
   const counterX=topArt.width*(.159-.5),counterY=topArt.height*.014,counterW=topArt.width*.16,counterH=topArt.width*.047;
@@ -1688,7 +1730,7 @@ const mainFlipper=game.flippers.reduce((lowest,f)=>!lowest||f.pivot[1]>lowest.pi
 $('probeLayer').value=mainFlipper?.layer||'lower';
 function bind(id,set){const b=$(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);set(true);e.preventDefault()};b.onpointerup=()=>set(false);b.onpointercancel=()=>set(false)}
 bind('left',v=>game.input.left=v);bind('right',v=>game.input.right=v);bind('launch',launch);
-function key(e,on){if(tutorialMode||leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();const control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':k===' '?'launch':null;if(firstPlayGuide&&!firstPlayGuide.allowed(control)){e.preventDefault();return;}if(!on&&control&&firstPlayGuide)firstPlayGuide.used(control);if([' ','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if(k===' '&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
+function key(e,on){if(tutorialMode||leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();const control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':[' ','arrowdown'].includes(k)?'launch':null;if(firstPlayGuide&&!firstPlayGuide.allowed(control)){e.preventDefault();return;}if(!on&&control&&firstPlayGuide)firstPlayGuide.used(control);if([' ','arrowdown','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if([' ','arrowdown'].includes(k)&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
 addEventListener('keydown',e=>{if(!gameOverOverlay)key(e,true)});addEventListener('keyup',e=>{if(!gameOverOverlay)key(e,false)});
 addEventListener('blur',()=>{clearTouchControls();game.input.left=game.input.right=game.input.launch=false;if(!window.AppControls&&!game.paused)openSettings()});
 canvas.onpointerdown=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*view[2]+view[0],y=(e.clientY-r.top)/r.height*view[3]+view[1];if(topHit(backArt,x,y)){requestLeaveGame();return;}if(topHit(settingsArt,x,y)){openSettings();return;}if(topHit(soundArt,x,y)){soundEnabled=!soundEnabled;localStorage.setItem('pinball-sound',soundEnabled?'on':'off');syncSound();notice(soundEnabled?PinballI18n.t('table.soundOn'):PinballI18n.t('table.soundOff'));draw();return;}if(!$('probe').checked){

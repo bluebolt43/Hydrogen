@@ -73,6 +73,12 @@ const api={offset,flipScale};if(typeof module!=='undefined')module.exports=api;e
 const defaultMap=()=>typeof module!=='undefined'&&module.exports?require('../indicator-lights.js').artMap():root.IndicatorLights.artMap();
 const animation=()=>typeof module!=='undefined'&&module.exports?require('../art-animation.js'):root.ArtAnimation;
 const planes=['background','lower','upper','top','foreground'];
+function createDrawPlan(items){
+ const batches=[];let batch=[],hasBallMarker=false;
+ for(const o of items){if(o.state==='ball-layer'){if(batch.length){batches.push(batch);batch=[];}batches.push(null);hasBallMarker=true;}else batch.push(o);}
+ if(batch.length)batches.push(batch);
+ return {batches,hasBallMarker};
+}
 function compactIndicator(o){
  if(!o.indicator)return o;
  const c={...o.indicator},t={...(c.trigger||{kind:'default'})},b={...(c.behavior||{mode:'keep'})};
@@ -115,7 +121,7 @@ function validateIndicator(c){
   if(t.threshold!==undefined&&(!Number.isInteger(t.threshold)||t.threshold<1||t.threshold>99))throw Error('燈號計數門檻不合法');
   if(t.kind==='hole-count'&&t.threshold!==undefined&&t.threshold<2)throw Error('進洞三階段門檻至少 2 次');
  }
- for(const b of [c.behavior,c.completion,c.releaseBehavior])if(b){if(!['keep','once','repeat','burst'].includes(b.mode))throw Error('燈號播放方式不合法');for(const k of ['onSeconds','offSeconds'])if(b[k]!==undefined&&(!Number.isFinite(b[k])||b[k]<=0))throw Error('燈號時間必須大於零');if(b.cycles!==undefined&&(!Number.isInteger(b.cycles)||b.cycles<1||b.cycles>99))throw Error('閃爍次數需為 1～99');}
+ for(const b of [c.behavior,c.completion,c.releaseBehavior,c.captureBehavior])if(b){if(!['keep','once','repeat','burst'].includes(b.mode))throw Error('燈號播放方式不合法');for(const k of ['onSeconds','offSeconds'])if(b[k]!==undefined&&(!Number.isFinite(b[k])||b[k]<=0))throw Error('燈號時間必須大於零');if(b.cycles!==undefined&&(!Number.isInteger(b.cycles)||b.cycles<1||b.cycles>99))throw Error('閃爍次數需為 1～99');}
  if(c.fade)for(const k of ['inSeconds','outSeconds'])if(c.fade[k]!==undefined&&(!Number.isFinite(c.fade[k])||c.fade[k]<0))throw Error('淡入淡出時間不合法');
 }
 function validate(items){
@@ -282,7 +288,7 @@ function integerGeometry(o){
  return result;
 }
 function serializable(items){return items.map(o=>{const result=compactIndicator(integerGeometry(o));if(!o.src||o.src.startsWith('blob:')||o.src.startsWith('data:')){result.src='';result.needsAsset=true;}return result;});}
-const api={compactIndicator,validateIndicator,planes,validate,integerGeometry,serializable,Renderer};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.PinballArt=api;
+const api={compactIndicator,validateIndicator,planes,createDrawPlan,validate,integerGeometry,serializable,Renderer};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.PinballArt=api;
 })(typeof window!=='undefined'?window:globalThis);
 
 /* Space's ten-capture constellation lottery. Native stars/lines, no image filters. */
@@ -422,7 +428,7 @@ function createGame(Base){return class extends Base{
 const api={Controller,createGame,constellation,label};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.SpaceConstellation=api;
 })(globalThis);
 
-/* Touhou's attack-powered bagua lottery. The display never captures or freezes a ball. */
+/* Attack- or entry-powered bagua lottery. The display never captures or freezes a ball. */
 (function(root){
 'use strict';
 const trigrams=[7,3,5,1,6,2,4,0];
@@ -441,6 +447,16 @@ class Controller{
   if(this.config.trigger==='circle-entry'||type!=='configured-attack'||data.kind!=='lv1'||this.game.gameOver)return;
   this.progress();
  }
+ crossCircle(ball,previous,layer){
+  if(this.config.trigger!=='circle-entry')return;
+  const o=this.geometry,countLayer=this.config.countLayer||o.layer,expected=countLayer==='upper'?'tavern':countLayer||'lower';
+  if(this.game.paused||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
+  const a=[previous[0]-(o.cx??o.x),previous[1]-(o.cy??o.y)],v=[ball.p[0]-previous[0],ball.p[1]-previous[1]],r=o.r??o.attractionRadius??this.config.radius;
+  if(a[0]*a[0]+a[1]*a[1]<=r*r)return;
+  const length=v[0]*v[0]+v[1]*v[1];if(!length)return;
+  const t=Math.max(0,Math.min(1,-(a[0]*v[0]+a[1]*v[1])/length));
+  if((a[0]+t*v[0])**2+(a[1]+t*v[1])**2<r*r)this.progress();
+ }
  progress(){
   if(this.game.gameOver)return;
   if(this.phase==='settled'){this.phase='idle';this.winner=-1;}
@@ -452,7 +468,7 @@ class Controller{
   this.count-=this.config.threshold;this.phase='spin';this.phaseAt=this.clock;this.winner=-1;
   this.available=this.availableRewards();
   this.target=this.pick();this.attackAge=0;
-  if(this.config.trigger!=='circle-entry')this.game.emit('configured-attack',{kind:'lv4',id:'touhou-bagua',position:[this.geometry.x,this.geometry.y]});
+  if(!this.game.g.gameplay?.runicTurntable)this.game.emit('configured-attack',{kind:'lv4',id:'touhou-bagua',position:[this.geometry.x,this.geometry.y]});
   this.game.emit('bagua-spin',{total:this.config.threshold});
   if(this.config.spinSound)this.game.emit('sound',{name:'runic-spin'});
  }
@@ -531,6 +547,16 @@ class Controller{
 // Same prize rules as bagua, with a passable circle and a flat stone presentation.
 const runePaths=['M0 -12 V12 M0 -3 L-9 -11 M0 -3 L9 -11','M-6 -12 V12 M-6 -10 L7 -2 L-6 5','M-6 -12 V12 M-6 -10 L7 -2 M-6 0 L7 10','M-7 -12 L7 12 M7 -12 L-7 12','M-6 12 V-12 L7 0 L-6 8','M-6 -12 V12 M6 -12 V12 M-6 -3 L6 3','M-7 -12 V12 M-7 -12 L8 -4 M-7 0 L5 6','M0 -12 V12 M0 -12 L-8 -3 M0 -12 L8 -3'];
 class RunicController extends Controller{
+ reset(){super.reset();this.rotationBase=0;this.restAngle=0;}
+ rotationAngle(){
+  if(this.phase==='idle')return this.restAngle;
+  const elapsed=this.phase==='spin'?Math.min(this.config.spinSeconds,this.clock-this.phaseAt):this.config.spinSeconds;
+  return this.rotationBase+(295*elapsed-125*elapsed*elapsed/this.config.spinSeconds)*Math.PI/180;
+ }
+ start(){
+  if(this.count<this.config.threshold)return;
+  this.rotationBase=this.rotationAngle();super.start();
+ }
  pick(replacement=false){
   let random=Math.max(0,Math.min(.999999,(this.game.random||Math.random)())),reserved=0;
   const rewards=this.config.rewards,common=this.available.filter(i=>rewards[i].probability===undefined);
@@ -541,26 +567,18 @@ class RunicController extends Controller{
  }
  progress(){
   if(this.phase==='spin'||this.phase==='winflash')return;
+  if(this.phase==='settled'){this.restAngle=this.rotationAngle();this.phase='idle';}
   super.progress();
  }
  event(type,data){
   super.event(type,data);
   if(type==='drain'&&!this.game.storyMode&&!this.game.freeBallQueue&&this.game.balls.every(b=>b.state==='drained')){this.multiplier=1;this.reset();}
  }
- crossCircle(ball,previous,layer){
-  const o=this.geometry,countLayer=this.config.countLayer||o.layer,expected=countLayer==='upper'?'tavern':countLayer||'lower';
-  if(this.game.paused||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
-  const a=[previous[0]-o.cx,previous[1]-o.cy],v=[ball.p[0]-previous[0],ball.p[1]-previous[1]],r=o.r;
-  if(a[0]*a[0]+a[1]*a[1]<=r*r)return;
-  const length=v[0]*v[0]+v[1]*v[1];if(!length)return;
-  const t=Math.max(0,Math.min(1,-(a[0]*v[0]+a[1]*v[1])/length));
-  if((a[0]+t*v[0])**2+(a[1]+t*v[1])**2<r*r)this.progress();
- }
+
  draw(ctx,renderer){
-  const o=this.geometry,r=this.config.radius,age=Math.min(this.config.spinSeconds,this.clock-this.phaseAt),spin=this.phase==='spin';
+  const o=this.geometry,r=this.config.radius,spin=this.phase==='spin';
   // Rotation is evaluated from elapsed time; the central reward stays upright.
-  const elapsed=spin?age:this.phase==='idle'?0:this.config.spinSeconds;
-  const angle=(295*elapsed-125*elapsed*elapsed/this.config.spinSeconds)*Math.PI/180;
+  const angle=this.rotationAngle();
   const bitmap=(art,size)=>{const im=renderer.image(art.src);if(!im.complete||!im.naturalWidth)return;const uv=art.uv||[0,0,1,1],w=im.naturalWidth,h=im.naturalHeight;ctx.drawImage(im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-size/2,-size/2,size,size);};
   ctx.save();ctx.translate(o.cx,o.cy);ctx.scale(r/100,r/100);
   ctx.save();ctx.rotate(angle);bitmap(this.config.rotorArt,136);

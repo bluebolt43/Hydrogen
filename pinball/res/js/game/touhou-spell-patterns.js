@@ -80,9 +80,9 @@ function sample(pattern,t,origin={x:.5,y:.12},aspect=361/642,targetAt=()=>({x:.5
     if(state)state.geometry.set(id,geometry);
    }
    const {px,py,u,ax,ay}=geometry,initial=Math.min(age,.9)*40,separation=clamp(age-.9,0,2.0)*52;
-   const split=clamp((age-.9)/.75,0,1),size=(1-split)*initial*1.65+split*58,curl=Math.max(0,age-2.9),phase=curl*(color?-1:1)*1.55+u*TAU;
+   const split=clamp((age-.9)/.75,0,1),size=(1-split)*initial*1.65+split*58,curl=Math.min(TAU/1.55,Math.max(0,age-2.9)),exit=Math.max(0,age-2.9-TAU/1.55)*220,phase=curl*(color?-1:1)*1.55+u*TAU;
    // At formation the five copies coincide. They then travel along the five axes.
-   const dx=ax*separation,dy=ay*separation;
+   const dx=ax*(separation+exit),dy=ay*(separation+exit);
    const x=dx+px*size+curl*(ax*28+Math.cos(phase)*23),y=dy+py*size+curl*(ay*28+Math.sin(phase)*23);
    put(id,x,y,Math.atan2(py,px)+phase,'round',color?'#ffc6dc':'#8baaff',2.7);
   }
@@ -302,14 +302,15 @@ function createSimulation(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/64
   return d.birth<=t;
  }
  function updateIce(d,age){const u=Math.min(age/1.25,1),out=d.travel*(2*u-u*u),after=Math.max(0,age-1.25);d.x=(d.cos*out+d.cosDown*d.v*after)*1.7;d.y=(d.sin*out+d.sinDown*d.v*after)*4.76;d.outAngle=age<1.25?d.angleStart:d.angleEnd;}
+ // Complete one curl, then release along the five outward axes; never keep growing the orbit.
  // Five star copies share the same thirteen curl phases and projected angles.
  function updateGray(d,age,t){
   const g=d.group;if(g.stamp!==t){
    const a=t-g.cycle*7.2-g.color*.16,initial=Math.min(a,.9)*40,split=clamp((a-.9)/.75,0,1);
-   g.separation=clamp(a-.9,0,2)*52;g.size=(1-split)*initial*1.65+split*58;g.curl=Math.max(0,a-2.9);g.angles.fill(NaN);
+   g.separation=clamp(a-.9,0,2)*52;g.size=(1-split)*initial*1.65+split*58;g.curl=Math.min(TAU/1.55,Math.max(0,a-2.9));g.exit=Math.max(0,a-2.9-TAU/1.55)*220;g.angles.fill(NaN);
    for(let n=0;n<13;n++){const phase=g.curl*(g.color?-1:1)*1.55+n/13*TAU;g.phases[n]=phase;g.cos[n]=Math.cos(phase);g.sin[n]=Math.sin(phase);}g.stamp=t;
   }
-  d.x=d.ax*g.separation+d.px*g.size+g.curl*(d.ax*28+g.cos[d.n]*23);d.y=d.ay*g.separation+d.py*g.size+g.curl*(d.ay*28+g.sin[d.n]*23);
+  d.x=d.ax*(g.separation+g.exit)+d.px*g.size+g.curl*(d.ax*28+g.cos[d.n]*23);d.y=d.ay*(g.separation+g.exit)+d.py*g.size+g.curl*(d.ay*28+g.sin[d.n]*23);
   const index=d.edge*13+d.n;if(Number.isNaN(g.angles[index]))g.angles[index]=project(d.staticAngle+g.phases[d.n]);d.outAngle=g.angles[index];
  }
  function updateSpark(d,age){const dist=d.speed*age;d.x=d.cos*dist;d.y=d.sin*dist;d.outAngle=project(d.a+age*1.7);}

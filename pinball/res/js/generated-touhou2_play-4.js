@@ -84,9 +84,9 @@ function sample(pattern,t,origin={x:.5,y:.12},aspect=361/642,targetAt=()=>({x:.5
     if(state)state.geometry.set(id,geometry);
    }
    const {px,py,u,ax,ay}=geometry,initial=Math.min(age,.9)*40,separation=clamp(age-.9,0,2.0)*52;
-   const split=clamp((age-.9)/.75,0,1),size=(1-split)*initial*1.65+split*58,curl=Math.max(0,age-2.9),phase=curl*(color?-1:1)*1.55+u*TAU;
+   const split=clamp((age-.9)/.75,0,1),size=(1-split)*initial*1.65+split*58,curl=Math.min(TAU/1.55,Math.max(0,age-2.9)),exit=Math.max(0,age-2.9-TAU/1.55)*220,phase=curl*(color?-1:1)*1.55+u*TAU;
    // At formation the five copies coincide. They then travel along the five axes.
-   const dx=ax*separation,dy=ay*separation;
+   const dx=ax*(separation+exit),dy=ay*(separation+exit);
    const x=dx+px*size+curl*(ax*28+Math.cos(phase)*23),y=dy+py*size+curl*(ay*28+Math.sin(phase)*23);
    put(id,x,y,Math.atan2(py,px)+phase,'round',color?'#ffc6dc':'#8baaff',2.7);
   }
@@ -306,14 +306,15 @@ function createSimulation(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/64
   return d.birth<=t;
  }
  function updateIce(d,age){const u=Math.min(age/1.25,1),out=d.travel*(2*u-u*u),after=Math.max(0,age-1.25);d.x=(d.cos*out+d.cosDown*d.v*after)*1.7;d.y=(d.sin*out+d.sinDown*d.v*after)*4.76;d.outAngle=age<1.25?d.angleStart:d.angleEnd;}
+ // Complete one curl, then release along the five outward axes; never keep growing the orbit.
  // Five star copies share the same thirteen curl phases and projected angles.
  function updateGray(d,age,t){
   const g=d.group;if(g.stamp!==t){
    const a=t-g.cycle*7.2-g.color*.16,initial=Math.min(a,.9)*40,split=clamp((a-.9)/.75,0,1);
-   g.separation=clamp(a-.9,0,2)*52;g.size=(1-split)*initial*1.65+split*58;g.curl=Math.max(0,a-2.9);g.angles.fill(NaN);
+   g.separation=clamp(a-.9,0,2)*52;g.size=(1-split)*initial*1.65+split*58;g.curl=Math.min(TAU/1.55,Math.max(0,a-2.9));g.exit=Math.max(0,a-2.9-TAU/1.55)*220;g.angles.fill(NaN);
    for(let n=0;n<13;n++){const phase=g.curl*(g.color?-1:1)*1.55+n/13*TAU;g.phases[n]=phase;g.cos[n]=Math.cos(phase);g.sin[n]=Math.sin(phase);}g.stamp=t;
   }
-  d.x=d.ax*g.separation+d.px*g.size+g.curl*(d.ax*28+g.cos[d.n]*23);d.y=d.ay*g.separation+d.py*g.size+g.curl*(d.ay*28+g.sin[d.n]*23);
+  d.x=d.ax*(g.separation+g.exit)+d.px*g.size+g.curl*(d.ax*28+g.cos[d.n]*23);d.y=d.ay*(g.separation+g.exit)+d.py*g.size+g.curl*(d.ay*28+g.sin[d.n]*23);
   const index=d.edge*13+d.n;if(Number.isNaN(g.angles[index]))g.angles[index]=project(d.staticAngle+g.phases[d.n]);d.outAngle=g.angles[index];
  }
  function updateSpark(d,age){const dist=d.speed*age;d.x=d.cos*dist;d.y=d.sin*dist;d.outAngle=project(d.a+age*1.7);}
@@ -614,6 +615,7 @@ class TouhouBossPresentation{
  }
  defeat(){this.defeated=true;this.elapsed=0;this.clearSpells();}
  onEvent(event){
+  if(event.type==='configured-attack'&&event.kind==='lv4')this.clearSpells();
   if(this.theme==='touhou1'&&['ready','ball-save-ready'].includes(event.type)){
    this.elapsed=0;this.clearSpells();
   }
@@ -718,7 +720,7 @@ class LayoutTheater{
    if(['complete','error'].includes(e.data.type)&&this.activeCommands.has(e.data.id)){
     const remaining=this.activeCommands.get(e.data.id)-1;
     if(remaining)this.activeCommands.set(e.data.id,remaining);else this.activeCommands.delete(e.data.id);
-    if(this.game)this.game.theaterFrozen=this.activeCommands.size>0;
+    if(this.game)this.game.theaterFrozen=this.blocksTable();
     if(!remaining)this.onCommandComplete?.(e.data);
    }
    if(e.data.type==='error')console.error('Theater:',e.data.message);
@@ -732,6 +734,11 @@ class LayoutTheater{
   warning.finished.then(()=>{if(generation!==this.generation||this.warning!==warning)return;this.warning=null;this.send({command:'warning-complete',token});});
  }
  send(message){this.frame.contentWindow.postMessage({channel:'pinball-theater',...message},'*');}
+ blocksTable(){
+  if(!['touhou1','touhou2'].includes(this.theme))return this.activeCommands.size>0;
+  for(const id of this.activeCommands.keys())if(id.startsWith(this.generation+':enemy:'))return true;
+  return false;
+ }
  reset(){this.onBossChanged?.(0);this.hudState=null;this.bossDefeated=false;this.warning?.cancel();this.warning=null;this.generation++;this.pending=[];this.activeCommands.clear();if(this.game)this.game.theaterFrozen=false;this.curtainClosing=true;if(this.ready)this.send({command:'reset',id:this.generation+':reset:0'});else this.frame.src='res/'+this.theme+'-theater.html?embed=1&session='+this.generation;}
  onEvent(e){
   if(e.type==='ready'&&this.theme==='space'&&this.game?.spaceEndlessMode&&(this.game.enemyActive||this.game.enemyIntroPending))return;
@@ -745,10 +752,10 @@ class LayoutTheater{
   if(command==='enemy'&&this.game)this.game.enemyIntroPending=true;
   const message={command,...(allowEmpty?{allowEmpty:true}:{}),skipWarning:!!this.tutorialPreview,mode:this.bossStage?'boss':this.game?.g?.gameplay?.mode||'free',stage:this.bossStage||0,id:this.generation+':'+command+':'+(attack?(this.attackSerial=(this.attackSerial||0)+1):(e.eventId||0))};
   this.activeCommands.set(message.id,(this.activeCommands.get(message.id)||0)+1);
-  if(this.game)this.game.theaterFrozen=true;
+  if(this.game)this.game.theaterFrozen=this.blocksTable();
   if(this.ready)this.send(message);else this.pending.push(message);
  }
- update(dt,game){this.game=game;game.theaterFrozen=this.activeCommands.size>0;if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
+ update(dt,game){this.game=game;game.theaterFrozen=this.blocksTable();if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
  drawAttackMessage(ctx,x,y,width,height,time){
   ctx.save();ctx.beginPath();ctx.rect(x,y,width,height);ctx.clip();
   ctx.font='bold 15px monospace';ctx.textAlign='left';ctx.textBaseline='middle';

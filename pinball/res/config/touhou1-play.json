@@ -86,7 +86,7 @@
           "mode": "burst",
           "onSeconds": 0.15,
           "offSeconds": 0.15,
-          "cycles": 3
+          "cycles": 10
         },
         "impactFlash": false
       },
@@ -1388,7 +1388,12 @@
         "behavior": {
           "mode": "keep"
         },
-        "impactFlash": false
+        "impactFlash": false,
+        "captureBehavior": {
+          "mode": "repeat",
+          "onSeconds": 0.2,
+          "offSeconds": 0.2
+        }
       },
       "runtimeSource": "res/img/touhou/touhou-yukari-gap-eyes-open.png"
     },
@@ -2290,7 +2295,8 @@
       "locks": 3,
       "autoLaunch": true,
       "keepOpenUntilFull": true,
-      "readySeconds": 1.5
+      "readySeconds": 3,
+      "captureSeconds": 3
     },
     "indicatorCounters": [
       "sensor-001"
