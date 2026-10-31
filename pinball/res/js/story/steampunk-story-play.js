@@ -507,7 +507,7 @@ next.onclick=()=>completeStory();
 window.addEventListener('pagehide',()=>{theaterCleanup();stopStorySounds();++playSerial;playing=false;cancelAnimationFrame(raf);clearTimeout(nextTimer);});
 if(new URLSearchParams(location.search).has('embed'))document.getElementById('chapters').hidden=true;
 render(0);
-window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>image.decode()));
+window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>PinballRuntimeImages.decode(image)));
 window.viewReady.catch(e=>{error.textContent='圖片載入失敗：'+e.message;error.hidden=false;});
 
 ;if(typeof play==='function')window.play=play;

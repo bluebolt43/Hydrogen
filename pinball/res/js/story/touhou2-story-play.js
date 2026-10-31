@@ -83,7 +83,7 @@ skip.onclick=()=>{if(seen())finish(true);};next.onclick=complete;
 if(new URLSearchParams(location.search).has('embed'))document.getElementById('chapters').hidden=true;
 window.addEventListener('pagehide',()=>{++playSerial;stop();clearTimeout(nextTimer);});
 window.viewAPI={play,render,suspend(){resumable=playing;stop();},resume(){if(!resumable)return;resumable=false;playing=true;last=performance.now();music?.play().catch(()=>{});frame=requestAnimationFrame(tick);}};
-window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>image.decode())).then(()=>{render(0);phone.dataset.ready='true';}).catch(error=>{document.getElementById('error').hidden=false;throw error;});
+window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>PinballRuntimeImages.decode(image))).then(()=>{render(0);phone.dataset.ready='true';}).catch(error=>{document.getElementById('error').hidden=false;throw error;});
 
 ;if(typeof play==='function')window.play=play;
 if(typeof render==='function')window.render=render;

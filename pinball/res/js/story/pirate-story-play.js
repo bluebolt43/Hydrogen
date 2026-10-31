@@ -281,8 +281,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -514,8 +513,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -776,8 +774,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -1009,8 +1006,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -1254,8 +1250,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -1503,8 +1498,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -1790,8 +1784,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -2040,8 +2033,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -2307,8 +2299,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -2564,8 +2555,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -2805,8 +2795,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -3062,8 +3051,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -3368,8 +3356,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -3634,8 +3621,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -3944,8 +3930,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
@@ -4220,8 +4205,7 @@ document.querySelector('#replay').addEventListener('click',()=>play());
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
-for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady=Promise.all(images.map(image=>PinballRuntimeImages.decode(image))).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){

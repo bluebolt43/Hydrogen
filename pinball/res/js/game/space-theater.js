@@ -37,6 +37,7 @@ function draw(){
  $('enemy-type').disabled=!loaded||busy;enemy.disabled=busy||paused||!hp;
 }
 function animate(element,frames,milliseconds,easing='ease-out'){
+ if(element.parentElement===effects)frames=TheaterFrame.positionFrames(element,frames);
  const duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:milliseconds*Number($('speed').value)/1000;
  const animation=element.animate(frames,{duration,easing,fill:'forwards'});running.add(animation);if(isPaused())animation.pause();
  return animation.finished.catch(error=>{if(error.name!=='AbortError')throw error;}).finally(()=>running.delete(animation));
@@ -66,7 +67,7 @@ busy=false;applyForm();enemy.style.opacity='';
 async function enter(skipWarning=false,background){
  entryBackground=background||config().background||SPACE_THEATER.background;resetScene();busy=true;draw();const token=generation;
  const image=stage.querySelector('.background');
- await Promise.all([image.decode(),boss.decode()]);if(token!==generation)return;
+ await Promise.all([PinballRuntimeImages.decode(image),PinballRuntimeImages.decode(boss)]);if(token!==generation)return;
  if(!skipWarning)await TheaterFrame.warning(stage);if(token!==generation)return;
  await frame.curtains(true);if(token!==generation)return;
  enemies.hidden=false;await frame.curtains(false);if(token!==generation)return;
@@ -81,14 +82,14 @@ async function advancePhase(token){
  if(config().damageStates){
   await animate(boss,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],160,'linear');if(token!==generation)return;
   phaseIndex++;applyForm();
-  try{await boss.decode();}catch(error){if(token!==generation)return;throw error;}
+  try{await PinballRuntimeImages.decode(boss);}catch(error){if(token!==generation)return;throw error;}
   if(token!==generation)return;
   TheaterFrame.renderHealth($('health'),hp);draw();
   await animate(boss,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],160,'linear');return;
  }
  await animate(boss,[{opacity:1},{opacity:0}],250);if(token!==generation)return;
  phaseIndex++;applyForm();
- try{await Promise.all([boss.decode(),stage.querySelector('.background').decode()]);}
+ try{await Promise.all([PinballRuntimeImages.decode(boss),PinballRuntimeImages.decode(stage.querySelector('.background'))]);}
  catch(error){if(token!==generation)return;throw error;}
  if(token!==generation)return;
  TheaterFrame.renderHealth($('health'),hp);draw();
@@ -216,7 +217,7 @@ async function attackFleet(kind){
     if(image.src!==source){
      await animate(image,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],160,'linear');if(token!==generation)return;
      TheaterFrame.setImage(image,source);image.alt=config().name+' '+(i+1)+' · '+asset.name;ship.dataset.damageState=damaged?'heavily-damaged':'normal';
-     try{await image.decode();}catch(error){if(token!==generation)return;throw error;}
+     try{await PinballRuntimeImages.decode(image);}catch(error){if(token!==generation)return;throw error;}
      if(token!==generation)return;
      await animate(image,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],160,'linear');if(token!==generation)return;
     }
@@ -264,7 +265,7 @@ window.viewAPI={play:()=>choose(level,true),suspend:()=>pause(true),resume:()=>p
 TheaterFrame.connect({stage,ready,reset,
  async enemy(data){
   await choose(data.mode==='boss'?Number(data.stage):data.mode==='free'?1+Math.floor(Math.random()*levels.length):level,data.skipWarning,data.background);
-  if(data.defeatOnly){phaseIndex=phases().length-1;hp=0;applyForm();await Promise.all([boss.decode(),stage.querySelector('.background').decode()]);draw();busy=true;await defeat(generation);busy=false;draw();}
+  if(data.defeatOnly){phaseIndex=phases().length-1;hp=0;applyForm();await Promise.all([PinballRuntimeImages.decode(boss),PinballRuntimeImages.decode(stage.querySelector('.background'))]);draw();busy=true;await defeat(generation);busy=false;draw();}
   if(data.attackDefeat)while(hp>0)await attack(data.attackDefeat);
  },
  attack,state,

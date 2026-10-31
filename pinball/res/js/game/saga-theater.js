@@ -56,7 +56,7 @@ function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=ma
 async function flip(to,token){
  if(to===stateIndex)return;
  await animate(boss,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],500);if(token!==generation)return;
- TheaterFrame.setImage(boss,config().states[to].src);await boss.decode();if(token!==generation)return;
+ TheaterFrame.setImage(boss,config().states[to].src);await PinballRuntimeImages.decode(boss);if(token!==generation)return;
  stateIndex=to;boss.alt=config().name+' · '+config().states[to].label;draw();layout();
  await animate(boss,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],500);
 }
@@ -70,7 +70,7 @@ async function enter(skipWarning=false,override){
  const token=cancelScene();if(!embedded)pause(false);busy=true;draw();
  await frame.curtains(true);if(token!==generation)return;
  enemies.hidden=true;applyScene(override);busy=true;draw();
- await Promise.all([boss.decode(),background.decode()]);if(token!==generation)return;layout();
+ await Promise.all([PinballRuntimeImages.decode(boss),PinballRuntimeImages.decode(background)]);if(token!==generation)return;layout();
  if(!skipWarning)await TheaterFrame.warning(stage);if(token!==generation)return;
  enemies.hidden=false;await frame.curtains(false);if(token!==generation)return;
  busy=false;draw();

@@ -1332,6 +1332,7 @@ function createImpactPresentation(game,artLayers,renderer){
  const particles=[],rings=[],swings=[],lampPulses=new Map(),recent=new Map();
  const effectLists=[particles,rings,swings];let cleanedAt=null,cleanDirty=true;
  let cannonAt=-Infinity;
+ let comboFlashAt=-Infinity,comboFlash=null,comboFlashPending=null;
  let combo=0,lastHit=-10,popAt=-10,shakeAt=-10,shakePower=0;
  const multiplier=n=>n>=30?4:n>=20?3:n>=10?2:n>=5?1.5:1;
  const plane=()=>game.visualPlane(game.ball),position=e=>e.position||game.ball.p;
@@ -1354,8 +1355,42 @@ function createImpactPresentation(game,artLayers,renderer){
   recent.set(id,game.time);if(game.time-lastHit>2)combo=0;
   combo++;lastHit=popAt=game.time;
   game.combo={count:combo,multiplier:multiplier(combo),expiresAt:lastHit+2};
-  if([5,10,20,30].includes(combo)){burst(game.ball.p,'#ffd36d',1.4);pulse(null,true);shakeAt=game.time;shakePower=.7;}
+  if([5,10,20,30].includes(combo)){burst(game.ball.p,'#ffd36d',1.4);pulseCombo();shakeAt=game.time;shakePower=.7;}
   return true;
+ }
+ function pulseCombo(){
+  if(renderer.rasterCacheEnabled)comboFlashAt=game.time;
+  else pulse(null,true);
+ }
+ const comboFlashActive=()=>!!comboFlash&&game.time>=comboFlashAt&&game.time-comboFlashAt<.35;
+ function prepareComboFlash(scale){
+  if(!renderer.rasterCacheEnabled||typeof document==='undefined')return Promise.resolve();
+  const items=artLayers.filter(a=>!a.hidden&&a.indicator&&a.indicator.impactFlash!==false).map(a=>{
+   const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src;
+   return {art:a,img:renderer.image(src)};
+  });
+  const key=JSON.stringify([scale,...items.map(({art:a,img})=>[renderer.imageKey(img),a.x,a.y,a.width,a.height,a.angle,a.flipX,a.flipY,a.crop])]);
+  if(comboFlash?.key===key)return Promise.resolve();
+  if(comboFlashPending?.key===key)return comboFlashPending.ready;
+  const request={key};comboFlashPending=request;
+  request.ready=(async()=>{
+   await renderer.decodeImages(new Set(items.map(a=>a.img)));
+   if(comboFlashPending!==request)return;
+   let next=null;
+   if(items.length){
+    const [x,y,w,h]=game.g.view_box,pad=14/scale;let left=Infinity,top=Infinity,right=-Infinity,bottom=-Infinity;
+    for(const {art:a} of items){const angle=(a.angle||0)*Math.PI/180,c=Math.abs(Math.cos(angle)),s=Math.abs(Math.sin(angle)),rx=(a.width*c+a.height*s)/2+pad,ry=(a.width*s+a.height*c)/2+pad;left=Math.min(left,a.x-rx);top=Math.min(top,a.y-ry);right=Math.max(right,a.x+rx);bottom=Math.max(bottom,a.y+ry);}
+    left=Math.floor(Math.max(x,left)*scale)/scale;top=Math.floor(Math.max(y,top)*scale)/scale;right=Math.ceil(Math.min(x+w,right)*scale)/scale;bottom=Math.ceil(Math.min(y+h,bottom)*scale)/scale;
+    const width=Math.max(1,Math.round((right-left)*scale)),height=Math.max(1,Math.round((bottom-top)*scale)),Art=typeof PinballArt==='undefined'?null:PinballArt;
+    const canvas=Art?Art.rasterCanvas(width,height,renderer.bitmapCacheEnabled):document.createElement('canvas');canvas.width=width;canvas.height=height;
+    const c=canvas.getContext('2d');c.setTransform(scale,0,0,scale,-left*scale,-top*scale);c.shadowColor=pulseColors[0];c.shadowBlur=6;
+    for(const {art:a,img} of items){c.save();c.translate(a.x,a.y);c.rotate((a.angle||0)*Math.PI/180);c.scale(a.flipX?-1:1,a.flipY?-1:1);renderer.drawImageWithShadow(c,img,...a.crop,a.width,a.height,scale);c.restore();}
+    next={key,scale,canvas:Art?Art.rasterImage(canvas):canvas,left,top,width:width/scale,height:height/scale};
+   }
+   if(comboFlash){if(comboFlash.canvas.close)comboFlash.canvas.close();else comboFlash.canvas.width=comboFlash.canvas.height=0;}
+   comboFlash=next;comboFlashPending=null;
+  })().catch(error=>{if(comboFlashPending===request)comboFlashPending=null;throw error;});
+  return request.ready;
  }
  const originalCollision=game.collisionEffect.bind(game);
  game.collisionEffect=(edge,approach)=>{
@@ -1372,6 +1407,7 @@ function createImpactPresentation(game,artLayers,renderer){
  game.onEvent=e=>{
   cleanDirty=true;
   if(['new-game','ready','drain','game-over'].includes(e.type)){
+   comboFlashAt=-Infinity;
    combo=0;lastHit=-10;game.combo={count:0,multiplier:1,expiresAt:0};recent.clear();
    if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;particles.length=rings.length=swings.length=0;lampPulses.clear();}
   }
@@ -1390,6 +1426,7 @@ function createImpactPresentation(game,artLayers,renderer){
    burst(position(e),e.type==='configured-attack'?'#fff0bb':'#ffe49b',e.type==='configured-attack'?2:1.4);pulse(null,true);shakeAt=game.time;shakePower=e.type==='configured-attack'?1.3:.7;
   }
   onEvent?.(e);
+  if(comboFlash&&['bumper-upgraded','new-game'].includes(e.type))prepareComboFlash(comboFlash.scale).catch(console.error);
  };
  function clean(){
   if(!cleanDirty&&cleanedAt===game.time)return;
@@ -1401,7 +1438,7 @@ function createImpactPresentation(game,artLayers,renderer){
  }
  function hasEffects(floor){
   if(particles.some(q=>q.plane===floor)||rings.some(q=>q.plane===floor)||swings.some(q=>q.plane===floor&&game.time-q.at<=.18))return true;
-  for(const [id,q] of lampPulses){const a=artById.get(id);if(a&&!a.hidden&&a.plane===floor&&game.time>=q.at)return true;}
+  if(!comboFlashActive())for(const [id,q] of lampPulses){const a=artById.get(id);if(a&&!a.hidden&&a.plane===floor&&game.time>=q.at)return true;}
   if(game.g.gameplay?.ballEffects!==false)for(const b of game.balls){
    if(game.visualPlane(b)!==floor||b.state!=='playing'||Math.hypot(...b.v)<180)continue;
    let count=0;for(const p of b.trail||[])if(p.layer===b.layer&&++count===2)return true;
@@ -1437,7 +1474,7 @@ function createImpactPresentation(game,artLayers,renderer){
   ctx.restore();
   for(const s of swings){if(s.plane!==floor)continue;const age=game.time-s.at;if(age>.18)continue;ctx.globalAlpha=1-age/.18;ctx.strokeStyle='#fff0bb';ctx.lineWidth=2*(1-age/.18);ctx.beginPath();ctx.arc(...s.p,5+age*45,s.angle+Math.PI-.9,s.angle+Math.PI+.9);ctx.stroke();}
   ctx.save();
-  for(const [id,q] of lampPulses){const a=artById.get(id);if(!a||a.hidden||a.plane!==floor)continue;const age=game.time-q.at;if(age<0)continue;
+  if(!comboFlashActive())for(const [id,q] of lampPulses){const a=artById.get(id);if(!a||a.hidden||a.plane!==floor)continue;const age=game.time-q.at;if(age<0)continue;
    const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
    if(transform===undefined)transform=readTransform(ctx);
    const angle=(a.angle||0)*Math.PI/180,flipX=a.flipX?-1:1,flipY=a.flipY?-1:1;
@@ -1469,8 +1506,15 @@ function createImpactPresentation(game,artLayers,renderer){
   const c=Math.cos(angle),s=Math.sin(angle);
   ctx.setTransform((m.a*c+m.c*s)*flipX,(m.b*c+m.d*s)*flipX,(m.c*c-m.a*s)*flipY,(m.d*c-m.b*s)*flipY,m.a*x+m.c*y+m.e,m.b*x+m.d*y+m.f);
  }
- return {draw,update:clean,async prepareShadows(scale){
+ return {draw,update:clean,prepareComboFlash,drawComboFlash(ctx,bounds=game.g.view_box){
+  if(!comboFlashActive())return;
+  ctx.save();
+  for(const b of game.balls){if(b.state==='drained')continue;ctx.beginPath();ctx.rect(...bounds);ctx.moveTo(b.p[0]+game.physics.ballRadius,b.p[1]);ctx.arc(...b.p,game.physics.ballRadius,0,Math.PI*2);ctx.clip('evenodd');}
+  ctx.globalAlpha=.65*Math.sin(Math.PI*(game.time-comboFlashAt)/.35);ctx.shadowBlur=0;
+  ctx.drawImage(comboFlash.canvas,comboFlash.left,comboFlash.top,comboFlash.width,comboFlash.height);ctx.restore();
+ },async prepareShadows(scale){
   if(!renderer.rasterCacheEnabled||!renderer.prepareShadowRaster)return;
+  await prepareComboFlash(scale);
   const entries=[],images=new Set();
   for(const a of artLayers){if(a.hidden||!a.indicator||a.indicator.impactFlash===false)continue;
    const c=a.indicator,sources=c.type==='bumper'&&c.keepLevelOnHit?[c.lv1,c.lv2,c.lv3]:[c.on||c.lv3||c.complete||a.src];
@@ -1494,7 +1538,7 @@ function createImpactPresentation(game,artLayers,renderer){
   if(kind==='flipper')swings.push({p,angle:-Math.PI/2,at:game.time,plane:plane()});
   else burst(p,kind==='bumper'?'#a9edff':kind==='slingshot'?'#e9b575':'#ffe49b',kind==='complete'?2:1,kind==='slingshot'?-Math.PI/2:null);
   if(kind==='combo'){combo=19;lastHit=game.time;recent.clear();hit('preview-combo');}
-  pulse(null,true);
+  if(kind==='combo')pulseCombo();else pulse(null,true);
  },drawBallGlow(ctx,ball){
   if(game.g.gameplay?.ballEffects===false||combo<2||game.time-lastHit>2||['ready','drained'].includes(ball.state))return;
   const strength=Math.min(1,(combo-1)/29),r=game.physics.ballRadius,radius=r*(1.25+strength*1.25);
@@ -1661,8 +1705,10 @@ function resize(){
  const availableW=Math.max(1,r.width-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)),availableH=Math.max(1,r.height-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom));
  const w=Math.min(availableW,playAspect==='landscape'?Infinity:600,availableH*view[2]/view[3]),h=w*view[3]/view[2];
  const pixelWidth=Math.max(1,Math.round(w)),pixelHeight=Math.max(1,Math.round(h));
+ const artworkSizeChanged=canvas.width!==pixelWidth||canvas.height!==pixelHeight;
  if(canvas.width!==pixelWidth)canvas.width=pixelWidth;if(canvas.height!==pixelHeight)canvas.height=pixelHeight;
  canvas.style.width=w+'px';canvas.style.height=h+'px';requestAnimationFrame(()=>draw());
+ if(artworkSizeChanged&&window.viewAPI)impactPresentation.prepareComboFlash(pixelWidth/view[2]).then(()=>draw()).catch(console.error);
 }
 new ResizeObserver(resize).observe($('playLayout').parentElement);new ResizeObserver(resize).observe(canvas.parentElement);
 let previous=performance.now(),accumulator=0,noticeUntil=0;
@@ -1818,6 +1864,7 @@ function draw(){
  const charge=game.charge;if($('geometryToggle').checked&&G.plunger.enabled!==false)withLayoutLayer(G.plunger.layer||'lower',()=>path([[G.plunger.x-5,G.plunger.rest_y+7.4+charge*10],[G.plunger.x+5,G.plunger.rest_y+7.4+charge*10]],null,'#f1bb77',2));
  if($('geometryToggle').checked){withLayoutLayer('lower',()=>GuidedTrackGeometry.drawRails(ctx,trackLayout,'lower'));withLayoutLayer('tavern',()=>GuidedTrackGeometry.drawRails(ctx,trackLayout,'upper'));withLayoutLayer('top',()=>GuidedTrackGeometry.drawRails(ctx,trackLayout,'top'));}
  for(const plane of PinballArt.planes)withLayoutLayer(plane==='upper'?'tavern':plane,()=>impactPresentation.draw(ctx,plane,view));
+ impactPresentation.drawComboFlash(ctx,view);
  drawFloatingRewards();
  drawBallOutlines();
  impactPresentation.drawHud(ctx,view);
@@ -1939,7 +1986,7 @@ async function loadPiratePreview(layout){
   const preparedImages=new Map();
   await Promise.all([...sources].map(async src=>{
    const image=new Image();image.src=PinballRuntimeImages.resolve(src);
-   try{await image.decode();}catch{throw Error('圖片載入失敗：'+src);}
+   try{await (PinballRuntimeImages.decode?.(image)??image.decode());}catch{throw Error('圖片載入失敗：'+src);}
    preparedImages.set(src,image);
   }));
   await startPreview(geometry,preparedImages);

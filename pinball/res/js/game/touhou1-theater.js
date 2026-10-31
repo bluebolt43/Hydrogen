@@ -68,7 +68,7 @@ function resetScene(){
 }
 async function enter(skipWarning=false){
  resetScene();busy=true;draw();const token=generation;
- await Promise.all([background.decode(),boss.decode()]);if(token!==generation)return;
+ await Promise.all([PinballRuntimeImages.decode(background),PinballRuntimeImages.decode(boss)]);if(token!==generation)return;
  if(!skipWarning)await TheaterFrame.warning(stage);if(token!==generation)return;
  await frame.curtains(true);if(token!==generation)return;
  enemies.hidden=false;bossStage(level);await frame.curtains(false);if(token!==generation)return;

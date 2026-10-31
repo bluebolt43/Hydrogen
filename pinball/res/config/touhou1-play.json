@@ -135,8 +135,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
@@ -170,8 +170,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
@@ -205,8 +205,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
@@ -240,8 +240,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
@@ -275,8 +275,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
@@ -310,8 +310,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
@@ -345,8 +345,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         },
         "group": "touhou1-targets",
         "completion": {
@@ -388,8 +388,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         },
         "group": "touhou1-targets",
         "completion": {
@@ -431,8 +431,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         },
         "group": "touhou1-targets",
         "completion": {
@@ -474,8 +474,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.3,
-          "offSeconds": 0.3
+          "onSeconds": 1,
+          "offSeconds": 1
         },
         "group": "touhou1-targets",
         "completion": {

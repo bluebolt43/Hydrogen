@@ -263,7 +263,7 @@ document.querySelectorAll('[data-attack]').forEach(b=>b.onclick=()=>attack(b.dat
 
 lock(true);
 const combatSources=[...Object.values(attackAssets),'res/img/pirate/pirate-kraken-tentacle.png','res/img/pirate/pirate-lightning.png','res/img/pirate/pirate-explosion-smoke.png'];
-const ready=Promise.all([...document.querySelectorAll('.scene,.wave')].map(im=>im.decode()).concat(preload(enemy.src),preload('res/img/theater-curtain-right.png'),...combatSources.map(preload))).then(async()=>{sync();renderHealth();if(!embedded){await warnAndClose();await enterEnemy();}else $('health-hud').hidden=true;lock(false);stage.dataset.ready='true';});ready.catch(()=>message.textContent='圖片載入失敗，請將 HTML 與 demo/assets 資料夾一起保留。');
+const ready=Promise.all([...document.querySelectorAll('.scene,.wave')].map(im=>PinballRuntimeImages.decode(im)).concat(preload(enemy.src),preload('res/img/theater-curtain-right.png'),...combatSources.map(preload))).then(async()=>{sync();renderHealth();if(!embedded){await warnAndClose();await enterEnemy();}else $('health-hud').hidden=true;lock(false);stage.dataset.ready='true';});ready.catch(()=>message.textContent='圖片載入失敗，請將 HTML 與 demo/assets 資料夾一起保留。');
 let enemyPresent=false;
 TheaterFrame.connect({stage,ready,
  bounds(){const s=stage.getBoundingClientRect();const rect=el=>{const r=el.getBoundingClientRect();return {x:(r.left-s.left)/s.width,y:(r.top-s.top)/s.height,w:r.width/s.width,h:r.height/s.height};};return {boss:rect(enemy),hearts:rect($('health-hud'))};},

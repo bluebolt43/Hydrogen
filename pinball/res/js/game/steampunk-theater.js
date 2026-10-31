@@ -40,7 +40,7 @@ function state(){return {name:levels[level-1].name,hp:[...hp],target,busy,paused
 function draw(){document.querySelectorAll('.racer').forEach((e,i)=>{e.classList.toggle('target',i===target&&hp[i]>0);e.querySelector('.hp').hidden=!hp[i];e.disabled=busy||paused||hp[i]===0||(level===8&&i===0&&stage.dataset.phase!=='body');e.setAttribute('aria-label',`對手 ${i+1}，${hp[i]} HP`);});stage.classList.toggle('defeated',total()===0);controls();}
 function createEnemy(i){const config=levels[level-1],position=positions[i];const b=document.createElement('button');b.className='racer';b.style.width=(config.widths?.[i]??config.width)+'%';b.style.left=position.x+'%';b.style.top=config.visualTop??(position.y+'%');b.style.animationDelay=(-i)+ 's';b.innerHTML='<span class="hp"></span>';const image=document.createElement('img');image.src=PinballRuntimeImages.resolve(config.ships[i]);image.alt=`${config.name} ${i+1}`;b.append(image);TheaterFrame.renderHealth(b.querySelector('.hp'),hp[i]);b.onclick=()=>{if(!busy&&!paused&&hp[i]&&targetOrder().includes(i)){target=i;draw();}};return b;}
 function reset(){soundBank?.setPaused(false);soundBank?.stop();generation++;for(const a of running)a.cancel();running.clear();effects.replaceChildren();delete stage.dataset.launching;stage.dataset.phase=level===8?'guards':'';const config=levels[level-1];positions=config.positions;hp=[...(config.health||config.ships.map(()=>1))];stage.dataset.level=String(level);$('enemy-type').value=String(level);target=hp.indexOf(Math.min(...hp));busy=false;paused=false;stage.classList.remove('paused');$('water').textContent='暫停動態';$('racers').replaceChildren();positions.forEach((_,i)=>$('racers').append(createEnemy(i)));$('status').textContent=`Boss ${level} · ${config.name}`;draw();}
-function animate(el,frames,duration){const a=el.animate(frames,{duration:duration*Number($('speed').value)/1000,fill:'forwards',easing:'ease-out'});running.add(a);if(paused)a.pause();return a.finished.finally(()=>running.delete(a));}
+function animate(el,frames,duration){if(el.parentElement===effects)frames=TheaterFrame.positionFrames(el,frames);const a=el.animate(frames,{duration:duration*Number($('speed').value)/1000,fill:'forwards',easing:'ease-out'});running.add(a);if(paused)a.pause();return a.finished.finally(()=>running.delete(a));}
 function fx(kind,x,y,w,h){const e=document.createElement('img');e.className='fx';e.src=PinballRuntimeImages.resolve(art[kind]);Object.assign(e.style,{left:x+'%',top:y+'%',width:w+'%',height:h+'%'});effects.append(e);return e;}
 async function explode(p,size=26){const e=fx('explosion',p.x,p.y,size,60);await animate(e,[{opacity:0,transform:pose(.2)},{opacity:1,transform:pose(1),offset:.25},{opacity:0,transform:pose(1.3)}],420);e.remove();}
 function updateDamage(i){
@@ -131,7 +131,7 @@ try{
 function pause(value){soundBank?.setPaused(value);paused=value;stage.classList.toggle('paused',value);for(const a of running)value?a.pause():a.play();$('water').textContent=value?'播放動態':'暫停動態';$('water').setAttribute('aria-pressed',String(value));draw();}
 document.querySelectorAll('[data-attack]').forEach(b=>b.onclick=()=>attack(b.dataset.attack).catch(e=>{$('status').textContent=e.message;}));$('next-state').onclick=()=>enter();$('water').onclick=()=>pause(!paused);$('height').oninput=e=>stage.style.aspectRatio=100/Number(e.target.value);
 $('enemy-type').replaceChildren(...levels.map((config,i)=>{const option=document.createElement('option');option.value=String(i+1);option.textContent=`Boss ${i+1} · ${config.name}`;return option;}));
-async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Steampunk 尚未建立此關卡');level=next;setBackground(levels[level-1].background||0);if(background){const image=stage.querySelector('.background');image.src=PinballRuntimeImages.resolve(background);await image.decode();}await enter(skipWarning);}
+async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Steampunk 尚未建立此關卡');level=next;setBackground(levels[level-1].background||0);if(background){const image=stage.querySelector('.background');image.src=PinballRuntimeImages.resolve(background);await PinballRuntimeImages.decode(image);}await enter(skipWarning);}
 $('enemy-type').onchange=e=>choose(Number(e.target.value));
 $('next-level').onclick=()=>choose(level+1);
 async function advanceGodPunishment(){
@@ -202,7 +202,7 @@ TheaterFrame.connect({stage,ready,
   if(data.attackDefeat){
    level=data.stage;reset();target=-1;busy=true;
    const background=stage.querySelector('.background');if(data.background)background.src=PinballRuntimeImages.resolve(data.background);
-   await Promise.all([background.decode(),...[...$('racers').children].map(r=>r.querySelector(':scope > img').decode())]);
+   await Promise.all([PinballRuntimeImages.decode(background),...[...$('racers').children].map(r=>PinballRuntimeImages.decode(r.querySelector(':scope > img')))]);
    $('racers').hidden=false;draw();
    await animate($('racers'),[{opacity:1},{opacity:1}],1200);
    // Story finale: one electric wave destroys all three ships; gameplay HP is unchanged.
@@ -215,7 +215,7 @@ TheaterFrame.connect({stage,ready,
    const background=stage.querySelector('.background');if(data.background)background.src=PinballRuntimeImages.resolve(data.background);
    const victims=level===7?hp.map((_,i)=>i):[0];
    for(const i of victims){hp[i]=0;updateDamage(i);}draw();
-   await Promise.all([background.decode(),...victims.map(i=>$('racers').children[i].querySelector(':scope > img').decode())]);
+   await Promise.all([PinballRuntimeImages.decode(background),...victims.map(i=>PinballRuntimeImages.decode($('racers').children[i].querySelector(':scope > img')))]);
    $('racers').hidden=false;
    await animate($('racers'),[{opacity:1},{opacity:1}],700);
    sound('explosion');

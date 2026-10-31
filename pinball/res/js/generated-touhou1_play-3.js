@@ -165,7 +165,7 @@ class Renderer{
  decodeImages(images){
   return Promise.all([...images].map(img=>{
    let entry=this.imageReadiness.get(img);
-   if(!entry||entry.src!==img.src){entry={src:img.src};entry.ready=img.decode().catch(error=>{if(this.imageReadiness.get(img)===entry)this.imageReadiness.delete(img);throw error;});this.imageReadiness.set(img,entry);}
+   if(!entry||entry.src!==img.src){entry={src:img.src};entry.ready=(root.PinballRuntimeImages?.decode?.(img)??img.decode()).then(()=>{entry.src=img.src;}).catch(error=>{if(this.imageReadiness.get(img)===entry)this.imageReadiness.delete(img);throw error;});this.imageReadiness.set(img,entry);}
    return entry.ready;
   }));
  }

@@ -1439,8 +1439,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1474,8 +1474,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1509,8 +1509,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1544,8 +1544,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1579,8 +1579,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1614,8 +1614,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1649,8 +1649,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1684,8 +1684,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1719,8 +1719,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },
@@ -1754,8 +1754,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       }
     },

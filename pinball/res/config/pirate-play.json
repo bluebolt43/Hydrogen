@@ -1035,8 +1035,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         },
         "impactFlash": false
       },
@@ -1074,8 +1074,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "flipX": false,
@@ -1111,8 +1111,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "flipX": false,
@@ -1149,8 +1149,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
@@ -1186,8 +1186,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
@@ -1222,8 +1222,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
@@ -1259,8 +1259,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
@@ -1295,8 +1295,8 @@
         },
         "behavior": {
           "mode": "repeat",
-          "onSeconds": 0.6,
-          "offSeconds": 2.4
+          "onSeconds": 1,
+          "offSeconds": 1
         }
       },
       "runtimeSource": "res/img/pirate/pirate-fish-angelfish-navy.png"

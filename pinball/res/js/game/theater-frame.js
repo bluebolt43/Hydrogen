@@ -13,13 +13,41 @@ window.TheaterFrame={create(stage,animate){
  }};
 }};
 
+// Disposable effect sprites can move without changing layout on every frame.
+// Actors keep native positioning: later animations may also own their translate.
+{
+const origins=new WeakMap();
+TheaterFrame.positionFrames=function(element,frames){
+ const axes=['left','top'].filter(axis=>frames.some(frame=>frame[axis]!==undefined));
+ if(!axes.length||frames.some(frame=>frame.translate!==undefined)||!window.CSS?.supports('translate','1px 1px'))return frames;
+ const parent=element.offsetParent;if(!parent||!parent.clientWidth||!parent.clientHeight)return frames;
+ const style=getComputedStyle(element);
+ let origin=origins.get(element);
+ if(!origin){
+  const parts=style.translate==='none'?['0px','0px']:style.translate.split(/\s+/);
+  if(parts.length>2||parts.some(value=>!/^[-\d.]+(?:px|%)$/.test(value)))return frames;
+  origin=[parts[0],parts[1]||'0px'];
+ }
+ const base={left:parseFloat(style.left),top:parseFloat(style.top)},size={left:parent.clientWidth,top:parent.clientHeight};
+ if(axes.some(axis=>!Number.isFinite(base[axis])))return frames;
+ const positions=[];
+ for(const frame of frames){const position={left:0,top:0};for(const axis of axes){
+  const value=String(frame[axis]);if(!/^-?(?:\d+\.?\d*|\.\d+)(?:px|%)$/.test(value))return frames;
+  position[axis]=parseFloat(value)*(value.endsWith('%')?size[axis]/100:1)-base[axis];
+ }positions.push(position);}
+ origins.set(element,origin);
+ const translated=(base,delta)=>base==='0px'?delta+'px':delta===0?base:'calc('+base+(delta<0?' - ':' + ')+Math.abs(delta)+'px)';
+ return frames.map((frame,i)=>{const converted={...frame,translate:translated(origin[0],positions[i].left)+' '+translated(origin[1],positions[i].top)};for(const axis of axes)delete converted[axis];return converted;});
+};
+}
+
 // Keep decoded sources alive for the current theater, and normalize logical PNG
 // aliases before comparing URLs. Clearing the iframe releases the whole cache.
 {
  const images=new Map();
  TheaterFrame.preloadImage=function(src){
   const url=PinballRuntimeImages.resolve(src);
-  if(!images.has(url)){const image=new Image();image.src=url;const ready=image.decode().then(()=>image).catch(error=>{images.delete(url);throw error;});images.set(url,ready);}
+  if(!images.has(url)){const image=new Image();image.src=url;const ready=(PinballRuntimeImages.decode?.(image)??image.decode()).then(()=>image).catch(error=>{images.delete(url);throw error;});images.set(url,ready);}
   return images.get(url);
  };
  TheaterFrame.preloadImages=sources=>Promise.all([...new Set(sources.filter(Boolean))].map(TheaterFrame.preloadImage));
