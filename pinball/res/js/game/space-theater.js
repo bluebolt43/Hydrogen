@@ -20,8 +20,8 @@ const isPaused=()=>paused||stage.classList.contains('paused');
 function state(){return {name:config().name,level,hp:fleetHp.length?[...fleetHp]:[hp],maxHp:config().health,phase:phaseIndex+1,phaseCount:phases().length,phaseHp:phaseHealth(),phaseMaxHp:form().health,core:form().core?'empty-plate':null,target:fleetHp.length?fleetHp.findIndex(h=>h>0):hp>0?0:-1,busy,paused:isPaused(),defeated:hp===0,background:(form().background||entryBackground).includes('mechanized')?'mechanized':(form().background||entryBackground).includes('palace')?'palace':'space'};}
 function applyForm(){
  enemy.hidden=!!config().ships;fleet.hidden=!config().ships;
- boss.src=PinballRuntimeImages.resolve(form().src);boss.alt=config().name+(form().name?' · '+form().name:'');
- stage.querySelector('.background').src=PinballRuntimeImages.resolve(form().background||entryBackground);
+ TheaterFrame.setImage(boss,form().src);boss.alt=config().name+(form().name?' · '+form().name:'');
+ TheaterFrame.setImage(stage.querySelector('.background'),form().background||entryBackground);
  stage.dataset.phase=String(phaseIndex+1);
  $('states').replaceChildren(...(config().phases||config().damageStates||[]).map((p,i)=>{const chip=document.createElement('span');chip.textContent=p.name;chip.className=i===phaseIndex?'active':'';return chip;}));
 }
@@ -212,9 +212,10 @@ async function attackFleet(kind){
    if(token!==generation)return;
    if(h>0&&config().damageStates){
     const image=ship.querySelector(':scope > img'),damaged=h*2<=config().ships[i].health,asset=config().damageStates[damaged?1:0];
-    if(image.getAttribute('src')!==asset.src){
+    const source=PinballRuntimeImages.resolve(asset.src);
+    if(image.src!==source){
      await animate(image,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],160,'linear');if(token!==generation)return;
-     image.src=PinballRuntimeImages.resolve(asset.src);image.alt=config().name+' '+(i+1)+' · '+asset.name;ship.dataset.damageState=damaged?'heavily-damaged':'normal';
+     TheaterFrame.setImage(image,source);image.alt=config().name+' '+(i+1)+' · '+asset.name;ship.dataset.damageState=damaged?'heavily-damaged':'normal';
      try{await image.decode();}catch(error){if(token!==generation)return;throw error;}
      if(token!==generation)return;
      await animate(image,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],160,'linear');if(token!==generation)return;
@@ -254,7 +255,7 @@ $('daynight').textContent='共用太空背景';$('daynight').disabled=true;
 for(const button of document.querySelectorAll('[data-attack]'))button.onclick=()=>attack(button.dataset.attack).catch(error=>{$('status').textContent=error.message;});
 resetScene();enemies.hidden=true;
 const sources=[...new Set([SPACE_THEATER.background,...Object.values(SPACE_THEATER.attacks).map(a=>a.src).filter(Boolean),...Object.values(SPACE_THEATER.effects||{}),...levels.map(b=>b.background),...levels.flatMap(b=>[b.src,...(b.phases||b.damageStates||[]).flatMap(p=>[p.src,p.background].filter(Boolean))]),'img/theater-curtain-right.png','img/health-heart.svg'])];
-const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=PinballRuntimeImages.resolve(src);return image.decode();})).then(async()=>{
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{
  loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();
 });
 window.SpaceTheater={attack,choose,reset,pause,state,get ready(){return loaded;}};

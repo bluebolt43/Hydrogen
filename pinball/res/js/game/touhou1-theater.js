@@ -62,7 +62,7 @@ function resetScene(){
  generation++;for(const animation of running)animation.cancel();running.clear();effects.replaceChildren();
  for(const animation of enemy.getAnimations())animation.cancel();
  bossStage(0);soundBank?.stop();pause(false);hp=config().health;busy=false;
- boss.src=PinballRuntimeImages.resolve(config().src);boss.alt=config().name+'・戰鬥';background.src=PinballRuntimeImages.resolve(config().background);background.alt=config().name+'的戰鬥場景';
+ TheaterFrame.setImage(boss,config().src);boss.alt=config().name+'・戰鬥';TheaterFrame.setImage(background,config().background);background.alt=config().name+'的戰鬥場景';
  stage.style.setProperty('--background-position',config().position||'50% 50%');
  TheaterFrame.renderHealth($('health'),hp);$('status').textContent='Boss '+level+' · '+config().name;draw();
 }
@@ -120,7 +120,7 @@ document.querySelector('label:has(#speed)').firstChild.textContent='動畫速度
 for(const button of document.querySelectorAll('[data-attack]'))button.onclick=()=>attack(button.dataset.attack).catch(error=>{$('status').textContent=error.message;});
 resetScene();enemies.hidden=true;
 const sources=[...new Set(levels.flatMap(b=>[b.src,b.background]).concat(Object.values(TOUHOU_ATTACK_EFFECTS).map(effect=>effect.src),['img/theater-curtain-right.png','img/health-heart.svg']))];
-const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=PinballRuntimeImages.resolve(src);return image.decode();})).then(async()=>{
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{
  loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();
 });
 ready.catch(error=>{$('status').textContent='圖片載入失敗：'+error.message;});

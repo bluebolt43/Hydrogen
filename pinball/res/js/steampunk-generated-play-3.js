@@ -187,13 +187,13 @@ class Renderer{
  }
  // Keep the original image separate: fading a flattened image+shadow changes
  // their overlap. Only the expensive blurred silhouette is immutable.
- drawImageWithShadow(ctx,img,sx,sy,sw,sh,width,height){
-  if(!this.rasterCacheEnabled||!(ctx.shadowBlur>0)||ctx.shadowOffsetX||ctx.shadowOffsetY||ctx.globalCompositeOperation!=='source-over'||ctx.filter&&ctx.filter!=='none')return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
-  const t=ctx.getTransform(),scaleX=Math.hypot(t.a,t.b),scaleY=Math.hypot(t.c,t.d);
-  if(scaleX<1/65536||Math.abs(scaleX-scaleY)>1e-7)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+ prepareShadowRaster(ctx,img,sx,sy,sw,sh,width,height,scaleHint=null){
+  if(!this.rasterCacheEnabled||!(ctx.shadowBlur>0)||ctx.shadowOffsetX||ctx.shadowOffsetY||ctx.globalCompositeOperation!=='source-over'||ctx.filter&&ctx.filter!=='none')return null;
+  const t=scaleHint===null?ctx.getTransform():null,scaleX=scaleHint??Math.hypot(t.a,t.b),scaleY=scaleHint??Math.hypot(t.c,t.d);
+  if(scaleX<1/65536||Math.abs(scaleX-scaleY)>1e-7)return null;
   const scale=Math.round(scaleX*65536)/65536,blur=ctx.shadowBlur,pad=Math.ceil(blur*2+2);
   const w=Math.ceil(width*scale)+pad*2,h=Math.ceil(height*scale)+pad*2,pixels=w*h;
-  if(w>2048||h>2048||pixels>1048576)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+  if(w>2048||h>2048||pixels>1048576)return null;
   const imageId=this.imageKey(img),color=ctx.shadowColor,smoothing=ctx.imageSmoothingEnabled,quality=ctx.imageSmoothingQuality;
   this.shadowRasters??=new Map();this.shadowPixels??=0;this.shadowLastEntries??=new WeakMap();
   let entry=this.shadowLastEntries.get(img);
@@ -206,15 +206,21 @@ class Renderer{
     // Put the image outside the canvas; its offset shadow lands inside it.
     c.shadowColor=ctx.shadowColor;c.shadowBlur=blur;c.shadowOffsetX=w+pad;
     c.drawImage(img,sx,sy,sw,sh,-w,pad,width*scale,height*scale);
-    entry={canvas:rasterImage(canvas),pixels,key,imageId,sx,sy,sw,sh,width,height,scale,blur,color,smoothing,quality};
+    entry={canvas:rasterImage(canvas),pixels,key,pad,imageId,sx,sy,sw,sh,width,height,scale,blur,color,smoothing,quality};
     while(this.shadowPixels+pixels>1048576&&this.shadowRasters.size){const id=this.shadowRasters.keys().next().value,old=this.shadowRasters.get(id);this.shadowPixels-=old.pixels;releaseRaster(old);this.shadowRasters.delete(id);}
     this.shadowPixels+=pixels;
    }
    this.shadowLastEntries.set(img,entry);
   }
   this.shadowRasters.delete(entry.key);this.shadowRasters.set(entry.key,entry);
+  return entry;
+ }
+ drawImageWithShadow(ctx,img,sx,sy,sw,sh,width,height,scaleHint=null){
+  const entry=this.prepareShadowRaster(ctx,img,sx,sy,sw,sh,width,height,scaleHint);
+  if(!entry)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+  const {canvas,pad,scale}=entry;
   ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';
-  ctx.drawImage(entry.canvas,-width/2-pad/scale,-height/2-pad/scale,w/scale,h/scale);ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();
+  ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();
  }
  // Cache the colored silhouette and soft edge once, rather than filtering each frame.
  drawGlow(ctx,img,sx,sy,sw,sh,width,height,glow){

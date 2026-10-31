@@ -11,10 +11,10 @@ const soundBank=embedded?null:new PinballSound(PirateMap.sounds);
 if(soundBank)for(const event of ['pointerdown','keydown'])addEventListener(event,()=>soundBank.unlock(),{capture:true});
 function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',type:'sound',name},'*');else soundBank.play(name);}
 const damage={ball:1,barrel:2,pirates:3,kraken:4};
-const cache=new Map();function preload(src){if(!cache.has(src)){const im=new Image();im.src=PinballRuntimeImages.resolve(src);cache.set(src,im.decode().then(()=>im).catch(e=>{cache.delete(src);throw e;}));}return cache.get(src);}
+const preload=TheaterFrame.preloadImage;
 function lock(v){isBusy=v;picker.disabled=next.disabled=daynight.disabled=v;$('height').disabled=v;document.querySelectorAll('[data-attack]').forEach(b=>b.disabled=v||defeated);$('next-level').disabled=v||!defeated;}
 function backgroundSources(type){const src=type.id==='kraken'?'res/img/pirate/pirate-story-kraken-cave.png':type.id==='sea-serpent'?'res/img/pirate/pirate-story-waterfall-channel.png':null;return src?[src,src]:['res/img/pirate/pirate-theater-background-day.png','res/img/pirate/pirate-theater-background-night.png'];}
-function sync(){const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){const image=$(id),src=backgroundSources(type)[i];if(image.getAttribute('src')!==src)image.src=PinballRuntimeImages.resolve(src);}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;positionHealth();}
+function sync(){const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){TheaterFrame.setImage($(id),backgroundSources(type)[i]);}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;positionHealth();}
 function animate(el,from,to,duration){if(!duration){el.style.transform=to;return Promise.resolve();}const animation=el.animate([{transform:from},{transform:to}],{duration,easing:'linear',fill:'forwards'});return animation.finished.then(()=>{el.style.transform=to;animation.cancel();});}
 function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=maximum*67?1:0;}
 let healthPositionFrame=0;
@@ -141,7 +141,7 @@ async function enterEnemy(){
 async function choose(index,round=index+1,skipWarning=false){
  if(isBusy)return;lock(true);
  try{
-  const asset=catalog[index].states[0];await Promise.all([asset.src,...backgroundSources(catalog[index])].map(preload));if(!skipWarning)await warnAndClose();
+  const asset=catalog[index].states[0];await Promise.all([...catalog[index].states.map(state=>state.src),...backgroundSources(catalog[index])].map(preload));if(!skipWarning)await warnAndClose();
   typeIndex=index;stateIndex=0;level=round;maxHp=level+2;hp=maxHp;defeated=false;
   isNight=['pirate-gunship','rock-shell-beast'].includes(catalog[index].id);
   $('day').hidden=isNight;$('night').hidden=!isNight;stage.classList.toggle('night',isNight);
@@ -262,7 +262,8 @@ async function tentacleAttack(){
 document.querySelectorAll('[data-attack]').forEach(b=>b.onclick=()=>attack(b.dataset.attack));
 
 lock(true);
-const ready=Promise.all([...document.querySelectorAll('.scene,.wave')].map(im=>im.decode()).concat(preload(enemy.src),preload('res/img/theater-curtain-right.png'))).then(async()=>{sync();renderHealth();if(!embedded){await warnAndClose();await enterEnemy();}else $('health-hud').hidden=true;lock(false);stage.dataset.ready='true';});ready.catch(()=>message.textContent='圖片載入失敗，請將 HTML 與 demo/assets 資料夾一起保留。');
+const combatSources=[...Object.values(attackAssets),'res/img/pirate/pirate-kraken-tentacle.png','res/img/pirate/pirate-lightning.png','res/img/pirate/pirate-explosion-smoke.png'];
+const ready=Promise.all([...document.querySelectorAll('.scene,.wave')].map(im=>im.decode()).concat(preload(enemy.src),preload('res/img/theater-curtain-right.png'),...combatSources.map(preload))).then(async()=>{sync();renderHealth();if(!embedded){await warnAndClose();await enterEnemy();}else $('health-hud').hidden=true;lock(false);stage.dataset.ready='true';});ready.catch(()=>message.textContent='圖片載入失敗，請將 HTML 與 demo/assets 資料夾一起保留。');
 let enemyPresent=false;
 TheaterFrame.connect({stage,ready,
  bounds(){const s=stage.getBoundingClientRect();const rect=el=>{const r=el.getBoundingClientRect();return {x:(r.left-s.left)/s.width,y:(r.top-s.top)/s.height,w:r.width/s.width,h:r.height/s.height};};return {boss:rect(enemy),hearts:rect($('health-hud'))};},

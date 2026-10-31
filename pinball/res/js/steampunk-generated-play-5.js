@@ -1330,6 +1330,7 @@ if(typeof module!=='undefined')module.exports=createReboundEffects;
 /* Event-driven paper fragments, light echoes and combo scoring. Physics stays unchanged. */
 function createImpactPresentation(game,artLayers,renderer){
  const artById=new Map(artLayers.map(a=>[a.id,a]));
+ const pulseColors=['#ffe59b','#b9f9ff'];
  const particles=[],rings=[],swings=[],lampPulses=new Map(),recent=new Map();
  const effectLists=[particles,rings,swings];let cleanedAt=null,cleanDirty=true;
  let cannonAt=-Infinity;
@@ -1347,7 +1348,7 @@ function createImpactPresentation(game,artLayers,renderer){
   for(const a of artLayers){if(a.hidden||!a.indicator||a.indicator.impactFlash===false)continue;
    const triggers=[a.indicator.trigger,...(a.indicator.extraTriggers||[])];
    if(all||triggers.some(t=>t?.source===source||t?.source&&source?.startsWith(t.source+'-')))
-    lampPulses.set(a.id,{at:game.time+(all?(a.x%7)*.018:0),color:all?'#ffe59b':'#b9f9ff'});
+    lampPulses.set(a.id,{at:game.time+(all?(a.x%7)*.018:0),color:pulseColors[all?0:1]});
   }
  }
  function hit(id){
@@ -1402,6 +1403,7 @@ function createImpactPresentation(game,artLayers,renderer){
  }
  function draw(ctx,floor,bounds=game.g.view_box){
   clean();ctx.save();ctx.lineCap='round';
+  let transform,shadowScale;
   // Effects may surround the ball but must not paint over its silver surface.
   for(const b of game.balls){
    if(b.state==='drained')continue;
@@ -1416,20 +1418,55 @@ function createImpactPresentation(game,artLayers,renderer){
    for(let i=start;i<(trail?.length||0);i++){const point=trail[i];if(point.layer!==b.layer)continue;if(previous){index++;ctx.globalAlpha=(index/count)*Math.min(.48,speed/1800);ctx.lineWidth=.5+index/count*2;ctx.beginPath();ctx.moveTo(...previous.p);ctx.lineTo(...point.p);ctx.stroke();}previous=point;}
   }
   for(const r of rings){if(r.plane!==floor)continue;const age=game.time-r.at,t=age/.4;ctx.globalAlpha=(1-t)*.85;ctx.strokeStyle=r.color;ctx.lineWidth=2.2*(1-t)+.3;ctx.beginPath();ctx.arc(...r.p,3+age*42*r.strength,0,Math.PI*2);ctx.stroke();}
-  for(const q of particles){if(q.plane!==floor)continue;const age=game.time-q.at;ctx.save();ctx.globalAlpha=1-age/q.life;ctx.translate(q.p[0]+q.v[0]*age,q.p[1]+q.v[1]*age+18*age*age);ctx.rotate(q.angle+age*5);ctx.fillStyle=q.color;ctx.fillRect(-q.size,-q.size*.4,q.size*2,q.size*.8);ctx.restore();}
-  for(const s of swings){if(s.plane!==floor)continue;const age=game.time-s.at;if(age>.18)continue;ctx.globalAlpha=1-age/.18;ctx.strokeStyle='#fff0bb';ctx.lineWidth=2*(1-age/.18);ctx.beginPath();ctx.arc(...s.p,5+age*45,s.angle+Math.PI-.9,s.angle+Math.PI+.9);ctx.stroke();}
-  for(const [id,q] of lampPulses){const a=artById.get(id);if(!a||a.hidden||a.plane!==floor)continue;const age=game.time-q.at;if(age<0)continue;
-   const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
-   ctx.save();ctx.translate(a.x,a.y);ctx.rotate((a.angle||0)*Math.PI/180);ctx.scale(a.flipX?-1:1,a.flipY?-1:1);ctx.globalAlpha=.65*fade;ctx.shadowColor=q.color;ctx.shadowBlur=6;
-   if(img.complete&&img.naturalWidth){
-    if(renderer.drawImageWithShadow)renderer.drawImageWithShadow(ctx,img,...a.crop,a.width,a.height);
-    else ctx.drawImage(img,...a.crop,-a.width/2,-a.height/2,a.width,a.height);
-   }
-   ctx.restore();
+  ctx.save();
+  for(const q of particles){if(q.plane!==floor)continue;const age=game.time-q.at;
+   if(transform===undefined)transform=readTransform(ctx);
+   const x=q.p[0]+q.v[0]*age,y=q.p[1]+q.v[1]*age+18*age*age,angle=q.angle+age*5;
+   if(transform)setPose(ctx,transform,x,y,angle);else{ctx.save();ctx.translate(x,y);ctx.rotate(angle);}
+   ctx.globalAlpha=1-age/q.life;ctx.fillStyle=q.color;ctx.fillRect(-q.size,-q.size*.4,q.size*2,q.size*.8);
+   if(!transform)ctx.restore();
   }
   ctx.restore();
+  for(const s of swings){if(s.plane!==floor)continue;const age=game.time-s.at;if(age>.18)continue;ctx.globalAlpha=1-age/.18;ctx.strokeStyle='#fff0bb';ctx.lineWidth=2*(1-age/.18);ctx.beginPath();ctx.arc(...s.p,5+age*45,s.angle+Math.PI-.9,s.angle+Math.PI+.9);ctx.stroke();}
+  ctx.save();
+  for(const [id,q] of lampPulses){const a=artById.get(id);if(!a||a.hidden||a.plane!==floor)continue;const age=game.time-q.at;if(age<0)continue;
+   const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
+   if(transform===undefined)transform=readTransform(ctx);
+   const angle=(a.angle||0)*Math.PI/180,flipX=a.flipX?-1:1,flipY=a.flipY?-1:1;
+   if(transform)setPose(ctx,transform,a.x,a.y,angle,flipX,flipY);else{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(angle);ctx.scale(flipX,flipY);}
+   ctx.globalAlpha=.65*fade;ctx.shadowColor=q.color;ctx.shadowBlur=6;
+   if(img.complete&&img.naturalWidth){
+    if(shadowScale===undefined)shadowScale=transform&&transform.b===0&&transform.c===0&&Math.abs(Math.abs(transform.a)-Math.abs(transform.d))<1e-7?Math.abs(transform.a):null;
+    if(renderer.drawImageWithShadow)renderer.drawImageWithShadow(ctx,img,...a.crop,a.width,a.height,shadowScale);
+    else ctx.drawImage(img,...a.crop,-a.width/2,-a.height/2,a.width,a.height);
+   }
+   if(!transform)ctx.restore();
+  }
+  ctx.restore();
+  ctx.restore();
  }
- return {draw,update:clean,onTheaterSound(name,now=performance.now()){
+ function readTransform(ctx){
+  const m=ctx.getTransform?.();
+  // Read native DOMMatrix getters once, not for every particle or lamp.
+  return m?{a:m.a,b:m.b,c:m.c,d:m.d,e:m.e,f:m.f}:null;
+ }
+ function setPose(ctx,m,x,y,angle,flipX=1,flipY=1){
+  const c=Math.cos(angle),s=Math.sin(angle);
+  ctx.setTransform((m.a*c+m.c*s)*flipX,(m.b*c+m.d*s)*flipX,(m.c*c-m.a*s)*flipY,(m.d*c-m.b*s)*flipY,m.a*x+m.c*y+m.e,m.b*x+m.d*y+m.f);
+ }
+ return {draw,update:clean,async prepareShadows(scale){
+  if(!renderer.rasterCacheEnabled||!renderer.prepareShadowRaster)return;
+  const entries=[],images=new Set();
+  for(const a of artLayers){if(a.hidden||!a.indicator||a.indicator.impactFlash===false)continue;
+   const c=a.indicator,sources=c.type==='bumper'&&c.keepLevelOnHit?[c.lv1,c.lv2,c.lv3]:[c.on||c.lv3||c.complete||a.src];
+   for(const src of sources){if(!src)continue;const img=renderer.image(src);images.add(img);entries.push({art:a,img});}
+  }
+  if(!entries.length)return;
+  await Promise.all([...images].map(img=>img.decode()));
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const brush=canvas.getContext('2d');brush.setTransform(scale,0,0,scale,0,0);brush.shadowBlur=6;
+  try{for(const color of pulseColors){brush.shadowColor=color;for(const {art:a,img} of entries)renderer.prepareShadowRaster(brush,img,...a.crop,a.width,a.height);}}
+  finally{canvas.width=canvas.height=0;}
+ },onTheaterSound(name,now=performance.now()){
   if(name==='explosion')cannonAt=now;
  },screenShake(now=performance.now()){
   const age=(now-cannonAt)/1000;
@@ -1473,7 +1510,7 @@ function createImpactPresentation(game,artLayers,renderer){
 }
 if(typeof module!=='undefined')module.exports=createImpactPresentation;
 
-function startPreview(PIRATE_GEOMETRY){
+async function startPreview(PIRATE_GEOMETRY){
 'use strict';
 const tutorialMode=!!TableTutorial&&new URLSearchParams(location.search).get('tutorial')==='1';
 const requestedBossStage=Number(new URLSearchParams(location.search).get('bossStage'));
@@ -1848,6 +1885,8 @@ canvas.onpointerup=e=>endTouch(e);
 canvas.onpointercancel=e=>endTouch(e,true);
 canvas.onlostpointercapture=e=>endTouch(e,true);
 applyPlayAspect(playAspect);
+await impactPresentation.prepareShadows(canvas.width/view[2]);
+previous=performance.now();accumulator=0;
 requestAnimationFrame(frame);
 window.viewAPI={hasSettingsControl:true,game,applyLocale,applySettings:applyAppSettings,suspend:suspendGame,resume:resumeGame};
 
@@ -1883,7 +1922,7 @@ async function loadPiratePreview(layout){
    const image=new Image();image.src=PinballRuntimeImages.resolve(src);
    try{await image.decode();}catch{throw Error('圖片載入失敗：'+src);}
   }));
-  startPreview(geometry);
+  await startPreview(geometry);
   document.title=previewTheme+' · 試玩';
   if(editorPreview)window.opener.postMessage({channel:'pinball-local-preview',type:'started'},'*');
  }catch(error){

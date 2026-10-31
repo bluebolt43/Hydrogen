@@ -13,7 +13,20 @@ window.TheaterFrame={create(stage,animate){
  }};
 }};
 
-/* Both themes use the same embedding, command queue, pause and completion contract. */
+// Keep decoded sources alive for the current theater, and normalize logical PNG
+// aliases before comparing URLs. Clearing the iframe releases the whole cache.
+{
+ const images=new Map();
+ TheaterFrame.preloadImage=function(src){
+  const url=PinballRuntimeImages.resolve(src);
+  if(!images.has(url)){const image=new Image();image.src=url;const ready=image.decode().then(()=>image).catch(error=>{images.delete(url);throw error;});images.set(url,ready);}
+  return images.get(url);
+ };
+ TheaterFrame.preloadImages=sources=>Promise.all([...new Set(sources.filter(Boolean))].map(TheaterFrame.preloadImage));
+ TheaterFrame.setImage=function(image,src){const url=PinballRuntimeImages.resolve(src);if(image.src===url)return false;image.src=url;return true;};
+}
+
+/* All themes share embedding, command queue, pause and completion contracts. */
 window.TheaterFrame.connect=function({stage,ready,reset,enemy,attack,state,bounds,storyVictory}){
  window.viewReady=ready;
  const embedded=new URLSearchParams(location.search).has('embed');

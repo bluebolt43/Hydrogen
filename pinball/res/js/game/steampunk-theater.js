@@ -16,7 +16,7 @@ const backgrounds=[
  {id:'day',label:'白天',src:'img/steampunk/steampunk-theater-background-day.png'}, {id:'night',label:'夜晚',src:'img/steampunk/steampunk-theater-background-night.png'}, {id:'mine',label:'礦山',src:'img/steampunk/steampunk-theater-background-mine.png'}, {id:'space',label:'太空',src:'img/steampunk/steampunk-theater-background-space.png'}, {id:'ruins',label:'遺跡',src:'img/steampunk/steampunk-theater-background-ruins.png'}
 ];
 let backgroundIndex=0;
-function setBackground(index){backgroundIndex=index;const background=backgrounds[index];stage.dataset.background=background.id;stage.querySelector('.background').src=PinballRuntimeImages.resolve(background.src);$('daynight').textContent='換成'+backgrounds[(index+1)%backgrounds.length].label;}
+function setBackground(index){backgroundIndex=index;const background=backgrounds[index];stage.dataset.background=background.id;TheaterFrame.setImage(stage.querySelector('.background'),background.src);$('daynight').textContent='換成'+backgrounds[(index+1)%backgrounds.length].label;}
 const levels=[
  {name:'競速對手',width:24,ships:['img/steampunk/steampunk-race-rival-1.png','img/steampunk/steampunk-race-rival-2.png','img/steampunk/steampunk-race-rival-3.png'],positions:[{x:25,y:45},{x:75,y:45},{x:50,y:74}]},
  {name:'追擊小艇編隊',width:20,ships:Array(4).fill('img/steampunk/steampunk-enemy-airship.png'),positions:[{x:22,y:42},{x:78,y:42},{x:37,y:78},{x:63,y:78}]},
@@ -45,7 +45,7 @@ function updateDamage(i){
  const config=levels[level-1],states=config.damageStatesByShip?.[i]||config.damageStates;if(!states)return;
  const damage=config.damageByHp?(hp[i]>=config.health[i]?0:config.damageByHp[hp[i]]):(hp[i]*100<=config.health[i]*34?2:hp[i]*100<=config.health[i]*67?1:0);
  const racer=$('racers').children[i];racer.dataset.damage=['normal','damaged','heavy-damaged'][damage];
- racer.querySelector(':scope > img').src=PinballRuntimeImages.resolve(states[damage]);
+ TheaterFrame.setImage(racer.querySelector(':scope > img'),states[damage]);
 }
 async function exitEnemy(i){
  const racer=$('racers').children[i];
@@ -186,7 +186,7 @@ $('daynight').onclick=changeBackground;setBackground(levels[level-1].background|
 window.SteampunkTheater={attack,reset,pause,state,changeBackground,choose};
 reset();
 const sources=['img/theater-curtain-right.png','img/health-heart.svg',...Object.values(art),...new Set(levels.flatMap(config=>[...config.ships,...(config.damageStates||[]),...(config.damageStatesByShip||[]).flat().filter(Boolean)])),...backgrounds.map(background=>background.src),'img/steampunk/steampunk-theater-cloud.png'];
-const ready=Promise.all(sources.map(src=>{const im=new Image();im.src=PinballRuntimeImages.resolve(src);return im.decode();})).then(async()=>{if(!embedded)await enter();loaded=true;draw();});
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{if(!embedded)await enter();loaded=true;draw();});
 ready.catch(()=>{$('status').textContent='素材載入失敗';});
 TheaterFrame.connect({stage,ready,
  bounds(){

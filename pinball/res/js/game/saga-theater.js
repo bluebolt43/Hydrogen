@@ -56,14 +56,14 @@ function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=ma
 async function flip(to,token){
  if(to===stateIndex)return;
  await animate(boss,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],500);if(token!==generation)return;
- boss.src=PinballRuntimeImages.resolve(config().states[to].src);await boss.decode();if(token!==generation)return;
+ TheaterFrame.setImage(boss,config().states[to].src);await boss.decode();if(token!==generation)return;
  stateIndex=to;boss.alt=config().name+' · '+config().states[to].label;draw();layout();
  await animate(boss,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],500);
 }
 function applyScene(override){
- const c=config();hp=c.health;stateIndex=0;boss.src=PinballRuntimeImages.resolve(c.states[0].src);boss.alt=c.name+' · 正常';
+ const c=config();hp=c.health;stateIndex=0;TheaterFrame.setImage(boss,c.states[0].src);boss.alt=c.name+' · 正常';
  enemy.hidden=false;enemy.style.opacity='';enemy.style.translate='';enemy.style.rotate='';
- background.src=PinballRuntimeImages.resolve(override||c.background);background.alt=c.name+'的戰鬥場景';stage.style.setProperty('--background-position',c.backgroundPosition);
+ TheaterFrame.setImage(background,override||c.background);background.alt=c.name+'的戰鬥場景';stage.style.setProperty('--background-position',c.backgroundPosition);
  TheaterFrame.renderHealth(health,hp);stage.dataset.phase='idle';$('status').textContent='Boss '+level+' · '+c.name;draw();layout();
 }
 async function enter(skipWarning=false,override){
@@ -189,7 +189,7 @@ document.querySelector('label:has(#speed)').firstChild.textContent='動畫速度
 for(const b of document.querySelectorAll('[data-attack]'))b.onclick=()=>attack(b.dataset.attack).catch(showError);
 applyScene();enemies.hidden=true;
 const sources=[...new Set(levels.flatMap(b=>[b.background,...b.states.map(state=>state.src)]).concat(Object.values(data.attacks).flatMap(a=>[a.src,a.secondarySrc].filter(Boolean)),[data.wavesSrc,data.lightningSrc,data.electricSrc,data.electricBurstSrc,'img/theater-curtain-right.png','img/health-heart.svg','img/pirate/pirate-explosion-smoke.png']))];
-const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=PinballRuntimeImages.resolve(src);return image.decode();})).then(async()=>{loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();});
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();});
 ready.catch(e=>{$('status').textContent='素材載入失敗：'+e.message;});
 window.SagaTheater={attack,choose,reset,pause,state,get ready(){return loaded;}};
 window.viewReady=ready;window.viewAPI={play:()=>choose(level,true),suspend:()=>pause(true),resume:()=>pause(false)};
