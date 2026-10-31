@@ -1267,7 +1267,7 @@ const hostMusicStart = Number(document.body.dataset.musicStart || 0);
 const hostSounds = [bgm, a2Bgm, a3Bgm, a4Bgm, a5Bgm, a6Bgm, a7Bgm, a8Bgm];
 let hostTimeline = [], hostTime = 0, hostPlaying = false, hostLast = 0;
 let hostFrame = 0, hostNextTimer = 0, hostCompleted = false, hostSerial = 0;
-let hostResume = false, hostMusicStarted = false;
+let hostResume = false, hostMusicStarted = false, hostPrime = null;
 
 function runHostTimeline() {
   hostTimeline.forEach(animation => {
@@ -1287,7 +1287,13 @@ function hostMarkSeen() {
   if (window.AppProgress) window.AppProgress.markSeen(hostKey);
   else localStorage.setItem('pinball-touhou1-story-seen-v1:' + hostKey, '1');
 }
-function hostStopAudio() { hostSounds.forEach(audio => audio.pause()); }
+function restoreHostPrime() {
+  if (!hostPrime) return;
+  hostAudio.pause();
+  hostAudio.muted = hostPrime.muted || localStorage.getItem('pinball-sound') === 'off';
+  hostPrime = null;
+}
+function hostStopAudio() { hostSounds.forEach(audio => audio.pause()); restoreHostPrime(); }
 function prepareHostChapter() {
   looping = false;
   play(); // Establish the original A1 background animation state used by seekTo.
@@ -1343,14 +1349,18 @@ function hostTick(now) {
 }
 async function playHostChapter(key = hostKey) {
   if (key !== hostKey) return false;
-  await window.viewReady;
   const serial = ++hostSerial;
+  await window.viewReady;
+  if (serial !== hostSerial) return false;
   clearTimeout(hostNextTimer); cancelAnimationFrame(hostFrame);
   hostPlaying = false; hostCompleted = false;
   hostNext.hidden = true; hostSkip.hidden = true;
   prepareHostChapter();
   if (hostPart === 'start' && !hostAudio.muted) {
+    hostPrime = {serial, muted: hostAudio.muted};
     try {
+      // Readiness is not an audible cue: delayed chapter music must not leak.
+      hostAudio.muted = true;
       await hostAudio.play();
       if (serial !== hostSerial) return false;
       hostAudio.pause(); hostAudio.currentTime = 0;
@@ -1361,6 +1371,8 @@ async function playHostChapter(key = hostKey) {
         hostBegin.hidden = false;
         return false;
       }
+    } finally {
+      if (hostPrime?.serial === serial) restoreHostPrime();
     }
   }
   if (serial !== hostSerial) return false;

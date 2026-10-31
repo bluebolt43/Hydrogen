@@ -247,17 +247,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -482,17 +480,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -746,17 +742,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -981,17 +975,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -1228,17 +1220,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -1479,17 +1469,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -1768,17 +1756,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -2020,17 +2006,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -2289,17 +2273,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -2548,17 +2530,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -2791,17 +2771,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -3050,17 +3028,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -3358,17 +3334,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -3508,7 +3482,12 @@ function renderCh7End(ms){
  const small=ch7EndLayout.objects.find(o=>o.asset==='stage7-4'&&o.width<500);
  const defeated=document.querySelector('#ch7-end-defeated');
  const travel=clamp((ms-3700)/2000,0,1);
- for(const key of ['x','y','width','height'])defeated.style[key==='x'?'left':key==='y'?'top':key]=`${large[key]+(small[key]-large[key])*travel}px`;
+ // Keep the raster's layout size fixed while it retreats; width/height
+ // animation forces layout and repaint on every frame of this large sprite.
+ defeated.style.left=large.x+'px';defeated.style.top=large.y+'px';
+ defeated.style.width=large.width+'px';defeated.style.height=large.height+'px';
+ defeated.style.transformOrigin='0 0';
+ defeated.style.transform=`translate(${(small.x-large.x)*travel}px,${(small.y-large.y)*travel}px) scale(${1+(small.width/large.width-1)*travel},${1+(small.height/large.height-1)*travel})`;
  defeated.style.opacity=ms<3700?0:1-clamp((ms-5700)/1000,0,1);
  document.querySelector('#ch7-end-boss').style.opacity=ms<3700?1:0;
  document.querySelector('#ch7-end-finale').style.opacity=clamp((ms-8700)/1500,0,1);
@@ -3621,17 +3600,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -3933,17 +3910,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;
@@ -4211,17 +4186,15 @@ async function play(chapter=activeChapter){
  error.hidden=true;playing=false;ambienceStarted=false;exploded=false;ch5BlastSound=-1;ch7VictoryPlayed=false;
  document.querySelector('#begin').hidden=true;
  if(chapterPart==='end'){
-  let timeout;
-  try{
-   await Promise.race([
-    Promise.all(sounds.map(sound=>{sound.volume=0;return sound.play();})),
-    new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Media start timed out')),3000);})
-   ]);
-  }catch{if(id===playId)requestPlayback();return false;}
-  finally{clearTimeout(timeout);}
-  if(id!==playId)return false;
-  stopSounds();
+  // Unlock each element silently without waiting for all decoders to start.
+  // volume=0 is not a reliable mute on iOS; a pending play must not stall story.
+  for(const sound of sounds){
+   const muted=sound.muted;
+   try{sound.muted=true;Promise.resolve(sound.play()).catch(()=>{});}
+   finally{sound.pause();sound.currentTime=0;sound.muted=muted;}
+  }
  }
+ if(id!==playId)return false;
  playing=true;
  if(typeof resetChapter==='function')resetChapter();
  for(const sound of sounds)sound.volume=0;

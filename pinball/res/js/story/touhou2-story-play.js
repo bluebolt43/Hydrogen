@@ -29,7 +29,7 @@ const phone=document.getElementById('phone'),begin=document.getElementById('begi
 const next=document.getElementById('story-next'),skip=document.getElementById('story-skip');
 const music=document.querySelector('audio'),key=`ch${storyData.chapter}-${storyData.part}`;
 const layers=storyData.layers.map(layer=>({...layer,element:document.getElementById(layer.id),visible:false}));
-let time=0,playing=false,last=0,frame=0,resumable=false,completed=false,nextTimer=0;
+let time=0,playing=false,last=0,frame=0,resumable=false,completed=false,nextTimer=0,playSerial=0;
 const clamp=value=>Math.max(0,Math.min(1,value));
 const seen=()=>window.AppProgress?window.AppProgress.hasSeen(key):localStorage.getItem(`pinball-touhou2-story-seen-v1:${key}`)==='1';
 function render(ms){
@@ -67,20 +67,21 @@ function render(ms){
 function complete(){if(completed)return;completed=true;clearTimeout(nextTimer);next.hidden=true;window.dispatchEvent(new CustomEvent('story:complete',{detail:{chapter:key}}));}
 function stop(){playing=false;cancelAnimationFrame(frame);music?.pause();}
 function finish(skipped=false){
- stop();render(storyData.duration);skip.hidden=true;
+ ++playSerial;stop();render(storyData.duration);skip.hidden=true;
  if(!skipped){if(window.AppProgress)window.AppProgress.markSeen(key);else localStorage.setItem(`pinball-touhou2-story-seen-v1:${key}`,'1');}
  if(storyData.part==='end'){next.hidden=false;nextTimer=setTimeout(complete,10000);}else complete();
 }
 function tick(now){if(!playing)return;render(time+Math.max(0,now-last));last=now;if(time>=storyData.duration)finish();else frame=requestAnimationFrame(tick);}
 async function play(chapter=key){
- if(chapter!==key)return false;await window.viewReady;stop();clearTimeout(nextTimer);completed=false;next.hidden=true;skip.hidden=!seen();render(0);begin.hidden=true;
- if(music){music.currentTime=0;try{await music.play();}catch{begin.hidden=false;return false;}}
+ if(chapter!==key)return false;const serial=++playSerial;await window.viewReady;if(serial!==playSerial)return false;stop();clearTimeout(nextTimer);completed=false;next.hidden=true;skip.hidden=!seen();render(0);begin.hidden=true;
+ if(music){music.currentTime=0;try{await music.play();}catch{if(serial===playSerial)begin.hidden=false;return false;}}
+ if(serial!==playSerial)return false;
  playing=true;last=performance.now();frame=requestAnimationFrame(tick);return true;
 }
 document.getElementById('start').onclick=()=>play();document.getElementById('replay').onclick=()=>play();
 skip.onclick=()=>{if(seen())finish(true);};next.onclick=complete;
 if(new URLSearchParams(location.search).has('embed'))document.getElementById('chapters').hidden=true;
-window.addEventListener('pagehide',()=>{stop();clearTimeout(nextTimer);});
+window.addEventListener('pagehide',()=>{++playSerial;stop();clearTimeout(nextTimer);});
 window.viewAPI={play,render,suspend(){resumable=playing;stop();},resume(){if(!resumable)return;resumable=false;playing=true;last=performance.now();music?.play().catch(()=>{});frame=requestAnimationFrame(tick);}};
 window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>image.decode())).then(()=>{render(0);phone.dataset.ready='true';}).catch(error=>{document.getElementById('error').hidden=false;throw error;});
 

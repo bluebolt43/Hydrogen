@@ -276,9 +276,9 @@ function compileLayout(layout,base){
  for(const socket of g.lower.filter(o=>o.kind==='socket'&&o.release)){
   // A teleport-only entrance never ejects here; destinations still need clearance.
   if(layout.objects.some(o=>o.id===socket.id&&o.exitHole)&&!layout.objects.some(o=>o.exitHole===socket.id))continue;
-  const center=socket.remote_release?socket.release:socket.center,edges=[],circles=[];
-  for(const solid of solids)if(solid.center)circles.push([solid.center,solid.radius]);else for(let i=1;i<solid.points.length;i++){const a=solid.points[i-1],b=solid.points[i];if(segmentDistance(center,a,b)<30)edges.push([a,b,(solid.thickness||0)/2])}
-  function clearance(v){let result=Infinity;const required=g.ball_radius+1;for(let i=0;i<49;i++){const p=[center[0]+v[0]*i*.5,center[1]+v[1]*i*.5],fade=socket.remote_release?0:Math.max(0,1-i*.5/14);for(const [a,b,r] of edges)result=Math.min(result,segmentDistance(p,a,b)-r+Math.max(0,required-segmentDistance(center,a,b)+r)*fade);for(const [c,r] of circles)result=Math.min(result,dist(p,c)-r+Math.max(0,required-dist(center,c)+r)*fade)}return result}
+  const center=socket.remote_release?socket.release:socket.center,edges=[],circles=[],required=g.ball_radius+1;
+  for(const solid of solids)if(solid.center)circles.push([solid.center,solid.radius,Math.max(0,required-dist(center,solid.center)+solid.radius)]);else for(let i=1;i<solid.points.length;i++){const a=solid.points[i-1],b=solid.points[i],distance=segmentDistance(center,a,b),r=(solid.thickness||0)/2;if(distance<30)edges.push([a,b,r,Math.max(0,required-distance+r)])}
+  function clearance(v){let result=Infinity;for(let i=0;i<49;i++){const p=[center[0]+v[0]*i*.5,center[1]+v[1]*i*.5],fade=socket.remote_release?0:Math.max(0,1-i*.5/14);for(const [a,b,r,bias] of edges)result=Math.min(result,segmentDistance(p,a,b)-r+bias*fade);for(const [c,r,bias] of circles)result=Math.min(result,dist(p,c)-r+bias*fade);if(result<required-1e-7)return result;}return result}
   const preferred=socket.release_direction;if(clearance(preferred)<g.ball_radius+1-1e-7){if(socket.release_mode==='fixed')throw Error('指定射出角度被阻擋：'+socket.id);if(socket.remote_release)throw Error('Remote socket exit is obstructed: '+socket.id);const candidates=Array.from({length:72},(_,i)=>[Math.cos(rad(i*5)),Math.sin(rad(i*5))]).sort((a,b)=>(b[0]*preferred[0]+b[1]*preferred[1])-(a[0]*preferred[0]+a[1]*preferred[1])),v=candidates.find(v=>clearance(v)>=g.ball_radius+1-1e-7);if(!v)throw Error('Socket has no ball-width exit: '+socket.id);socket.release_direction=v;socket.release=[center[0]+v[0]*14,center[1]+v[1]*14]}
  }
  g.one_way_gates=g.one_way_gates.filter(o=>Math.min(...o.points.map(p=>p[1]))>=300);for(const gate of g.one_way_gates)gate.points=gate.points.map(p=>[p[0]+offset[0],p[1]+offset[1]]);
@@ -1407,9 +1407,19 @@ function createImpactPresentation(game,artLayers,renderer){
   for(const [id,p] of lampPulses)if(game.time-p.at>.35)lampPulses.delete(id);
   for(const [id,at] of recent)if(game.time-at>2)recent.delete(id);
  }
+ function hasEffects(floor){
+  if(particles.some(q=>q.plane===floor)||rings.some(q=>q.plane===floor)||swings.some(q=>q.plane===floor&&game.time-q.at<=.18))return true;
+  for(const [id,q] of lampPulses){const a=artById.get(id);if(a&&!a.hidden&&a.plane===floor&&game.time>=q.at)return true;}
+  if(game.g.gameplay?.ballEffects!==false)for(const b of game.balls){
+   if(game.visualPlane(b)!==floor||b.state!=='playing'||Math.hypot(...b.v)<180)continue;
+   let count=0;for(const p of b.trail||[])if(p.layer===b.layer&&++count===2)return true;
+  }
+  return false;
+ }
  function draw(ctx,floor,bounds=game.g.view_box){
-  clean();ctx.save();ctx.lineCap='round';
-  let transform,shadowScale;
+  clean();if(!hasEffects(floor))return;
+  ctx.save();ctx.lineCap='round';
+  let transform,shadowScale,shadowStyle;
   // Effects may surround the ball but must not paint over its silver surface.
   for(const b of game.balls){
    if(b.state==='drained')continue;
@@ -1440,10 +1450,17 @@ function createImpactPresentation(game,artLayers,renderer){
    if(transform===undefined)transform=readTransform(ctx);
    const angle=(a.angle||0)*Math.PI/180,flipX=a.flipX?-1:1,flipY=a.flipY?-1:1;
    if(transform)setPose(ctx,transform,a.x,a.y,angle,flipX,flipY);else{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(angle);ctx.scale(flipX,flipY);}
-   ctx.globalAlpha=.65*fade;ctx.shadowColor=q.color;ctx.shadowBlur=6;
+   ctx.globalAlpha=.65*fade;
+   if(transform&&renderer.prepareShadowRaster){
+    if(!shadowStyle){
+     shadowStyle={shadowBlur:6,shadowColor:q.color,shadowOffsetX:ctx.shadowOffsetX,shadowOffsetY:ctx.shadowOffsetY,globalCompositeOperation:ctx.globalCompositeOperation,filter:ctx.filter,imageSmoothingEnabled:ctx.imageSmoothingEnabled,imageSmoothingQuality:ctx.imageSmoothingQuality,getTransform:()=>ctx.getTransform()};
+     ctx.shadowColor='transparent';ctx.shadowBlur=0;
+    }
+    shadowStyle.shadowColor=q.color;
+   }else{ctx.shadowColor=q.color;ctx.shadowBlur=6;}
    if(img.complete&&img.naturalWidth){
     if(shadowScale===undefined)shadowScale=transform&&transform.b===0&&transform.c===0&&Math.abs(Math.abs(transform.a)-Math.abs(transform.d))<1e-7?Math.abs(transform.a):null;
-    if(renderer.drawImageWithShadow)renderer.drawImageWithShadow(ctx,img,...a.crop,a.width,a.height,shadowScale);
+    if(renderer.drawImageWithShadow)renderer.drawImageWithShadow(ctx,img,...a.crop,a.width,a.height,shadowScale,shadowStyle);
     else ctx.drawImage(img,...a.crop,-a.width/2,-a.height/2,a.width,a.height);
    }
    if(!transform)ctx.restore();
@@ -1468,7 +1485,7 @@ function createImpactPresentation(game,artLayers,renderer){
    for(const src of sources){if(!src)continue;const img=renderer.image(src);images.add(img);entries.push({art:a,img});}
   }
   if(!entries.length)return;
-  await Promise.all([...images].map(img=>img.decode()));
+  await renderer.decodeImages(images);
   const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const brush=canvas.getContext('2d');brush.setTransform(scale,0,0,scale,0,0);brush.shadowBlur=6;
   try{for(const color of pulseColors){brush.shadowColor=color;for(const {art:a,img} of entries)renderer.prepareShadowRaster(brush,img,...a.crop,a.width,a.height);}}
   finally{canvas.width=canvas.height=0;}
@@ -1516,7 +1533,7 @@ function createImpactPresentation(game,artLayers,renderer){
 }
 if(typeof module!=='undefined')module.exports=createImpactPresentation;
 
-async function startPreview(PIRATE_GEOMETRY){
+async function startPreview(PIRATE_GEOMETRY,preparedImages){
 'use strict';
 const tutorialMode=!!TableTutorial&&new URLSearchParams(location.search).get('tutorial')==='1';
 const requestedBossStage=Number(new URLSearchParams(location.search).get('bossStage'));
@@ -1535,7 +1552,7 @@ const theater=new LayoutTheater(PLAYTEST_THEME);theater.bossStage=bossStage;thea
 let firstPlayGuide=null;
 let firstPlayGuidePending=!!TableTutorial&&(tutorialMode||bossStage===1&&new URLSearchParams(location.search).get('firstPlayTutorial')==='1'&&!(window.AppProgress?window.AppProgress.tutorialComplete:localStorage.getItem(`pinball-${PLAYTEST_THEME}-first-play-tutorial-v1`)==='1'));
 const touchControls=new Map();let launchMode=localStorage.getItem('pinball-launch-mode')||'hold',launchDrag=null;
-const artRenderer=new (PLAYTEST_THEME==='steampunk'?SteampunkArt.Renderer:PinballArt.Renderer)("",IndicatorLights.artMap(PirateMap));let artLayers=[],artWarning='';
+const artRenderer=new (PLAYTEST_THEME==='steampunk'?SteampunkArt.Renderer:PinballArt.Renderer)("",IndicatorLights.artMap(PirateMap),preparedImages);let artLayers=[],artWarning='';
 artRenderer.rasterCacheEnabled=true;
 artRenderer.bitmapCacheEnabled=true;
 artRenderer.backgroundCacheEnabled=true;
@@ -1891,7 +1908,10 @@ canvas.onpointerup=e=>endTouch(e);
 canvas.onpointercancel=e=>endTouch(e,true);
 canvas.onlostpointercapture=e=>endTouch(e,true);
 applyPlayAspect(playAspect);
+artRenderer.brightness=.82;
+try{await artRenderer.prepareArtwork(artLayers,canvas.width/view[2]);}finally{artRenderer.brightness=1;}
 await impactPresentation.prepareShadows(canvas.width/view[2]);
+draw();
 previous=performance.now();accumulator=0;
 requestAnimationFrame(frame);
 window.viewAPI={hasSettingsControl:true,game,applyLocale,applySettings:applyAppSettings,suspend:suspendGame,resume:resumeGame};
@@ -1924,11 +1944,13 @@ async function loadPiratePreview(layout){
    else if(value&&typeof value==='object')Object.values(value).forEach(collectImages);
   }
   collectImages(geometry.gameplay?.touhouBagua);collectImages(geometry.gameplay?.runicTurntable);collectImages(geometry.artLayers);collectImages(PlayFrame.createArt(previewTheme));
+  const preparedImages=new Map();
   await Promise.all([...sources].map(async src=>{
    const image=new Image();image.src=PinballRuntimeImages.resolve(src);
    try{await image.decode();}catch{throw Error('圖片載入失敗：'+src);}
+   preparedImages.set(src,image);
   }));
-  await startPreview(geometry);
+  await startPreview(geometry,preparedImages);
   document.title=previewTheme+' · 試玩';
   if(editorPreview)window.opener.postMessage({channel:'pinball-local-preview',type:'started'},'*');
  }catch(error){

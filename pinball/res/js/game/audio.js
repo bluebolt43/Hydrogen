@@ -13,12 +13,12 @@ class SoundBank {
  unlock(){
   if(this.unlocked)return;this.unlocked=true;
   if(this.synthEnabled&&this.AudioContextClass){try{this.synthContext=new this.AudioContextClass();this.synthContext.resume().catch(()=>{});}catch{}}
-  // Warm the actual reusable elements during the input gesture (mobile audio).
+  // iOS may ignore volume writes. Mute and stop within the gesture instead
+  // of leaving every effect playing until its play promise settles.
   for(const clip of this.clips.values())for(const voice of clip.voices){
-   const token=++voice.token;voice.audio.volume=0;
-   Promise.resolve(voice.audio.play()).then(()=>{
-    if(voice.token!==token)return;voice.audio.pause();voice.audio.currentTime=0;voice.audio.volume=clip.volume??1;
-   }).catch(()=>{if(voice.token===token)voice.audio.volume=clip.volume??1;});
+   const audio=voice.audio,muted=audio.muted;voice.token++;
+   try{audio.muted=true;Promise.resolve(audio.play()).catch(()=>{});}
+   finally{audio.pause();audio.currentTime=0;audio.muted=muted;}
   }
  }
  play(name){

@@ -2,13 +2,14 @@
 (function(root){
 'use strict';
 function createMenuMusic(src){
- const audio=new Audio(src);audio.preload='metadata';audio.loop=true;
- let enabled=false,disposed=false;
+ const audio=new Audio();audio.preload='none';audio.loop=true;
+ let enabled=false,disposed=false,sourceAttached=false;
  function pause(){
   audio.pause();
  }
  function start(){
   if(!enabled||disposed)return;
+  if(!sourceAttached){audio.src=src;sourceAttached=true;}
   if(audio.paused)audio.play().catch(()=>{}); // Retry on a user gesture if autoplay is blocked.
  }
  function gesture(){start();}

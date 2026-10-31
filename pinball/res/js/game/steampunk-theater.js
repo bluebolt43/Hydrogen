@@ -3,12 +3,14 @@
 TheaterFrame.mountControls({title:'蒸氣龐克紙雕劇場',attacks:{lv1:'機槍',lv2:'砲擊',lv3:'特斯拉空雷',lv4:'神之罰'}});
 const $=id=>document.getElementById(id),stage=$('stage'),effects=$('effects');
 const embedded=new URLSearchParams(location.search).has('embed');
+let disposed=false;
+addEventListener('pagehide',()=>{disposed=true;generation++;for(const animation of running)animation.cancel();soundBank?.stop();},{once:true});
 document.documentElement.classList.toggle('embed',embedded);
 document.documentElement.classList.toggle('story-defeat',new URLSearchParams(location.search).has('story-defeat'));
 const frame=TheaterFrame.create(stage,animate);
 const soundBank=embedded?null:new PinballSound(Object.fromEntries(Object.entries({...PirateMap.sounds,...SteampunkSounds}).map(([name,clip])=>[name,{...clip,src:new URL('../'+clip.src,document.baseURI).href}])));
 if(soundBank)for(const event of ['pointerdown','keydown'])addEventListener(event,()=>soundBank.unlock(),{capture:true});
-function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',type:'sound',name},'*');else soundBank.play(name);}
+function sound(name){if(disposed)return;if(embedded)parent.postMessage({channel:'pinball-theater',type:'sound',name},'*');else soundBank.play(name);}
 const pose=scale=>`translate(-50%,-50%) scale(${scale})`;
 const attacks={lv1:{name:'機槍',damage:1},lv2:{name:'砲擊',damage:2},lv3:{name:'特斯拉空雷',damage:3},lv4:{name:'神之罰',damage:4}};
 const art={gun:'img/steampunk/steampunk-attack-machine-gun.png',beam:'img/steampunk/steampunk-attack-beam.png',electric:'img/steampunk/steampunk-attack-electric-sphere.png',mine:'img/steampunk/steampunk-tesla-mine.png',explosion:'img/steampunk/steampunk-attack-explosion.png'};
@@ -186,8 +188,8 @@ $('daynight').onclick=changeBackground;setBackground(levels[level-1].background|
 window.SteampunkTheater={attack,reset,pause,state,changeBackground,choose};
 reset();
 const sources=['img/theater-curtain-right.png','img/health-heart.svg',...Object.values(art),...new Set(levels.flatMap(config=>[...config.ships,...(config.damageStates||[]),...(config.damageStatesByShip||[]).flat().filter(Boolean)])),...backgrounds.map(background=>background.src),'img/steampunk/steampunk-theater-cloud.png'];
-const ready=TheaterFrame.preloadImages(sources).then(async()=>{if(!embedded)await enter();loaded=true;draw();});
-ready.catch(()=>{$('status').textContent='素材載入失敗';});
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{if(disposed)return;if(!embedded)await enter();if(disposed)return;loaded=true;draw();});
+ready.catch(()=>{if(!disposed)$('status').textContent='素材載入失敗';});
 TheaterFrame.connect({stage,ready,
  bounds(){
   const s=stage.getBoundingClientRect(),rs=[...document.querySelectorAll('#racers .hp')].map(el=>el.getBoundingClientRect()).filter(r=>r.width&&r.height);

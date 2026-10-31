@@ -157,8 +157,18 @@ function validate(items){
  });
 }
 class Renderer{
- constructor(base='',map=defaultMap()){this.map=map;this.base=base;this.cache=new Map();}
+ constructor(base='',map=defaultMap(),preparedImages=new Map()){
+  this.map=map;this.base=base;this.cache=preparedImages;this.imageReadiness=new WeakMap();
+  for(const img of preparedImages.values())this.imageReadiness.set(img,{src:img.src,ready:Promise.resolve()});
+ }
  image(src){if(!this.cache.has(src)){const img=new Image();if(src){const url=src.startsWith('blob:')?src:this.base+src;img.src=root.PinballRuntimeImages?.resolve(url)??url;}this.cache.set(src,img);}return this.cache.get(src);}
+ decodeImages(images){
+  return Promise.all([...images].map(img=>{
+   let entry=this.imageReadiness.get(img);
+   if(!entry||entry.src!==img.src){entry={src:img.src};entry.ready=img.decode().catch(error=>{if(this.imageReadiness.get(img)===entry)this.imageReadiness.delete(img);throw error;});this.imageReadiness.set(img,entry);}
+   return entry.ready;
+  }));
+ }
  imageKey(img){
   this.imageKeys??=new WeakMap();const src=img.src;let key=this.imageKeys.get(img);
   if(!key||key.src!==src){key={src,id:this.imageKeySerial=(this.imageKeySerial||0)+1};this.imageKeys.set(img,key);}
@@ -166,11 +176,35 @@ class Renderer{
  }
  // Gameplay opts in; editors retain original pixels. Cache only raster content,
  // so transforms, light state, opacity and animation still update every frame.
+ async prepareArtwork(items,scale){
+  if(!this.rasterCacheEnabled)return;
+  const tasks=[],images=new Set(),brightness=this.brightness;
+  for(const a of items){if(a.hidden)continue;
+   const c=a.indicator,sources=new Set([a.src,...['off','on','complete','lv1','lv2','lv3'].map(k=>c?.[k])].filter(Boolean));
+   for(const src of sources){const img=this.image(src);images.add(img);tasks.push({a,img});}
+  }
+  await this.decodeImages(images);
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const brush=canvas.getContext('2d');brush.setTransform(scale,0,0,scale,0,0);
+  const previousBrightness=this.brightness;this.brightness=brightness;
+  try{for(const {a,img} of tasks){const [x,y,w,h]=a.crop,colors=new Set([a.indicator?.glow?.on,a.indicator?.glow?.complete,a.indicator?.glow?.preview?.color].filter(Boolean));
+   for(let frame=0;frame<(a.frames||1);frame++){const sx=x+(a.frameAxis==='y'?0:frame*(a.frameStride||w)),sy=y+(a.frameAxis==='y'?frame*(a.frameStride||h):0);
+    if(sx+w>img.naturalWidth+.01||sy+h>img.naturalHeight+.01)continue;
+    this.drawRaster(brush,img,sx,sy,w,h,a.width,a.height);
+    for(const color of colors)this.drawGlow(brush,img,sx,sy,w,h,a.width,a.height,{color,alpha:0});
+   }
+  }}finally{this.brightness=previousBrightness;canvas.width=canvas.height=0;}
+ }
  drawRaster(ctx,img,sx,sy,sw,sh,width,height,x=0,y=0,scaleHint=null){
   if(!this.rasterCacheEnabled){ctx.drawImage(img,sx,sy,sw,sh,x-width/2,y-height/2,width,height);return;}
   const scale=scaleHint??rasterScale(ctx);
   const w=Math.max(1,Math.min(2048,Math.ceil(width*scale))),h=Math.max(1,Math.min(2048,Math.ceil(height*scale)));
-  const brightness=this.brightness??1,key=JSON.stringify([this.imageKey(img),sx,sy,sw,sh,w,h,brightness]);
+  const brightness=this.brightness??1,id=this.imageKey(img),previous=this.rasterLastKeys?.get(img);
+  let key;
+  if(previous&&previous.id===id&&previous.sx===sx&&previous.sy===sy&&previous.sw===sw&&previous.sh===sh&&previous.w===w&&previous.h===h&&previous.brightness===brightness)key=previous.key;
+  else{
+   key=JSON.stringify([id,sx,sy,sw,sh,w,h,brightness]);this.rasterLastKeys??=new WeakMap();
+   this.rasterLastKeys.set(img,{id,sx,sy,sw,sh,w,h,brightness,key});
+  }
   this.rasters??=new Map();this.rasterPixels??=0;
   let entry=this.rasters.get(key);
   if(!entry){
@@ -215,12 +249,16 @@ class Renderer{
   this.shadowRasters.delete(entry.key);this.shadowRasters.set(entry.key,entry);
   return entry;
  }
- drawImageWithShadow(ctx,img,sx,sy,sw,sh,width,height,scaleHint=null){
-  const entry=this.prepareShadowRaster(ctx,img,sx,sy,sw,sh,width,height,scaleHint);
-  if(!entry)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+ drawImageWithShadow(ctx,img,sx,sy,sw,sh,width,height,scaleHint=null,shadowStyle=null){
+  const entry=this.prepareShadowRaster(shadowStyle||ctx,img,sx,sy,sw,sh,width,height,scaleHint);
+  if(!entry){
+   if(!shadowStyle)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+   ctx.save();ctx.shadowBlur=shadowStyle.shadowBlur;ctx.shadowColor=shadowStyle.shadowColor;
+   ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();return;
+  }
   const {canvas,pad,scale}=entry;
-  ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';
-  ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();
+  if(!shadowStyle){ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';}
+  ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);if(!shadowStyle)ctx.restore();
  }
  // Cache the colored silhouette and soft edge once, rather than filtering each frame.
  drawGlow(ctx,img,sx,sy,sw,sh,width,height,glow){
