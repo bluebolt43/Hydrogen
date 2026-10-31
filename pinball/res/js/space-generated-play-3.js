@@ -72,6 +72,15 @@ const api={offset,flipScale};if(typeof module!=='undefined')module.exports=api;e
 'use strict';
 const defaultMap=()=>typeof module!=='undefined'&&module.exports?require('../indicator-lights.js').artMap():root.IndicatorLights.artMap();
 const animation=()=>typeof module!=='undefined'&&module.exports?require('../art-animation.js'):root.ArtAnimation;
+function rasterScale(ctx){const t=ctx.getTransform();return Math.max(1/64,Math.round(Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))*64)/64);}
+const rasterPool=[];
+function rasterCanvas(width,height,bitmap){
+ if(bitmap&&typeof OffscreenCanvas==='function'&&OffscreenCanvas.prototype.transferToImageBitmap){const canvas=rasterPool.pop()||new OffscreenCanvas(width,height);canvas.width=width;canvas.height=height;if(canvas.getContext('2d'))return canvas;}
+ const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;return canvas;
+}
+function recycleRasterCanvas(canvas){canvas.width=0;canvas.height=0;if(canvas.transferToImageBitmap&&rasterPool.length<4)rasterPool.push(canvas);}
+function rasterImage(canvas){if(!canvas.transferToImageBitmap)return canvas;const bitmap=canvas.transferToImageBitmap();recycleRasterCanvas(canvas);return bitmap;}
+function releaseRaster(entry){if(!entry?.canvas)return;if(entry.canvas.close)entry.canvas.close();else {entry.canvas.width=0;entry.canvas.height=0;}}
 const planes=['background','lower','upper','top','foreground'];
 function createDrawPlan(items){
  const batches=[];let batch=[],hasBallMarker=false;
@@ -149,7 +158,7 @@ function validate(items){
 }
 class Renderer{
  constructor(base='',map=defaultMap()){this.map=map;this.base=base;this.cache=new Map();}
- image(src){if(!this.cache.has(src)){const img=new Image();if(src)img.src=src.startsWith('blob:')?src:this.base+src;this.cache.set(src,img);}return this.cache.get(src);}
+ image(src){if(!this.cache.has(src)){const img=new Image();if(src){const url=src.startsWith('blob:')?src:this.base+src;img.src=root.PinballRuntimeImages?.resolve(url)??url;}this.cache.set(src,img);}return this.cache.get(src);}
  imageKey(img){
   this.imageKeys??=new WeakMap();const src=img.src;let key=this.imageKeys.get(img);
   if(!key||key.src!==src){key={src,id:this.imageKeySerial=(this.imageKeySerial||0)+1};this.imageKeys.set(img,key);}
@@ -157,24 +166,55 @@ class Renderer{
  }
  // Gameplay opts in; editors retain original pixels. Cache only raster content,
  // so transforms, light state, opacity and animation still update every frame.
- drawRaster(ctx,img,sx,sy,sw,sh,width,height){
-  if(!this.rasterCacheEnabled){ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);return;}
-  const t=ctx.getTransform(),scale=Math.ceil(Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))*2)/2;
+ drawRaster(ctx,img,sx,sy,sw,sh,width,height,x=0,y=0,scaleHint=null){
+  if(!this.rasterCacheEnabled){ctx.drawImage(img,sx,sy,sw,sh,x-width/2,y-height/2,width,height);return;}
+  const scale=scaleHint??rasterScale(ctx);
   const w=Math.max(1,Math.min(2048,Math.ceil(width*scale))),h=Math.max(1,Math.min(2048,Math.ceil(height*scale)));
   const brightness=this.brightness??1,key=JSON.stringify([this.imageKey(img),sx,sy,sw,sh,w,h,brightness]);
   this.rasters??=new Map();this.rasterPixels??=0;
   let entry=this.rasters.get(key);
   if(!entry){
-   const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+   const canvas=rasterCanvas(w,h,this.bitmapCacheEnabled);
    const c=canvas.getContext('2d');c.drawImage(img,sx,sy,sw,sh,0,0,w,h);
    if(brightness<1){c.globalCompositeOperation='source-atop';c.fillStyle=`rgba(0,0,0,${1-brightness})`;c.fillRect(0,0,w,h);}
-   entry={canvas,pixels:w*h};
+   entry={canvas:rasterImage(canvas),pixels:w*h};
    // Bound prepared pixels to 64 MiB, including obsolete viewport sizes.
-   while(this.rasterPixels+entry.pixels>16777216&&this.rasters.size){const oldest=this.rasters.keys().next().value;this.rasterPixels-=this.rasters.get(oldest).pixels;this.rasters.delete(oldest);}
+   while(this.rasterPixels+entry.pixels>16777216&&this.rasters.size){const oldest=this.rasters.keys().next().value;this.rasterPixels-=this.rasters.get(oldest).pixels;releaseRaster(this.rasters.get(oldest));this.rasters.delete(oldest);}
    this.rasterPixels+=entry.pixels;
   }
   this.rasters.delete(key);this.rasters.set(key,entry);
-  ctx.drawImage(entry.canvas,-width/2,-height/2,width,height);
+  ctx.drawImage(entry.canvas,x-width/2,y-height/2,width,height);
+ }
+ // Keep the original image separate: fading a flattened image+shadow changes
+ // their overlap. Only the expensive blurred silhouette is immutable.
+ drawImageWithShadow(ctx,img,sx,sy,sw,sh,width,height){
+  if(!this.rasterCacheEnabled||!(ctx.shadowBlur>0)||ctx.shadowOffsetX||ctx.shadowOffsetY||ctx.globalCompositeOperation!=='source-over'||ctx.filter&&ctx.filter!=='none')return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+  const t=ctx.getTransform(),scaleX=Math.hypot(t.a,t.b),scaleY=Math.hypot(t.c,t.d);
+  if(scaleX<1/65536||Math.abs(scaleX-scaleY)>1e-7)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+  const scale=Math.round(scaleX*65536)/65536,blur=ctx.shadowBlur,pad=Math.ceil(blur*2+2);
+  const w=Math.ceil(width*scale)+pad*2,h=Math.ceil(height*scale)+pad*2,pixels=w*h;
+  if(w>2048||h>2048||pixels>1048576)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+  const imageId=this.imageKey(img),color=ctx.shadowColor,smoothing=ctx.imageSmoothingEnabled,quality=ctx.imageSmoothingQuality;
+  this.shadowRasters??=new Map();this.shadowPixels??=0;this.shadowLastEntries??=new WeakMap();
+  let entry=this.shadowLastEntries.get(img);
+  if(!entry||entry.imageId!==imageId||entry.sx!==sx||entry.sy!==sy||entry.sw!==sw||entry.sh!==sh||entry.width!==width||entry.height!==height||entry.scale!==scale||entry.blur!==blur||entry.color!==color||entry.smoothing!==smoothing||entry.quality!==quality||!this.shadowRasters.has(entry.key)){
+   const key=JSON.stringify([imageId,sx,sy,sw,sh,width,height,scale,blur,color,smoothing,quality]);
+   entry=this.shadowRasters.get(key);
+   if(!entry){
+    const canvas=rasterCanvas(w,h,this.bitmapCacheEnabled),c=canvas.getContext('2d');
+    c.imageSmoothingEnabled=ctx.imageSmoothingEnabled;c.imageSmoothingQuality=ctx.imageSmoothingQuality;
+    // Put the image outside the canvas; its offset shadow lands inside it.
+    c.shadowColor=ctx.shadowColor;c.shadowBlur=blur;c.shadowOffsetX=w+pad;
+    c.drawImage(img,sx,sy,sw,sh,-w,pad,width*scale,height*scale);
+    entry={canvas:rasterImage(canvas),pixels,key,imageId,sx,sy,sw,sh,width,height,scale,blur,color,smoothing,quality};
+    while(this.shadowPixels+pixels>1048576&&this.shadowRasters.size){const id=this.shadowRasters.keys().next().value,old=this.shadowRasters.get(id);this.shadowPixels-=old.pixels;releaseRaster(old);this.shadowRasters.delete(id);}
+    this.shadowPixels+=pixels;
+   }
+   this.shadowLastEntries.set(img,entry);
+  }
+  this.shadowRasters.delete(entry.key);this.shadowRasters.set(entry.key,entry);
+  ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';
+  ctx.drawImage(entry.canvas,-width/2-pad/scale,-height/2-pad/scale,w/scale,h/scale);ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();
  }
  // Cache the colored silhouette and soft edge once, rather than filtering each frame.
  drawGlow(ctx,img,sx,sy,sw,sh,width,height,glow){
@@ -192,32 +232,82 @@ class Renderer{
   }
   ctx.save();ctx.globalAlpha*=glow.alpha;ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);ctx.restore();
  }
- // Reuse a static prefix; indicator/animated art stays live above it.
+ // Interactive objects remain live; only disjoint scenery may cross them.
+ cacheable(o,plane){
+  return o.plane===plane&&!o.hidden&&!o.indicator&&!o.animation?.enabled&&!o.bind&&!o.dynamicPose&&!o.liveArt&&!(o.frames>1)&&(!o.blendMode||o.blendMode==='source-over')&&(!o.state||o.state==='static');
+ }
+ artBounds(o,game,result=null){
+  if(o.motionBounds)return o.motionBounds;
+  if(o.indicator?.screenMask||o.indicator?.glow||o.indicator?.halo||o.dynamicPose||o.state==='vortex'||o.state==='plunger'||o.state==='ball-layer'||o.blendMode&&o.blendMode!=='source-over')return null;
+  let f;for(let i=0;i<(game?.flippers?.length||0);i++)if(game.flippers[i].id===o.bind){f=game.flippers[i];break;}
+  const radius=f||o.bind?Math.hypot(o.width,o.height)/2:0;
+  if(f){const r=Math.hypot(o.x-f.pivot[0],o.y-f.pivot[1])+radius+2;const bounds=result||[];bounds[0]=f.pivot[0]-r;bounds[1]=f.pivot[1]-r;bounds[2]=f.pivot[0]+r;bounds[3]=f.pivot[1]+r;return bounds;}
+  const angle=(o.angle||0)*Math.PI/180,c=Math.abs(Math.cos(angle)),s=Math.abs(Math.sin(angle));
+  const pad=1+(o.animation?.effect==='shake'?(o.animation.amplitude??2.5):0)+(o.bind?2+radius*.11:0);
+  const w=(o.width*c+o.height*s)/2+pad,h=(o.width*s+o.height*c)/2+pad;
+  const bounds=result||[];bounds[0]=o.x-w;bounds[1]=o.y-h;bounds[2]=o.x+w;bounds[3]=o.y+h;return bounds;
+ }
+ compositionPlan(items,plane,game){
+  let buffers;
+  if(this.reuseCompositionBuffers){
+   // Nested draws need independent scratch arrays; moving art may supply fresh items.
+   this.compositionBuffers??=new Map();const slot=plane+':'+(this.compositionDepth||0);
+   buffers=this.compositionBuffers.get(slot);if(!buffers){buffers={batches:[],barriers:[],bounds:[]};this.compositionBuffers.set(slot,buffers);}
+  }
+  const batches=buffers?.batches||[],barriers=buffers?.barriers||[];barriers.length=0;
+  let group=null,used=0,boundCount=0;
+  const nextBatch=cached=>{let batch=batches[used];if(!batch)batch=batches[used]={items:[]};used++;batch.cached=cached;batch.items.length=0;return batch;};
+  const boundsFor=o=>{let result=null;if(buffers){result=buffers.bounds[boundCount]??=[];boundCount++;}return this.artBounds(o,game,result);};
+  const overlaps=(a,b)=>!a||!b||!(a[2]<b[0]||b[2]<a[0]||a[3]<b[1]||b[3]<a[1]);
+  for(const o of items){
+   if(o.state==='ball-layer'){group=null;barriers.length=0;continue;}
+   if(o.plane!==plane||o.hidden)continue;
+   if(this.cacheable(o,plane)){
+    let blocked=!group||this.overlapCacheEnabled===false&&barriers.length;
+    if(!blocked&&barriers.length){const bounds=boundsFor(o);for(let i=0;i<barriers.length;i++)if(overlaps(bounds,barriers[i])){blocked=true;break;}}
+    if(blocked){group=nextBatch(true);barriers.length=0;}
+    group.items.push(o);
+   }else{
+    if(!used||batches[used-1].cached)nextBatch(false);
+    batches[used-1].items.push(o);barriers.push(boundsFor(o));
+   }
+  }
+  batches.length=used;return batches;
+ }
+ draw(ctx,items,plane,game=null){
+  if(this.buildingBackground||!(plane==='background'?this.backgroundCacheEnabled:this.staticCacheEnabled))return this.drawUncached(ctx,items,plane,game);
+  this.compositionDepth=(this.compositionDepth||0)+1;
+  try{for(const batch of this.compositionPlan(items,plane,game))if(!batch.cached||!this.drawStaticCache(ctx,batch.items,plane,game))this.drawUncached(ctx,batch.items,plane,game);}
+  finally{this.compositionDepth--;}
+ }
  drawStaticCache(ctx,items,plane,game){
   let count=0;
-  while(count<items.length){const a=items[count];if(a.plane!==plane||a.hidden||a.indicator||a.animation?.enabled||a.bind||a.frames>1||a.blendMode&&a.blendMode!=='source-over'||a.state&&a.state!=='static')break;count++;}
+  while(count<items.length&&this.cacheable(items[count],plane,game))count++;
   if(count<2)return false;
-  const batch=items.slice(0,count),images=batch.map(a=>this.image(a.src)),t=ctx.getTransform();
-  if(t.b||t.c||t.a<=0||t.d<=0||ctx.globalAlpha!==1||ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur>0||ctx.filter&&ctx.filter!=='none'||!images.every(i=>i.complete&&i.naturalWidth))return false;
-  this.staticCaches??=new Map();const slot=plane+':'+batch[0].id;
-  const key=JSON.stringify([t.a,t.d,this.brightness,ctx.imageSmoothingEnabled,ctx.imageSmoothingQuality,batch]);let cached=this.staticCaches.get(slot);
-  if(!cached||cached.key!==key||images.some((im,i)=>im!==cached.images[i])){
+  const batch=count===items.length?items:items.slice(0,count),t=ctx.getTransform(),slot=plane+':'+batch[0].id;
+  let cached=this.staticCaches?.get(slot),ready=true,imagesChanged=cached?.images.length!==batch.length;
+  for(let i=0;i<batch.length;i++){const im=this.image(batch[i].src);if(!im.complete||!im.naturalWidth)ready=false;if(im!==cached?.images[i])imagesChanged=true;}
+  if(t.b||t.c||t.a<=0||t.d<=0||ctx.globalAlpha!==1||ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur>0||ctx.filter&&ctx.filter!=='none'||!ready)return false;
+  this.staticCaches??=new Map();
+  const key=JSON.stringify([t.a,t.d,this.brightness,ctx.imageSmoothingEnabled,ctx.imageSmoothingQuality,batch]);
+  if(!cached||cached.key!==key||imagesChanged){
+   const images=batch.map(a=>this.image(a.src));
    let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
    for(const a of batch){const angle=a.angle*Math.PI/180,c=Math.abs(Math.cos(angle)),s=Math.abs(Math.sin(angle)),w=(a.width*c+a.height*s)/2,h=(a.width*s+a.height*c)/2;x0=Math.min(x0,a.x-w);x1=Math.max(x1,a.x+w);y0=Math.min(y0,a.y-h);y1=Math.max(y1,a.y+h);}
    const left=Math.floor(x0*t.a+t.e),top=Math.floor(y0*t.d+t.f),width=Math.ceil(x1*t.a+t.e)-left,height=Math.ceil(y1*t.d+t.f)-top;
    if(width*height>4194304)return false;
-   const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+   const canvas=rasterCanvas(width,height,this.bitmapCacheEnabled);
    const c=canvas.getContext('2d');c.setTransform(t.a,0,0,t.d,t.e-left,t.f-top);c.imageSmoothingEnabled=ctx.imageSmoothingEnabled;c.imageSmoothingQuality=ctx.imageSmoothingQuality;
    this.buildingBackground=true;try{Renderer.prototype.draw.call(this,c,batch,plane,game);}finally{this.buildingBackground=false;}
-   this.staticCaches.delete(slot);
-   while([...this.staticCaches.values()].reduce((n,c)=>n+c.canvas.width*c.canvas.height,0)+width*height>4194304)this.staticCaches.delete(this.staticCaches.keys().next().value);
-   cached={key,images,canvas,left,top,e:t.e,f:t.f};this.staticCaches.set(slot,cached);
+   releaseRaster(this.staticCaches.get(slot));this.staticCaches.delete(slot);
+   while([...this.staticCaches.values()].reduce((n,c)=>n+c.canvas.width*c.canvas.height,0)+width*height>4194304){const oldest=this.staticCaches.keys().next().value;releaseRaster(this.staticCaches.get(oldest));this.staticCaches.delete(oldest);}
+   cached={key,images,canvas:rasterImage(canvas),left,top,e:t.e,f:t.f};this.staticCaches.set(slot,cached);
   }else for(const a of batch)this.beforeDraw?.(ctx,a);
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(cached.canvas,cached.left+t.e-cached.e,cached.top+t.f-cached.f);ctx.restore();
-  Renderer.prototype.draw.call(this,ctx,items.slice(count),plane,game);return true;
+  if(count<items.length)Renderer.prototype.draw.call(this,ctx,items.slice(count),plane,game);return true;
  }
- draw(ctx,items,plane,game=null){
-  if(!this.buildingBackground&&(this.backgroundCacheEnabled&&plane==='background'||this.staticCacheEnabled&&plane==='lower')&&this.drawStaticCache(ctx,items,plane,game))return;
+ drawUncached(ctx,items,plane,game=null){
+  const scale=this.rasterCacheEnabled?rasterScale(ctx):null;
   for(const o of items){if(o.state==='ball-layer'||o.plane!==plane||o.hidden)continue;
    this.beforeDraw?.(ctx,o);
    const targetId=game&&o.bind&&(game.targetGroups?.some(g=>g.targets.includes(o.bind))?o.bind:game.targetGroups?.some(g=>g.targets.includes(o.bind+'-1'))?o.bind+'-1':null);
@@ -229,10 +319,15 @@ class Renderer{
    let [sx,sy,sw,sh]=o.crop;if(o.frameAxis==='y')sy+=frame*(o.frameStride||sh);else sx+=frame*(o.frameStride||sw);
    const ready=(image,x,y)=>image.complete&&image.naturalWidth&&x+sw<=image.naturalWidth+.01&&y+sh<=image.naturalHeight+.01;
    if(!ready(baseImage,o.crop[0],o.crop[1])&&!ready(img,sx,sy))continue;
+   const f=game&&o.bind&&game.flippers.find(f=>f.id===o.bind);
+   if((!o.state||o.state==='static')&&!o.angle&&!o.flipX&&!o.flipY&&!o.animation?.enabled&&!f&&!game?.flagHitAt?.has(o.bind)&&o.opacity===1&&targetAlpha===1&&(state.alpha??1)===1&&!o.indicator?.halo&&!(state.glow?.alpha>0)&&(!o.blendMode||o.blendMode==='source-over')){
+    if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height,o.x,o.y,scale);
+    if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height,o.x,o.y,scale);
+    continue;
+   }
    ctx.save();ctx.globalAlpha*=o.opacity*targetAlpha*(state.alpha??1);
    if(o.blendMode)ctx.globalCompositeOperation=o.blendMode;
    if(o.state==='guide-arrow'){const time=game?game.time:performance.now()/1000;ctx.globalAlpha*=.3+.7*(.5+.5*Math.cos(time*Math.PI*3));}
-   const f=game&&game.flippers.find(f=>f.id===o.bind);
    if(f){ctx.translate(...f.pivot);ctx.rotate(f.angle-f.rest);ctx.translate(-f.pivot[0],-f.pivot[1]);}
    const vortexAge=game&&o.bind&&o.state==='vortex'&&state.active&&game.vortexActivatedAt!=null?Math.max(0,game.time-game.vortexActivatedAt):null;
    if(game&&o.bind&&o.state==='vortex'){
@@ -273,8 +368,8 @@ class Renderer{
     ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.fill();
    }
    // Keep the default image underneath every state/frame overlay.
-   if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height);
-   if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height);
+   if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height,0,0,scale);
+   if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height,0,0,scale);
    if(state.glow?.alpha>0&&ready(img,sx,sy))this.drawGlow(ctx,img,sx,sy,sw,sh,o.width,o.height,state.glow);
    ctx.restore();
   }
@@ -288,7 +383,7 @@ function integerGeometry(o){
  return result;
 }
 function serializable(items){return items.map(o=>{const result=compactIndicator(integerGeometry(o));if(!o.src||o.src.startsWith('blob:')||o.src.startsWith('data:')){result.src='';result.needsAsset=true;}return result;});}
-const api={compactIndicator,validateIndicator,planes,createDrawPlan,validate,integerGeometry,serializable,Renderer};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.PinballArt=api;
+const api={compactIndicator,validateIndicator,planes,createDrawPlan,validate,integerGeometry,serializable,Renderer,rasterCanvas,rasterImage,releaseRaster,recycleRasterCanvas};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.PinballArt=api;
 })(typeof window!=='undefined'?window:globalThis);
 
 /* Space's ten-capture constellation lottery. Native stars/lines, no image filters. */
@@ -441,7 +536,7 @@ function drawYinYang(ctx,radius){
 }
 class Controller{
  constructor(game,config){this.game=game;this.config=config;this.geometry=game.g.art_layout_objects.find(o=>o.id===config.object);this.clock=0;this.multiplier=1;this.reset();}
- reset(){this.count=0;this.phase='idle';this.winner=-1;this.phaseAt=this.clock;this.attackAge=Infinity;}
+ reset(){this.count=0;this.phase='idle';this.winner=-1;this.phaseAt=this.clock;this.attackAge=Infinity;this.entryAt=-Infinity;}
  event(type,data){
   if(type==='new-game'){this.multiplier=1;this.reset();}
   if(this.config.trigger==='circle-entry'||type!=='configured-attack'||data.kind!=='lv1'||this.game.gameOver)return;
@@ -450,12 +545,15 @@ class Controller{
  crossCircle(ball,previous,layer){
   if(this.config.trigger!=='circle-entry')return;
   const o=this.geometry,countLayer=this.config.countLayer||o.layer,expected=countLayer==='upper'?'tavern':countLayer||'lower';
-  if(this.game.paused||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
+  if(this.game.paused||this.game.gameOver||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
   const a=[previous[0]-(o.cx??o.x),previous[1]-(o.cy??o.y)],v=[ball.p[0]-previous[0],ball.p[1]-previous[1]],r=o.r??o.attractionRadius??this.config.radius;
   if(a[0]*a[0]+a[1]*a[1]<=r*r)return;
   const length=v[0]*v[0]+v[1]*v[1];if(!length)return;
   const t=Math.max(0,Math.min(1,-(a[0]*v[0]+a[1]*v[1])/length));
-  if((a[0]+t*v[0])**2+(a[1]+t*v[1])**2<r*r)this.progress();
+  if((a[0]+t*v[0])**2+(a[1]+t*v[1])**2<r*r){
+   if(this.game.time-this.entryAt<(this.config.entryCooldown??0))return;
+   this.entryAt=this.game.time;this.progress();
+  }
  }
  progress(){
   if(this.game.gameOver)return;
@@ -537,11 +635,22 @@ class Controller{
   ctx.beginPath();ctx.arc(0,0,centerRadius,0,Math.PI*2);ctx.strokeStyle='#b5a57d';ctx.lineWidth=.65;ctx.stroke();
   for(let i=0;i<this.config.threshold;i++){const a=(-90+i*360/this.config.threshold)*Math.PI/180;ctx.beginPath();ctx.arc(Math.cos(a)*63,Math.sin(a)*63,1.4,0,Math.PI*2);ctx.fillStyle=i<this.count?'#ffe49a':'#56616b';ctx.fill();}
   const effect=this.config.attackArt;
-  if(effect&&this.attackAge<effect.duration){
+  if(effect&&!effect.fullscreen&&this.attackAge<effect.duration){
    const im=renderer.image(effect.src),t=this.attackAge/effect.duration,size=105*(.3+Math.min(1,t*3));
    if(im.complete&&im.naturalWidth){ctx.save();ctx.globalAlpha*=Math.min(1,t*8)*Math.min(1,(1-t)*3);ctx.rotate(t*Math.PI/3);ctx.drawImage(im,-size/2,-size/2,size,size);ctx.restore();}
   }
   ctx.restore();
+ }
+ drawAttackOverlay(ctx,renderer,view){
+  const effect=this.config.attackArt;
+  if(!effect?.fullscreen||this.attackAge>=effect.duration)return;
+  const image=renderer.image(effect.src);
+  if(!image.complete||!image.naturalWidth)return;
+  const t=this.attackAge/effect.duration,p=1-(1-t)**3;
+  const start=105*.3*this.config.radius/68,size=start+(Math.hypot(view[2],view[3])*1.5-start)*p;
+  const x=this.geometry.x+(view[0]+view[2]/2-this.geometry.x)*p,y=this.geometry.y+(view[1]+view[3]/2-this.geometry.y)*p;
+  ctx.save();ctx.globalAlpha*=1-t;ctx.translate(x,y);ctx.rotate(t*Math.PI/3);
+  ctx.drawImage(image,-size/2,-size/2,size,size);ctx.restore();
  }
 }
 // Same prize rules as bagua, with a passable circle and a flat stone presentation.

@@ -610,7 +610,7 @@ class TouhouBossPresentation{
  choose(stage){
   if(stage===this.stage)return;
   this.stage=stage;this.defeated=false;this.elapsed=0;this.clearSpells();this.audio.pause();this.audio.currentTime=0;this.musicWanted=false;
-  if(stage)this.audio.src=this.theme==='touhou2'?'res/audio/touhou2-b'+stage+'.ogg':'res/audio/touhou1/touhou-a'+stage+'-bgm.ogg';
+  if(stage)this.audio.src=this.theme==='touhou2'?'res/audio/touhou2-b'+stage+'.ogg':'res/audio/touhou1/touhou-a'+stage+'-bgm.m4a';
   else if(this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
  }
  defeat(){this.defeated=true;this.elapsed=0;this.clearSpells();}
@@ -631,7 +631,7 @@ class TouhouBossPresentation{
   return r&&o?{x:o.x,y:o.y*r.stageHeight/r.height}:undefined;
  }
  syncMusic(sound,retry=false,paused=this.game.paused){
-  const wanted=(!!this.stage||this.theme==='touhou1')&&!paused&&sound.enabled&&sound.unlocked;
+  const wanted=(!!this.stage||this.theme==='touhou1')&&!paused&&sound.enabled&&(sound.unlocked||root.PinballPlatform==='android');
   this.audio.muted=!sound.enabled;
   if(wanted&&(!this.musicWanted||retry))this.audio.play().catch(()=>{});
   if(!wanted&&this.musicWanted)this.audio.pause();
@@ -761,16 +761,34 @@ class LayoutTheater{
   ctx.font='bold 15px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
   ctx.fillStyle='#ffe6a3';
   const text=PinballI18n.t('table.defeatBoss'),span=ctx.measureText(text).width+45,offset=(time*35)%span;
-  for(let at=x-offset;at<x+width;at+=span)ctx.fillText(text,at,y+height/2);
+  if(typeof document!=='undefined'&&ctx.drawImage&&ctx.getTransform){
+   const m=ctx.getTransform(),sx=Math.hypot(m.a,m.b),sy=Math.hypot(m.c,m.d),pad=Math.ceil((2*(ctx.shadowBlur||0)+Math.abs(ctx.shadowOffsetX||0)+Math.abs(ctx.shadowOffsetY||0)+2)/Math.min(sx,sy));
+   const key=JSON.stringify([text,span,height,ctx.font,sx,sy,ctx.shadowBlur,ctx.shadowColor,ctx.shadowOffsetX,ctx.shadowOffsetY]);
+   if(this.attackMessageRaster?.key!==key){
+    this.attackMessageRaster?.canvas.close?.();const Art=root.PinballArt;
+    const canvas=Art?.rasterCanvas(Math.ceil((span+pad*2)*sx),Math.ceil((height+pad*2)*sy),true)||document.createElement('canvas');canvas.width=Math.ceil((span+pad*2)*sx);canvas.height=Math.ceil((height+pad*2)*sy);
+    const c=canvas.getContext('2d');c.setTransform(sx,0,0,sy,pad*sx,pad*sy);c.font=ctx.font;c.textBaseline='middle';c.fillStyle=ctx.fillStyle;c.shadowBlur=ctx.shadowBlur;c.shadowColor=ctx.shadowColor;c.shadowOffsetX=ctx.shadowOffsetX;c.shadowOffsetY=ctx.shadowOffsetY;c.fillText(text,0,height/2);
+    this.attackMessageRaster={key,canvas:Art?Art.rasterImage(canvas):canvas};
+   }
+   ctx.shadowColor='transparent';ctx.shadowBlur=0;
+   for(let at=x-offset;at<x+width;at+=span)ctx.drawImage(this.attackMessageRaster.canvas,at-pad,y-pad,this.attackMessageRaster.canvas.width/sx,this.attackMessageRaster.canvas.height/sy);
+  }else for(let at=x-offset;at<x+width;at+=span)ctx.fillText(text,at,y+height/2);
   ctx.restore();
+ }
+ positionFrame(position){
+  // Cache submitted values: CSSOM may round pixel strings on readback.
+  const previous=this.framePosition||(this.framePosition={});
+  for(const [key,value] of Object.entries(position))if(previous[key]!==value){this.frame.style[key]=value;previous[key]=value;}
  }
  draw(ctx,game,top=-170.5){
   this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
-  if(this.panelElement){const box=this.panelElement.getBoundingClientRect(),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};Object.assign(this.frame.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
-  this.frame.style.zIndex='2';
+  if(this.panelElement){const box=this.panelElement.getBoundingClientRect(),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
   const canvas=ctx.canvas,r=canvas.getBoundingClientRect(),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
-  const position={left:(r.left+m.e*sx)+'px',top:(r.top+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden'};
-  for(const [key,value] of Object.entries(position))if(this.frame.style[key]!==value)this.frame.style[key]=value;
+  // Both surfaces already share CSS shake. Position the iframe from the unshaken
+  // layout box; quantize away float noise in translated DOMRect coordinates.
+  const [shakeX=0,shakeY=0]=(canvas.style?.translate||'').split(' ').map(v=>parseFloat(v)||0);
+  const left=Math.round((r.left-shakeX)*64)/64,topY=Math.round((r.top-shakeY)*64)/64;
+  this.positionFrame({left:(left+m.e*sx)+'px',top:(topY+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden',zIndex:'2'});
   // Reveal the theater iframe beneath the table artwork.
   ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
   const viewport={rect:r,transform:m};

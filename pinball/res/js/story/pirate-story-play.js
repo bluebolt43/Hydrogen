@@ -284,7 +284,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -295,7 +296,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -518,7 +519,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -529,7 +531,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -781,7 +783,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -792,7 +795,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -1015,7 +1018,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -1026,7 +1030,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -1261,7 +1265,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -1272,7 +1277,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -1511,7 +1516,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -1522,7 +1528,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -1799,7 +1805,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -1810,7 +1817,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -2050,7 +2057,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -2061,7 +2069,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -2318,7 +2326,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -2329,7 +2338,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -2576,7 +2585,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -2587,7 +2597,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -2818,7 +2828,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -2829,7 +2840,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -3076,7 +3087,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -3087,7 +3099,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -3383,7 +3395,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -3394,7 +3407,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -3645,7 +3658,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -3656,7 +3670,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -3956,7 +3970,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -3967,7 +3982,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){
@@ -4233,7 +4248,8 @@ document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListe
 window.addEventListener('resize',()=>draw(lastElapsed));
 window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 for(const image of images)image.addEventListener('error',()=>showError(`圖片載入失敗：${image.getAttribute('src')}`));
-Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);}).catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
+window.viewReady=Promise.all(images.map(image=>image.decode())).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
+window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 
 if(previewMode){
  const [offset,stop]=chapters[activeChapter];
@@ -4244,7 +4260,7 @@ if(previewMode){
   worldWidths:{'ch7-third-world':typeof ch7Layout==='undefined'?null:ch7Layout.camera.width,'ch7-end-world':typeof ch7EndLayout==='undefined'?null:ch7EndLayout.camera.width},
   duration:(stop-offset)/1000,seekable,
   cues:[...document.querySelectorAll('#story-cues [data-start][data-end]')].map(el=>({start:Number(el.dataset.start),end:Number(el.dataset.end),label:el.textContent.trim()})).filter(cue=>Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&cue.start>=0&&cue.end>cue.start&&cue.label).sort((a,b)=>a.start-b.start),
-  ready:Promise.all(images.map(image=>image.decode())),
+  ready:window.viewReady,
   draw(seconds){if(seekable)draw(offset+Math.min(seconds*1000,stop-offset-.01));},
   pause:stopSounds,
   seek(seconds){

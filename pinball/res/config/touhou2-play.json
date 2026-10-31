@@ -177,6 +177,7 @@
         "duration": 1.55
       },
       "trigger": "circle-entry",
+      "entryCooldown": 0.5,
       "countLayer": "lower"
     },
     "holeMultiball": {

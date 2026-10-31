@@ -79,16 +79,30 @@
         "on": "res/img/touhou/touhou-yukari-gap-eyes-open.png",
         "defaultState": "off",
         "trigger": {
-          "kind": "gap-launch",
+          "kind": "hole-active",
           "source": "hole-008"
         },
         "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "captureBehavior": {
+          "mode": "repeat",
+          "onSeconds": 0.2,
+          "offSeconds": 0.2
+        },
+        "extraTriggers": [
+          {
+            "kind": "gap-launch",
+            "source": "hole-008"
+          }
+        ],
+        "releaseBehavior": {
           "mode": "burst",
           "onSeconds": 0.15,
           "offSeconds": 0.15,
           "cycles": 10
-        },
-        "impactFlash": false
+        }
       },
       "runtimeSource": "res/img/touhou/touhou-yukari-gap-eyes-open.png"
     },
@@ -1393,6 +1407,18 @@
           "mode": "repeat",
           "onSeconds": 0.2,
           "offSeconds": 0.2
+        },
+        "extraTriggers": [
+          {
+            "kind": "gap-launch",
+            "source": "hole-008"
+          }
+        ],
+        "releaseBehavior": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 10
         }
       },
       "runtimeSource": "res/img/touhou/touhou-yukari-gap-eyes-open.png"
@@ -2418,7 +2444,8 @@
       },
       "attackArt": {
         "src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png",
-        "duration": 1.55
+        "duration": 1.55,
+        "fullscreen": true
       }
     },
     "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"

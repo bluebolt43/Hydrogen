@@ -228,7 +228,7 @@ function paintRaceSequence(panel,layout,t){
   const on=panel.querySelector('[data-race-on]').src,off=layout.assets.find(a=>a.id==='asset-001').src;
   for(const id of ['image-001','image-005','image-003']){
    const lamp=panel.querySelector(`[data-race-id="${id}"]`);
-   lamp.src=t>=2.4?on:off;
+   lamp.src=PinballRuntimeImages.resolve(t>=2.4?on:off);
    lamp.hidden=false;
   }
   for(const [i,id] of ['image-006','image-009','image-011'].entries()){
@@ -262,7 +262,7 @@ function paintRaceSequence(panel,layout,t){
   mask.querySelector('[data-engine-short]').style.opacity=age>=0&&(flicker<.08||flicker>.15&&flicker<.22||flicker>.35&&flicker<.4)?1:0;
  }
  const on=panel.querySelector('[data-race-on]').src,off=layout.assets.find(a=>a.id==='asset-001').src;
- for(const id of ['image-001','image-005','image-003'])panel.querySelector(`[data-race-id="${id}"]`).src=t>=1.4?on:off;
+ for(const id of ['image-001','image-005','image-003'])panel.querySelector(`[data-race-id="${id}"]`).src=PinballRuntimeImages.resolve(t>=1.4?on:off);
  for(const [from,to,blast] of [['image-007','image-006','image-012'],['image-008','image-009','image-013'],['image-010','image-011','image-014']]){
   const a=objects[from],b=objects[to],progress=ease((t-timing.rivals)/timing.rivalMove),drop=clamp((t-timing.drop)/timing.dropDuration);
   const x=a.x+(b.x-a.x)*progress+90*drop,y=a.y+(b.y-a.y)*progress+1000*drop*drop;
@@ -495,7 +495,7 @@ async function play(chapter=chapterId){
  if(chapter!==chapterId)return false;
  theaterCleanup();stopStorySounds();soundCursor=0;
  const serial=++playSerial;playing=false;cancelAnimationFrame(raf);clearTimeout(nextTimer);next.hidden=true;skip.hidden=true;
- try{await Promise.all([...phone.querySelectorAll('img')].map(image=>image.decode()));}
+ try{await window.viewReady;}
  catch(e){if(serial===playSerial){error.textContent='圖片載入失敗：'+e.message;error.hidden=false;begin.hidden=false;}return false;}
  if(serial!==playSerial)return false;
  error.hidden=true;completed=false;begin.hidden=true;skip.hidden=!hasSeen();playing=true;startedAt=performance.now();render(0);if(STORY_SHOTS[0].theater){replayStoryTheater(STORY_SHOTS[0].theater,serial);return true;}raf=requestAnimationFrame(tick);return true;
@@ -507,6 +507,8 @@ next.onclick=()=>completeStory();
 window.addEventListener('pagehide',()=>{theaterCleanup();stopStorySounds();++playSerial;playing=false;cancelAnimationFrame(raf);clearTimeout(nextTimer);});
 if(new URLSearchParams(location.search).has('embed'))document.getElementById('chapters').hidden=true;
 render(0);
+window.viewReady=Promise.all([...phone.querySelectorAll('img')].map(image=>image.decode()));
+window.viewReady.catch(e=>{error.textContent='圖片載入失敗：'+e.message;error.hidden=false;});
 
 ;if(typeof play==='function')window.play=play;
 if(typeof render==='function')window.render=render;

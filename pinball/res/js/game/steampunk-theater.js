@@ -11,19 +11,21 @@ if(soundBank)for(const event of ['pointerdown','keydown'])addEventListener(event
 function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',type:'sound',name},'*');else soundBank.play(name);}
 const pose=scale=>`translate(-50%,-50%) scale(${scale})`;
 const attacks={lv1:{name:'機槍',damage:1},lv2:{name:'砲擊',damage:2},lv3:{name:'特斯拉空雷',damage:3},lv4:{name:'神之罰',damage:4}};
-const art={gun:'steampunk-attack-machine-gun',beam:'steampunk-attack-beam',electric:'steampunk-attack-electric-sphere',mine:'steampunk-tesla-mine',explosion:'steampunk-attack-explosion'};
-const backgrounds=['day','night','mine','space','ruins'],backgroundLabels=['白天','夜晚','礦山','太空','遺跡'];
+const art={gun:'img/steampunk/steampunk-attack-machine-gun.png',beam:'img/steampunk/steampunk-attack-beam.png',electric:'img/steampunk/steampunk-attack-electric-sphere.png',mine:'img/steampunk/steampunk-tesla-mine.png',explosion:'img/steampunk/steampunk-attack-explosion.png'};
+const backgrounds=[
+ {id:'day',label:'白天',src:'img/steampunk/steampunk-theater-background-day.png'}, {id:'night',label:'夜晚',src:'img/steampunk/steampunk-theater-background-night.png'}, {id:'mine',label:'礦山',src:'img/steampunk/steampunk-theater-background-mine.png'}, {id:'space',label:'太空',src:'img/steampunk/steampunk-theater-background-space.png'}, {id:'ruins',label:'遺跡',src:'img/steampunk/steampunk-theater-background-ruins.png'}
+];
 let backgroundIndex=0;
-function setBackground(index){backgroundIndex=index;const name=backgrounds[index];stage.dataset.background=name;stage.querySelector('.background').src='img/steampunk/steampunk-theater-background-'+name+'.png';$('daynight').textContent='換成'+backgroundLabels[(index+1)%backgrounds.length];}
+function setBackground(index){backgroundIndex=index;const background=backgrounds[index];stage.dataset.background=background.id;stage.querySelector('.background').src=PinballRuntimeImages.resolve(background.src);$('daynight').textContent='換成'+backgrounds[(index+1)%backgrounds.length].label;}
 const levels=[
- {name:'競速對手',width:24,ships:[1,2,3].map(i=>'steampunk-race-rival-'+i+'.png'),positions:[{x:25,y:45},{x:75,y:45},{x:50,y:74}]},
- {name:'追擊小艇編隊',width:20,ships:Array(4).fill('steampunk-enemy-airship.png'),positions:[{x:22,y:42},{x:78,y:42},{x:37,y:78},{x:63,y:78}]},
- {name:'大型飛空戰艦',background:1,width:52,health:[5],damageStates:['steampunk-enemy-battleship.png','steampunk-enemy-battleship-damaged.png','steampunk-enemy-battleship-heavy-damaged.png'],ships:['steampunk-enemy-battleship.png'],positions:[{x:50,y:55}]},
- {name:'浮空水晶守衛',background:0,width:20,health:[6],damageStates:['steampunk-enemy-crystal.png','steampunk-enemy-crystal-damaged.png','steampunk-enemy-crystal-heavy-damaged.png'],ships:['steampunk-enemy-crystal.png'],positions:[{x:50,y:55}]},
- {name:'三艘戰艦艦隊',background:1,width:29,health:[3,2,2],damageByHp:{0:2,1:2,2:1},damageStates:['steampunk-enemy-battleship.png','steampunk-enemy-battleship-damaged.png','steampunk-enemy-battleship-heavy-damaged.png'],ships:Array(3).fill('steampunk-enemy-battleship.png'),positions:[{x:50,y:69},{x:23,y:35},{x:77,y:35}]},
- {name:'天空龍',background:2,width:40,visualTop:'calc(50% + 10.667cqw)',health:[8],damageStates:['steampunk-enemy-dragon.png','steampunk-enemy-dragon-damaged.png','steampunk-enemy-dragon-heavy-damaged.png'],ships:['steampunk-enemy-dragon.png'],positions:[{x:50,y:55}]},
- {name:'空母混合艦隊',background:0,width:24,widths:[36,24,24,12,12,12],health:[2,2,2,1,1,1],targetOrder:[3,4,5,1,2,0],damageByHp:{0:2,1:2},damageStatesByShip:[['steampunk-enemy-carrier.png','steampunk-enemy-carrier-damaged.png','steampunk-enemy-carrier-heavy-damaged.png'],['steampunk-enemy-battleship.png','steampunk-enemy-battleship-damaged.png','steampunk-enemy-battleship-heavy-damaged.png'],['steampunk-enemy-battleship.png','steampunk-enemy-battleship-damaged.png','steampunk-enemy-battleship-heavy-damaged.png'],null,null,null],ships:['steampunk-enemy-carrier.png','steampunk-enemy-battleship.png','steampunk-enemy-battleship.png','steampunk-enemy-airship.png','steampunk-enemy-airship.png','steampunk-enemy-airship.png'],positions:[{x:28,y:43},{x:74,y:25},{x:74,y:57},{x:24,y:83},{x:47,y:83},{x:72,y:85}]},
- {name:'神之罰',background:3,width:100/3,widths:[100/3,15,15],health:[6,2,2],damageStatesByShip:[['steampunk-enemy-god-punishment.png','steampunk-enemy-god-punishment-damaged.png','steampunk-enemy-god-punishment-heavy-damaged.png'],['steampunk-enemy-crystal.png','steampunk-enemy-crystal-heavy-damaged.png','steampunk-enemy-crystal-heavy-damaged.png'],['steampunk-enemy-crystal.png','steampunk-enemy-crystal-heavy-damaged.png','steampunk-enemy-crystal-heavy-damaged.png']],ships:['steampunk-enemy-god-punishment.png','steampunk-enemy-crystal.png','steampunk-enemy-crystal.png'],positions:[{x:50,y:50},{x:17,y:57},{x:83,y:57}]}
+ {name:'競速對手',width:24,ships:['img/steampunk/steampunk-race-rival-1.png','img/steampunk/steampunk-race-rival-2.png','img/steampunk/steampunk-race-rival-3.png'],positions:[{x:25,y:45},{x:75,y:45},{x:50,y:74}]},
+ {name:'追擊小艇編隊',width:20,ships:Array(4).fill('img/steampunk/steampunk-enemy-airship.png'),positions:[{x:22,y:42},{x:78,y:42},{x:37,y:78},{x:63,y:78}]},
+ {name:'大型飛空戰艦',background:1,width:52,health:[5],damageStates:['img/steampunk/steampunk-enemy-battleship.png','img/steampunk/steampunk-enemy-battleship-damaged.png','img/steampunk/steampunk-enemy-battleship-heavy-damaged.png'],ships:['img/steampunk/steampunk-enemy-battleship.png'],positions:[{x:50,y:55}]},
+ {name:'浮空水晶守衛',background:0,width:20,health:[6],damageStates:['img/steampunk/steampunk-enemy-crystal.png','img/steampunk/steampunk-enemy-crystal-damaged.png','img/steampunk/steampunk-enemy-crystal-heavy-damaged.png'],ships:['img/steampunk/steampunk-enemy-crystal.png'],positions:[{x:50,y:55}]},
+ {name:'三艘戰艦艦隊',background:1,width:29,health:[3,2,2],damageByHp:{0:2,1:2,2:1},damageStates:['img/steampunk/steampunk-enemy-battleship.png','img/steampunk/steampunk-enemy-battleship-damaged.png','img/steampunk/steampunk-enemy-battleship-heavy-damaged.png'],ships:Array(3).fill('img/steampunk/steampunk-enemy-battleship.png'),positions:[{x:50,y:69},{x:23,y:35},{x:77,y:35}]},
+ {name:'天空龍',background:2,width:40,visualTop:'calc(50% + 10.667cqw)',health:[8],damageStates:['img/steampunk/steampunk-enemy-dragon.png','img/steampunk/steampunk-enemy-dragon-damaged.png','img/steampunk/steampunk-enemy-dragon-heavy-damaged.png'],ships:['img/steampunk/steampunk-enemy-dragon.png'],positions:[{x:50,y:55}]},
+ {name:'空母混合艦隊',background:0,width:24,widths:[36,24,24,12,12,12],health:[2,2,2,1,1,1],targetOrder:[3,4,5,1,2,0],damageByHp:{0:2,1:2},damageStatesByShip:[['img/steampunk/steampunk-enemy-carrier.png','img/steampunk/steampunk-enemy-carrier-damaged.png','img/steampunk/steampunk-enemy-carrier-heavy-damaged.png'],['img/steampunk/steampunk-enemy-battleship.png','img/steampunk/steampunk-enemy-battleship-damaged.png','img/steampunk/steampunk-enemy-battleship-heavy-damaged.png'],['img/steampunk/steampunk-enemy-battleship.png','img/steampunk/steampunk-enemy-battleship-damaged.png','img/steampunk/steampunk-enemy-battleship-heavy-damaged.png'],null,null,null],ships:['img/steampunk/steampunk-enemy-carrier.png','img/steampunk/steampunk-enemy-battleship.png','img/steampunk/steampunk-enemy-battleship.png','img/steampunk/steampunk-enemy-airship.png','img/steampunk/steampunk-enemy-airship.png','img/steampunk/steampunk-enemy-airship.png'],positions:[{x:28,y:43},{x:74,y:25},{x:74,y:57},{x:24,y:83},{x:47,y:83},{x:72,y:85}]},
+ {name:'神之罰',background:3,width:100/3,widths:[100/3,15,15],health:[6,2,2],damageStatesByShip:[['img/steampunk/steampunk-enemy-god-punishment.png','img/steampunk/steampunk-enemy-god-punishment-damaged.png','img/steampunk/steampunk-enemy-god-punishment-heavy-damaged.png'],['img/steampunk/steampunk-enemy-crystal.png','img/steampunk/steampunk-enemy-crystal-heavy-damaged.png','img/steampunk/steampunk-enemy-crystal-heavy-damaged.png'],['img/steampunk/steampunk-enemy-crystal.png','img/steampunk/steampunk-enemy-crystal-heavy-damaged.png','img/steampunk/steampunk-enemy-crystal-heavy-damaged.png']],ships:['img/steampunk/steampunk-enemy-god-punishment.png','img/steampunk/steampunk-enemy-crystal.png','img/steampunk/steampunk-enemy-crystal.png'],positions:[{x:50,y:50},{x:17,y:57},{x:83,y:57}]}
 ];
 const requestedStage=Number(new URLSearchParams(location.search).get('stage'));
 let level=Number.isInteger(requestedStage)&&levels[requestedStage-1]?requestedStage:1;
@@ -34,16 +36,16 @@ function targetOrder(){if(level===8)return hp[1]||hp[2]?[1,2].filter(i=>hp[i]>0)
 function controls(){document.querySelectorAll('[data-attack]').forEach(b=>b.disabled=!loaded||busy||paused||!total());$('next-state').disabled=!loaded;$('water').disabled=!loaded;$('daynight').disabled=!loaded||busy||paused;$('enemy-type').disabled=!loaded||busy;$('next-level').disabled=!loaded||busy||total()>0||level>=levels.length;}
 function state(){return {name:levels[level-1].name,hp:[...hp],target,busy,paused,defeated:total()===0,maxHp:(levels[level-1].health||levels[level-1].ships.map(()=>1)).reduce((a,b)=>a+b,0),level,phase:level===8?stage.dataset.phase:undefined,background:backgrounds[backgroundIndex]};}
 function draw(){document.querySelectorAll('.racer').forEach((e,i)=>{e.classList.toggle('target',i===target&&hp[i]>0);e.querySelector('.hp').hidden=!hp[i];e.disabled=busy||paused||hp[i]===0||(level===8&&i===0&&stage.dataset.phase!=='body');e.setAttribute('aria-label',`對手 ${i+1}，${hp[i]} HP`);});stage.classList.toggle('defeated',total()===0);controls();}
-function createEnemy(i){const config=levels[level-1],position=positions[i];const b=document.createElement('button');b.className='racer';b.style.width=(config.widths?.[i]??config.width)+'%';b.style.left=position.x+'%';b.style.top=config.visualTop??(position.y+'%');b.style.animationDelay=(-i)+ 's';b.innerHTML='<span class="hp"></span>';const image=document.createElement('img');image.src='img/steampunk/'+config.ships[i];image.alt=`${config.name} ${i+1}`;b.append(image);TheaterFrame.renderHealth(b.querySelector('.hp'),hp[i]);b.onclick=()=>{if(!busy&&!paused&&hp[i]&&targetOrder().includes(i)){target=i;draw();}};return b;}
+function createEnemy(i){const config=levels[level-1],position=positions[i];const b=document.createElement('button');b.className='racer';b.style.width=(config.widths?.[i]??config.width)+'%';b.style.left=position.x+'%';b.style.top=config.visualTop??(position.y+'%');b.style.animationDelay=(-i)+ 's';b.innerHTML='<span class="hp"></span>';const image=document.createElement('img');image.src=PinballRuntimeImages.resolve(config.ships[i]);image.alt=`${config.name} ${i+1}`;b.append(image);TheaterFrame.renderHealth(b.querySelector('.hp'),hp[i]);b.onclick=()=>{if(!busy&&!paused&&hp[i]&&targetOrder().includes(i)){target=i;draw();}};return b;}
 function reset(){soundBank?.setPaused(false);soundBank?.stop();generation++;for(const a of running)a.cancel();running.clear();effects.replaceChildren();delete stage.dataset.launching;stage.dataset.phase=level===8?'guards':'';const config=levels[level-1];positions=config.positions;hp=[...(config.health||config.ships.map(()=>1))];stage.dataset.level=String(level);$('enemy-type').value=String(level);target=hp.indexOf(Math.min(...hp));busy=false;paused=false;stage.classList.remove('paused');$('water').textContent='暫停動態';$('racers').replaceChildren();positions.forEach((_,i)=>$('racers').append(createEnemy(i)));$('status').textContent=`Boss ${level} · ${config.name}`;draw();}
 function animate(el,frames,duration){const a=el.animate(frames,{duration:duration*Number($('speed').value)/1000,fill:'forwards',easing:'ease-out'});running.add(a);if(paused)a.pause();return a.finished.finally(()=>running.delete(a));}
-function fx(kind,x,y,w,h){const e=document.createElement('img');e.className='fx';e.src='img/steampunk/'+art[kind]+'.png';Object.assign(e.style,{left:x+'%',top:y+'%',width:w+'%',height:h+'%'});effects.append(e);return e;}
+function fx(kind,x,y,w,h){const e=document.createElement('img');e.className='fx';e.src=PinballRuntimeImages.resolve(art[kind]);Object.assign(e.style,{left:x+'%',top:y+'%',width:w+'%',height:h+'%'});effects.append(e);return e;}
 async function explode(p,size=26){const e=fx('explosion',p.x,p.y,size,60);await animate(e,[{opacity:0,transform:pose(.2)},{opacity:1,transform:pose(1),offset:.25},{opacity:0,transform:pose(1.3)}],420);e.remove();}
 function updateDamage(i){
  const config=levels[level-1],states=config.damageStatesByShip?.[i]||config.damageStates;if(!states)return;
  const damage=config.damageByHp?(hp[i]>=config.health[i]?0:config.damageByHp[hp[i]]):(hp[i]*100<=config.health[i]*34?2:hp[i]*100<=config.health[i]*67?1:0);
  const racer=$('racers').children[i];racer.dataset.damage=['normal','damaged','heavy-damaged'][damage];
- racer.querySelector(':scope > img').src='img/steampunk/'+states[damage];
+ racer.querySelector(':scope > img').src=PinballRuntimeImages.resolve(states[damage]);
 }
 async function exitEnemy(i){
  const racer=$('racers').children[i];
@@ -127,7 +129,7 @@ try{
 function pause(value){soundBank?.setPaused(value);paused=value;stage.classList.toggle('paused',value);for(const a of running)value?a.pause():a.play();$('water').textContent=value?'播放動態':'暫停動態';$('water').setAttribute('aria-pressed',String(value));draw();}
 document.querySelectorAll('[data-attack]').forEach(b=>b.onclick=()=>attack(b.dataset.attack).catch(e=>{$('status').textContent=e.message;}));$('next-state').onclick=()=>enter();$('water').onclick=()=>pause(!paused);$('height').oninput=e=>stage.style.aspectRatio=100/Number(e.target.value);
 $('enemy-type').replaceChildren(...levels.map((config,i)=>{const option=document.createElement('option');option.value=String(i+1);option.textContent=`Boss ${i+1} · ${config.name}`;return option;}));
-async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Steampunk 尚未建立此關卡');level=next;setBackground(levels[level-1].background||0);if(background){const image=stage.querySelector('.background');image.src=background;await image.decode();}await enter(skipWarning);}
+async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Steampunk 尚未建立此關卡');level=next;setBackground(levels[level-1].background||0);if(background){const image=stage.querySelector('.background');image.src=PinballRuntimeImages.resolve(background);await image.decode();}await enter(skipWarning);}
 $('enemy-type').onchange=e=>choose(Number(e.target.value));
 $('next-level').onclick=()=>choose(level+1);
 async function advanceGodPunishment(){
@@ -183,8 +185,8 @@ async function changeBackground(){if(!loaded||busy||paused)return;busy=true;draw
 $('daynight').onclick=changeBackground;setBackground(levels[level-1].background||0);
 window.SteampunkTheater={attack,reset,pause,state,changeBackground,choose};
 reset();
-const sources=['img/theater-curtain-right.png','img/health-heart.svg',...Object.values(art).map(n=>'img/steampunk/'+n+'.png'),...new Set(levels.flatMap(config=>[...config.ships,...(config.damageStates||[]),...(config.damageStatesByShip||[]).flat().filter(Boolean)].map(name=>'img/steampunk/'+name))),...backgrounds.map(name=>'img/steampunk/steampunk-theater-background-'+name+'.png'),'img/steampunk/steampunk-theater-cloud.png'];
-const ready=Promise.all(sources.map(src=>{const im=new Image();im.src=src;return im.decode();})).then(async()=>{if(!embedded)await enter();loaded=true;draw();});
+const sources=['img/theater-curtain-right.png','img/health-heart.svg',...Object.values(art),...new Set(levels.flatMap(config=>[...config.ships,...(config.damageStates||[]),...(config.damageStatesByShip||[]).flat().filter(Boolean)])),...backgrounds.map(background=>background.src),'img/steampunk/steampunk-theater-cloud.png'];
+const ready=Promise.all(sources.map(src=>{const im=new Image();im.src=PinballRuntimeImages.resolve(src);return im.decode();})).then(async()=>{if(!embedded)await enter();loaded=true;draw();});
 ready.catch(()=>{$('status').textContent='素材載入失敗';});
 TheaterFrame.connect({stage,ready,
  bounds(){
@@ -197,7 +199,7 @@ TheaterFrame.connect({stage,ready,
  async enemy(data){
   if(data.attackDefeat){
    level=data.stage;reset();target=-1;busy=true;
-   const background=stage.querySelector('.background');if(data.background)background.src=data.background;
+   const background=stage.querySelector('.background');if(data.background)background.src=PinballRuntimeImages.resolve(data.background);
    await Promise.all([background.decode(),...[...$('racers').children].map(r=>r.querySelector(':scope > img').decode())]);
    $('racers').hidden=false;draw();
    await animate($('racers'),[{opacity:1},{opacity:1}],1200);
@@ -208,7 +210,7 @@ TheaterFrame.connect({stage,ready,
 
   if(data.defeatOnly){
    level=data.stage;reset();busy=true;target=-1;
-   const background=stage.querySelector('.background');if(data.background)background.src=data.background;
+   const background=stage.querySelector('.background');if(data.background)background.src=PinballRuntimeImages.resolve(data.background);
    const victims=level===7?hp.map((_,i)=>i):[0];
    for(const i of victims){hp[i]=0;updateDamage(i);}draw();
    await Promise.all([background.decode(),...victims.map(i=>$('racers').children[i].querySelector(':scope > img').decode())]);

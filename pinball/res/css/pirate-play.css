@@ -42,3 +42,12 @@ html[data-play-aspect="landscape"] header,html[data-play-aspect="landscape"] foo
 .landscape-stats strong{font-size:clamp(16px,5.5cqw,36px)}
 #wideNotice{font-size:clamp(12px,3.4cqw,22px)}
 #landscapePanel small{font-size:clamp(10px,2.5cqw,16px)}
+
+#leaveGameDialog{color-scheme:dark;width:min(340px,calc(100% - 40px));padding:26px 22px 22px;border:2px solid #c49a49;border-radius:16px;background:radial-gradient(ellipse at top,#583528,#211a20 80%);color:#ffe1a0;text-align:center;box-shadow:0 12px 48px #000b,inset 0 0 0 4px #f5d48418}
+#leaveGameDialog::backdrop{background:#000a}
+#leaveGameDialog h2{margin:0 0 24px;color:#ffe1a0;font:600 22px/1.4 system-ui,sans-serif}
+#leaveGameDialog button{min-height:46px;padding:10px 16px;margin:4px;border-radius:8px;font:600 15px/1.4 system-ui,sans-serif;cursor:pointer;touch-action:manipulation}
+#leaveGameDialog #continueGame{background:linear-gradient(#f5d58d,#c69a4d);border:1px solid #ffdf9c;color:#2c1b13}
+#leaveGameDialog #leaveGame{background:#30212a;border:1px solid #b99359;color:#f6dfb4}
+#leaveGameDialog button:focus-visible{outline:2px solid #a9d9ff;outline-offset:3px}
+#leaveGameDialog button:active{filter:brightness(.85)}

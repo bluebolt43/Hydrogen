@@ -150,8 +150,8 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
  ctx.restore();
  const visible=visibility(o);
  const markerSize=canvasWidth*.07;
- for(const [key,src,x] of [['marker','card-marker-empty.png',o.x],['clear','card-marker-complete.png',o.x+o.width-markerSize]]){
-  if(!visible[key])continue;const image=getImage('res/img/'+src);if(!image)continue;
+ for(const [key,src,x] of [['marker','res/img/card-marker-empty.png',o.x],['clear','res/img/card-marker-complete.png',o.x+o.width-markerSize]]){
+  if(!visible[key])continue;const image=getImage(src);if(!image)continue;
   const y=o.y;ctx.drawImage(image,x,y,markerSize,markerSize);
   if(key==='marker'&&o.showMarkerText!==false){
    const text=o.markerText??'1';ctx.save();let size=markerSize*.52;ctx.font='800 '+size+'px Arial, sans-serif';

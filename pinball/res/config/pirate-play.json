@@ -20,7 +20,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-water-background.png"
     },
     {
       "id": "art-045",
@@ -41,7 +42,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-37px.png"
     },
     {
       "id": "art-046",
@@ -62,7 +64,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-73.01px.png"
     },
     {
       "id": "art-047",
@@ -83,7 +86,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-56px.png"
     },
     {
       "id": "art-048",
@@ -104,7 +108,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-99.62px.png"
     },
     {
       "id": "art-049",
@@ -125,7 +130,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png"
     },
     {
       "id": "art-070",
@@ -159,7 +165,8 @@
           "mode": "once",
           "onSeconds": 1.2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-reef-navy.png"
     },
     {
       "id": "art-071",
@@ -193,7 +200,8 @@
           "mode": "once",
           "onSeconds": 1.2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-reef-navy.png"
     },
     {
       "id": "art-072",
@@ -227,7 +235,8 @@
           "mode": "once",
           "onSeconds": 1.2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-reef-navy.png"
     },
     {
       "id": "art-073",
@@ -261,7 +270,8 @@
           "mode": "once",
           "onSeconds": 1.2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-reef-navy.png"
     },
     {
       "id": "art-074",
@@ -295,7 +305,8 @@
           "mode": "once",
           "onSeconds": 1.2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-reef-navy.png"
     },
     {
       "id": "art-075",
@@ -331,7 +342,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-076",
@@ -367,7 +379,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-077",
@@ -403,7 +416,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-078",
@@ -439,7 +453,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-079",
@@ -476,7 +491,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-080",
@@ -513,7 +529,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-081",
@@ -550,7 +567,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-082",
@@ -587,7 +605,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-tuna-navy.png"
     },
     {
       "id": "art-083",
@@ -623,7 +642,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-school-navy.png"
     },
     {
       "id": "art-084",
@@ -659,7 +679,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-school-navy.png"
     },
     {
       "id": "art-085",
@@ -695,7 +716,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-school-navy.png"
     },
     {
       "id": "art-086",
@@ -729,7 +751,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-shark-navy.png"
     },
     {
       "id": "art-087",
@@ -763,7 +786,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-shark-navy.png"
     },
     {
       "id": "art-088",
@@ -796,7 +820,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-shark-navy.png"
     },
     {
       "id": "art-089",
@@ -831,7 +856,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-shark-navy.png"
     },
     {
       "id": "art-090",
@@ -865,7 +891,8 @@
         "behavior": {
           "mode": "keep"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-shark-navy.png"
     },
     {
       "id": "art-091",
@@ -901,7 +928,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-sailfish-navy.png"
     },
     {
       "id": "art-092",
@@ -937,7 +965,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-sailfish-navy.png"
     },
     {
       "id": "art-093",
@@ -973,7 +1002,8 @@
           "offSeconds": 0.15,
           "cycles": 2
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-sailfish-navy.png"
     },
     {
       "id": "art-107",
@@ -1011,7 +1041,8 @@
         "impactFlash": false
       },
       "flipX": true,
-      "flipY": false
+      "flipY": false,
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-navy.png"
     },
     {
       "id": "art-108",
@@ -1047,7 +1078,8 @@
           "offSeconds": 2.4
         }
       },
-      "flipX": false
+      "flipX": false,
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
     },
     {
       "id": "art-094",
@@ -1083,7 +1115,8 @@
           "offSeconds": 2.4
         }
       },
-      "flipX": false
+      "flipX": false,
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
     },
     {
       "id": "art-095",
@@ -1119,7 +1152,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
     },
     {
       "id": "art-096",
@@ -1155,7 +1189,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
     },
     {
       "id": "art-097",
@@ -1190,7 +1225,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
     },
     {
       "id": "art-098",
@@ -1226,7 +1262,8 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-gold.png"
     },
     {
       "id": "art-099",
@@ -1261,13 +1298,14 @@
           "onSeconds": 0.6,
           "offSeconds": 2.4
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-fish-angelfish-navy.png"
     },
     {
       "id": "art-032",
       "src": "res/hd_img/pirate/pirate-target-crate.png",
-      "x": 81,
-      "y": 14,
+      "x": 84,
+      "y": 13,
       "width": 15,
       "height": 15,
       "angle": 60,
@@ -1282,13 +1320,14 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "target-012-1"
+      "bind": "target-012-1",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-033",
       "src": "res/hd_img/pirate/pirate-target-crate.png",
-      "x": 60,
-      "y": 2,
+      "x": 58,
+      "y": -1,
       "width": 15,
       "height": 15,
       "angle": 0,
@@ -1303,12 +1342,13 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "target-011-1"
+      "bind": "target-011-1",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-034",
       "src": "res/hd_img/pirate/pirate-target-crate.png",
-      "x": 16,
+      "x": 14,
       "y": 39,
       "width": 15,
       "height": 15,
@@ -1324,7 +1364,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "target-010-1"
+      "bind": "target-010-1",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-021",
@@ -1345,7 +1386,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-lower-center-reef.png"
     },
     {
       "id": "art-020",
@@ -1366,7 +1408,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-lower-left-reef-lower.png"
     },
     {
       "id": "art-022",
@@ -1387,7 +1430,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-lower-left-reef-upper.png"
     },
     {
       "id": "art-060",
@@ -1408,7 +1452,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-lower-right-rapids.png"
     },
     {
       "id": "art-061",
@@ -1429,15 +1474,16 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-lower-right-terrain.png"
     },
     {
       "id": "art-004",
       "src": "res/hd_img/pirate/pirate-table-frame.png",
       "x": 180,
       "y": 227,
-      "width": 359,
-      "height": 484,
+      "width": 360,
+      "height": 485,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -1450,7 +1496,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-table-frame.png"
     },
     {
       "id": "art-005",
@@ -1471,7 +1518,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "vortex",
-      "bind": "blockhole-001"
+      "bind": "blockhole-001",
+      "runtimeSource": "res/img/pirate/pirate-whirlpool.png"
     },
     {
       "id": "art-009",
@@ -1504,7 +1552,8 @@
           "kind": "level",
           "source": "circle-023"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-lighthouse-level-1.png"
     },
     {
       "id": "art-010",
@@ -1537,7 +1586,8 @@
         "trigger": {
           "kind": "default"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
     },
     {
       "id": "art-011",
@@ -1558,7 +1608,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flipper-002"
+      "bind": "flipper-002",
+      "runtimeSource": "res/img/pirate/pirate-flipper-right.png"
     },
     {
       "id": "art-012",
@@ -1580,7 +1631,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "flipper-001",
-      "flipX": true
+      "flipX": true,
+      "runtimeSource": "res/img/pirate/pirate-flipper-right.png"
     },
     {
       "id": "art-013",
@@ -1601,7 +1653,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "center-post",
-      "bind": "centerPost-001"
+      "bind": "centerPost-001",
+      "runtimeSource": "res/img/pirate/pirate-compass-off.png"
     },
     {
       "id": "art-014",
@@ -1622,7 +1675,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-bumper-triangle-left.png"
     },
     {
       "id": "art-015",
@@ -1643,7 +1697,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-bumper-triangle-right.png"
     },
     {
       "id": "art-050",
@@ -1664,7 +1719,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-lower-left-powder-storage.png"
     },
     {
       "id": "art-026",
@@ -1685,7 +1741,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-001-3"
+      "bind": "targets-001-3",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-027",
@@ -1706,7 +1763,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-001-2"
+      "bind": "targets-001-2",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-028",
@@ -1727,7 +1785,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-001-1"
+      "bind": "targets-001-1",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-109",
@@ -1748,7 +1807,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-tavern.png"
     },
     {
       "id": "art-111",
@@ -1796,7 +1856,8 @@
       "layoutAnchor": [
         332.063,
         380.975
-      ]
+      ],
+      "runtimeSource": "res/img/plunger-rod.png"
     },
     {
       "id": "art-019",
@@ -1817,7 +1878,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-wooden-rails.png"
     },
     {
       "id": "art-006",
@@ -1854,7 +1916,8 @@
           "cycles": 11
         },
         "screenMask": true
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-shark-off.png"
     },
     {
       "id": "art-017",
@@ -1887,7 +1950,8 @@
           "kind": "level",
           "source": "circle-022"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png"
     },
     {
       "id": "art-016",
@@ -1920,7 +1984,8 @@
           "kind": "level",
           "source": "circle-020"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png"
     },
     {
       "id": "art-018",
@@ -1953,7 +2018,8 @@
           "kind": "level",
           "source": "circle-021"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png"
     },
     {
       "id": "art-024",
@@ -1974,7 +2040,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "target-022-1"
+      "bind": "target-022-1",
+      "runtimeSource": "res/img/pirate/pirate-target-wanted-poster.png"
     },
     {
       "id": "art-025",
@@ -1995,7 +2062,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "target-023-1"
+      "bind": "target-023-1",
+      "runtimeSource": "res/img/pirate/pirate-target-wanted-poster.png"
     },
     {
       "id": "art-029",
@@ -2016,7 +2084,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-003-1"
+      "bind": "targets-003-1",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-030",
@@ -2037,7 +2106,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-003-2"
+      "bind": "targets-003-2",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-031",
@@ -2058,7 +2128,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-003-3"
+      "bind": "targets-003-3",
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
     },
     {
       "id": "art-035",
@@ -2079,7 +2150,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-002-3"
+      "bind": "targets-002-3",
+      "runtimeSource": "res/img/pirate/pirate-pearl-off.png"
     },
     {
       "id": "art-036",
@@ -2100,7 +2172,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-002-2"
+      "bind": "targets-002-2",
+      "runtimeSource": "res/img/pirate/pirate-pearl-off.png"
     },
     {
       "id": "art-037",
@@ -2121,7 +2194,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "targets-002-1"
+      "bind": "targets-002-1",
+      "runtimeSource": "res/img/pirate/pirate-pearl-off.png"
     },
     {
       "id": "art-038",
@@ -2156,7 +2230,8 @@
           "mode": "keep"
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
     },
     {
       "id": "art-039",
@@ -2191,7 +2266,8 @@
           "mode": "keep"
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
     },
     {
       "id": "art-040",
@@ -2226,7 +2302,8 @@
           "mode": "keep"
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
     },
     {
       "id": "art-044",
@@ -2263,7 +2340,8 @@
             "source": "hole-005"
           }
         ]
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-volleyball.png"
     },
     {
       "id": "art-052",
@@ -2284,7 +2362,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-middle-left-background.png"
     },
     {
       "id": "art-069",
@@ -2305,7 +2384,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-middle-left-border.png"
     },
     {
       "id": "art-112",
@@ -2353,7 +2433,8 @@
       "layoutAnchor": [
         332.063,
         380.975
-      ]
+      ],
+      "runtimeSource": "res/img/plunger-collar.png"
     },
     {
       "id": "art-008",
@@ -2391,7 +2472,8 @@
           "cycles": 11
         },
         "screenMask": true
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-octopus-off.png"
     },
     {
       "id": "art-007",
@@ -2412,7 +2494,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-shipwreck.png"
     },
     {
       "id": "art-053",
@@ -2445,7 +2528,8 @@
           "kind": "level",
           "source": "circle-024"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png"
     },
     {
       "id": "art-054",
@@ -2478,7 +2562,8 @@
           "kind": "level",
           "source": "circle-025"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png"
     },
     {
       "id": "art-055",
@@ -2511,7 +2596,8 @@
           "kind": "level",
           "source": "circle-026"
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png"
     },
     {
       "id": "art-051",
@@ -2542,7 +2628,8 @@
           "kind": "hole-capture",
           "source": ""
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
     },
     {
       "id": "art-041",
@@ -2563,7 +2650,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flag-002"
+      "bind": "flag-002",
+      "runtimeSource": "res/img/pirate/pirate-flag-buoy.png"
     },
     {
       "id": "art-042",
@@ -2584,7 +2672,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "flag-001"
+      "bind": "flag-001",
+      "runtimeSource": "res/img/pirate/pirate-flag-buoy.png"
     },
     {
       "id": "art-043",
@@ -2605,7 +2694,18 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-003"
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bottle-off.png"
     },
     {
       "id": "art-062",
@@ -2648,7 +2748,8 @@
           "cycles": 11
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
     },
     {
       "id": "art-063",
@@ -2691,7 +2792,8 @@
           "cycles": 11
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
     },
     {
       "id": "art-064",
@@ -2734,7 +2836,8 @@
           "cycles": 11
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
     },
     {
       "id": "art-065",
@@ -2777,7 +2880,8 @@
         },
         "complete": "res/hd_img/pirate/pirate-eye-glowing.png",
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
     },
     {
       "id": "art-066",
@@ -2820,7 +2924,8 @@
           "cycles": 11
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
     },
     {
       "id": "art-100",
@@ -2859,7 +2964,8 @@
           "outSeconds": 0.48
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosion-smoke.png"
     },
     {
       "id": "art-101",
@@ -2899,7 +3005,8 @@
           "outSeconds": 0.48
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosion-smoke.png"
     },
     {
       "id": "art-102",
@@ -2938,7 +3045,8 @@
           "outSeconds": 0.48
         },
         "impactFlash": false
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosion-smoke.png"
     },
     {
       "id": "art-103",
@@ -2994,7 +3102,8 @@
             "source": "hole-005"
           }
         ]
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosion-smoke.png"
     },
     {
       "id": "art-110",
@@ -3015,7 +3124,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-tavern-lanes-mask.png"
     },
     {
       "id": "art-113",
@@ -3068,7 +3178,8 @@
           "kind": "hole-capture",
           "source": ""
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
     },
     {
       "id": "art-115",
@@ -3099,7 +3210,8 @@
           "kind": "hole-capture",
           "source": ""
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
     },
     {
       "id": "art-116",
@@ -3130,7 +3242,8 @@
           "kind": "hole-capture",
           "source": ""
         }
-      }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
     },
     {
       "id": "art-117",
@@ -3151,7 +3264,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "return-gate",
-      "bind": "oneway-015"
+      "bind": "oneway-015",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png"
     },
     {
       "id": "art-118",
@@ -3172,7 +3286,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "return-gate",
-      "bind": "oneway-016"
+      "bind": "oneway-016",
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png"
     }
   ],
   "gameplay": {},
@@ -3195,57 +3310,57 @@
     {
       "id": "arc-001",
       "type": "arc",
+      "layer": "lower",
       "x1": 212.52,
       "y1": -5.209999999999994,
       "qx": 237.018,
       "qy": 0.10599999999999454,
       "x2": 259.181,
-      "y2": 11.790000000000006,
-      "layer": "lower"
+      "y2": 11.790000000000006
     },
     {
       "id": "arc-002",
       "type": "arc",
+      "layer": "lower",
       "x1": 259.181,
       "y1": 11.790000000000006,
       "qx": 320.402,
       "qy": 46.703,
       "x2": 336.226,
-      "y2": 115.24,
-      "layer": "lower"
+      "y2": 115.24
     },
     {
       "id": "arc-003",
       "type": "arc",
+      "layer": "lower",
       "x1": 336.226,
       "y1": 115.24,
       "qx": 340.346,
       "qy": 131.99,
       "x2": 340.205,
-      "y2": 149.24099999999999,
-      "layer": "lower"
+      "y2": 149.24099999999999
     },
     {
       "id": "arc-005",
       "type": "arc",
+      "layer": "lower",
       "x1": 12,
       "y1": 40,
       "qx": 13,
       "qy": 0,
       "x2": 55,
-      "y2": -4,
-      "layer": "lower"
+      "y2": -4
     },
     {
       "id": "arc-007",
       "type": "arc",
+      "layer": "lower",
       "x1": 273.018,
       "y1": 60.031,
       "qx": 323.038,
       "qy": 115.903,
       "x2": 302.817,
-      "y2": 188.215,
-      "layer": "lower"
+      "y2": 188.215
     },
     {
       "id": "line-012",
@@ -3259,31 +3374,31 @@
     {
       "id": "arc-008",
       "type": "arc",
+      "layer": "lower",
       "x1": 311.331,
       "y1": 162.673,
       "qx": 325.765,
       "qy": 115.251,
       "x2": 296.668,
-      "y2": 74.694,
-      "layer": "lower"
+      "y2": 74.694
     },
     {
       "id": "line-014",
       "type": "line",
+      "layer": "lower",
       "x1": 303.156,
       "y1": 188.113,
       "x2": 274,
-      "y2": 251,
-      "layer": "lower"
+      "y2": 251
     },
     {
       "id": "line-020",
       "type": "line",
+      "layer": "lower",
       "x1": 298,
       "y1": 254,
       "x2": 300.849,
-      "y2": 211.985,
-      "layer": "lower"
+      "y2": 211.985
     },
     {
       "id": "line-027",
@@ -3318,20 +3433,6 @@
       "id": "line-029",
       "type": "line",
       "layer": "lower",
-      "side": "right",
-      "aim": [
-        308.7012634277344,
-        366.73
-      ],
-      "launch_point": [
-        308.7012634277344,
-        366.73
-      ],
-      "direction": [
-        0,
-        -1
-      ],
-      "speed": 600,
       "x1": 126.019,
       "y1": 27.566999999999993,
       "x2": 122.347,
@@ -3341,20 +3442,6 @@
       "id": "line-030",
       "type": "line",
       "layer": "lower",
-      "side": "left",
-      "aim": [
-        36.84383333333335,
-        352
-      ],
-      "launch_point": [
-        40,
-        370
-      ],
-      "direction": [
-        0,
-        -1
-      ],
-      "speed": 600,
       "x1": 122.347,
       "y1": 26.814999999999998,
       "x2": 109,
@@ -4086,10 +4173,10 @@
     {
       "id": "circle-002",
       "type": "circle",
+      "layer": "lower",
       "cx": 299.825,
       "cy": 303,
       "r": 3.254,
-      "layer": "lower",
       "mechanic": "solid-circle"
     },
     {
@@ -4138,15 +4225,6 @@
       "qy": 210.773,
       "x2": 160.153,
       "y2": 258.735
-    },
-    {
-      "id": "line-188",
-      "type": "line",
-      "layer": "upper",
-      "x1": 160.153,
-      "y1": 258.735,
-      "x2": 115.337,
-      "y2": 274.33299999999997
     },
     {
       "id": "arc-044",
@@ -4407,7 +4485,6 @@
       "id": "oneway-006",
       "type": "oneway",
       "layer": "lower",
-      "side": "left",
       "x1": 252.825,
       "y1": 3.4140000000000015,
       "x2": 238.138,
@@ -4517,23 +4594,23 @@
     {
       "id": "hole-001",
       "type": "hole",
+      "layer": "lower",
       "x": 251.658,
       "y": 55.145,
       "angle": 0,
-      "layer": "lower",
-      "attack": "lv1",
+      "releaseMode": "fixed",
       "releaseAngle": 40.365,
-      "releaseMode": "fixed"
+      "attack": "lv1"
     },
     {
       "id": "hole-002",
       "type": "hole",
+      "layer": "lower",
       "x": 109.423,
       "y": 239.819,
       "angle": 0,
-      "layer": "lower",
-      "releaseAngle": 304.656,
-      "releaseMode": "fixed"
+      "releaseMode": "fixed",
+      "releaseAngle": 304.656
     },
     {
       "id": "flag-001",
@@ -4610,45 +4687,45 @@
     {
       "id": "thickline-001",
       "type": "thickline",
+      "layer": "lower",
       "x1": 170,
       "y1": 46,
       "x2": 170,
       "y2": 64,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "thickline-002",
       "type": "thickline",
+      "layer": "lower",
       "x1": 196,
       "y1": 46,
       "x2": 196,
       "y2": 64,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "line-232",
       "type": "line",
+      "layer": "lower",
       "x1": 267,
       "y1": 151,
       "x2": 247,
       "y2": 200,
-      "mechanic": "active-rebound",
-      "layer": "lower",
+      "reboundStrength": "strong",
       "slingshot": true,
-      "reboundStrength": "strong"
+      "mechanic": "active-rebound"
     },
     {
       "id": "line-233",
       "type": "line",
+      "layer": "lower",
       "x1": 71,
       "y1": 177,
       "x2": 117,
       "y2": 199,
-      "mechanic": "active-rebound",
-      "layer": "lower",
-      "reboundStrength": "strong"
+      "reboundStrength": "strong",
+      "mechanic": "active-rebound"
     },
     {
       "id": "hole-004",
@@ -4662,13 +4739,13 @@
     {
       "id": "hole-005",
       "type": "hole",
+      "layer": "lower",
       "x": 236,
       "y": 70,
       "angle": 0,
-      "layer": "lower",
-      "attack": "lv1",
+      "releaseMode": "fixed",
       "releaseAngle": 136.231,
-      "releaseMode": "fixed"
+      "attack": "lv1"
     },
     {
       "id": "hole-006",
@@ -4677,49 +4754,49 @@
       "x": 287,
       "y": 264,
       "angle": 0,
-      "releaseAngle": 173.694,
-      "releaseMode": "fixed"
+      "releaseMode": "fixed",
+      "releaseAngle": 173.694
     },
     {
       "id": "ublock-001",
       "type": "ublock",
+      "layer": "lower",
       "x": 107,
       "y": 61,
-      "angle": 139.207,
-      "layer": "lower"
+      "angle": 139.207
     },
     {
       "id": "arc-062",
       "type": "arc",
+      "layer": "lower",
       "x1": 139,
       "y1": 230,
       "qx": 153,
       "qy": 245,
       "x2": 159,
-      "y2": 259,
-      "layer": "lower"
+      "y2": 259
     },
     {
       "id": "oneway-012",
       "type": "oneway",
-      "x1": 151,
-      "y1": 249,
-      "x2": 116,
-      "y2": 262,
-      "mechanic": "layer-transition",
+      "layer": "lower",
+      "x1": 155,
+      "y1": 257,
+      "x2": 118,
+      "y2": 270,
       "direction": 1,
+      "mechanic": "layer-transition",
       "fromLayer": "lower",
       "toLayer": "upper",
-      "bidirectional": true,
-      "layer": "lower"
+      "bidirectional": true
     },
     {
       "id": "targets-001",
       "type": "targets",
+      "layer": "lower",
       "x": 62,
       "y": 146,
       "angle": 257.358,
-      "layer": "lower",
       "targetGroup": {
         "id": "targetGroup-002",
         "members": [
@@ -4737,10 +4814,10 @@
     {
       "id": "targets-002",
       "type": "targets",
+      "layer": "lower",
       "x": 174,
       "y": 201,
       "angle": 18.82,
-      "layer": "lower",
       "targetGroup": {
         "id": "targetGroup-003",
         "members": [
@@ -4753,10 +4830,10 @@
     {
       "id": "targets-003",
       "type": "targets",
+      "layer": "lower",
       "x": 258,
       "y": 118,
       "angle": 71.208,
-      "layer": "lower",
       "targetGroup": {
         "id": "targetGroup-004",
         "members": [
@@ -4774,10 +4851,10 @@
     {
       "id": "targets-004",
       "type": "targets",
+      "layer": "lower",
       "x": 129,
       "y": 79,
       "angle": -32.247,
-      "layer": "lower",
       "targetGroup": {
         "id": "targetGroup-005",
         "members": [
@@ -4798,199 +4875,196 @@
     {
       "id": "line-234",
       "type": "line",
+      "layer": "lower",
       "x1": 240,
       "y1": 27,
       "x2": 247,
-      "y2": 29,
-      "layer": "lower"
+      "y2": 29
     },
     {
       "id": "arc-063",
       "type": "arc",
+      "layer": "lower",
       "x1": 263,
       "y1": 38,
       "qx": 284,
       "qy": 54,
       "x2": 297,
-      "y2": 75,
-      "layer": "lower"
+      "y2": 75
     },
     {
       "id": "thickline-003",
       "type": "thickline",
+      "layer": "lower",
       "x1": 50,
       "y1": 337,
       "x2": 50,
       "y2": 374,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "thickline-004",
       "type": "thickline",
+      "layer": "lower",
       "x1": 72,
       "y1": 337,
       "x2": 72,
       "y2": 365,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "thickline-005",
       "type": "thickline",
+      "layer": "lower",
       "x1": 300,
       "y1": 336,
       "x2": 300,
       "y2": 392,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "thickline-006",
       "type": "thickline",
+      "layer": "lower",
       "x1": 50,
       "y1": 376,
       "x2": 131,
       "y2": 434,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "thickline-007",
       "type": "thickline",
+      "layer": "lower",
       "x1": 300,
       "y1": 392,
       "x2": 241,
       "y2": 435,
-      "thickness": 5,
-      "layer": "lower"
+      "thickness": 5
     },
     {
       "id": "oneway-013",
       "type": "oneway",
+      "layer": "upper",
       "x1": 320,
       "y1": 189,
       "x2": 303,
       "y2": 211,
-      "mechanic": "layer-transition",
       "direction": -1,
+      "mechanic": "layer-transition",
       "fromLayer": "upper",
       "toLayer": "lower",
-      "bidirectional": false,
-      "layer": "upper"
+      "bidirectional": false
     },
     {
       "id": "oneway-014",
       "type": "oneway",
+      "layer": "lower",
       "x1": 248,
       "y1": 31,
       "x2": 262,
       "y2": 39,
-      "mechanic": "layer-transition",
       "direction": 1,
+      "mechanic": "layer-transition",
       "fromLayer": "lower",
       "toLayer": "upper",
-      "bidirectional": true,
-      "layer": "lower"
+      "bidirectional": true
     },
     {
       "id": "arc-064",
       "type": "arc",
+      "layer": "lower",
       "x1": 251,
       "y1": 45,
       "qx": 265,
       "qy": 50,
       "x2": 273,
-      "y2": 60,
-      "layer": "lower"
+      "y2": 60
     },
     {
       "id": "line-235",
       "type": "line",
+      "layer": "lower",
       "x1": 271,
       "y1": 339,
       "x2": 246,
       "y2": 398,
-      "mechanic": "active-rebound",
-      "layer": "lower",
-      "reboundStrength": "strong"
+      "reboundStrength": "strong",
+      "mechanic": "active-rebound"
     },
     {
       "id": "line-236",
       "type": "line",
+      "layer": "lower",
       "x1": 126,
       "y1": 399,
       "x2": 102,
       "y2": 340,
-      "mechanic": "active-rebound",
-      "layer": "lower",
-      "reboundStrength": "strong"
+      "reboundStrength": "strong",
+      "mechanic": "active-rebound"
     },
     {
       "id": "circle-028",
       "type": "circle",
-      "mechanic": "layer-transition",
+      "layer": "upper",
       "cx": 60,
       "cy": 351,
       "r": 7.81,
+      "initialSpeed": 0,
+      "stopOnEntry": true,
+      "mechanic": "layer-transition",
       "fromLayer": "upper",
       "toLayer": "lower",
-      "bidirectional": false,
-      "layer": "upper",
-      "initialSpeed": 0,
-      "stopOnEntry": true
+      "bidirectional": false
     },
     {
       "id": "blockhole-001",
       "type": "blockhole",
+      "layer": "lower",
       "x": 187,
       "y": 325,
       "angle": 0,
-      "layer": "lower",
       "attractionRadius": 62
     },
     {
       "id": "oneway-015",
       "type": "oneway",
+      "layer": "lower",
       "mechanic": "rescue-return",
       "side": "left",
       "x1": 23,
       "y1": 390,
       "x2": 50.5,
       "y2": 410.5,
-      "direction": -1,
-      "layer": "lower"
+      "direction": -1
     },
     {
       "id": "oneway-016",
       "type": "oneway",
+      "layer": "lower",
       "mechanic": "rescue-return",
       "side": "right",
       "x1": 290.5,
       "y1": 430.5,
       "x2": 320,
       "y2": 408,
-      "direction": -1,
-      "layer": "lower"
+      "direction": -1
     },
     {
       "id": "line-237",
       "type": "line",
+      "layer": "lower",
       "x1": 300,
       "y1": 424,
       "x2": 305,
-      "y2": 452,
-      "layer": "lower"
+      "y2": 452
     },
     {
       "id": "line-238",
       "type": "line",
+      "layer": "lower",
       "mechanic": "rescue-kicker",
       "side": "right",
-      "x1": 297.5,
-      "y1": 438,
-      "x2": 322.5,
-      "y2": 438,
       "aim": [
         310,
         400
@@ -5000,17 +5074,17 @@
         -1
       ],
       "speed": 600,
-      "layer": "lower"
+      "x1": 297.5,
+      "y1": 438,
+      "x2": 322.5,
+      "y2": 438
     },
     {
       "id": "line-239",
       "type": "line",
+      "layer": "lower",
       "mechanic": "rescue-kicker",
       "side": "left",
-      "x1": 23.5,
-      "y1": 424,
-      "x2": 48.5,
-      "y2": 424,
       "aim": [
         36,
         386
@@ -5020,15 +5094,18 @@
         -1
       ],
       "speed": 600,
-      "layer": "lower"
+      "x1": 23.5,
+      "y1": 424,
+      "x2": 48.5,
+      "y2": 424
     },
     {
       "id": "target-023",
       "type": "target",
+      "layer": "lower",
       "x": 86,
       "y": 285,
       "angle": 90,
-      "layer": "lower",
       "targetGroup": {
         "id": "targetGroup-001",
         "action": "boss",
@@ -5041,47 +5118,47 @@
     {
       "id": "line-240",
       "type": "line",
+      "layer": "lower",
       "x1": 274,
       "y1": 251,
       "x2": 287,
-      "y2": 248,
-      "layer": "lower"
+      "y2": 248
     },
     {
       "id": "line-241",
       "type": "line",
+      "layer": "lower",
       "x1": 287,
       "y1": 247,
       "x2": 298,
-      "y2": 254,
-      "layer": "lower"
+      "y2": 254
     },
     {
       "id": "rollover-001",
       "type": "rollover",
+      "layer": "lower",
       "x1": 149,
       "y1": 52,
       "x2": 168,
-      "y2": 52,
-      "layer": "lower"
+      "y2": 52
     },
     {
       "id": "rollover-002",
       "type": "rollover",
+      "layer": "lower",
       "x1": 174,
       "y1": 52,
       "x2": 193,
-      "y2": 52,
-      "layer": "lower"
+      "y2": 52
     },
     {
       "id": "rollover-003",
       "type": "rollover",
+      "layer": "lower",
       "x1": 198,
       "y1": 52,
       "x2": 217,
       "y2": 52,
-      "layer": "lower",
       "rolloverGroup": {
         "id": "rolloverGroup-001",
         "members": [
@@ -5097,29 +5174,29 @@
     {
       "id": "rollover-004",
       "type": "rollover",
+      "layer": "lower",
       "x1": 50,
       "y1": 366,
       "x2": 70,
-      "y2": 366,
-      "layer": "lower"
+      "y2": 366
     },
     {
       "id": "rollover-005",
       "type": "rollover",
+      "layer": "lower",
       "x1": 75,
       "y1": 366,
       "x2": 92,
-      "y2": 366,
-      "layer": "lower"
+      "y2": 366
     },
     {
       "id": "rollover-006",
       "type": "rollover",
+      "layer": "lower",
       "x1": 280,
       "y1": 371,
       "x2": 297,
       "y2": 371,
-      "layer": "lower",
       "rolloverGroup": {
         "id": "rolloverGroup-002",
         "members": [
@@ -5135,6 +5212,7 @@
     {
       "id": "centerPost-001",
       "type": "centerPost",
+      "layer": "lower",
       "x": 185,
       "y": 462,
       "angle": 0,
@@ -5144,93 +5222,93 @@
         "rollover-005",
         "rollover-004"
       ],
-      "hitCount": 5,
-      "layer": "lower"
+      "hitCount": 5
     },
     {
       "id": "sensor-001",
       "type": "sensor",
+      "layer": "upper",
       "x1": 45,
       "y1": 192,
       "x2": 58,
       "y2": 210,
-      "layer": "upper",
       "attack": "lv4",
       "attackCount": 5
     },
     {
       "id": "line-242",
       "type": "line",
+      "layer": "lower",
       "x1": 235,
       "y1": 59,
       "x2": 248,
-      "y2": 70,
-      "layer": "lower"
+      "y2": 70
     },
     {
       "id": "line-243",
       "type": "line",
+      "layer": "lower",
       "x1": 248,
       "y1": 70,
       "x2": 241,
-      "y2": 80,
-      "layer": "lower"
+      "y2": 80
     },
     {
       "id": "sensor-002",
       "type": "sensor",
+      "layer": "lower",
       "x1": 313,
       "y1": 126,
       "x2": 338,
-      "y2": 124,
-      "layer": "lower"
+      "y2": 124
     },
     {
       "id": "sensor-003",
       "type": "sensor",
+      "layer": "lower",
       "x1": 310,
       "y1": 107,
       "x2": 336,
-      "y2": 97,
-      "layer": "lower"
+      "y2": 97
     },
     {
       "id": "sensor-004",
       "type": "sensor",
+      "layer": "lower",
       "x1": 304,
       "y1": 90,
       "x2": 328,
-      "y2": 75,
-      "layer": "lower"
+      "y2": 75
     },
     {
       "id": "sensor-005",
       "type": "sensor",
+      "layer": "lower",
       "x1": 294,
       "y1": 72,
       "x2": 313,
-      "y2": 57,
-      "layer": "lower"
+      "y2": 57
     },
     {
       "id": "sensor-006",
       "type": "sensor",
+      "layer": "lower",
       "x1": 281,
       "y1": 56,
       "x2": 300,
-      "y2": 37,
-      "layer": "lower"
+      "y2": 37
     },
     {
       "id": "flag-003",
       "type": "flag",
+      "layer": "lower",
       "x1": 267,
       "y1": 276,
       "x2": 297,
-      "y2": 303,
-      "layer": "lower"
+      "y2": 303
     }
   ],
+  "gravityRegions": [],
   "lockedLayout": [],
   "upperLayout": [],
   "topLayout": [],
@@ -5289,6 +5367,5 @@
       "height": 10,
       "markup": "<circle r=\"5\" fill=\"#263945\"/><circle r=\"3.3\" fill=\"none\"/><path d=\"M-2 0H2M0 -2V2\"/>"
     }
-  },
-  "gravityRegions": []
+  }
 }

@@ -36,7 +36,9 @@ const PirateTutorial={
  const overlay=document.createElement('div');overlay.id='tableTutorial';overlay.style.pointerEvents='none';
  overlay.innerHTML='<canvas id="tutorialSpotlight" aria-hidden="true"></canvas><section id="tutorialPanel"><h2 id="tutorialTitle"></h2><p id="tutorialText"></p><p id="tutorialHint" hidden>點擊進入下一步</p></section>';
  document.body.append(overlay);
- const text=value=>typeof value==='function'?value():PinballI18n.t(value);
+ const androidTutorial=window.PinballPlatform==='android';
+ const androidText={'tutorial.left.text':'tutorial.android.left.text','tutorial.right.text':'tutorial.android.right.text'};
+ const text=value=>typeof value==='function'?value():PinballI18n.t(androidTutorial&&androidText[value]||value);
  let flightTime=0,step=0,waiting=false,pointer=null,heldKey=null,heartOnly=false,narrationReady=replay,demo=null,demoElapsed=0;
  const info=PirateTutorial.describe(G,artLayers),{bounds,artBounds}=info;
  function flipper(side){const f=game.flippers.find(f=>(f.control||f.side)===side&&(f.layer||'lower')==='lower')||game.flippers.filter(f=>(f.control||f.side)===side).sort((a,b)=>b.pivot[1]-a.pivot[1])[0]||game.flippers[side==='left'?0:1];return bounds({points:[f.pivot,P.add(f.pivot,[Math.cos(f.rest)*f.length,Math.sin(f.rest)*f.length])]});}
@@ -91,7 +93,7 @@ const PirateTutorial={
   const preferred=rs.length?(steps[step][3]==='below'?maxY+16:minY-top>=h+24?minY-h-16:maxY+16):(top+bottom-h)/2;
   panel.style.top=Math.max(top+12,Math.min(bottom-h-12,preferred))+'px';
  }
- function render(){overlay.hidden=waiting||tutorialMode&&['enemy','ball','barrel','airdrop','kraken'].includes(demo);overlay.dataset.demo=demo||'';overlay.dataset.step=String(step+1);overlay.dataset.heartOnly=String(heartOnly);$('tutorialTitle').hidden=step>=4;$('tutorialHint').hidden=!!demo||!replay&&step<3;$('tutorialHint').textContent=PinballI18n.t(window.matchMedia?.('(pointer: fine)').matches?'tutorial.nextKeyboard':'tutorial.next');$('tutorialTitle').textContent=text(step===3&&heartOnly?'tutorial.health.title':steps[step][0]);$('tutorialText').textContent=text(step===3&&heartOnly?'tutorial.health.text':steps[step][1]);position();}
+ function render(){overlay.hidden=waiting||tutorialMode&&['enemy','ball','barrel','airdrop','kraken'].includes(demo);overlay.dataset.demo=demo||'';overlay.dataset.step=String(step+1);overlay.dataset.heartOnly=String(heartOnly);$('tutorialTitle').hidden=step>=4;$('tutorialHint').hidden=!!demo||!replay&&step<3;$('tutorialHint').textContent=PinballI18n.t(androidTutorial?'tutorial.android.next':window.matchMedia?.('(pointer: fine)').matches?'tutorial.nextKeyboard':'tutorial.next');$('tutorialTitle').textContent=text(step===3&&heartOnly?'tutorial.health.title':steps[step][0]);$('tutorialText').textContent=text(step===3&&heartOnly?'tutorial.health.text':steps[step][1]);position();}
  function used(control){if(waiting||step>1||control!==['left','right'][step])return;step++;render();}
  function allowed(control){return waiting||step<3&&control===['left','right','launch'][step];}
  function stop(e){e.preventDefault();e.stopImmediatePropagation();}
@@ -157,7 +159,7 @@ const SagaTutorial={
 };
 
 const TableTutorial=SagaTutorial;
-const TOUHOU_GAMEPLAY_DEFAULTS={"touhouGap": {"sensor": "sensor-003", "hole": "hole-008", "passes": 1, "locks": 3, "autoLaunch": true, "keepOpenUntilFull": true, "readySeconds": 3, "captureSeconds": 3}, "indicatorCounters": ["sensor-001"], "touhouBagua": {"object": "blockhole-001", "radius": 68, "threshold": 8, "spinSeconds": 4.5, "winFlashSeconds": 1.2, "rewards": [{"kind": "score", "value": 1000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-1000.png", "crop": [0, 0, 20, 9]}}, {"kind": "score", "value": 2500, "art": {"src": "res/img/steampunk/steampunk-bonus-score-2500.png", "crop": [0, 0, 20, 7]}}, {"kind": "score", "value": 5000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-5000.png", "crop": [0, 0, 20, 8]}}, {"kind": "multiplier", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-2.png", "crop": [0, 0, 16, 12]}}, {"kind": "multiplier", "value": 3, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-3.png", "crop": [0, 0, 14, 12]}}, {"kind": "ball", "value": 1, "art": {"src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png", "crop": [0, 0, 18, 9]}}, {"kind": "multi", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiball.png", "crop": [0, 0, 19, 18]}}, {"kind": "enemy", "value": 0, "art": {"src": "res/img/steampunk/steampunk-bonus-enemy.png", "crop": [0, 0, 13, 13]}}], "yinYang": {"fadeSeconds": 0.8}, "attackArt": {"src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png", "duration": 1.55}}, "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"};
+const TOUHOU_GAMEPLAY_DEFAULTS={"touhouGap": {"sensor": "sensor-003", "hole": "hole-008", "passes": 1, "locks": 3, "autoLaunch": true, "keepOpenUntilFull": true, "readySeconds": 3, "captureSeconds": 3}, "indicatorCounters": ["sensor-001"], "touhouBagua": {"object": "blockhole-001", "radius": 68, "threshold": 8, "spinSeconds": 4.5, "winFlashSeconds": 1.2, "rewards": [{"kind": "score", "value": 1000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-1000.png", "crop": [0, 0, 20, 9]}}, {"kind": "score", "value": 2500, "art": {"src": "res/img/steampunk/steampunk-bonus-score-2500.png", "crop": [0, 0, 20, 7]}}, {"kind": "score", "value": 5000, "art": {"src": "res/img/steampunk/steampunk-bonus-score-5000.png", "crop": [0, 0, 20, 8]}}, {"kind": "multiplier", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-2.png", "crop": [0, 0, 16, 12]}}, {"kind": "multiplier", "value": 3, "art": {"src": "res/img/steampunk/steampunk-bonus-multiplier-3.png", "crop": [0, 0, 14, 12]}}, {"kind": "ball", "value": 1, "art": {"src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png", "crop": [0, 0, 18, 9]}}, {"kind": "multi", "value": 2, "art": {"src": "res/img/steampunk/steampunk-bonus-multiball.png", "crop": [0, 0, 19, 18]}}, {"kind": "enemy", "value": 0, "art": {"src": "res/img/steampunk/steampunk-bonus-enemy.png", "crop": [0, 0, 13, 13]}}], "yinYang": {"fadeSeconds": 0.8}, "attackArt": {"src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png", "duration": 1.55, "fullscreen": true}}, "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"};
 /* Editor JSON -> physics geometry. Shared by editor previews and built games. */
 (function(root){
 'use strict';
@@ -454,6 +456,7 @@ function prepare(layout,g){
   if(!['background','lower','upper','top'].includes(runic.displayPlane)||!['lower','upper','top'].includes(runic.countLayer)||runic.trigger!=='circle-entry'||!art(runic.ringArt)||!art(runic.rotorArt)||!runic.rewards?.every(r=>art(r.art)))throw Error('盧恩石盤需要通過計數與有效石刻圖片');
  }
  if(bagua){
+  if(bagua.entryCooldown!==undefined&&(!Number.isFinite(bagua.entryCooldown)||bagua.entryCooldown<0))throw Error('八卦進入冷卻時間不合法');
   const marker=objects.find(o=>o.id===bagua.object&&o.type===(runic?'circle':'blockhole'));
   if(!marker||!Number.isInteger(bagua.threshold)||bagua.threshold<1||bagua.threshold>99||!Number.isFinite(bagua.radius)||bagua.radius<=0||!(bagua.spinSeconds>0)||!(bagua.winFlashSeconds>0)||!Array.isArray(bagua.rewards)||bagua.rewards.length!==8||bagua.rewards.every(r=>r.kind==='enemy'))throw Error('八卦需要位置物件、累積門檻與八個獎項');
   for(const r of bagua.rewards)if(!['score','multiplier','ball','multi','enemy'].includes(r.kind)||!Number.isInteger(r.value)||(r.kind==='enemy'?r.value!==0:r.value<=0)||!r.art?.src)throw Error('八卦獎項設定不合法');
@@ -635,6 +638,7 @@ const view=typeof module!=='undefined'?require('./mechanism-view.js'):root.Mecha
 function createGame(Base,P){return class ConfiguredGame extends Base{
   reset(){this.gapLock=null;super.reset();}
   gapBusy(){return this.gapLock?.active||this.freeBallQueue>0||this.balls.filter(b=>b.state!=='drained').length>1;}
+  hasPendingBalls(){return super.hasPendingBalls()||this.gapLock?.pending>0;}
   spawnFreeBall(){
    const entrance=this.socketsById.get(this.g.gameplay?.multiballHole);
    if(!entrance)return super.spawnFreeBall();
@@ -858,7 +862,9 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   const id=group?.id||objectId;
   const kind=group?group.attack:this.g.mechanisms?.attacks?.[id];
   if(!kind||kind==='none'&&!this.g.gameplay?.indicatorCounters?.includes(id))return;
-  if(this.time-(this.objectAttackAt.get(id)??-Infinity)<.3)return;
+  // A multi-lane group already deduplicates its members with a Set. Applying
+  // the last round's contact cooldown here can discard a valid next-lane hit.
+  if((!group||group.members.length<2)&&this.time-(this.objectAttackAt.get(id)??-Infinity)<.3)return;
 
   if(group){
    group.collected.add(objectId);
@@ -1027,7 +1033,12 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   this.applyOneWaySpeed?.(previous,layer);
   if(this.ball.launchGuard&&this.ball.v[1]>=0&&this.ball.p[1]>this.launchGateExitY+this.physics.ballRadius)this.ball.launchGuard=false;
   this.flagSensors(previous,layer);
-  this.sensors(dt);
+  // A fast ball can cross the entire gap between two endpoint checks.
+  const gap=this.g.gameplay?.touhouGap,hole=gap&&this.socketsById.get(gap.hole),ball=this.ball;
+  if(hole&&ball.state==='playing'&&layer===ball.layer&&hole.layer===layer&&this.gapLock?.armed&&!this.gapBusy()&&this.time>=ball.immunity&&P.len(P.sub(P.nearest(hole.center,previous,ball.p).p,hole.center))<hole.radius){
+   this.capture(hole.id,hole.center,hole.release,layer,hole.release_direction,250);
+  }
+  this.sensors(previous,layer);
   if(this.ball.state!=='playing')return;
 
   this.crossConfiguredSensors(previous,layer);
@@ -1109,7 +1120,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    r.attackRemaining=(r.attackRemaining??r.attackCount??1)-1;if(r.attackRemaining<=0){r.attackRemaining=r.attackCount??1;this.emit('configured-attack',{kind:r.attack||'lv1',id:r.id,position:[...this.ball.p]});}
   }
  }
- sensors(){
+ sensors(previous=null,previousLayer=null){
   this.expireHoles();
   const ball=this.ball;
   if(ball.state!=='playing')return;
@@ -1118,7 +1129,8 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    for(const socket of floorParts||[]){
     const controlled=this.controlledHoles.has(socket.id);
     if(controlled&&!this.armedHoles.has(socket.id))continue;
-    if(P.len(P.sub(ball.p,socket.center))>=socket.radius)continue;
+    const position=Array.isArray(previous)&&previousLayer===ball.layer?P.nearest(socket.center,previous,ball.p).p:ball.p;
+    if(P.len(P.sub(position,socket.center))>=socket.radius)continue;
     this.capture(socket.id,socket.center,socket.release,ball.layer,socket.release_direction,250);
     return;
    }
@@ -1174,9 +1186,21 @@ function presentation(o,g){
  if(!g)return {state:initial,alpha:1,on:initial==='on'};
  const attract=attractLight(g,o);if(attract!==null)return {state:c.type==='bumper'?(attract?'lv3':'lv1'):(attract?(c.attractState||'on'):'off'),alpha:1,on:false,attract:true};
  if(c.trigger?.kind==='hole-count'){const count=g.holeCaptureCounts?.get(c.trigger.source)||0,state=count>=(c.trigger.threshold||2)?'complete':count>0?'on':'off';return {state,alpha:1,on:state!=='off'};}
- if(c.trigger?.kind==='hole-active'&&c.captureBehavior&&g.balls.some(ball=>ball.state==='captured'&&ball.held?.id===c.trigger.source)){
-  const b=c.captureBehavior,on=b.onSeconds||.2,off=b.offSeconds||.2,age=Math.max(0,g.time-(g.holeCapturedAt.get(c.trigger.source)??g.time)),lit=age%(on+off)<on;
+ const linkedTriggers=[c.trigger||{},...(c.extraTriggers||[])],captureSource=linkedTriggers.find(t=>t.kind==='hole-active')?.source;
+ // Boss replacement balls retain locks, but paired gaps stay visually closed
+ // until a ball is back in play. A live multiball must not close the pair.
+ if(g.storyMode&&g.preserveTableOnDrain&&captureSource===g.g.gameplay?.touhouGap?.hole&&
+    linkedTriggers.some(t=>t.kind==='gap-launch')&&g.balls.every(ball=>['ready','drained','saver-return'].includes(ball.state)))
+  return {state:'off',alpha:1,on:false};
+ if(captureSource&&c.captureBehavior&&g.balls.some(ball=>ball.state==='captured'&&ball.held?.id===captureSource)){
+  const b=c.captureBehavior,on=b.onSeconds||.2,off=b.offSeconds||.2,age=Math.max(0,g.time-(g.holeCapturedAt.get(captureSource)??g.time)),lit=age%(on+off)<on;
   return {state:lit?'on':'off',alpha:1,on:lit};
+ }
+ if(c.releaseBehavior){
+  const stamp=Math.max(...linkedTriggers.filter(t=>t.kind==='gap-launch').map(t=>g.gapLaunchAt?.get(t.source)??-Infinity));
+  const b=c.releaseBehavior,on=b.onSeconds||.15,off=b.offSeconds||.15,age=g.time-stamp;
+  const duration=b.mode==='once'?on:b.mode==='burst'?(on+off)*(b.cycles||3):Infinity;
+  if(Number.isFinite(stamp)&&age>=0&&age<duration){const lit=['repeat','burst'].includes(b.mode)?age%(on+off)<on:true;return {state:lit?'on':'off',alpha:1,on:lit};}
  }
  if(c.trigger?.kind==='gap-output'){
   const gap=g.g.gameplay?.touhouGap,lock=g.gapLock,exit=gap&&g.socketsById?.get(gap.hole)?.exit_hole;
@@ -1197,7 +1221,9 @@ function presentation(o,g){
  if(c.type==='bumper'){const id=c.trigger?.source||o.bind;let n=g.bumperLevel(id);if(!c.keepLevelOnHit&&(g.bumperHitUntil?.get(id)||0)>g.time)n=n%3+1;return {state:'lv'+n,alpha:1,on:false};}
  let cache=visualStates.get(g);if(!cache||cache.epoch!==g.attackRemaining){cache={epoch:g.attackRemaining,items:new Map()};visualStates.set(g,cache)}
  let v=cache.items.get(o);if(!v){v={active:false,start:null,stamp:undefined,lastOn:false,alpha:0,time:g.time};cache.items.set(o,v)}
- const triggers=[c.trigger||{},...(c.extraTriggers||[])],inputs=triggers.map(t=>signal(o,g,t));
+ const triggers=c.releaseBehavior?linkedTriggers.filter(t=>t.kind!=='gap-launch'):linkedTriggers;
+ const inputs=v.signals||(v.signals=[]);inputs.length=triggers.length;
+ for(let i=0;i<triggers.length;i++)inputs[i]=signal(o,g,triggers[i]);
  let completion=null;
  if(c.completion)for(let i=0;i<triggers.length;i++){
   const t=triggers[i],id=t.source;let stamp,rest;
@@ -1213,8 +1239,15 @@ function presentation(o,g){
   if(stamp!=null&&(!completion||stamp>completion.stamp))completion={stamp};
   if(stamp!=null&&rest)inputs[i].active=false;
  }
- const stamp=Math.max(...inputs.map(input=>Number.isFinite(input.stamp)?input.stamp:-Infinity)),event=Number.isFinite(stamp);
- const active=inputs.some(input=>input.active),rising=inputs.some((input,i)=>input.active&&!v.inputs?.[i]);v.inputs=inputs.map(input=>!!input.active);
+ let stamp=-Infinity,active=false,rising=false;
+ const previousInputs=v.inputs||(v.inputs=[]);
+ for(let i=0;i<inputs.length;i++){
+  const input=inputs[i];if(Number.isFinite(input.stamp))stamp=Math.max(stamp,input.stamp);
+  if(input.active){active=true;if(!previousInputs[i])rising=true;}
+  previousInputs[i]=!!input.active;
+ }
+ previousInputs.length=inputs.length;
+ const event=Number.isFinite(stamp);
  const b=c.behavior||{mode:'keep'},on=b.onSeconds||.6,off=b.offSeconds||2.4;
  if(event&&v.stamp!==stamp){v.start=stamp;v.stamp=stamp;}
  if(rising)v.start=g.time;
@@ -1296,6 +1329,7 @@ if(typeof module!=='undefined')module.exports=createReboundEffects;
 function createImpactPresentation(game,artLayers,renderer){
  const artById=new Map(artLayers.map(a=>[a.id,a]));
  const particles=[],rings=[],swings=[],lampPulses=new Map(),recent=new Map();
+ const effectLists=[particles,rings,swings];let cleanedAt=null,cleanDirty=true;
  let cannonAt=-Infinity;
  let combo=0,lastHit=-10,popAt=-10,shakeAt=-10,shakePower=0;
  const multiplier=n=>n>=30?4:n>=20?3:n>=10?2:n>=5?1.5:1;
@@ -1335,6 +1369,7 @@ function createImpactPresentation(game,artLayers,renderer){
  };
  const onEvent=game.onEvent;
  game.onEvent=e=>{
+  cleanDirty=true;
   if(['new-game','ready','drain','game-over'].includes(e.type)){
    combo=0;lastHit=-10;game.combo={count:0,multiplier:1,expiresAt:0};recent.clear();
    if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;particles.length=rings.length=swings.length=0;lampPulses.clear();}
@@ -1356,8 +1391,10 @@ function createImpactPresentation(game,artLayers,renderer){
   onEvent?.(e);
  };
  function clean(){
+  if(!cleanDirty&&cleanedAt===game.time)return;
+  cleanDirty=false;cleanedAt=game.time;
   if(game.time-lastHit>2&&combo){combo=0;game.combo={count:0,multiplier:1,expiresAt:0};}
-  for(const list of [particles,rings,swings])for(let i=list.length-1;i>=0;i--)if(game.time-list[i].at>(list[i].life||.4))list.splice(i,1);
+  for(const list of effectLists){let live=0;for(let i=0;i<list.length;i++)if(!(game.time-list[i].at>(list[i].life||.4)))list[live++]=list[i];list.length=live;}
   for(const [id,p] of lampPulses)if(game.time-p.at>.35)lampPulses.delete(id);
   for(const [id,at] of recent)if(game.time-at>2)recent.delete(id);
  }
@@ -1370,8 +1407,11 @@ function createImpactPresentation(game,artLayers,renderer){
    ctx.arc(...b.p,game.physics.ballRadius,0,Math.PI*2);ctx.clip('evenodd');
   }
   for(const b of game.balls){if(game.g.gameplay?.ballEffects===false||game.visualPlane(b)!==floor||b.state!=='playing')continue;const speed=Math.hypot(...b.v);if(speed<180)continue;
-   const trail=(b.trail||[]).filter(t=>t.layer===b.layer).slice(-10);ctx.strokeStyle=combo>=10?'#ffe597':'#a9eaff';
-   for(let i=1;i<trail.length;i++){ctx.globalAlpha=(i/trail.length)*Math.min(.48,speed/1800);ctx.lineWidth=.5+i/trail.length*2;ctx.beginPath();ctx.moveTo(...trail[i-1].p);ctx.lineTo(...trail[i].p);ctx.stroke();}
+   const trail=b.trail;let start=trail?.length||0,count=0;
+   for(let i=start-1;i>=0;i--)if(trail[i].layer===b.layer){start=i;if(++count===10)break;}
+   ctx.strokeStyle=combo>=10?'#ffe597':'#a9eaff';
+   let previous=null,index=0;
+   for(let i=start;i<(trail?.length||0);i++){const point=trail[i];if(point.layer!==b.layer)continue;if(previous){index++;ctx.globalAlpha=(index/count)*Math.min(.48,speed/1800);ctx.lineWidth=.5+index/count*2;ctx.beginPath();ctx.moveTo(...previous.p);ctx.lineTo(...point.p);ctx.stroke();}previous=point;}
   }
   for(const r of rings){if(r.plane!==floor)continue;const age=game.time-r.at,t=age/.4;ctx.globalAlpha=(1-t)*.85;ctx.strokeStyle=r.color;ctx.lineWidth=2.2*(1-t)+.3;ctx.beginPath();ctx.arc(...r.p,3+age*42*r.strength,0,Math.PI*2);ctx.stroke();}
   for(const q of particles){if(q.plane!==floor)continue;const age=game.time-q.at;ctx.save();ctx.globalAlpha=1-age/q.life;ctx.translate(q.p[0]+q.v[0]*age,q.p[1]+q.v[1]*age+18*age*age);ctx.rotate(q.angle+age*5);ctx.fillStyle=q.color;ctx.fillRect(-q.size,-q.size*.4,q.size*2,q.size*.8);ctx.restore();}
@@ -1379,7 +1419,10 @@ function createImpactPresentation(game,artLayers,renderer){
   for(const [id,q] of lampPulses){const a=artById.get(id);if(!a||a.hidden||a.plane!==floor)continue;const age=game.time-q.at;if(age<0)continue;
    const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
    ctx.save();ctx.translate(a.x,a.y);ctx.rotate((a.angle||0)*Math.PI/180);ctx.scale(a.flipX?-1:1,a.flipY?-1:1);ctx.globalAlpha=.65*fade;ctx.shadowColor=q.color;ctx.shadowBlur=6;
-   if(img.complete&&img.naturalWidth)ctx.drawImage(img,...a.crop,-a.width/2,-a.height/2,a.width,a.height);
+   if(img.complete&&img.naturalWidth){
+    if(renderer.drawImageWithShadow)renderer.drawImageWithShadow(ctx,img,...a.crop,a.width,a.height);
+    else ctx.drawImage(img,...a.crop,-a.width/2,-a.height/2,a.width,a.height);
+   }
    ctx.restore();
   }
   ctx.restore();
@@ -1392,6 +1435,7 @@ function createImpactPresentation(game,artLayers,renderer){
   const amplitude=5*(1-age/.3)**2;
   return [Math.cos(age*135)*amplitude,Math.sin(age*170)*amplitude*.7];
  },preview(kind){
+  cleanDirty=true;
   const p=[180,230];
   if(kind==='flipper')swings.push({p,angle:-Math.PI/2,at:game.time,plane:plane()});
   else burst(p,kind==='bumper'?'#a9edff':kind==='slingshot'?'#e9b575':'#ffe49b',kind==='complete'?2:1,kind==='slingshot'?-Math.PI/2:null);
@@ -1407,12 +1451,18 @@ function createImpactPresentation(game,artLayers,renderer){
  },get combo(){return {count:combo,multiplier:multiplier(combo),expiresAt:lastHit+2};},shake(){const t=game.time-shakeAt;if(t<0||t>.16)return [0,0];const fade=1-t/.16;return [Math.sin(t*150)*shakePower*fade,Math.cos(t*170)*shakePower*fade];},drawHud(ctx,bounds){
   clean();if(combo<2)return;const [x,y,w,h]=bounds;
   // Use the bottommost flipper on each side, excluding higher auxiliary flippers.
-  const floorFlippers=game.flippers.filter(f=>(f.layer||'lower')==='lower');
-  const lower=(floorFlippers.length?floorFlippers:[...game.flippers]).sort((a,b)=>b.pivot[1]-a.pivot[1]);
-  const pair=['left','right'].map(side=>lower.find(f=>(f.control||f.side)===side));
-  const anchors=pair.every(Boolean)?pair:lower.slice(0,2);
-  const cx=anchors.length?anchors.reduce((sum,f)=>sum+f.pivot[0],0)/anchors.length:x+w/2;
-  const cy=anchors.length?anchors.reduce((sum,f)=>sum+f.pivot[1],0)/anchors.length-75:y+h-100;
+  let hasLower=false;for(const f of game.flippers)if((f.layer||'lower')==='lower'){hasLower=true;break;}
+  let left=null,right=null,first=null,second=null;
+  for(const f of game.flippers){
+   if(hasLower&&(f.layer||'lower')!=='lower')continue;
+   if(!first||f.pivot[1]>first.pivot[1]){second=first;first=f;}else if(!second||f.pivot[1]>second.pivot[1])second=f;
+   const side=f.control||f.side;
+   if(side==='left'&&(!left||f.pivot[1]>left.pivot[1]))left=f;
+   if(side==='right'&&(!right||f.pivot[1]>right.pivot[1]))right=f;
+  }
+  const a=left&&right?left:first,b=left&&right?right:second;
+  const cx=a?(b?(a.pivot[0]+b.pivot[0])/2:a.pivot[0]):x+w/2;
+  const cy=a?(b?(a.pivot[1]+b.pivot[1])/2:a.pivot[1])-75:y+h-100;
   const size=Math.min(28,13+Math.log2(combo)*2.5),pop=1+.18*Math.exp(-Math.max(0,game.time-popAt)*18);
   const hud=game.g.gameplay?.comboHud||{};
   ctx.save();ctx.translate(cx,cy);ctx.scale(pop,pop);ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='bold '+size+'px sans-serif';ctx.lineWidth=3;ctx.strokeStyle=hud.outline||'#142735';ctx.fillStyle=hud.color||(combo>=10?'#ffe39a':'#c6f5ff');ctx.strokeText(String(combo),0,0);ctx.fillText(String(combo),0,0);ctx.scale(1/pop,1/pop);ctx.font='bold 9px sans-serif';ctx.strokeText('COMBO',0,-25);ctx.fillText('COMBO',0,-25);
@@ -1442,8 +1492,10 @@ let firstPlayGuidePending=!!TableTutorial&&(tutorialMode||bossStage===1&&new URL
 const touchControls=new Map();let launchMode=localStorage.getItem('pinball-launch-mode')||'hold',launchDrag=null;
 const artRenderer=new (PLAYTEST_THEME==='steampunk'?SteampunkArt.Renderer:PinballArt.Renderer)("",IndicatorLights.artMap(PirateMap));let artLayers=[],artWarning='';
 artRenderer.rasterCacheEnabled=true;
-artRenderer.backgroundCacheEnabled=['norse','touhou1'].includes(PLAYTEST_THEME);
-artRenderer.staticCacheEnabled=['pirate','steampunk'].includes(PLAYTEST_THEME);
+artRenderer.bitmapCacheEnabled=true;
+artRenderer.backgroundCacheEnabled=true;
+artRenderer.staticCacheEnabled=true;
+artRenderer.reuseCompositionBuffers=true;
 try{artLayers=PinballArt.validate(G.artLayers||[]);
  if(new URLSearchParams(location.search).get('art')==='preview'){
   const preview=JSON.parse(localStorage.getItem('pinball-art-preview-res')||'null');
@@ -1479,16 +1531,22 @@ const bossPresentation=['touhou1','touhou2'].includes(theater.theme)?new TouhouB
 if(bossPresentation){bossPresentation.choose(bossStage);theater.bossPresentation=bossPresentation;theater.onBossChanged=stage=>bossPresentation.choose(stage||bossStage);theater.onBossDefeated=()=>bossPresentation.defeat();bossPresentation.requestOrigin=()=>theater.send({command:'boss-origin'});theater.onBossOrigin=(stage,origin)=>bossPresentation.cast(stage,origin);addEventListener('pagehide',()=>bossPresentation.destroy(),{once:true});}
 for(const event of ['pointerdown','keydown'])addEventListener(event,()=>{soundBank.unlock();bossPresentation?.syncMusic(soundBank,true);},{capture:true});
 let soundEnabled=localStorage.getItem('pinball-sound')!=='off';
-function syncSound(){soundBank.setEnabled(soundEnabled);document.querySelectorAll('audio,video').forEach(a=>a.muted=!soundEnabled);}
+function syncSound(){soundBank.setEnabled(soundEnabled);document.querySelectorAll('audio,video').forEach(a=>a.muted=!soundEnabled);soundArt.src='res/img/system-marker-'+(soundEnabled&&window.PinballSystemVolume!==0?'sound':'muted')+'.png';const button=$('wideSound');button.setAttribute('aria-pressed',String(soundEnabled));button.querySelector('img').src=PinballRuntimeImages.resolve(soundArt.src);}
+function setPlaySound(enabled){
+ if(window.AppControls?.setSound)window.AppControls.setSound(!!enabled);
+ else{soundEnabled=!!enabled;localStorage.setItem('pinball-sound',soundEnabled?'on':'off');syncSound();}
+ draw();
+}
+addEventListener('storage',event=>{if(event.key==='pinball-sound'){soundEnabled=localStorage.getItem('pinball-sound')!=='off';syncSound();draw();}});
 syncSound();
 const settings=document.createElement('dialog');settings.style.cssText='background:#30251e;color:#fff0cc;border:2px solid #b89051;border-radius:12px;padding:24px';
 settings.innerHTML='<p><label><span data-i18n="settings.language">語言</span> <select id="tableLanguage"><option value="zh-Hant">繁體中文</option><option value="en">English</option><option value="ja">日本語</option></select></label></p><h2 data-i18n="settings.title">設定</h2><p><label><span data-i18n="settings.physics">球物理</span> <select id="physicsModel"><option value="legacy" data-i18n="settings.legacy">原本物理</option></select></label></p>'+[['geometryToggle','table.geometry']].map(([id,label])=>`<p><label><input type="checkbox" data-setting="${id}"> <span data-i18n="${label}">${PinballI18n.t(label)}</span></label></p>`).join('')+'<p><label><input id="artToggle" type="checkbox" checked> <span data-i18n="table.art">美術圖層</span></label></p><p hidden><label>畫面比例 <select id="playAspect"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label></p><p><label><span data-i18n="settings.launch">發射模式</span> <select id="launchMode"><option value="hold" data-i18n="settings.holdCharge">按住蓄力</option><option value="drag" data-i18n="settings.dragDown">向下拖曳</option></select></label></p><button id="testImpactSound" data-i18n="table.testSound">測試碰撞音效</button><button id="closeSettings" data-i18n="common.close">關閉</button><button id="mobileRestart" data-i18n="common.restart">重新開始</button>';
 document.body.append(settings);$('physicsModel').value=game.config.physicsModel;$('physicsModel').onchange=()=>applyPhysicsModel($('physicsModel').value);$('launchMode').value=launchMode;$('launchMode').onchange=()=>{clearTouchControls();launchMode=$('launchMode').value;localStorage.setItem('pinball-launch-mode',launchMode);};let settingsWasPaused=false;
 settings.onchange=e=>{const id=e.target.dataset.setting;if(id)$(id).checked=e.target.checked;if(id||e.target.id==='artToggle')draw();};
-$('closeSettings').onclick=()=>settings.close();$('testImpactSound').onclick=()=>{soundEnabled=true;localStorage.setItem('pinball-sound','on');syncSound();soundBank.unlock();soundBank.setPaused(false);soundBank.play('metal');};$('mobileRestart').onclick=()=>{settings.close();reset();};settings.onclose=()=>{game.paused=settingsWasPaused;};
+$('closeSettings').onclick=()=>settings.close();$('testImpactSound').onclick=()=>{setPlaySound(true);soundBank.unlock();soundBank.setPaused(false);soundBank.play('metal');};$('mobileRestart').onclick=()=>{settings.close();reset();};settings.onclose=()=>{game.paused=settingsWasPaused;};
 function openSettings(){if(window.AppControls){window.AppControls.openSettings();return;}if(settings.open)return;clearTouchControls();settingsWasPaused=game.paused;game.paused=true;launchStartedAt=null;game.input.launch=game.input.left=game.input.right=false;settings.querySelectorAll('[data-setting]').forEach(e=>e.checked=$(e.dataset.setting).checked);settings.showModal();}
-const leaveDialog=document.createElement('dialog');leaveDialog.id='leaveGameDialog';leaveDialog.style.cssText='background:#30251e;color:#fff0cc;border:2px solid #b89051;border-radius:12px;padding:24px';
-leaveDialog.innerHTML='<h2 data-i18n="table.leaveTitle">離開球台？</h2><button id="continueGame" data-i18n="table.continue">繼續遊玩</button> <button id="leaveGame" data-i18n="table.leave">離開球台</button>';document.body.append(leaveDialog);
+const leaveDialog=document.createElement('dialog');leaveDialog.id='leaveGameDialog';leaveDialog.setAttribute('aria-labelledby','leave-game-title');
+leaveDialog.innerHTML='<h2 id="leave-game-title" data-i18n="table.leaveTitle">離開球台？</h2><button id="continueGame" data-i18n="table.continue">繼續遊玩</button> <button id="leaveGame" data-i18n="table.leave">離開球台</button>';document.body.append(leaveDialog);
 function applyLocale(){
  document.documentElement.lang=PinballI18n.locale;PinballI18n.apply(document);$('tableLanguage').value=PinballI18n.locale;firstPlayGuide?.refresh();
 }
@@ -1512,7 +1570,7 @@ function artWithBalls(plane){
  const drawBalls=()=>{reboundEffects.draw(ctx,plane);for(const b of game.balls){if(b.layer==='right_upper')continue;const track=b.state==='guided'?game.guidedTracks.find(t=>t.id===b.track.id):null;const visualPlane=track?(track.layer==='tavern'?'upper':track.layer||'lower'):game.visualPlane(b);if(visualPlane===plane)drawBall(b);}};
  if(!plan.hasBallMarker)drawBalls();
  let drawn=false;for(const batch of plan.batches){if(batch)art(plane,batch);else if(!drawn){drawBalls();drawn=true;}}
- GuidedTrackGeometry.drawRails(ctx,trackOverlay,plane);
+ trackRenderer.draw(ctx,plane);
  if(!spaceTheme)ConfiguredMechanisms.drawPostCounts(game,ctx,plane);
 }
 
@@ -1540,7 +1598,7 @@ function applyPlayAspect(value){
 }
 $('playAspect').onchange=()=>applyPlayAspect($('playAspect').value);
 $('wideBack').onclick=()=>requestLeaveGame();
-$('wideSettings').onclick=()=>openSettings();$('wideRestart').onclick=()=>reset();$('wideSound').onclick=()=>{soundEnabled=!soundEnabled;localStorage.setItem('pinball-sound',soundEnabled?'on':'off');syncSound();};
+$('wideSettings').onclick=()=>openSettings();$('wideRestart').onclick=()=>reset();$('wideSound').onclick=()=>setPlaySound(!soundEnabled);
 $('wideTitle').textContent=({pirate:'PIRATE PINBALL',steampunk:'STEAMPUNK PINBALL','sci-fi':'SPACE PINBALL',norse:'SAGA PINBALL'}[PLAYTEST_THEME]||'PINBALL');
 function resize(){
  const stage=$('playLayout');
@@ -1604,7 +1662,7 @@ function endGame(){
  try{localStorage.setItem('pinball-high-scores-v1',JSON.stringify(rows));}catch{}
  gameOverOverlay=PirateMap.showGameOver(document,game.score,rows,id,()=>{gameOverOverlay=null;if(bossStage)window.dispatchEvent(new CustomEvent('pinball:boss-exit',{detail:{stage:bossStage}}));else reset();},bossStage?PinballI18n.t('table.leave'):'重新開始');
 }
-game.onEvent=e=>{bossPresentation?.onEvent(e);artRenderer.onEvent?.(e);firstPlayGuide?.onEvent(e);updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;}if(e.type==='ball-saved')notice(PinballI18n.t('table.ballSaved'));if(e.type==='ball-save-ready'){launchStartedAt=null;notice(PinballI18n.t('table.relaunch'));}if(e.type==='sound'&&e.name!=='runic-spin')soundBank.play(e.name);if(e.type==='release'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice(PinballI18n.t('table.enemyWait'));window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice(PinballI18n.t('table.extraBall',{source:e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':PinballI18n.t('table.vortex')}));if(e.type==='vortex-activated')notice(PinballI18n.t('table.vortexActive'));if(e.type==='target-bonus')notice(PinballI18n.t('table.targetBonus'));if(e.type==='bumper-upgraded')notice(PinballI18n.t('table.bumperLevel',{level:e.level}));if(e.type==='center-post-up')notice(PinballI18n.t('table.postUp'));if(e.type==='multiball-awarded')notice(PinballI18n.t('table.multiball'));if(e.type==='free-ball-launch')notice(PinballI18n.t('table.multiballLaunch'));if(e.type==='kickback-lane')notice(e.side==='left'?PinballI18n.t('table.kickLeft'):PinballI18n.t('table.kickRight'));if(e.type==='capture'){if(spaceTheme)soundBank.play('space-magic');notice(PinballI18n.t('table.capture'));}if(e.type==='release')notice(PinballI18n.t('table.release'));if(e.type==='drain')notice(PinballI18n.t('table.drain'));if(e.type==='ready')notice(PinballI18n.t('table.launchShort'));if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to==='top'?PinballI18n.t('table.enterTop'):e.to!=='lower'?PinballI18n.t('table.enterMiddle'):PinballI18n.t('table.enterLower'));if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?PinballI18n.t('table.singleTarget'):PinballI18n.t('table.targetSet'));};
+game.onEvent=e=>{window.PinballHaptics?.onEvent(e,game);bossPresentation?.onEvent(e);artRenderer.onEvent?.(e);firstPlayGuide?.onEvent(e);updateScreenDimEvent(e);if(e.type==='new-game')floatingRewards=[];if((e.type==='score'||e.type==='target-bonus')&&e.points>0)showFloatingReward(e.position,'+'+e.points);if(e.type==='extra-life-awarded')showFloatingReward(e.position||game.ball.p,'+1',true);if(e.type==='launch'){ballStartedAt=game.time;ballElapsed=0;soundBank.play('explosion');}if(e.type==='drain'&&ballStartedAt!==null){ballElapsed=game.time-ballStartedAt;ballStartedAt=null;}if(e.type==='new-game'){ballStartedAt=null;ballElapsed=0;}if(e.type==='ball-saved')notice(PinballI18n.t('table.ballSaved'));if(e.type==='ball-save-ready'){launchStartedAt=null;notice(PinballI18n.t('table.relaunch'));}if(e.type==='sound'&&e.name!=='runic-spin')soundBank.play(e.name);if(e.type==='release'||e.type==='kickback')soundBank.play('explosion');if(e.type==='new-game'||e.type==='ready')soundBank.stop();theater.onEvent(e);if(e.type==='enemy-spawn-requested'){launchStartedAt=null;game.input.launch=false;game.charge=game.chargeElapsed=0;notice(PinballI18n.t('table.enemyWait'));window.dispatchEvent(new CustomEvent('pinball:enemy-spawn',{detail:e}));}if(e.type==='extra-life-awarded')notice(PinballI18n.t('table.extraBall',{source:e.source==='multiball'?'Multiball':e.source==='boss-target'?'Boss target':PinballI18n.t('table.vortex')}));if(e.type==='vortex-activated')notice(PinballI18n.t('table.vortexActive'));if(e.type==='target-bonus')notice(PinballI18n.t('table.targetBonus'));if(e.type==='bumper-upgraded')notice(PinballI18n.t('table.bumperLevel',{level:e.level}));if(e.type==='center-post-up')notice(PinballI18n.t('table.postUp'));if(e.type==='multiball-awarded')notice(PinballI18n.t('table.multiball'));if(e.type==='free-ball-launch')notice(PinballI18n.t('table.multiballLaunch'));if(e.type==='kickback-lane')notice(e.side==='left'?PinballI18n.t('table.kickLeft'):PinballI18n.t('table.kickRight'));if(e.type==='capture'){if(spaceTheme)soundBank.play('space-magic');notice(PinballI18n.t('table.capture'));}if(e.type==='release')notice(PinballI18n.t('table.release'));if(e.type==='drain')notice(PinballI18n.t('table.drain'));if(e.type==='ready')notice(PinballI18n.t('table.launchShort'));if(e.type==='game-over')endGame();if(e.type==='layer')notice(e.to==='top'?PinballI18n.t('table.enterTop'):e.to!=='lower'?PinballI18n.t('table.enterMiddle'):PinballI18n.t('table.enterLower'));if(e.type==='target-group-complete')notice(game.targetGroups.find(g=>g.id===e.id)?.targets.length===1?PinballI18n.t('table.singleTarget'):PinballI18n.t('table.targetSet'));};
 theater.game=game;
 function startBoss(){
  if(!Number.isInteger(bossStage)||bossStage<1||bossStage>8)return;
@@ -1644,6 +1702,7 @@ const reboundEffects=createReboundEffects(game,soundBank);
 const impactPresentation=createImpactPresentation(game,artLayers,artRenderer);
 theater.onSound=name=>impactPresentation.onTheaterSound(name);
 const trackOverlay=GuidedTrackGeometry.outlines([...(G.guided_tracks||[]),...(G.visual_tracks||[])]);const trackLayout=new Map([...trackOverlay].map(([id,t])=>[id,{...t,showAboveArt:true}]));
+const trackRenderer=GuidedTrackGeometry.createRenderer(trackOverlay);
 function drawGravityZone(zone){
  const [dx,dy]={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[zone.direction],size=Math.min(12,zone.width/4,zone.height/4),tip=[zone.x+dx*size,zone.y+dy*size];
  ctx.save();const points=zone.points||[[zone.x-zone.width/2,zone.y-zone.height/2],[zone.x+zone.width/2,zone.y-zone.height/2],[zone.x+zone.width/2,zone.y+zone.height/2],[zone.x-zone.width/2,zone.y+zone.height/2]];ctx.setLineDash([4,2]);path(points,zone.points?'#9ae2a520':'#77c9ff18',zone.points?'#9ae2a5':'#77c9ff',.8,true);ctx.setLineDash([]);
@@ -1708,6 +1767,7 @@ function draw(){
  drawFloatingRewards();
  drawBallOutlines();
  impactPresentation.drawHud(ctx,view);
+ if($('artToggle').checked)game.bonus?.drawAttackOverlay?.(ctx,artRenderer,view);
  if(playAspect==='landscape'){setText('wideScore',game.score);setText('wideBalls',game.ballNumber+' / 3');setText('wideStage',bossStage||theater.hudState?.level||PinballI18n.t('table.freeShort'));setText('wideBoss',theater.hudState?.name?(theater.hudState.defeated?PinballI18n.t('table.defeated'):'BOSS · ')+theater.hudState.name:game.enemyActive?PinballI18n.t('table.entering'):PinballI18n.t('table.free'));setText('wideTime',formatBallTime(ballStartedAt===null?ballElapsed:game.time-ballStartedAt));setText('wideNotice',$('notice').textContent);}
  const mechanismStatus=ConfiguredMechanisms.status(game);
  setText('mechanics',PinballI18n.t('table.mechanics',{status:mechanismStatus,left:game.rescueState(game.ball.layer).hits.left?'✓':'○',right:game.rescueState(game.ball.layer).hits.right?'✓':'○',balls:game.balls.filter(b=>b.state!=='drained').length,awards:game.multiballAwards})+(game.configuredPosts?.size?' · '+mechanismStatus:''));
@@ -1734,7 +1794,7 @@ function frame(now){
  if(canvas.style.translate!==screenTranslate){canvas.style.translate=screenTranslate;theater.frame.style.translate=screenTranslate;}
  const dt=Math.min(.05,(now-previous)/1000);previous=now;firstPlayGuide?.tick?.(dt);if(firstPlayGuidePending&&!game.paused&&!game.enemyIntroPending&&!theater.curtainClosing&&!game.theaterFrozen){firstPlayGuidePending=false;firstPlayGuide=TableTutorial.start({game,theater,canvas,G,P,artLayers,view,getView:()=>view,soundBank,clearTouchControls,launch,notice,
 controls:{get launchMode(){return launchMode},get launchDrag(){return launchDrag},set launchDrag(value){launchDrag=value}},
-onFinish(){firstPlayGuide=null;}});}theater.update(leaveDialog.open?0:dt,game);game.bonus?.update(dt);bossPresentation?.update(dt,soundBank,game.paused&&(!theater.bossDefeated||settings.open||leaveDialog.open||suspendedGameState!==null));soundBank.setPaused(game.paused&&!settings.open);if(G.gameplay?.runicTurntable)soundBank.sync('runic-spin',game.bonus.clock-game.bonus.phaseAt,!game.paused&&game.bonus.phase==='spin'&&game.bonus.clock-game.bonus.phaseAt<G.gameplay.runicTurntable.spinSeconds);if(!game.paused&&!game.theaterFrozen&&!game.bonusFrozen&&!firstPlayGuide?.demoFrozen){accumulator+=dt;while(accumulator>=game.physics.step){game.step();accumulator-=game.physics.step;if(game.theaterFrozen||game.bonusFrozen||game.paused){accumulator=0;break;}}}else accumulator=0;syncLaunchCharge(now);if(!game.paused&&!game.theaterFrozen||screenDimAlpha>0||now-lastDrawAt>=100){draw();lastDrawAt=now;}requestAnimationFrame(frame)}
+onFinish(){firstPlayGuide=null;}});}theater.update(leaveDialog.open?0:dt,game);game.bonus?.update(dt);bossPresentation?.update(dt,soundBank,settings.open||leaveDialog.open||suspendedGameState!==null||game.paused&&!firstPlayGuide&&!theater.bossDefeated);soundBank.setPaused(game.paused&&!settings.open);if(G.gameplay?.runicTurntable)soundBank.sync('runic-spin',game.bonus.clock-game.bonus.phaseAt,!game.paused&&game.bonus.phase==='spin'&&game.bonus.clock-game.bonus.phaseAt<G.gameplay.runicTurntable.spinSeconds);if(!game.paused&&!game.theaterFrozen&&!game.bonusFrozen&&!firstPlayGuide?.demoFrozen){accumulator+=dt;while(accumulator>=game.physics.step){game.step();accumulator-=game.physics.step;if(game.theaterFrozen||game.bonusFrozen||game.paused){accumulator=0;break;}}}else accumulator=0;syncLaunchCharge(now);if(!game.paused&&!game.theaterFrozen||screenDimAlpha>0||now-lastDrawAt>=100){draw();lastDrawAt=now;}requestAnimationFrame(frame)}
 let launchStartedAt=null;
 function syncLaunchCharge(now=performance.now()){
  if(launchDrag)return;
@@ -1762,15 +1822,15 @@ $('settings').onclick=openSettings;$('restart').onclick=reset;$('nudge').onclick
 $('probe').checked=false;
 const mainFlipper=game.flippers.reduce((lowest,f)=>!lowest||f.pivot[1]>lowest.pivot[1]?f:lowest,null);
 $('probeLayer').value=mainFlipper?.layer||'lower';
-function bind(id,set){const b=$(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);set(true);e.preventDefault()};b.onpointerup=()=>set(false);b.onpointercancel=()=>set(false)}
+function bind(id,set){const b=$(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);set(true);if(!game.paused&&!game.gameOver)window.PinballHaptics?.play('tap');e.preventDefault()};b.onpointerup=()=>set(false);b.onpointercancel=()=>set(false)}
 bind('left',v=>game.input.left=v);bind('right',v=>game.input.right=v);bind('launch',launch);
 function key(e,on){if(tutorialMode||leaveDialog.open)return;if(e.target.tagName==='INPUT')return;const k=e.key.toLowerCase();const control=['arrowleft','z'].includes(k)?'left':['arrowright','c'].includes(k)?'right':[' ','arrowdown'].includes(k)?'launch':null;if(firstPlayGuide&&!firstPlayGuide.allowed(control)){e.preventDefault();return;}if(!on&&control&&firstPlayGuide)firstPlayGuide.used(control);if([' ','arrowdown','arrowleft','arrowright','z','c','x','r'].includes(k))e.preventDefault();if(['arrowleft','z'].includes(k))game.input.left=on;if(['arrowright','c'].includes(k))game.input.right=on;if([' ','arrowdown'].includes(k)&&!e.repeat)launch(on);if(on&&!e.repeat){if(k==='r')reset();if(k==='x')game.nudge()}}
 addEventListener('keydown',e=>{if(!gameOverOverlay)key(e,true)});addEventListener('keyup',e=>{if(!gameOverOverlay)key(e,false)});
 addEventListener('blur',()=>{clearTouchControls();game.input.left=game.input.right=game.input.launch=false;if(!window.AppControls&&!game.paused)openSettings()});
-canvas.onpointerdown=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*view[2]+view[0],y=(e.clientY-r.top)/r.height*view[3]+view[1];if(topHit(backArt,x,y)){requestLeaveGame();return;}if(topHit(settingsArt,x,y)){openSettings();return;}if(topHit(soundArt,x,y)){soundEnabled=!soundEnabled;localStorage.setItem('pinball-sound',soundEnabled?'on':'off');syncSound();notice(soundEnabled?PinballI18n.t('table.soundOn'):PinballI18n.t('table.soundOff'));draw();return;}if(!$('probe').checked){
+canvas.onpointerdown=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*view[2]+view[0],y=(e.clientY-r.top)/r.height*view[3]+view[1];if(topHit(backArt,x,y)){requestLeaveGame();return;}if(topHit(settingsArt,x,y)){openSettings();return;}if(topHit(soundArt,x,y)){setPlaySound(!soundEnabled);notice(soundEnabled?PinballI18n.t('table.soundOn'):PinballI18n.t('table.soundOff'));draw();return;}if(!$('probe').checked){
  if(e.pointerType!=='touch'||game.paused||game.gameOver||y<0)return;
  const control=game.ball.state==='ready'&&x>=G.plunger.left?'launch':x<180?'left':'right';
- const already=[...touchControls.values()].includes(control);touchControls.set(e.pointerId,control);canvas.setPointerCapture(e.pointerId);e.preventDefault();
+ const already=[...touchControls.values()].includes(control);if(!already)window.PinballHaptics?.play('tap');touchControls.set(e.pointerId,control);canvas.setPointerCapture(e.pointerId);e.preventDefault();
  if(control==='launch'){if(!already){if(launchMode==='drag'){if(game.ball.state==='ready'&&!game.freezeRemaining&&!game.enemyIntroPending&&!theater.curtainClosing){launchDrag={pointerId:e.pointerId,y:e.clientY};game.launchAiming=true;}}else launch(true);}}else game.input[control]=true;
  return;
 }
@@ -1818,7 +1878,7 @@ async function loadPiratePreview(layout){
   }
   collectImages(geometry.gameplay?.touhouBagua);collectImages(geometry.gameplay?.runicTurntable);collectImages(geometry.artLayers);collectImages(PlayFrame.createArt(previewTheme));
   await Promise.all([...sources].map(async src=>{
-   const image=new Image();image.src=src;
+   const image=new Image();image.src=PinballRuntimeImages.resolve(src);
    try{await image.decode();}catch{throw Error('圖片載入失敗：'+src);}
   }));
   startPreview(geometry);

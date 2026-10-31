@@ -26,7 +26,7 @@ function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='重新開始
  return doc.defaultView.GameOverDialog.show(doc,score,rows,currentId,onClose,buttonLabel);
 }
 const sounds={
- metal:{src:'res/audio/electronic-impact.wav',volume:1,interval:70,voices:4},
+ metal:{src:'res/audio/ball-impact.wav',volume:1,interval:70,voices:4},
  thunder:{src:'res/audio/thunder.ogg',volume:.75,interval:100,voices:2},
  'electric-charge':{src:'res/audio/steampunk-electric-charge.wav',volume:.55,interval:50,voices:1},
  judgment:{src:'res/audio/steampunk-attack-judgment.ogg?v=short2',volume:.65,interval:50,voices:1},

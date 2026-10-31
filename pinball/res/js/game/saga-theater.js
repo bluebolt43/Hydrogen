@@ -3,7 +3,7 @@
 const data=SAGA_THEATER,$=id=>document.getElementById(id);
 TheaterFrame.mountControls({title:data.title+' · 戰鬥劇場',attacks:Object.fromEntries(Object.entries(data.attacks).map(([id,a])=>[id,id.toUpperCase()+' '+a.name]))});
 const stage=$('stage'),boss=$('boss'),enemy=$('enemy'),enemies=$('enemies'),effects=$('effects'),background=$('background'),health=$('health');
-for(const image of document.querySelectorAll('.saga-wave'))image.src=data.wavesSrc;
+for(const image of document.querySelectorAll('.saga-wave'))image.src=PinballRuntimeImages.resolve(data.wavesSrc);
 const params=new URLSearchParams(location.search),embedded=params.has('embed'),running=new Set();
 const soundBank=embedded?null:new PinballSound(Object.fromEntries(Object.entries(PirateMap.sounds).map(([name,clip])=>[name,{...clip,src:new URL('../'+clip.src,document.baseURI).href}])));
 if(soundBank)for(const name of ['pointerdown','keydown'])addEventListener(name,()=>soundBank.unlock(),{capture:true});
@@ -56,14 +56,14 @@ function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=ma
 async function flip(to,token){
  if(to===stateIndex)return;
  await animate(boss,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],500);if(token!==generation)return;
- boss.src=config().states[to].src;await boss.decode();if(token!==generation)return;
+ boss.src=PinballRuntimeImages.resolve(config().states[to].src);await boss.decode();if(token!==generation)return;
  stateIndex=to;boss.alt=config().name+' · '+config().states[to].label;draw();layout();
  await animate(boss,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],500);
 }
 function applyScene(override){
- const c=config();hp=c.health;stateIndex=0;boss.src=c.states[0].src;boss.alt=c.name+' · 正常';
+ const c=config();hp=c.health;stateIndex=0;boss.src=PinballRuntimeImages.resolve(c.states[0].src);boss.alt=c.name+' · 正常';
  enemy.hidden=false;enemy.style.opacity='';enemy.style.translate='';enemy.style.rotate='';
- background.src=override||c.background;background.alt=c.name+'的戰鬥場景';stage.style.setProperty('--background-position',c.backgroundPosition);
+ background.src=PinballRuntimeImages.resolve(override||c.background);background.alt=c.name+'的戰鬥場景';stage.style.setProperty('--background-position',c.backgroundPosition);
  TheaterFrame.renderHealth(health,hp);stage.dataset.phase='idle';$('status').textContent='Boss '+level+' · '+c.name;draw();layout();
 }
 async function enter(skipWarning=false,override){
@@ -77,7 +77,7 @@ async function enter(skipWarning=false,override){
 }
 async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Saga 尚未建立此關卡');level=next;await enter(skipWarning,background);}
 async function reset(){const token=cancelScene();pause(false);busy=true;draw();await frame.curtains(true);if(token!==generation)return;enemies.hidden=true;applyScene();busy=false;draw();}
-function sprite(src,className='prop'){const e=document.createElement('img');e.className=className;e.src=src;e.alt='';effects.append(e);return e;}
+function sprite(src,className='prop'){const e=document.createElement('img');e.className=className;e.src=PinballRuntimeImages.resolve(src);e.alt='';effects.append(e);return e;}
 function effect(className){const e=document.createElement('div');e.className=className;effects.append(e);return e;}
 function fragments(color,count=9){return Promise.all(Array.from({length:count},(_,i)=>{const p=effect('paper-piece');p.style.background=color;const angle=i/count*Math.PI*2;return animate(p,[{opacity:1,translate:'0 0',rotate:'0deg'},{opacity:0,translate:`${Math.cos(angle)*350}% ${Math.sin(angle)*280+180}%`,rotate:(i*47)+'deg'}],620);}));}
 async function approach(kind,weapon,spread=0){
@@ -151,12 +151,12 @@ async function attack(command){
  if(!a)throw Error('Unknown Saga attack: '+command);
  if(!loaded||busy||isPaused()||hp===0)return false;
  busy=true;draw();const token=generation,previous=hp;
- const weapon=effect('strike');weapon.dataset.attack=kind;weapon.dataset.phase='approach';weapon.style.width=a.width+'%';const image=document.createElement('img');image.src=a.src;image.alt='';weapon.append(image);
+ const weapon=effect('strike');weapon.dataset.attack=kind;weapon.dataset.phase='approach';weapon.style.width=a.width+'%';const image=document.createElement('img');image.src=PinballRuntimeImages.resolve(a.src);image.alt='';weapon.append(image);
  try{
   const weapons=[weapon];
   if(kind==='lv2'){
    const fork=effect('strike');fork.dataset.attack=kind;fork.dataset.phase='approach';fork.style.width=a.width+'%';
-   const image=document.createElement('img');image.src=a.secondarySrc;image.alt='';fork.append(image);weapons.push(fork);
+   const image=document.createElement('img');image.src=PinballRuntimeImages.resolve(a.secondarySrc);image.alt='';fork.append(image);weapons.push(fork);
   }
   await Promise.all(weapons.map((item,i)=>approach(kind,item,kind==='lv2'?(i===0?-.12:.12):0)));
   if(token!==generation)return false;
@@ -189,7 +189,7 @@ document.querySelector('label:has(#speed)').firstChild.textContent='動畫速度
 for(const b of document.querySelectorAll('[data-attack]'))b.onclick=()=>attack(b.dataset.attack).catch(showError);
 applyScene();enemies.hidden=true;
 const sources=[...new Set(levels.flatMap(b=>[b.background,...b.states.map(state=>state.src)]).concat(Object.values(data.attacks).flatMap(a=>[a.src,a.secondarySrc].filter(Boolean)),[data.wavesSrc,data.lightningSrc,data.electricSrc,data.electricBurstSrc,'img/theater-curtain-right.png','img/health-heart.svg','img/pirate/pirate-explosion-smoke.png']))];
-const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=src;return image.decode();})).then(async()=>{loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();});
+const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=PinballRuntimeImages.resolve(src);return image.decode();})).then(async()=>{loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();});
 ready.catch(e=>{$('status').textContent='素材載入失敗：'+e.message;});
 window.SagaTheater={attack,choose,reset,pause,state,get ready(){return loaded;}};
 window.viewReady=ready;window.viewAPI={play:()=>choose(level,true),suspend:()=>pause(true),resume:()=>pause(false)};

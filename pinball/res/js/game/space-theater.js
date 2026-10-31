@@ -20,8 +20,8 @@ const isPaused=()=>paused||stage.classList.contains('paused');
 function state(){return {name:config().name,level,hp:fleetHp.length?[...fleetHp]:[hp],maxHp:config().health,phase:phaseIndex+1,phaseCount:phases().length,phaseHp:phaseHealth(),phaseMaxHp:form().health,core:form().core?'empty-plate':null,target:fleetHp.length?fleetHp.findIndex(h=>h>0):hp>0?0:-1,busy,paused:isPaused(),defeated:hp===0,background:(form().background||entryBackground).includes('mechanized')?'mechanized':(form().background||entryBackground).includes('palace')?'palace':'space'};}
 function applyForm(){
  enemy.hidden=!!config().ships;fleet.hidden=!config().ships;
- boss.src=form().src;boss.alt=config().name+(form().name?' · '+form().name:'');
- stage.querySelector('.background').src=form().background||entryBackground;
+ boss.src=PinballRuntimeImages.resolve(form().src);boss.alt=config().name+(form().name?' · '+form().name:'');
+ stage.querySelector('.background').src=PinballRuntimeImages.resolve(form().background||entryBackground);
  stage.dataset.phase=String(phaseIndex+1);
  $('states').replaceChildren(...(config().phases||config().damageStates||[]).map((p,i)=>{const chip=document.createElement('span');chip.textContent=p.name;chip.className=i===phaseIndex?'active':'';return chip;}));
 }
@@ -57,7 +57,7 @@ function resetScene(){
   const element=document.createElement('span');element.className='fleet-ship';element.dataset.ship=String(i);
   Object.assign(element.style,{left:ship.x+'%',top:ship.y+'%',width:ship.width+'%'});
   const hearts=document.createElement('span');hearts.className='hp';element.append(hearts);
-  const image=new Image();image.src=config().src;image.alt=config().name+' '+(i+1)+' · 正常';element.dataset.damageState='normal';element.append(image);fleet.append(element);
+  const image=new Image();image.src=PinballRuntimeImages.resolve(config().src);image.alt=config().name+' '+(i+1)+' · 正常';element.dataset.damageState='normal';element.append(image);fleet.append(element);
   TheaterFrame.renderHealth(hearts,fleetHp[i]);
  }
 busy=false;applyForm();enemy.style.opacity='';
@@ -101,7 +101,7 @@ async function defeat(token){
  await animate(enemy,frames,650);if(token===generation)enemies.hidden=true;
 }
 function attackSprite(kind,x,y,width){
- const image=new Image();image.src=SPACE_THEATER.attacks[kind].src;image.alt='';image.className='space-attack-sprite';image.dataset.sprite=kind;
+ const image=new Image();image.src=PinballRuntimeImages.resolve(SPACE_THEATER.attacks[kind].src);image.alt='';image.className='space-attack-sprite';image.dataset.sprite=kind;
  Object.assign(image.style,{left:x+'%',top:y+'%',width:width+'%'});effects.append(image);return image;
 }
 function laser(from,to,large=false){
@@ -123,7 +123,7 @@ async function playAttack(kind,targets,token){
   ],850,'ease-in');
   if(token!==generation)return false;cookie.remove();stage.dataset.attackPhase='explosion';sound('explosion');
   for(let i=0;i<2;i++){
-   const puff=new Image();puff.src=SPACE_THEATER.effects.explosion;puff.alt='';puff.className='space-attack-sprite';puff.dataset.effect='explosion';
+   const puff=new Image();puff.src=PinballRuntimeImages.resolve(SPACE_THEATER.effects.explosion);puff.alt='';puff.className='space-attack-sprite';puff.dataset.effect='explosion';
    Object.assign(puff.style,{left:p.x+'%',top:p.y+'%',width:'25.6%'});effects.append(puff);
    await animate(puff,[{scale:.2,opacity:0,translate:'0 0',offset:0},{scale:.95,opacity:1,offset:.15},{scale:1.15,opacity:.9,offset:.5},{scale:1.4,opacity:0,translate:'0 -12px',offset:1}],650,'linear');
    if(token!==generation)return false;puff.remove();
@@ -153,7 +153,7 @@ async function playAttack(kind,targets,token){
    ],720,'linear');
    if(token!==generation)return;bandit.remove();sound('explosion');
    const burst=document.createElement('div');burst.className='space-bandit-hit';burst.dataset.effect='bandit-hit';Object.assign(burst.style,{left:hitX+'%',top:target.y+'%'});effects.append(burst);
-   const puff=new Image();puff.src=SPACE_THEATER.effects.explosion;puff.className='space-attack-sprite';puff.alt='';Object.assign(puff.style,{left:hitX+'%',top:target.y+'%',width:'25.6%'});effects.append(puff);
+   const puff=new Image();puff.src=PinballRuntimeImages.resolve(SPACE_THEATER.effects.explosion);puff.className='space-attack-sprite';puff.alt='';Object.assign(puff.style,{left:hitX+'%',top:target.y+'%',width:'25.6%'});effects.append(puff);
    await Promise.all([
     animate(burst,[{opacity:1,scale:.2},{opacity:1,scale:i===2?1.4:1,offset:.25},{opacity:0,scale:1.6}],300),
     animate(enemies,[{translate:'0 0'},{translate:(i%2?-1:1)*(i===2?10:6)+'px -4px',offset:.3},{translate:'0 0'}],180),
@@ -178,7 +178,7 @@ async function playAttack(kind,targets,token){
   stage.dataset.attackPhase='blackout';pasta.remove();hole.remove();
   await animate(black,[{opacity:1},{opacity:1}],250);if(token!==generation)return false;
   stage.dataset.attackPhase='blast';sound('explosion');
-  const blast=new Image();blast.src=SPACE_THEATER.effects.explosion;blast.className='space-attack-sprite space-super-explosion';blast.alt='';blast.dataset.effect='super-explosion';effects.append(blast);
+  const blast=new Image();blast.src=PinballRuntimeImages.resolve(SPACE_THEATER.effects.explosion);blast.className='space-attack-sprite space-super-explosion';blast.alt='';blast.dataset.effect='super-explosion';effects.append(blast);
   const flash=document.createElement('div');flash.className='space-explosion-flash';effects.append(flash);
   await Promise.all([animate(blast,[{opacity:0,scale:.1},{opacity:1,scale:.9,offset:.16},{opacity:1,scale:1.3,offset:.5},{opacity:0,scale:1.8}],900),animate(flash,[{opacity:0},{opacity:1,offset:.2},{opacity:0}],200)]);
   if(token!==generation)return false;blast.remove();flash.remove();await animate(black,[{opacity:1},{opacity:0}],250);if(token!==generation)return false;black.remove();
@@ -214,7 +214,7 @@ async function attackFleet(kind){
     const image=ship.querySelector(':scope > img'),damaged=h*2<=config().ships[i].health,asset=config().damageStates[damaged?1:0];
     if(image.getAttribute('src')!==asset.src){
      await animate(image,[{transform:'rotateY(0deg)'},{transform:'rotateY(90deg)'}],160,'linear');if(token!==generation)return;
-     image.src=asset.src;image.alt=config().name+' '+(i+1)+' · '+asset.name;ship.dataset.damageState=damaged?'heavily-damaged':'normal';
+     image.src=PinballRuntimeImages.resolve(asset.src);image.alt=config().name+' '+(i+1)+' · '+asset.name;ship.dataset.damageState=damaged?'heavily-damaged':'normal';
      try{await image.decode();}catch(error){if(token!==generation)return;throw error;}
      if(token!==generation)return;
      await animate(image,[{transform:'rotateY(-90deg)'},{transform:'rotateY(0deg)'}],160,'linear');if(token!==generation)return;
@@ -254,7 +254,7 @@ $('daynight').textContent='共用太空背景';$('daynight').disabled=true;
 for(const button of document.querySelectorAll('[data-attack]'))button.onclick=()=>attack(button.dataset.attack).catch(error=>{$('status').textContent=error.message;});
 resetScene();enemies.hidden=true;
 const sources=[...new Set([SPACE_THEATER.background,...Object.values(SPACE_THEATER.attacks).map(a=>a.src).filter(Boolean),...Object.values(SPACE_THEATER.effects||{}),...levels.map(b=>b.background),...levels.flatMap(b=>[b.src,...(b.phases||b.damageStates||[]).flatMap(p=>[p.src,p.background].filter(Boolean))]),'img/theater-curtain-right.png','img/health-heart.svg'])];
-const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=src;return image.decode();})).then(async()=>{
+const ready=Promise.all(sources.map(src=>{const image=new Image();image.src=PinballRuntimeImages.resolve(src);return image.decode();})).then(async()=>{
  loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();
 });
 window.SpaceTheater={attack,choose,reset,pause,state,get ready(){return loaded;}};

@@ -1354,9 +1354,13 @@ async function playHostChapter(key = hostKey) {
       await hostAudio.play();
       if (serial !== hostSerial) return false;
       hostAudio.pause(); hostAudio.currentTime = 0;
-    } catch {
-      hostBegin.hidden = false;
-      return false;
+    } catch (error) {
+      // Only a gesture restriction can be resolved by asking for another tap.
+      // Missing/unsupported audio must not prevent the story from completing.
+      if (error.name === 'NotAllowedError') {
+        hostBegin.hidden = false;
+        return false;
+      }
     }
   }
   if (serial !== hostSerial) return false;

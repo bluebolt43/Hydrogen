@@ -1,6 +1,14 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080e14}
 body{display:grid;place-items:center}
+#fanwork-notice{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:32px;background:#000;color:#fff;font-family:system-ui,sans-serif;text-align:center;outline:none}
+#fanwork-notice[hidden]{display:none}
+#fanwork-notice>div{width:min(100%,28rem);opacity:0}
+#fanwork-notice.notice-ready>div{animation:notice-fade-in .6s ease-out both}
+#fanwork-notice h1{font-size:20px;font-weight:600;letter-spacing:.08em;line-height:1.5;margin:0 0 28px;color:#fff}
+#fanwork-notice p{font-size:15px;line-height:1.85;margin:0 0 20px;text-align:start;text-wrap:pretty;color:#e0e0e0}
+#fanwork-notice p:last-child{font-size:14px;color:#aaa;margin:28px 0 0}
+@keyframes notice-fade-in{from{opacity:0}to{opacity:1}}
 /* 360 × 640 design size; match play's 600 px width cap.
    On smaller screens, available width/height takes priority over the baseline. */
 #main-frame{position:relative;container-type:inline-size;width:clamp(360px,56.25vh,600px);width:clamp(360px,56.25dvh,600px);max-width:min(100vw,56.25vh);max-width:min(100vw,56.25dvh);aspect-ratio:9/16;overflow:hidden}
@@ -72,9 +80,15 @@ body{display:grid;place-items:center}
 #unlock-status{position:absolute;top:67%;left:8%;right:8%;text-align:center;color:#fff0cc;font:14px system-ui;background:#24180ee6;border-radius:6px;padding:8px}
 #unlock-status:empty{display:none}
 
-#purchase-debug{margin-top:6.667cqw;padding-top:4.444cqw;border-top:1px solid #b9955544}
-#purchase-debug h2{font-size:5cqw;margin:0 0 3.333cqw;font-weight:600}
-#purchase-debug p{font-size:3.611cqw;line-height:1.6}
-#clear-purchases,#clear-game-records{padding:2.778cqw 4.444cqw;background:#57312c;color:#fff0cc;border:1px solid #c38b70;border-radius:6px;cursor:pointer}
-#clear-purchases:disabled{opacity:.5;cursor:default}
-#purchase-debug-status:empty{display:none}
+#clear-game-records{padding:2.778cqw 4.444cqw;background:#57312c;color:#fff0cc;border:1px solid #c38b70;border-radius:6px;cursor:pointer}
+
+#announcement-dialog{position:absolute;inset:0;margin:auto;width:86%;max-width:none;max-height:76%;padding:0;color:#f8e7bd;border:2px solid #c49a49;border-radius:16px;background:radial-gradient(ellipse at top,#583528,#211a20 75%);box-shadow:0 12px 48px #000b,inset 0 0 0 4px #f5d48418;font:clamp(14px,3.8cqw,22px)/1.8 system-ui,sans-serif}
+#announcement-dialog::backdrop{background:#000a}
+#announcement-dialog header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid #c49a4955;background:#130c1280}
+#announcement-dialog h1{margin:0;color:#ffe1a0;font-size:1.3em;letter-spacing:.15em}
+#close-announcement{border:1px solid #bd914d88;border-radius:50%;background:#291b20;color:#ffe1a0;width:36px;height:36px;font-size:26px;line-height:1;cursor:pointer}
+#announcement-content{padding:8px 24px 28px;max-height:55dvh;overflow-y:auto;overflow-wrap:anywhere}
+#announcement-content p{margin:18px 0}
+#announcement-content .announcement-lead{font-size:1.15em;font-weight:700;color:#ffe1a0}
+#announcement-content a{display:inline-block;color:#a9d9ff;text-underline-offset:5px;padding:6px 0}
+#announcement-dialog :focus-visible{outline:2px solid #a9d9ff;outline-offset:3px}
