@@ -109,7 +109,9 @@ TheaterFrame.renderHealth=function(container,hp,previous=hp){
 
 TheaterFrame.warning=function(stage){
  stage.dataset.combat='warning';
- if(!new URLSearchParams(location.search).has('embed'))return PirateMap.showWarning(document).finished.finally(()=>delete stage.dataset.combat);
+ // The warning is a play overlay. Standalone theater previews only show
+ // stage animation; embedded stages ask their play host to present it.
+ if(!new URLSearchParams(location.search).has('embed')){delete stage.dataset.combat;return Promise.resolve();}
  const token=String(Date.now())+':'+Math.random();
  return new Promise(resolve=>{
   const complete=e=>{if(e.source===parent&&e.data?.channel==='pinball-theater'&&e.data.command==='warning-complete'&&e.data.token===token){removeEventListener('message',complete);delete stage.dataset.combat;resolve();}};
