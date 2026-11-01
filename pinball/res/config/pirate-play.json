@@ -4611,7 +4611,7 @@
       "angle": 0,
       "releaseMode": "fixed",
       "releaseAngle": 304.656,
-      "ballSpeed": 500
+      "ballSpeed": 400
     },
     {
       "id": "flag-001",

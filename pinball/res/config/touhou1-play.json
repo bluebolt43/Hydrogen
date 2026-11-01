@@ -4825,7 +4825,7 @@
         ]
       ],
       "gravityDirection": "right",
-      "gravityStrength": 50
+      "gravityStrength": 150
     },
     {
       "id": "gravityZone-003",
@@ -5143,7 +5143,7 @@
         ]
       ],
       "gravityDirection": "up",
-      "gravityStrength": 50
+      "gravityStrength": 150
     }
   ],
   "lockedLayout": [],
