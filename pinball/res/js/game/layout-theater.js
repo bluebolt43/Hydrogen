@@ -1,0 +1,107 @@
+/* Theater iframe bridge. */
+(function(root){
+'use strict';
+class LayoutTheater{
+ constructor(theme='pirate'){
+  this.theme=['saga','norse','ragnarok'].includes(theme)?'saga':['space','sci-fi','cosmic-dessert'].includes(theme)?'space':['touhou1','touhou-horrors'].includes(theme)?'touhou1':['touhou2','touhou-black-knight-2000'].includes(theme)?'touhou2':theme==='steampunk'?'steampunk':'pirate';
+  this.pending=[];this.activeCommands=new Map();this.ready=false;this.curtainClosing=true;this.paused=null;this.generation=0;
+  this.frame=document.createElement('iframe');this.frame.title=this.theme==='saga'?'黑曜石傳奇劇場':this.theme==='space'?'宇宙點心劇場':['touhou1','touhou2'].includes(this.theme)?'東方賽銭録劇場':this.theme==='steampunk'?'蒸氣龐克劇場':'海盜劇場';
+  this.frame.style.cssText='position:fixed;border:0;pointer-events:none;z-index:2;visibility:hidden';
+  document.body.append(this.frame);
+  addEventListener('message',e=>{
+   if(e.source!==this.frame.contentWindow||e.data?.channel!=='pinball-theater')return;
+   if(['complete','error'].includes(e.data.type)&&e.data.id&&!e.data.id.startsWith(this.generation+':'))return;
+   if(e.data.type==='boss-stage'&&['touhou1','touhou2'].includes(this.theme)&&Number.isInteger(e.data.stage)&&e.data.stage>=0&&e.data.stage<=8){if(e.data.defeated)this.onBossDefeated?.();else this.onBossChanged?.(e.data.stage);return;}
+   if(e.data.type==='boss-origin'&&['touhou1','touhou2'].includes(this.theme)){this.onBossOrigin?.(e.data.stage,e.data.origin);return;}
+   if(e.data.type==='complete'&&(this.activeCommands.has(e.data.id)||e.data.id===this.generation+':reset:0'))this.hudState=e.data;
+   if(e.data.type==='tutorial-bounds'){this.tutorialBounds=e.data.bounds;this.onTutorialBounds?.();return;}
+   if(e.data.type==='sound'){this.soundBank?.play(e.data.name);this.onSound?.(e.data.name);return;}
+   if(e.data.type==='warning'){this.showWarning(e.data.token);return;}
+   if(e.data.type==='ready'){this.ready=true;this.curtainClosing=false;this.send({command:'pause',paused:!!this.game?.paused});for(const message of this.pending)this.send(message);this.pending=[];}
+   if(['complete','error'].includes(e.data.type)&&e.data.id===this.generation+':reset:0')this.curtainClosing=false;
+   if(e.data.type==='complete'&&this.activeCommands.has(e.data.id)&&e.data.defeated){
+    const stageCleared=!!this.bossStage&&!this.bossDefeated&&Number.isFinite(e.data.maxHp)&&e.data.maxHp>0;
+    if(stageCleared)this.bossDefeated=true;
+    this.onEnemyDefeated?.(e.data,stageCleared);
+   }
+   if(['complete','error'].includes(e.data.type)&&this.activeCommands.has(e.data.id)&&e.data.id.startsWith(this.generation+':enemy:'))this.onEnemyReady?.(e.data);
+   if(['complete','error'].includes(e.data.type)&&this.activeCommands.has(e.data.id)){
+    const remaining=this.activeCommands.get(e.data.id)-1;
+    if(remaining)this.activeCommands.set(e.data.id,remaining);else this.activeCommands.delete(e.data.id);
+    this.syncGameState();
+    if(!remaining)this.onCommandComplete?.(e.data);
+   }
+   if(e.data.type==='error')console.error('Theater:',e.data.message);
+  });
+  this.reset();
+ }
+ showWarning(token){
+  this.warning?.cancel();
+  const generation=this.generation,warning=root.PirateMap.showWarning(document);this.warning=warning;
+  if(this.game?.paused)warning.pause();
+  warning.finished.then(()=>{if(generation!==this.generation||this.warning!==warning)return;this.warning=null;this.send({command:'warning-complete',token});});
+ }
+ send(message){this.frame.contentWindow.postMessage({channel:'pinball-theater',...message},'*');}
+ hasEnemyCommand(){for(const id of this.activeCommands.keys())if(id.startsWith(this.generation+':enemy:'))return true;return false;}
+ blocksTable(){return this.theme==='touhou1'||this.theme==='touhou2'?this.hasEnemyCommand():this.activeCommands.size>0;}
+ syncGameState(){if(this.game){this.game.theaterFrozen=this.blocksTable();this.game.enemyIntroPending=this.hasEnemyCommand();}}
+
+ reset(){this.onBossChanged?.(0);this.hudState=null;this.bossDefeated=false;this.warning?.cancel();this.warning=null;this.generation++;this.pending=[];this.activeCommands.clear();this.syncGameState();this.curtainClosing=true;if(this.ready)this.send({command:'reset',id:this.generation+':reset:0'});else this.frame.src='res/'+this.theme+'-theater.html?embed=1&session='+this.generation;}
+ onEvent(e){
+  if(e.type==='ready'&&this.theme==='space'&&this.game?.spaceEndlessMode&&(this.game.enemyActive||this.game.enemyIntroPending))return;
+  if(e.type==='new-game'||(e.type==='ready'&&!this.bossStage)){this.reset();return;}
+  // A replacement ball keeps the stage Boss and its HP.
+  if(e.type==='ready'&&this.bossStage)return;
+  const attack=e.type==='configured-attack';
+  const command=e.type==='enemy-spawn-requested'?'enemy':attack?(['steampunk','space','touhou1','touhou2','saga'].includes(this.theme)?e.kind:{lv1:'ball',lv2:'barrel',lv3:'airdrop',lv4:'kraken'}[e.kind]):null;
+  const allowEmpty=attack&&e.kind==='lv4'&&e.id==='touhou-bagua'&&['touhou1','touhou2'].includes(this.theme)&&!this.game?.enemyActive;
+  if(!command||attack&&!this.game?.enemyActive&&!allowEmpty)return;
+  const message={command,...(allowEmpty?{allowEmpty:true}:{}),skipWarning:!!this.tutorialPreview,mode:this.bossStage?'boss':this.game?.g?.gameplay?.mode||'free',stage:this.bossStage||0,id:this.generation+':'+command+':'+(attack?(this.attackSerial=(this.attackSerial||0)+1):(e.eventId||0))};
+  this.activeCommands.set(message.id,(this.activeCommands.get(message.id)||0)+1);
+  this.syncGameState();
+  if(this.ready)this.send(message);else this.pending.push(message);
+ }
+ update(dt,game){this.game=game;this.syncGameState();if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
+ drawAttackMessage(ctx,x,y,width,height,time){
+  ctx.save();ctx.beginPath();ctx.rect(x,y,width,height);ctx.clip();
+  ctx.font='bold 15px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillStyle='#ffe6a3';
+  const text=PinballI18n.t('table.defeatBoss'),span=ctx.measureText(text).width+45,offset=(time*35)%span;
+  if(typeof document!=='undefined'&&ctx.drawImage&&ctx.getTransform){
+   const m=ctx.getTransform(),sx=Math.hypot(m.a,m.b),sy=Math.hypot(m.c,m.d),pad=Math.ceil((2*(ctx.shadowBlur||0)+Math.abs(ctx.shadowOffsetX||0)+Math.abs(ctx.shadowOffsetY||0)+2)/Math.min(sx,sy));
+   const key=JSON.stringify([text,span,height,ctx.font,sx,sy,ctx.shadowBlur,ctx.shadowColor,ctx.shadowOffsetX,ctx.shadowOffsetY]);
+   if(this.attackMessageRaster?.key!==key){
+    this.attackMessageRaster?.canvas.close?.();const Art=root.PinballArt;
+    const canvas=Art?.rasterCanvas(Math.ceil((span+pad*2)*sx),Math.ceil((height+pad*2)*sy),true)||document.createElement('canvas');canvas.width=Math.ceil((span+pad*2)*sx);canvas.height=Math.ceil((height+pad*2)*sy);
+    const c=canvas.getContext('2d');c.setTransform(sx,0,0,sy,pad*sx,pad*sy);c.font=ctx.font;c.textBaseline='middle';c.fillStyle=ctx.fillStyle;c.shadowBlur=ctx.shadowBlur;c.shadowColor=ctx.shadowColor;c.shadowOffsetX=ctx.shadowOffsetX;c.shadowOffsetY=ctx.shadowOffsetY;c.fillText(text,0,height/2);
+    this.attackMessageRaster={key,canvas:Art?Art.rasterImage(canvas):canvas};
+   }
+   ctx.shadowColor='transparent';ctx.shadowBlur=0;
+   for(let at=x-offset;at<x+width;at+=span)ctx.drawImage(this.attackMessageRaster.canvas,at-pad,y-pad,this.attackMessageRaster.canvas.width/sx,this.attackMessageRaster.canvas.height/sy);
+  }else for(let at=x-offset;at<x+width;at+=span)ctx.fillText(text,at,y+height/2);
+  ctx.restore();
+ }
+ positionFrame(position){
+  // Cache submitted values: CSSOM may round pixel strings on readback.
+  const previous=this.framePosition||(this.framePosition={});
+  for(const [key,value] of Object.entries(position))if(previous[key]!==value){this.frame.style[key]=value;previous[key]=value;}
+ }
+ draw(ctx,game,top=-170.5){
+  this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
+  if(this.panelElement){const box=this.panelElement.getBoundingClientRect(),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
+  const canvas=ctx.canvas,r=canvas.getBoundingClientRect(),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
+  // Both surfaces already share CSS shake. Position the iframe from the unshaken
+  // layout box; quantize away float noise in translated DOMRect coordinates.
+  const [shakeX=0,shakeY=0]=(canvas.style?.translate||'').split(' ').map(v=>parseFloat(v)||0);
+  const left=Math.round((r.left-shakeX)*64)/64,topY=Math.round((r.top-shakeY)*64)/64;
+  this.positionFrame({left:(left+m.e*sx)+'px',top:(topY+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden',zIndex:'2'});
+  // Reveal the theater iframe beneath the table artwork.
+  ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
+  const viewport={rect:r,transform:m};
+  if(this.customScore)return viewport;
+  ctx.save();ctx.fillStyle='#36251e';ctx.fillRect(0,top,360,scoreH);ctx.strokeStyle='#ba9456';ctx.lineWidth=1;ctx.strokeRect(1,top+1,358,scoreH-2);ctx.fillStyle='#ffe5a6';ctx.textAlign='left';ctx.font='bold 12px monospace';if(this.bossStage)this.drawAttackMessage(ctx,12,top+6,220,20,game.time);else ctx.fillText('SCORE '+String(game.score).padStart(12,'0'),12,top+20);ctx.textAlign='right';ctx.font='bold 10px monospace';ctx.fillText('BALL '+game.ballNumber+' / 3',348,top+20);ctx.restore();
+  return viewport;
+ }
+}
+if(typeof module!=='undefined'&&module.exports)module.exports=LayoutTheater;else root.LayoutTheater=LayoutTheater;
+})(typeof window!=='undefined'?window:globalThis);

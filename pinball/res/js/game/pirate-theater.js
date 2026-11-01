@@ -39,7 +39,7 @@ async function flip(to){
  const duration=reduced.matches?0:Number($('speed').value);
  message.textContent='翻面中…';
  await animate(spinner,'rotateY(0deg)','rotateY(90deg)',duration/2);
- enemy.src=PinballRuntimeImages.resolve(asset.src);stateIndex=to;
+ enemy.src=TheaterFrame.imageSource(asset.src);stateIndex=to;
  stage.style.setProperty('--enemy-anchor',(-100*asset.waterAnchor)+'%');stage.style.setProperty('--water-pivot',(100*asset.waterAnchor)+'%');stage.dataset.swapAngle='90';
  spinner.style.transform='rotateY(-90deg)';await animate(spinner,'rotateY(-90deg)','rotateY(0deg)',duration/2);spinner.style.transform='rotateY(0deg)';sync();
 }
@@ -51,7 +51,7 @@ async function victoryBlast(){
  const animations=[],puffs=[];
  try{
   for(let i=0;i<3;i++){
-   const puff=document.createElement('img');puff.src=PinballRuntimeImages.resolve(smoke);puff.className='attack-sprite';puff.style.width=size+'px';layer.append(puff);puffs.push(puff);
+   const puff=document.createElement('img');puff.src=TheaterFrame.imageSource(smoke);puff.className='attack-sprite';puff.style.width=size+'px';layer.append(puff);puffs.push(puff);
    const x=w*(.45+i*.05)-size/2,y=h*.52-size/2;
    const pose=(scale,dy)=>`translate(${x}px,${y+dy}px) scale(${scale})`;
    animations.push(puff.animate([{transform:pose(.2,0),opacity:0},{transform:pose(.95,0),opacity:1,offset:.15},{transform:pose(1.15,-w*.012),opacity:.9,offset:.5},{transform:pose(1.4,-w*.04),opacity:0}],{duration:1400,delay:i*400,fill:'both'}));
@@ -68,7 +68,7 @@ async function sinkingThumb(){
  const water=stage.clientHeight*2/3+stage.clientWidth*.019333;
  const size=stage.clientWidth*.23;
  const hand=document.createElement('img');
- hand.src=PinballRuntimeImages.resolve(src);hand.alt='海賊伸出拇指，慢慢沉入海中';
+ hand.src=TheaterFrame.imageSource(src);hand.alt='海賊伸出拇指，慢慢沉入海中';
  hand.style.cssText=`position:absolute;width:${size}px;height:auto;left:calc(50% - ${size*1.07}px);top:0;z-index:2;pointer-events:none;rotate:-15deg`;
  stage.append(hand);
  const submerged=`translateY(${stage.clientHeight+2}px)`,raised=`translateY(${water-size*.52}px)`;
@@ -92,7 +92,7 @@ async function playStoryVictory(){
   typeIndex=catalog.findIndex(t=>t.id==='pirate-gunship');stateIndex=2;
   const asset=catalog[typeIndex].states[stateIndex];
   await Promise.all([preload(asset.src),preload('res/img/pirate/pirate-explosion-smoke.png'),preload('res/img/pirate/pirate-story-thumbs-up.png')]);
-  enemy.src=PinballRuntimeImages.resolve(asset.src);hp=1;maxHp=3;defeated=false;sync();
+  enemy.src=TheaterFrame.imageSource(asset.src);hp=1;maxHp=3;defeated=false;sync();
   isNight=true;$('day').hidden=true;$('night').hidden=false;stage.classList.add('night');
   document.querySelectorAll('.curtain').forEach(el=>el.style.display='none');
   $('health-hud').hidden=true;spinner.style.visibility='visible';spinner.style.transform='rotateY(0deg)';
@@ -147,7 +147,7 @@ async function choose(index,round=index+1,skipWarning=false){
   $('day').hidden=isNight;$('night').hidden=!isNight;stage.classList.toggle('night',isNight);
   daynight.textContent=isNight?'換成白天':'換成夜晚';
   stage.classList.remove('defeated');delete stage.dataset.combat;spinner.style.transform='rotateY(0deg)';spinner.style.visibility='';
-  enemy.src=PinballRuntimeImages.resolve(asset.src);picker.value=String(index);sync();renderHealth();await enterEnemy();
+  enemy.src=TheaterFrame.imageSource(asset.src);picker.value=String(index);sync();renderHealth();await enterEnemy();
  }catch(e){picker.value=String(typeIndex);message.textContent='敵人圖片載入失敗。';}finally{lock(false);}
 }
 async function nextLevel(){if(!defeated||isBusy)return;await choose((typeIndex+1)%catalog.length,level+1);}
@@ -166,7 +166,7 @@ async function attack(kind){
   const a=el.animate(frames,{duration:reduced.matches?1:duration,delay:reduced.matches?0:delay,fill:'both',easing:'linear'});
   animations.push(a);await a.finished;
  };
- const sprite=(src,size)=>{const im=document.createElement('img');im.src=PinballRuntimeImages.resolve(src);im.className='attack-sprite';im.style.width=size+'px';im.alt='';layer.append(im);return im;};
+ const sprite=(src,size)=>{const im=document.createElement('img');im.src=TheaterFrame.imageSource(src);im.className='attack-sprite';im.style.width=size+'px';im.alt='';layer.append(im);return im;};
  try{
   const src=attackAssets[kind],smoke='res/img/pirate/pirate-explosion-smoke.png';
   await Promise.all([preload(src),preload(smoke)]);
@@ -216,7 +216,7 @@ async function tentacleAttack(){
   const a=el.animate(frames,{duration:reduced.matches?1:duration,easing,fill:'forwards'});
   animations.push(a);await a.finished;
  };
- const add=(layer,src,size,cls)=>{const im=document.createElement('img');im.src=PinballRuntimeImages.resolve(src);im.className=cls;im.style.width=size+'px';im.alt='';layer.append(im);return im;};
+ const add=(layer,src,size,cls)=>{const im=document.createElement('img');im.src=TheaterFrame.imageSource(src);im.className=cls;im.style.width=size+'px';im.alt='';layer.append(im);return im;};
  try{
   const tentacle='res/img/pirate/pirate-kraken-tentacle.png',bolt='res/img/pirate/pirate-lightning.png',smoke='res/img/pirate/pirate-explosion-smoke.png';
   await Promise.all([tentacle,bolt,smoke].map(preload));
@@ -273,7 +273,7 @@ TheaterFrame.connect({stage,ready,
   delete stage.dataset.combat;delete stage.dataset.attack;delete stage.dataset.attackPhase;
   $('attack-layer').replaceChildren();$('tentacle-behind').replaceChildren();$('tentacle-ahead').replaceChildren();
   $('hearts').replaceChildren();$('health-hud').hidden=true;spinner.style.visibility='hidden';spinner.style.transform='rotateY(0deg)';
-  enemy.src=PinballRuntimeImages.resolve(catalog[0].states[0].src);picker.value='0';sync();lock(false);
+  enemy.src=TheaterFrame.imageSource(catalog[0].states[0].src);picker.value='0';sync();lock(false);
  },
  async enemy(data){
   if(enemyPresent&&!defeated)return;

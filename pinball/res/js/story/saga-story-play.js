@@ -89,7 +89,7 @@ const delivery=$('delivery'),loadedImages=new Map();let scene=$('scene');
 const thoughtBubble=document.createElement('aside');thoughtBubble.id='thought-bubble';thoughtBubble.hidden=true;$('camera').append(thoughtBubble);
 function renderThoughtBubble(s,local){
  thoughtBubble.hidden=!s?.thoughtBubble;if(!s?.thoughtBubble)return;
- const image=loadedImages.get(PinballRuntimeImages.resolve(s.thoughtBubble));
+ const image=loadedImages.get(s.thoughtBubble);
  if(image&&thoughtBubble.firstElementChild!==image){image.alt='';thoughtBubble.replaceChildren(image);}
  thoughtBubble.style.opacity=Math.max(0,Math.min(1,local/(s.fade||400),(s.duration-local)/200));
 }
@@ -239,7 +239,7 @@ function renderEnding(s,local){
  curtain.style.opacity=s.endCover?Math.max(0,Math.min(1,local/1600)):1;
  StoryEndingText.paint($('ending-text'),s.endCard?Math.max(0,1-local/1500):1);
 }
-function render(){storySoundtrack.sync(elapsed/1000,running&&!document.hidden);const {i,local}=shotAt(elapsed),s=shots[i],activeSrc=s?.ravenSequence&&local>=2200?s.afterSrc:s?.src;renderRaven(s,local);renderCh2(s,local);renderSealMemory(s,local);renderPuppyMemory(s,local);renderCh3(s,local);renderShell(s,local);renderCh4(s,local);renderCh5(s,local);renderCh6(s,local);renderThoughtBubble(s,local);renderEnding(s,local);$('stage').style.background=s?.bookBridge||s?.fromBook?'#f3dfb9':'#000';$('camera').hidden=!s||s.type==='map'||s.type==='black';delivery.toggleAttribute('hidden',!s||s.type!=='map'||!!(s.blackTail&&local>=s.duration-s.blackTail));if(s&&(i!==current||(activeSrc&&scene.getAttribute('src')!==activeSrc))){current=i;if(activeSrc){const next=loadedImages.get(PinballRuntimeImages.resolve(activeSrc));if(next&&next!==scene){scene.removeAttribute('id');scene.replaceWith(next);scene=next;scene.id='scene'}scene.alt=''}for(const [j,b] of [...$('shots').children].entries())b.setAttribute('aria-pressed',String(i===j))}if(s?.type==='map'){delivery.style.opacity=Math.min(1,local/800);drawMap(local,!!s.mapCompanion);}else if(s&&s.type!=='black'){cameraFrame(s,local);renderQuake(s,local)}setStoryText($('play'),running?'暫停':'播放');$('seek').value=total?elapsed/total*100:0;setStoryText($('position'),s?(i+1)+' / '+shots.length+' · '+s.title+' · '+Math.floor(elapsed/1000)+' / '+Math.ceil(total/1000)+' 秒':'');$('previous').disabled=!ready||i<=0;$('next').disabled=!ready||i<0||i>=shots.length-1}
+function render(){storySoundtrack.sync(elapsed/1000,running&&!document.hidden);const {i,local}=shotAt(elapsed),s=shots[i],activeSrc=s?.ravenSequence&&local>=2200?s.afterSrc:s?.src;renderRaven(s,local);renderCh2(s,local);renderSealMemory(s,local);renderPuppyMemory(s,local);renderCh3(s,local);renderShell(s,local);renderCh4(s,local);renderCh5(s,local);renderCh6(s,local);renderThoughtBubble(s,local);renderEnding(s,local);$('stage').style.background=s?.bookBridge||s?.fromBook?'#f3dfb9':'#000';$('camera').hidden=!s||s.type==='map'||s.type==='black';delivery.toggleAttribute('hidden',!s||s.type!=='map'||!!(s.blackTail&&local>=s.duration-s.blackTail));if(s&&(i!==current||(activeSrc&&scene.getAttribute('src')!==activeSrc))){current=i;if(activeSrc){const next=loadedImages.get(activeSrc);if(next&&next!==scene){scene.removeAttribute('id');scene.replaceWith(next);scene=next;scene.id='scene'}scene.alt=''}for(const [j,b] of [...$('shots').children].entries())b.setAttribute('aria-pressed',String(i===j))}if(s?.type==='map'){delivery.style.opacity=Math.min(1,local/800);drawMap(local,!!s.mapCompanion);}else if(s&&s.type!=='black'){cameraFrame(s,local);renderQuake(s,local)}setStoryText($('play'),running?'暫停':'播放');$('seek').value=total?elapsed/total*100:0;setStoryText($('position'),s?(i+1)+' / '+shots.length+' · '+s.title+' · '+Math.floor(elapsed/1000)+' / '+Math.ceil(total/1000)+' 秒':'');$('previous').disabled=!ready||i<=0;$('next').disabled=!ready||i<0||i>=shots.length-1}
 function jump(i){if(i<0||i>=shots.length)return;elapsed=shots.slice(0,i).reduce((sum,s)=>sum+s.duration,0);render()}
 $('play').onclick=()=>{if(!ready||!shots.length)return;if(elapsed>=total)elapsed=0;running=!running;stopStoryFrame();scheduleStoryFrame();render()};
 $('replay').onclick=()=>play();
@@ -279,18 +279,17 @@ async function loadChapter(n,p){
  const dependencies=SAGA_STORY.imageDependencies[n+'-'+p];
  if(!dependencies)throw Error('不存在的章節：'+n+'-'+p);
  await Promise.all(dependencies.map(src=>{
-  const url=PinballRuntimeImages.resolve(src);if(loadedImages.has(url))return Promise.resolve();
-  const im=new Image();im.src=url;return PinballRuntimeImages.decode(im).then(()=>{loadedImages.set(url,im);});
+  if(loadedImages.has(src))return Promise.resolve();
+  const im=new Image();im.src=PinballRuntimeImages.resolve(src);return PinballRuntimeImages.decode(im).then(()=>{loadedImages.set(src,im);});
  }));
  if(version!==loadVersion)return;
- const urls=new Set(dependencies.map(src=>PinballRuntimeImages.resolve(src)));
+ const imagesByURL=new Map(dependencies.map(src=>[PinballRuntimeImages.resolve(src),loadedImages.get(src)]));
  const layers=[...document.querySelectorAll('[data-src]')];
  await Promise.all(layers.map(async im=>{
-  const src=PinballRuntimeImages.resolve(im.dataset.src);
-  if(!urls.has(src))return;
-  const readySrc=loadedImages.get(src)?.src||src;
-  if(im.namespaceURI===ns)im.setAttribute('href',readySrc);
-  else{im.src=readySrc;await PinballRuntimeImages.decode(im);}
+  const image=imagesByURL.get(PinballRuntimeImages.resolve(im.dataset.src));
+  if(!image)return;
+  if(im.namespaceURI===ns)im.setAttribute('href',image.src);
+  else{im.src=image.src;await PinballRuntimeImages.decode(im);}
  }));
  if(version!==loadVersion)return;
  ready=true;$('phone').dataset.ready='true';$('loading').hidden=true;select(n,p);syncSkip();

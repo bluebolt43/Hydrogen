@@ -47,11 +47,16 @@ TheaterFrame.positionFrames=function(element,frames){
  const images=new Map();
  TheaterFrame.preloadImage=function(src){
   const url=PinballRuntimeImages.resolve(src);
-  if(!images.has(url)){const image=new Image();image.src=url;const ready=(PinballRuntimeImages.decode?.(image)??image.decode()).then(()=>image).catch(error=>{images.delete(url);throw error;});images.set(url,ready);}
-  return images.get(url);
+  if(!images.has(url)){
+   const image=new Image();image.src=url;const entry={image};
+   entry.ready=PinballRuntimeImages.decode(image).then(()=>image).catch(error=>{images.delete(url);throw error;});
+   images.set(url,entry);
+  }
+  return images.get(url).ready;
  };
  TheaterFrame.preloadImages=sources=>Promise.all([...new Set(sources.filter(Boolean))].map(TheaterFrame.preloadImage));
- TheaterFrame.setImage=function(image,src){const url=PinballRuntimeImages.resolve(src);if(image.src===url)return false;image.src=url;return true;};
+ TheaterFrame.imageSource=function(src){const url=PinballRuntimeImages.resolve(src);return images.get(url)?.image.src||url;};
+ TheaterFrame.setImage=function(image,src){const url=TheaterFrame.imageSource(src);if(image.src===url)return false;image.src=url;return true;};
 }
 
 /* All themes share embedding, command queue, pause and completion contracts. */

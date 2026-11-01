@@ -3,7 +3,7 @@
 const data=SAGA_THEATER,$=id=>document.getElementById(id);
 TheaterFrame.mountControls({title:data.title+' · 戰鬥劇場',attacks:Object.fromEntries(Object.entries(data.attacks).map(([id,a])=>[id,id.toUpperCase()+' '+a.name]))});
 const stage=$('stage'),boss=$('boss'),enemy=$('enemy'),enemies=$('enemies'),effects=$('effects'),background=$('background'),health=$('health');
-for(const image of document.querySelectorAll('.saga-wave'))image.src=PinballRuntimeImages.resolve(data.wavesSrc);
+for(const image of document.querySelectorAll('.saga-wave'))image.src=TheaterFrame.imageSource(data.wavesSrc);
 const params=new URLSearchParams(location.search),embedded=params.has('embed'),running=new Set();
 const soundBank=embedded?null:new PinballSound(Object.fromEntries(Object.entries(PirateMap.sounds).map(([name,clip])=>[name,{...clip,src:new URL('../'+clip.src,document.baseURI).href}])));
 if(soundBank)for(const name of ['pointerdown','keydown'])addEventListener(name,()=>soundBank.unlock(),{capture:true});
@@ -77,7 +77,7 @@ async function enter(skipWarning=false,override){
 }
 async function choose(next,skipWarning=false,background){if(!Number.isInteger(next)||!levels[next-1])throw Error('Saga 尚未建立此關卡');level=next;await enter(skipWarning,background);}
 async function reset(){const token=cancelScene();pause(false);busy=true;draw();await frame.curtains(true);if(token!==generation)return;enemies.hidden=true;applyScene();busy=false;draw();}
-function sprite(src,className='prop'){const e=document.createElement('img');e.className=className;e.src=PinballRuntimeImages.resolve(src);e.alt='';effects.append(e);return e;}
+function sprite(src,className='prop'){const e=document.createElement('img');e.className=className;e.src=TheaterFrame.imageSource(src);e.alt='';effects.append(e);return e;}
 function effect(className){const e=document.createElement('div');e.className=className;effects.append(e);return e;}
 function fragments(color,count=9){return Promise.all(Array.from({length:count},(_,i)=>{const p=effect('paper-piece');p.style.background=color;const angle=i/count*Math.PI*2;return animate(p,[{opacity:1,translate:'0 0',rotate:'0deg'},{opacity:0,translate:`${Math.cos(angle)*350}% ${Math.sin(angle)*280+180}%`,rotate:(i*47)+'deg'}],620);}));}
 async function approach(kind,weapon,spread=0){
@@ -151,12 +151,12 @@ async function attack(command){
  if(!a)throw Error('Unknown Saga attack: '+command);
  if(!loaded||busy||isPaused()||hp===0)return false;
  busy=true;draw();const token=generation,previous=hp;
- const weapon=effect('strike');weapon.dataset.attack=kind;weapon.dataset.phase='approach';weapon.style.width=a.width+'%';const image=document.createElement('img');image.src=PinballRuntimeImages.resolve(a.src);image.alt='';weapon.append(image);
+ const weapon=effect('strike');weapon.dataset.attack=kind;weapon.dataset.phase='approach';weapon.style.width=a.width+'%';const image=document.createElement('img');image.src=TheaterFrame.imageSource(a.src);image.alt='';weapon.append(image);
  try{
   const weapons=[weapon];
   if(kind==='lv2'){
    const fork=effect('strike');fork.dataset.attack=kind;fork.dataset.phase='approach';fork.style.width=a.width+'%';
-   const image=document.createElement('img');image.src=PinballRuntimeImages.resolve(a.secondarySrc);image.alt='';fork.append(image);weapons.push(fork);
+   const image=document.createElement('img');image.src=TheaterFrame.imageSource(a.secondarySrc);image.alt='';fork.append(image);weapons.push(fork);
   }
   await Promise.all(weapons.map((item,i)=>approach(kind,item,kind==='lv2'?(i===0?-.12:.12):0)));
   if(token!==generation)return false;

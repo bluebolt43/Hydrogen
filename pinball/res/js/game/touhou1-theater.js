@@ -89,7 +89,7 @@ async function attack(command,options={}){
  const empty=kind==='lv4'&&options.allowEmpty===true;
  if(!loaded||busy||isPaused()||hp===0&&!empty)return false;
  busy=true;draw();const token=generation,previous=hp,effect=TOUHOU_ATTACK_EFFECTS[kind];
- const impact=document.createElement('img');impact.className='attack-effect';impact.dataset.attack=kind;impact.dataset.phase='approach';impact.src=PinballRuntimeImages.resolve(effect.src);impact.alt='';impact.style.width=effect.width+'%';effects.append(impact);
+ const impact=document.createElement('img');impact.className='attack-effect';impact.dataset.attack=kind;impact.dataset.phase='approach';impact.src=TheaterFrame.imageSource(effect.src);impact.alt='';impact.style.width=effect.width+'%';effects.append(impact);
  try{
   if(empty){enemies.hidden=true;impact.style.opacity='0';await frame.curtains(false);if(token!==generation)return false;}
   await animate(impact,attackFrames[kind].approach,effect.approachDuration);
