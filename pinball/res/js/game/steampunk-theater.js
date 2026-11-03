@@ -18,7 +18,10 @@ const backgrounds=[
  {id:'day',label:'白天',src:'img/steampunk/steampunk-theater-background-day.png'}, {id:'night',label:'夜晚',src:'img/steampunk/steampunk-theater-background-night.png'}, {id:'mine',label:'礦山',src:'img/steampunk/steampunk-theater-background-mine.png'}, {id:'space',label:'太空',src:'img/steampunk/steampunk-theater-background-space.png'}, {id:'ruins',label:'遺跡',src:'img/steampunk/steampunk-theater-background-ruins.png'}
 ];
 let backgroundIndex=0;
-function setBackground(index){backgroundIndex=index;const background=backgrounds[index];stage.dataset.background=background.id;TheaterFrame.setImage(stage.querySelector('.background'),background.src);$('daynight').textContent='換成'+backgrounds[(index+1)%backgrounds.length].label;}
+const cloudSource='img/steampunk/steampunk-theater-cloud.png';
+function tintClouds(){let ready=true;for(const image of stage.querySelectorAll('.clouds img'))ready=TheaterFrame.setTint(image,cloudSource,backgrounds[backgroundIndex].id==='night'?'brightness(.4)':'')&&ready;if(ready)stage.querySelector('.clouds').style.filter='none';}
+
+function setBackground(index){backgroundIndex=index;const background=backgrounds[index];stage.dataset.background=background.id;tintClouds();TheaterFrame.setImage(stage.querySelector('.background'),background.src);$('daynight').textContent='換成'+backgrounds[(index+1)%backgrounds.length].label;}
 const levels=[
  {name:'競速對手',width:24,ships:['img/steampunk/steampunk-race-rival-1.png','img/steampunk/steampunk-race-rival-2.png','img/steampunk/steampunk-race-rival-3.png'],positions:[{x:25,y:45},{x:75,y:45},{x:50,y:74}]},
  {name:'追擊小艇編隊',width:20,ships:Array(4).fill('img/steampunk/steampunk-enemy-airship.png'),positions:[{x:22,y:42},{x:78,y:42},{x:37,y:78},{x:63,y:78}]},
@@ -40,7 +43,7 @@ function state(){return {name:levels[level-1].name,hp:[...hp],target,busy,paused
 function draw(){document.querySelectorAll('.racer').forEach((e,i)=>{e.classList.toggle('target',i===target&&hp[i]>0);e.querySelector('.hp').hidden=!hp[i];e.disabled=busy||paused||hp[i]===0||(level===8&&i===0&&stage.dataset.phase!=='body');e.setAttribute('aria-label',`對手 ${i+1}，${hp[i]} HP`);});stage.classList.toggle('defeated',total()===0);controls();}
 function createEnemy(i){const config=levels[level-1],position=positions[i];const b=document.createElement('button');b.className='racer';b.style.width=(config.widths?.[i]??config.width)+'%';b.style.left=position.x+'%';b.style.top=config.visualTop??(position.y+'%');b.style.animationDelay=(-i)+ 's';b.innerHTML='<span class="hp"></span>';const image=document.createElement('img');image.src=TheaterFrame.imageSource(config.ships[i]);image.alt=`${config.name} ${i+1}`;b.append(image);TheaterFrame.renderHealth(b.querySelector('.hp'),hp[i]);b.onclick=()=>{if(!busy&&!paused&&hp[i]&&targetOrder().includes(i)){target=i;draw();}};return b;}
 function reset(){soundBank?.setPaused(false);soundBank?.stop();generation++;for(const a of running)a.cancel();running.clear();effects.replaceChildren();delete stage.dataset.launching;stage.dataset.phase=level===8?'guards':'';const config=levels[level-1];positions=config.positions;hp=[...(config.health||config.ships.map(()=>1))];stage.dataset.level=String(level);$('enemy-type').value=String(level);target=hp.indexOf(Math.min(...hp));busy=false;paused=false;stage.classList.remove('paused');$('water').textContent='暫停動態';$('racers').replaceChildren();positions.forEach((_,i)=>$('racers').append(createEnemy(i)));$('status').textContent=`Boss ${level} · ${config.name}`;draw();}
-function animate(el,frames,duration){if(el.parentElement===effects)frames=TheaterFrame.positionFrames(el,frames);const a=el.animate(frames,{duration:duration*Number($('speed').value)/1000,fill:'forwards',easing:'ease-out'});running.add(a);if(paused)a.pause();return a.finished.finally(()=>running.delete(a));}
+function animate(el,frames,duration){frames=TheaterFrame.effectFrames(el,frames);const a=el.animate(frames,{duration:duration*Number($('speed').value)/1000,fill:'forwards',easing:'ease-out'});running.add(a);if(paused)a.pause();return a.finished.finally(()=>running.delete(a));}
 function fx(kind,x,y,w,h){const e=document.createElement('img');e.className='fx';e.src=TheaterFrame.imageSource(art[kind]);Object.assign(e.style,{left:x+'%',top:y+'%',width:w+'%',height:h+'%'});effects.append(e);return e;}
 async function explode(p,size=26){const e=fx('explosion',p.x,p.y,size,60);await animate(e,[{opacity:0,transform:pose(.2)},{opacity:1,transform:pose(1),offset:.25},{opacity:0,transform:pose(1.3)}],420);e.remove();}
 function updateDamage(i){
@@ -64,7 +67,7 @@ async function hit(victims,concealed=false){
   if(hp[i]===0)await exitEnemy(i);
  }));
 }
-async function attack(kind){if(!loaded||busy||paused||!total())return false;if(!attacks[kind])throw Error('Unknown attack: '+kind);busy=true;const token=generation,order=targetOrder(),index=order[0],p=positions[index],victims=(level===8&&stage.dataset.phase==='guards'?[...order,0]:order).flatMap(i=>Array(hp[i]).fill(i)).slice(0,attacks[kind].damage);target=index;draw();$('status').textContent=attacks[kind].name+' → 對手 '+(index+1);
+async function attack(kind){if(!loaded||busy||paused||!total()||$('racers').hidden)return false;if(!attacks[kind])throw Error('Unknown attack: '+kind);busy=true;const token=generation,order=targetOrder(),index=order[0],p=positions[index],victims=(level===8&&stage.dataset.phase==='guards'?[...order,0]:order).flatMap(i=>Array(hp[i]).fill(i)).slice(0,attacks[kind].damage);target=index;draw();$('status').textContent=attacks[kind].name+' → 對手 '+(index+1);
 try{
  if(kind==='lv1'){
   const gun=fx('gun',50,65,95,110);
@@ -188,7 +191,7 @@ $('daynight').onclick=changeBackground;setBackground(levels[level-1].background|
 window.SteampunkTheater={attack,reset,pause,state,changeBackground,choose};
 reset();
 const sources=['img/theater-curtain-right.png','img/health-heart.svg',...Object.values(art),...new Set(levels.flatMap(config=>[...config.ships,...(config.damageStates||[]),...(config.damageStatesByShip||[]).flat().filter(Boolean)])),...backgrounds.map(background=>background.src),'img/steampunk/steampunk-theater-cloud.png'];
-const ready=TheaterFrame.preloadImages(sources).then(async()=>{if(disposed)return;if(!embedded)await enter();if(disposed)return;loaded=true;draw();});
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{if(disposed)return;await TheaterFrame.preloadTint(cloudSource,'brightness(.4)');if(disposed)return;tintClouds();if(!embedded)await enter();if(disposed)return;loaded=true;draw();});
 ready.catch(()=>{if(!disposed)$('status').textContent='素材載入失敗';});
 TheaterFrame.connect({stage,ready,
  bounds(){

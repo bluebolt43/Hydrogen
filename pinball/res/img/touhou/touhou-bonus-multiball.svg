@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="112" viewBox="0 0 160 112">
+  <defs>
+    <radialGradient id="shine" cx="25%" cy="20%" r="85%"><stop stop-color="#fff" stop-opacity=".44"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset=".78" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>
+    <g id="orb"><circle r="1" fill="#fffdf5"/><path d="M0-1A1 1 0 0 0 0 1A.5 .5 0 0 0 0 0A.5 .5 0 0 1 0-1Z" fill="#111319"/><circle cy="-.5" r=".145" fill="#111319"/><circle cy=".5" r=".145" fill="#fffdf5"/><circle r="1" fill="url(#shine)" stroke="#d7bd7c" stroke-width=".055"/></g>
+  </defs>
+  <use href="#orb" transform="translate(53 43) scale(33)"/>
+  <use href="#orb" transform="translate(106 69) rotate(25) scale(33)"/>
+</svg>

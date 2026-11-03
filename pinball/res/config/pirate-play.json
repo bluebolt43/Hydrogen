@@ -4610,8 +4610,8 @@
       "y": 239.819,
       "angle": 0,
       "releaseMode": "fixed",
-      "releaseAngle": 304.656,
-      "ballSpeed": 400
+      "releaseAngle": 300.043,
+      "ballSpeed": 450
     },
     {
       "id": "flag-001",
@@ -4781,10 +4781,10 @@
       "id": "oneway-012",
       "type": "oneway",
       "layer": "lower",
-      "x1": 156,
-      "y1": 260,
-      "x2": 119,
-      "y2": 273,
+      "x1": 155,
+      "y1": 257,
+      "x2": 118,
+      "y2": 270,
       "direction": 1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",

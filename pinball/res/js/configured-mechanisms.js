@@ -8,15 +8,15 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   gapBusy(){return this.gapLock?.active||this.freeBallQueue>0||this.balls.filter(b=>b.state!=='drained').length>1;}
   hasPendingBalls(){return super.hasPendingBalls()||this.gapLock?.pending>0;}
   spawnFreeBall(){
-   const entrance=this.socketsById.get(this.g.gameplay?.multiballHole);
+   const entrance=this.socketsById.get(this.freeBallSources[0]);
    if(!entrance)return super.spawnFreeBall();
    if(!this.freeBallQueue)return;
-   if(this.balls.filter(b=>b.state!=='drained').length>=3){this.freeBallQueue--;this.awardExtraLife('multiball',this.freeBallRewardPositions.shift()||this.ball.p);return;}
+   if(this.balls.filter(b=>b.state!=='drained').length>=3){this.freeBallQueue--;this.freeBallSources.shift();this.awardExtraLife('multiball',this.freeBallRewardPositions.shift()||this.ball.p);return;}
    const exit=this.socketsById.get(entrance.exit_hole)||entrance;
    if(this.time<(this.holeMultiballNextAt||0)||this.balls.some(b=>b.state==='captured'&&b.held?.id===exit.id||b.state!=='drained'&&b.layer===exit.layer&&P.len(P.sub(b.p,exit.release))<this.physics.ballRadius*2+3))return;
    const previous=this.ball,b={p:[...exit.center],v:[0,0],layer:exit.layer,z:0,state:'captured',immunity:0,trail:[],free:true};
    this.balls.push(b);this.ball=b;this.held={id:exit.id,remaining:0,speed:0,release:[...exit.release],layer:exit.layer,direction:exit.release_direction};
-   this.release();this.freeBallQueue--;this.freeBallRewardPositions.shift();this.holeMultiballNextAt=this.time+.5;
+   this.release();this.freeBallQueue--;this.freeBallSources.shift();this.freeBallRewardPositions.shift();this.holeMultiballNextAt=this.time+.5;
    this.emit('free-ball-launch',{id:exit.id,position:[...b.p],layer:b.layer});this.ball=previous;
   }
   awardGapMultiball(count){
@@ -304,7 +304,9 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  }
  onCapture(id){
  const multi=this.g.gameplay?.holeMultiball;
- if(multi&&id===multi.hole){this.holeMultiballHits++;if(this.holeMultiballHits>=multi.hits){this.holeMultiballHits=0;this.awardMultiball();}}
+ if(multi&&id===multi.hole){this.holeMultiballHits++;if(this.holeMultiballHits>=multi.hits){this.holeMultiballHits=0;this.holeCaptureCounts.set(id,0);this.awardMultiball(this.ball.p,this.ball.layer,multi.hole);
+  const total=multi.balls||2,live=this.balls.filter(b=>b.state!=='drained').length;
+  while(live+this.freeBallQueue<total){this.freeBallQueue++;this.freeBallSources.push(multi.hole);this.freeBallRewardPositions.push([...this.ball.p]);}}}
  const gap=this.g.gameplay?.touhouGap,state=this.gapLock;
  if(gap&&id===gap.hole){
   if(gap.captureSeconds>0&&this.held)this.held.remaining=gap.captureSeconds;
@@ -401,11 +403,6 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
   this.applyOneWaySpeed?.(previous,layer);
   if(this.ball.launchGuard&&this.ball.v[1]>=0&&this.ball.p[1]>this.launchGateExitY+this.physics.ballRadius)this.ball.launchGuard=false;
   this.flagSensors(previous,layer);
-  // A fast ball can cross the entire gap between two endpoint checks.
-  const gap=this.g.gameplay?.touhouGap,hole=gap&&this.socketsById.get(gap.hole),ball=this.ball;
-  if(hole&&ball.state==='playing'&&layer===ball.layer&&hole.layer===layer&&this.gapLock?.armed&&!this.gapBusy()&&this.time>=ball.immunity&&P.len(P.sub(P.nearest(hole.center,previous,ball.p).p,hole.center))<hole.radius){
-   this.capture(hole.id,hole.center,hole.release,layer,hole.release_direction,250);
-  }
   this.sensors(previous,layer);
   if(this.ball.state!=='playing')return;
 
@@ -498,7 +495,9 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
     const controlled=this.controlledHoles.has(socket.id);
     if(controlled&&!this.armedHoles.has(socket.id))continue;
     const position=Array.isArray(previous)&&previousLayer===ball.layer?P.nearest(socket.center,previous,ball.p).p:ball.p;
-    if(P.len(P.sub(position,socket.center))>=socket.radius)continue;
+    // Gap collection starts when the ball surface reaches the open mouth.
+    const radius=socket.radius+(socket.id===this.g.gameplay?.touhouGap?.hole?this.physics.ballRadius:0);
+    if(P.len(P.sub(position,socket.center))>=radius)continue;
     this.capture(socket.id,socket.center,socket.release,ball.layer,socket.release_direction,250);
     return;
    }

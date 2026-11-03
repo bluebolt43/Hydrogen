@@ -2,11 +2,12 @@
 (function(root){
 'use strict';
 if(root.PinballI18n)return;
-function create(catalogs,storage){
+function create(catalogs,storage,language=root.navigator?.languages?.[0]||root.navigator?.language||'en'){
  const fallback='zh-Hant',listeners=new Set(),supported=Object.freeze(['zh-Hant','en','ja']);
  const normalize=value=>supported.includes(value)?value:fallback;
- let locale=fallback;
- try{locale=normalize(storage?.getItem('pinball-language'));}catch{}
+ const systemLanguage=String(language).trim().toLowerCase().split(/[-_]/)[0];
+ let locale=systemLanguage==='zh'?'zh-Hant':systemLanguage==='ja'?'ja':'en';
+ try{const saved=storage?.getItem('pinball-language');if(supported.includes(saved))locale=saved;}catch{}
  function t(key,params={}){
   const message=language=>Object.hasOwn(catalogs[language]||{},key)?catalogs[language][key]:undefined;
   const text=message(locale)??message(fallback)??key;

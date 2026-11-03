@@ -37,7 +37,7 @@ function draw(){
  $('enemy-type').disabled=!loaded||busy;enemy.disabled=busy||paused||!hp;
 }
 function animate(element,frames,milliseconds,easing='ease-out'){
- if(element.parentElement===effects)frames=TheaterFrame.positionFrames(element,frames);
+ frames=TheaterFrame.effectFrames(element,frames);
  const duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:milliseconds*Number($('speed').value)/1000;
  const animation=element.animate(frames,{duration,easing,fill:'forwards'});running.add(animation);if(isPaused())animation.pause();
  return animation.finished.catch(error=>{if(error.name!=='AbortError')throw error;}).finally(()=>running.delete(animation));
@@ -232,7 +232,7 @@ async function attackFleet(kind){
 async function attack(command){
  const kind={ball:'lv1',barrel:'lv2',airdrop:'lv3',kraken:'lv4'}[command]||command;
  if(!damages[kind])throw Error('Unknown Space attack: '+command);
- if(!loaded||busy||isPaused()||hp===0)return false;
+ if(!loaded||busy||isPaused()||hp===0||enemies.hidden)return false;
  if(fleetHp.length)return attackFleet(kind);
  busy=true;draw();const token=generation,previous=hp;
  try{

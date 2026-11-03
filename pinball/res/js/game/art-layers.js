@@ -62,7 +62,7 @@ function validateIndicator(c){
  if(c.extraTriggers!==undefined&&(!Array.isArray(c.extraTriggers)||c.extraTriggers.length>7||c.extraTriggers.some(t=>!t)))throw Error('關聯組數需為 1～8');
  for(const t of [c.trigger,...(c.extraTriggers||[])])if(t){
   if(typeof t!=='object'||Array.isArray(t)||t.source!==undefined&&typeof t.source!=='string')throw Error('燈號關聯來源不合法');
-  if(!['default','game-started','hole-count','gap-output','gap-launch','hole-active','gap-count','enemy-target','count','count-complete','hole-capture','hole-release','attack','multiball','rebound','sensor','rollover','enemy-active','enemy-idle','kickback','post','level','object-hidden','flipper','flag','target','layer-entry'].includes(t.kind))throw Error('燈號觸發條件不合法');
+  if(!['default','game-started','kickback-event','rescue-closed','hole-count','gap-output','gap-launch','hole-active','gap-count','enemy-target','count','count-complete','hole-capture','hole-release','attack','multiball','rebound','sensor','rollover','enemy-active','enemy-idle','kickback','post','level','object-hidden','flipper','flag','target','layer-entry'].includes(t.kind))throw Error('燈號觸發條件不合法');
   if(t.threshold!==undefined&&(!Number.isInteger(t.threshold)||t.threshold<1||t.threshold>99))throw Error('燈號計數門檻不合法');
   if(t.kind==='hole-count'&&t.threshold!==undefined&&t.threshold<2)throw Error('進洞三階段門檻至少 2 次');
  }

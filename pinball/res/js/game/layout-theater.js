@@ -54,9 +54,8 @@ class LayoutTheater{
   if(e.type==='ready'&&this.bossStage)return;
   const attack=e.type==='configured-attack';
   const command=e.type==='enemy-spawn-requested'?'enemy':attack?(['steampunk','space','touhou1','touhou2','saga'].includes(this.theme)?e.kind:{lv1:'ball',lv2:'barrel',lv3:'airdrop',lv4:'kraken'}[e.kind]):null;
-  const allowEmpty=attack&&e.kind==='lv4'&&e.id==='touhou-bagua'&&['touhou1','touhou2'].includes(this.theme)&&!this.game?.enemyActive;
-  if(!command||attack&&!this.game?.enemyActive&&!allowEmpty)return;
-  const message={command,...(allowEmpty?{allowEmpty:true}:{}),skipWarning:!!this.tutorialPreview,mode:this.bossStage?'boss':this.game?.g?.gameplay?.mode||'free',stage:this.bossStage||0,id:this.generation+':'+command+':'+(attack?(this.attackSerial=(this.attackSerial||0)+1):(e.eventId||0))};
+  if(!command||attack&&!this.game?.enemyActive)return;
+  const message={command,skipWarning:!!this.tutorialPreview,mode:this.bossStage?'boss':this.game?.g?.gameplay?.mode||'free',stage:this.bossStage||0,id:this.generation+':'+command+':'+(attack?(this.attackSerial=(this.attackSerial||0)+1):(e.eventId||0))};
   this.activeCommands.set(message.id,(this.activeCommands.get(message.id)||0)+1);
   this.syncGameState();
   if(this.ready)this.send(message);else this.pending.push(message);
@@ -81,6 +80,25 @@ class LayoutTheater{
   }else for(let at=x-offset;at<x+width;at+=span)ctx.fillText(text,at,y+height/2);
   ctx.restore();
  }
+ invalidateViewport(){this.viewportRect=null;this.onViewportChange?.();}
+ viewport(target,translated=false){
+  if(this.viewportTarget!==target){
+   this.viewportCleanup?.();this.viewportTarget=target;this.invalidateViewport();
+   const invalidate=()=>this.invalidateViewport(),observer=typeof ResizeObserver==='function'?new ResizeObserver(invalidate):null;
+   observer?.observe(target);if(target.parentElement)observer?.observe(target.parentElement);
+   root.addEventListener?.('resize',invalidate);root.addEventListener?.('scroll',invalidate,true);
+   const scrollRoot=target.getRootNode?.();scrollRoot?.addEventListener('scroll',invalidate,true);
+   root.visualViewport?.addEventListener('resize',invalidate);root.visualViewport?.addEventListener('scroll',invalidate);
+   const ancestors=typeof MutationObserver==='function'?new MutationObserver(invalidate):null;
+   for(let p=target.parentElement;p;p=p.parentElement||p.getRootNode?.().host)ancestors?.observe(p,{attributes:true,attributeFilter:['style','class']});
+   this.viewportCleanup=()=>{observer?.disconnect();ancestors?.disconnect();scrollRoot?.removeEventListener('scroll',invalidate,true);root.removeEventListener?.('resize',invalidate);root.removeEventListener?.('scroll',invalidate,true);root.visualViewport?.removeEventListener('resize',invalidate);root.visualViewport?.removeEventListener('scroll',invalidate);};
+   if(!this.viewportLifetime){this.viewportLifetime=true;root.addEventListener?.('pagehide',()=>this.viewportCleanup?.(),{once:true});}
+  }
+  const [x=0,y=0]=translated?(target.style?.translate||'').split(' ').map(v=>parseFloat(v)||0):[];
+  if(!this.viewportRect){const r=target.getBoundingClientRect();this.viewportCssScale={x:r.width/(parseFloat(target.style?.width)||target.width||r.width||1),y:r.height/(parseFloat(target.style?.height)||target.height||r.height||1)};this.viewportRect={left:r.left-x*this.viewportCssScale.x,top:r.top-y*this.viewportCssScale.y,width:r.width,height:r.height};}
+  const r=this.viewportRect;if(!x&&!y)return r;
+  return {left:r.left+x*this.viewportCssScale.x,top:r.top+y*this.viewportCssScale.y,width:r.width,height:r.height};
+ }
  positionFrame(position){
   // Cache submitted values: CSSOM may round pixel strings on readback.
   const previous=this.framePosition||(this.framePosition={});
@@ -88,12 +106,12 @@ class LayoutTheater{
  }
  draw(ctx,game,top=-170.5){
   this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
-  if(this.panelElement){const box=this.panelElement.getBoundingClientRect(),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
-  const canvas=ctx.canvas,r=canvas.getBoundingClientRect(),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
+  if(this.panelElement){const box=this.viewport(this.panelElement),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
+  const canvas=ctx.canvas,r=this.viewport(canvas,true),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
   // Both surfaces already share CSS shake. Position the iframe from the unshaken
   // layout box; quantize away float noise in translated DOMRect coordinates.
   const [shakeX=0,shakeY=0]=(canvas.style?.translate||'').split(' ').map(v=>parseFloat(v)||0);
-  const left=Math.round((r.left-shakeX)*64)/64,topY=Math.round((r.top-shakeY)*64)/64;
+  const left=Math.round((r.left-shakeX*this.viewportCssScale.x)*64)/64,topY=Math.round((r.top-shakeY*this.viewportCssScale.y)*64)/64;
   this.positionFrame({left:(left+m.e*sx)+'px',top:(topY+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden',zIndex:'2'});
   // Reveal the theater iframe beneath the table artwork.
   ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));

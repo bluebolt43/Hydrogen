@@ -56,9 +56,13 @@ function presentation(o,g){
  }
  if(c.trigger?.kind==='gap-output'){
   const gap=g.g.gameplay?.touhouGap,lock=g.gapLock,exit=gap&&g.socketsById?.get(gap.hole)?.exit_hole;
-  if(c.trigger.source!==exit||!lock?.active||!lock.pending)return {state:'off',alpha:1,on:false};
-  const releasing=Number.isFinite(lock.releaseStartedAt),b=(releasing?c.releaseBehavior:c.behavior)||{};
-  const on=b.onSeconds||(releasing?.1:.6),off=b.offSeconds||(releasing?.1:.6),age=Math.max(0,g.time-(releasing?lock.releaseStartedAt:lock.readyAt));
+  const entrance=g.g.gameplay?.multiballHole,socket=entrance&&g.socketsById?.get(entrance);
+  const queued=!!entrance&&c.trigger.source===(socket?.exit_hole||entrance)&&!!g.freeBallQueue&&g.freeBallSources?.includes(entrance);
+  const gapPending=c.trigger.source===exit&&lock?.active&&lock.pending;
+  if(!gapPending&&!queued)return {state:'off',alpha:1,on:false};
+  const releasing=gapPending?Number.isFinite(lock.releaseStartedAt):(g.holeMultiballNextAt||0)>0,b=(releasing?c.releaseBehavior:c.behavior)||{};
+  const start=gapPending?(releasing?lock.releaseStartedAt:lock.readyAt):(g.holeMultiballNextAt||0);
+  const on=b.onSeconds||(releasing?.1:.6),off=b.offSeconds||(releasing?.1:.6),age=Math.max(0,g.time-start);
   const lit=age%(on+off)<on;return {state:lit?'on':'off',alpha:1,on:lit};
  }
  if(c.trigger?.kind==='enemy-target'){

@@ -6,6 +6,8 @@ function signal(o,g,t){
  const id=t.source||o.bind;
  switch(t.kind){
  case 'game-started':return {active:!!g.hasLaunchedOnce};
+ case 'rescue-closed':{const k=g.rescueById?.get(id);return {active:!!k&&!!g.gates?.some(p=>p.side===k.side&&p.layer===(k.layer||'lower')&&p.closed&&!p.unlocked)};}
+ case 'kickback-event':return {stamp:g.kickbackAt?.get(id)};
  case 'gap-launch':return {stamp:g.gapLaunchAt?.get(id)};
  case 'hole-count':return {active:(g.holeCaptureCounts?.get(id)||0)>=(t.threshold||2)};
  case 'hole-active':return {active:!!g.armedHoles?.has(id)};

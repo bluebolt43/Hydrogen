@@ -11,10 +11,14 @@ const soundBank=embedded?null:new PinballSound(PirateMap.sounds);
 if(soundBank)for(const event of ['pointerdown','keydown'])addEventListener(event,()=>soundBank.unlock(),{capture:true});
 function sound(name){if(embedded)parent.postMessage({channel:'pinball-theater',type:'sound',name},'*');else soundBank.play(name);}
 const damage={ball:1,barrel:2,pirates:3,kraken:4};
+const waterTints=[...stage.querySelectorAll('.wave')].map(image=>({image,src:image.src,back:!!image.closest('.back')}));
+let waterTintsReady=false;
+function refreshWaterTints(){if(waterTintsReady)for(const {image,src,back} of waterTints)TheaterFrame.setTint(image,src,isNight?'brightness(.55) saturate(.8)':back?'brightness(.86)':'');}
+
 const preload=TheaterFrame.preloadImage;
 function lock(v){isBusy=v;picker.disabled=next.disabled=daynight.disabled=v;$('height').disabled=v;document.querySelectorAll('[data-attack]').forEach(b=>b.disabled=v||defeated);$('next-level').disabled=v||!defeated;}
 function backgroundSources(type){const src=type.id==='kraken'?'res/img/pirate/pirate-story-kraken-cave.png':type.id==='sea-serpent'?'res/img/pirate/pirate-story-waterfall-channel.png':null;return src?[src,src]:['res/img/pirate/pirate-theater-background-day.png','res/img/pirate/pirate-theater-background-night.png'];}
-function sync(){const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){TheaterFrame.setImage($(id),backgroundSources(type)[i]);}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;positionHealth();}
+function sync(){refreshWaterTints();const type=catalog[typeIndex],anchor=type.states[stateIndex].waterAnchor;for(const [i,id] of ['day','night'].entries()){TheaterFrame.setImage($(id),backgroundSources(type)[i]);}stage.style.setProperty('--enemy-width',(32*type.scale)+'%');stage.style.setProperty('--enemy-anchor',(-100*anchor)+'%');stage.style.setProperty('--water-pivot',(100*anchor)+'%');$('states').replaceChildren(...type.states.map((s,i)=>{const el=document.createElement('span');el.textContent=s.label;el.className=i===stateIndex?'active':'';return el;}));enemy.alt=type.name+'・'+type.states[stateIndex].label;message.textContent=enemy.alt;stage.dataset.enemy=type.id;stage.dataset.state=type.states[stateIndex].id;positionHealth();}
 function animate(el,from,to,duration){if(!duration){el.style.transform=to;return Promise.resolve();}const animation=el.animate([{transform:from},{transform:to}],{duration,easing:'linear',fill:'forwards'});return animation.finished.then(()=>{el.style.transform=to;animation.cancel();});}
 function healthState(value,maximum){return value*100<=maximum*34?2:value*100<=maximum*67?1:0;}
 let healthPositionFrame=0;
@@ -93,7 +97,7 @@ async function playStoryVictory(){
   const asset=catalog[typeIndex].states[stateIndex];
   await Promise.all([preload(asset.src),preload('res/img/pirate/pirate-explosion-smoke.png'),preload('res/img/pirate/pirate-story-thumbs-up.png')]);
   enemy.src=TheaterFrame.imageSource(asset.src);hp=1;maxHp=3;defeated=false;sync();
-  isNight=true;$('day').hidden=true;$('night').hidden=false;stage.classList.add('night');
+  isNight=true;$('day').hidden=true;$('night').hidden=false;stage.classList.add('night');refreshWaterTints();
   document.querySelectorAll('.curtain').forEach(el=>el.style.display='none');
   $('health-hud').hidden=true;spinner.style.visibility='visible';spinner.style.transform='rotateY(0deg)';
   await resolveDamage('kraken');
@@ -151,18 +155,20 @@ async function choose(index,round=index+1,skipWarning=false){
  }catch(e){picker.value=String(typeIndex);message.textContent='敵人圖片載入失敗。';}finally{lock(false);}
 }
 async function nextLevel(){if(!defeated||isBusy)return;await choose((typeIndex+1)%catalog.length,level+1);}
-async function changeDay(){if(isBusy)return;lock(true);try{await frame.transition(()=>{isNight=!isNight;$('day').hidden=isNight;$('night').hidden=!isNight;stage.classList.toggle('night',isNight);daynight.textContent=isNight?'換成白天':'換成夜晚';});}finally{lock(false);}}
+async function changeDay(){if(isBusy)return;lock(true);try{await frame.transition(()=>{isNight=!isNight;$('day').hidden=isNight;$('night').hidden=!isNight;stage.classList.toggle('night',isNight);refreshWaterTints();daynight.textContent=isNight?'換成白天':'換成夜晚';});}finally{lock(false);}}
 
 catalog.forEach((t,i)=>{const o=document.createElement('option');o.value=i;o.textContent=t.name;picker.append(o);});next.onclick=()=>choose(typeIndex,level);$('next-level').onclick=nextLevel;picker.onchange=()=>choose(Number(picker.value));daynight.onclick=changeDay;
 $('height').oninput=e=>stage.style.aspectRatio=100/Number(e.target.value);$('water').onclick=e=>{const paused=stage.classList.toggle('still');e.currentTarget.textContent=paused?'播放動態':'暫停動態';e.currentTarget.setAttribute('aria-pressed',String(paused));};
 
 const attackAssets={barrel:'res/img/pirate/pirate-explosive-barrel.png',ball:'res/img/pirate/pirate-volleyball.png',pirates:'res/img/pirate/pirate-airborne-crew.png'};
 async function attack(kind){
+ if(!enemyPresent)return;
  if(kind==='kraken')return tentacleAttack();
  if(isBusy||defeated||!attackAssets[kind])return;
  lock(true);
  const layer=$('attack-layer'),animations=[];
  const play=async(el,frames,duration,delay=0)=>{
+  frames=TheaterFrame.effectFrames(el,frames);
   const a=el.animate(frames,{duration:reduced.matches?1:duration,delay:reduced.matches?0:delay,fill:'both',easing:'linear'});
   animations.push(a);await a.finished;
  };
@@ -213,6 +219,7 @@ async function tentacleAttack(){
  lock(true);
  const layers=[$('tentacle-behind'),$('tentacle-ahead')],fx=$('attack-layer'),animations=[];
  const play=async(el,frames,duration,easing='ease-in-out')=>{
+  frames=TheaterFrame.effectFrames(el,frames);
   const a=el.animate(frames,{duration:reduced.matches?1:duration,easing,fill:'forwards'});
   animations.push(a);await a.finished;
  };
@@ -263,7 +270,7 @@ document.querySelectorAll('[data-attack]').forEach(b=>b.onclick=()=>attack(b.dat
 
 lock(true);
 const combatSources=[...Object.values(attackAssets),'res/img/pirate/pirate-kraken-tentacle.png','res/img/pirate/pirate-lightning.png','res/img/pirate/pirate-explosion-smoke.png'];
-const ready=Promise.all([...document.querySelectorAll('.scene,.wave')].map(im=>PinballRuntimeImages.decode(im)).concat(preload(enemy.src),preload('res/img/theater-curtain-right.png'),...combatSources.map(preload))).then(async()=>{sync();renderHealth();if(!embedded){await warnAndClose();await enterEnemy();}else $('health-hud').hidden=true;lock(false);stage.dataset.ready='true';});ready.catch(()=>message.textContent='圖片載入失敗，請將 HTML 與 demo/assets 資料夾一起保留。');
+const ready=Promise.all([...document.querySelectorAll('.scene,.wave')].map(im=>PinballRuntimeImages.decode(im)).concat(preload(enemy.src),preload('res/img/theater-curtain-right.png'),...combatSources.map(preload))).then(async()=>{await Promise.all(waterTints.flatMap(({src})=>['brightness(.86)','brightness(.55) saturate(.8)'].map(filter=>TheaterFrame.preloadTint(src,filter))));waterTintsReady=true;sync();renderHealth();if(!embedded){await warnAndClose();await enterEnemy();}else $('health-hud').hidden=true;lock(false);stage.dataset.ready='true';});ready.catch(()=>message.textContent='圖片載入失敗，請將 HTML 與 demo/assets 資料夾一起保留。');
 let enemyPresent=false;
 TheaterFrame.connect({stage,ready,
  bounds(){const s=stage.getBoundingClientRect();const rect=el=>{const r=el.getBoundingClientRect();return {x:(r.left-s.left)/s.width,y:(r.top-s.top)/s.height,w:r.width/s.width,h:r.height/s.height};};return {boss:rect(enemy),hearts:rect($('health-hud'))};},

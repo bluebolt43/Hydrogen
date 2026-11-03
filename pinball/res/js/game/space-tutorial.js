@@ -27,7 +27,7 @@ const SpaceTutorial={
    ['tutorial.space.attack.title','tutorial.space.attack.text',()=>{const ids=attackIds('lv3'),flags=artRegions(a=>ids.includes(a.bind)&&/\/space-target-bandit-flag\./.test(a.src));return flags.length?flags:regions(ids);}],
    ['tutorial.space.lv1.title','tutorial.space.lv1.text',()=>attack('lv1')],
    ['tutorial.space.lv2.title','tutorial.space.lv2.text',()=>{const throne=artRegions(a=>/\/space-king-toilet-throne-front\./.test(a.src));return throne.length?throne:attack('lv2');}],
-   ['tutorial.space.lv4.title',()=>PinballI18n.t('tutorial.space.lv4.text',{count:counts[0]||1}),()=>regions(counter,true)],
+   ['tutorial.space.lv4.title',()=>PinballI18n.t('tutorial.space.lv4.text',{count:counts[0]||1}),()=>[...regions(counter,true),...artRegions(a=>/\/space-ch7-spatial-rift-transparent\./.test(a.src))]],
   ];
   return {firstPlaySteps,steps:[...firstPlaySteps,
    ['tutorial.space.upgrade.title','tutorial.space.upgrade.text',()=>regions(upgrades.flatMap(r=>[...r.targets,...r.bumpers]))],

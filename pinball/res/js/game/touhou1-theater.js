@@ -40,6 +40,7 @@ function draw(){
  $('next-state').disabled=!loaded;$('next-level').disabled=!loaded||busy||hp>0||level>=levels.length;$('enemy-type').disabled=!loaded||busy;
 }
 function animate(element,frames,milliseconds){
+ frames=TheaterFrame.effectFrames(element,frames);
  const duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:milliseconds*Number($('speed').value)/1000;
  const animation=element.animate(frames,{duration,easing:'ease-out',fill:'forwards'});running.add(animation);if(isPaused())animation.pause();
  return animation.finished.catch(error=>{if(error.name!=='AbortError')throw error;}).finally(()=>running.delete(animation));
@@ -83,15 +84,13 @@ async function defeat(token){
  bossStage(level,true);sound('explosion');await animate(enemy,[{opacity:1,translate:'0 0'},{opacity:0,translate:'0 15%'}],650);
  if(token===generation)enemies.hidden=true;
 }
-async function attack(command,options={}){
+async function attack(command){
  const kind={ball:'lv1',barrel:'lv2',airdrop:'lv3',kraken:'lv4'}[command]||command;
  if(!damages[kind])throw Error('Unknown Touhou '+part+' attack: '+command);
- const empty=kind==='lv4'&&options.allowEmpty===true;
- if(!loaded||busy||isPaused()||hp===0&&!empty)return false;
+ if(!loaded||busy||isPaused()||hp===0||enemies.hidden)return false;
  busy=true;draw();const token=generation,previous=hp,effect=TOUHOU_ATTACK_EFFECTS[kind];
  const impact=document.createElement('img');impact.className='attack-effect';impact.dataset.attack=kind;impact.dataset.phase='approach';impact.src=TheaterFrame.imageSource(effect.src);impact.alt='';impact.style.width=effect.width+'%';effects.append(impact);
  try{
-  if(empty){enemies.hidden=true;impact.style.opacity='0';await frame.curtains(false);if(token!==generation)return false;}
   await animate(impact,attackFrames[kind].approach,effect.approachDuration);
   if(token!==generation)return false;
   if(effect.holdDuration>0){
@@ -100,16 +99,16 @@ async function attack(command,options={}){
    if(token!==generation)return false;
   }
   const explodes=kind==='lv1';
-  if(!empty)hp=Math.max(0,hp-damages[kind]);impact.dataset.phase='impact';sound(explodes?'explosion':'metal');
-  await Promise.all([...(empty?[]:[TheaterFrame.renderHealth($('health'),hp,previous),
-   animate(enemy,[{filter:'brightness(2)',translate:'-2% 0'},{filter:'brightness(1)',translate:'0 0'}],250)]),
+  hp=Math.max(0,hp-damages[kind]);impact.dataset.phase='impact';sound(explodes?'explosion':'metal');
+  await Promise.all([TheaterFrame.renderHealth($('health'),hp,previous),
+   animate(enemy,[{filter:'brightness(2)',translate:'-2% 0'},{filter:'brightness(1)',translate:'0 0'}],250),
    animate(impact,attackFrames[kind].impact,effect.impactDuration),
    ...(explodes?[burst(effect.impactDuration)]:[])]);
   if(token!==generation)return false;
-  if(!empty&&hp===0)await defeat(token);
+  if(hp===0)await defeat(token);
   if(token!==generation)return false;
-  $('status').textContent=empty?'Lv4 夢想封印':hp?'剩餘 '+hp+' / '+config().health+' 顆心':'Boss '+level+' 完成';return true;
- }finally{if(token===generation){effects.replaceChildren();if(empty)await frame.curtains(true);if(token===generation){busy=false;draw();}}}
+  $('status').textContent=hp?'剩餘 '+hp+' / '+config().health+' 顆心':'Boss '+level+' 完成';return true;
+ }finally{if(token===generation){effects.replaceChildren();busy=false;draw();}}
 }
 $('enemy-type').replaceChildren(...levels.map(item=>{const option=document.createElement('option');option.value=item.stage;option.textContent='Boss '+item.stage+' · '+item.name;return option;}));
 $('enemy-type').onchange=e=>choose(Number(e.target.value)).catch(error=>{$('status').textContent=error.message;});

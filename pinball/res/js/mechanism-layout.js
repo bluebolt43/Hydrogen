@@ -40,6 +40,7 @@ function prepare(layout,g){
  const holeMulti=layout.gameplay?.holeMultiball;
  if(layout.gameplay?.multiballHole!==undefined&&!objects.some(o=>o.id===layout.gameplay.multiballHole&&o.type==='hole'))throw Error('Multiball 出球需要有效洞口');
  if(holeMulti&&(!objects.some(o=>o.id===holeMulti.hole&&o.type==='hole')||!Number.isInteger(holeMulti.hits)||holeMulti.hits<1||holeMulti.hits>99))throw Error('Multiball 需要有效洞口及 1～99 次進洞');
+ if(holeMulti?.balls!==undefined&&(!Number.isInteger(holeMulti.balls)||holeMulti.balls<2||holeMulti.balls>3))throw Error('Multiball 球數需要為 2～3');
  const gap=layout.gameplay?.touhouGap;
  if(gap){
   const sensor=objects.find(o=>o.id===gap.sensor&&o.type==='sensor'),hole=objects.find(o=>o.id===gap.hole&&o.type==='hole');

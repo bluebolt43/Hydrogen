@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="96" viewBox="0 0 160 96">
+  <defs>
+    <radialGradient id="shine" cx="25%" cy="20%" r="85%"><stop stop-color="#fff" stop-opacity=".44"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset=".78" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></radialGradient>
+    <g id="orb">
+      <circle r="1" fill="#fffdf5"/>
+      <path d="M0-1A1 1 0 0 0 0 1A.5 .5 0 0 0 0 0A.5 .5 0 0 1 0-1Z" fill="#111319"/>
+      <circle cy="-.5" r=".145" fill="#111319"/><circle cy=".5" r=".145" fill="#fffdf5"/>
+      <circle r="1" fill="url(#shine)" stroke="#d7bd7c" stroke-width=".055"/>
+    </g>
+    <path id="plus-one" d="M91 48H111M101 38V58M126 34L138 25V72M128 72H149"/>
+  </defs>
+  <use href="#orb" transform="translate(43 48) scale(36)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#plus-one" stroke="#332819" stroke-width="13"/><use href="#plus-one" stroke="#d7b56e" stroke-width="10"/><use href="#plus-one" stroke="#fff4d3" stroke-width="6"/></g>
+</svg>

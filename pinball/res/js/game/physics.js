@@ -6,9 +6,6 @@
 (function(root){
 'use strict';
 const CadetFlipper=typeof module!=='undefined'&&module.exports?require('./space-cadet-flipper.js'):root.SpaceCadetFlipper;
-const VpxFlipper=typeof module!=='undefined'&&module.exports?require('./vpx-flipper.js'):root.VpxFlipper;
-const VpxPhysics=typeof module!=='undefined'&&module.exports?require('./vpx-physics.js'):root.VpxPhysics;
-const ArcadePhysics=typeof module!=='undefined'&&module.exports?require('./arcade-physics.js'):root.ArcadePhysics;
 const EPS=1e-6, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const add=(a,b)=>[a[0]+b[0],a[1]+b[1]], sub=(a,b)=>[a[0]-b[0],a[1]-b[1]], mul=(a,k)=>[a[0]*k,a[1]*k];
 const dot=(a,b)=>a[0]*b[0]+a[1]*b[1], cross=(a,b)=>a[0]*b[1]-a[1]*b[0], len=a=>Math.hypot(...a), unit=a=>mul(a,1/(len(a)||1));
@@ -24,22 +21,6 @@ function basicCollision(velocity,normal,elasticity=.82,smoothness=.96,threshold=
  else direction=unit(add(mul(add(direction,mul(normal,projection)),smoothness),mul(normal,projection*elasticity)));
  const reboundSpeed=projection*speed;speed-=(1-elasticity)*reboundSpeed;
  let result=mul(direction,speed);if(reboundSpeed>=threshold)result=add(result,mul(normal,boost));return result;
-}
-// Project vertical gravity onto the slope, then express it in the 2D
-// surface-distance coordinates used by this game (no Z position/bounce).
-function slopeAcceleration(angle,direction,gravity){
- const theta=angle*Math.PI/180,s=Math.sin(theta),c=Math.cos(theta),d=unit(direction);
- const normal=[s*d[0],s*d[1],c],g=[0,0,-gravity],projection=g[2]*normal[2];
- const along=[g[0]-projection*normal[0],g[1]-projection*normal[1],g[2]-projection*normal[2]];
- const slopeTangent=[c*d[0],c*d[1],-s],acceleration=along.reduce((sum,v,i)=>sum+v*slopeTangent[i],0);
- return mul(d,acceleration);
-}
-// VPX-style normal impulse and Coulomb-limited contact friction, restricted
-// to XY motion and spin about Z. Unit sphere mass, inertia = 2/5 * r^2.
-// Compatibility API delegates to the same VPX implementation as the runtime.
-function vpxCollision(velocity,normal,spin,radius,elasticity,friction,threshold=Infinity,boost=0,contact=false){
- if(!contact)return VpxPhysics.collision(velocity,normal,spin,radius,elasticity,friction,0,radius/25,threshold,boost);
- const ball={v:[...velocity],spin};VpxPhysics.contact(ball,normal,[0,0],0,friction,{ballRadius:radius,vpxLengthScale:radius/25});return {velocity:ball.v,spin:ball.spin};
 }
 // maths::ray_intersect_circle: retain negative entry distance for an inside ray.
 function circleHit(p,d,c,r){
@@ -94,14 +75,6 @@ class Grid {
  }
  query(p,d,padding=5){const found=new Set();for(let x=Math.floor((Math.min(p[0],p[0]+d[0])-padding)/24);x<=Math.floor((Math.max(p[0],p[0]+d[0])+padding)/24);x++)for(let y=Math.floor((Math.min(p[1],p[1]+d[1])-padding)/24);y<=Math.floor((Math.max(p[1],p[1]+d[1])+padding)/24);y++)for(const e of this.map.get(x+','+y)||[])found.add(e);return found;}
 }
-// VPX XY flipper equations are kept in their own GPL-3.0-or-later module.
-const flipperSurface=VpxFlipper.surface,vpxFlipperResponse=VpxFlipper.response,moveVpxFlipper=VpxFlipper.move;
-function vpxFlipperHit(p,v,f,radius,offset,dt,c=CONFIG){
- const hit=VpxFlipper.hit(p,v,f,radius,offset,dt,c);if(hit)return hit;
- const base=circleHit(p,mul(v,dt),f.pivot,radius+f.radii[0]);
- if(!base||dot(v,base.n)>=0)return null;
- return {...base,t:Math.max(0,base.t),position:add(p,mul(v,Math.max(0,base.t)*dt)),angularVelocity:0};
-}
 // PINBALL.DAT: ball/500=.3, table/305=[25,.5,pi/2], table/701=.2.
 // World distance and velocity are multiplied by 21; time is still seconds.
 const CONFIG={
@@ -114,8 +87,8 @@ const CONFIG={
  kickbackSpeed:55*21,wellPull:30*21,wellDrag:1
 };
 class CoreGame {
- constructor(g){this.g=g;this.random=Math.random;this.config={...CONFIG,ballRadius:g.ball_radius};this.vpxConfig={...VpxPhysics.CONFIG,ballRadius:g.ball_radius,vpxLengthScale:g.ball_radius/25};this.vpxParameters=VpxPhysics.parameters(this.vpxConfig);this.arcadeConfig={...ArcadePhysics.CONFIG,ballRadius:g.ball_radius};this.arcadeParameters=ArcadePhysics.parameters(this.arcadeConfig);this.input={left:false,right:false,launch:false};this.events=[];this.onEvent=null;this.time=0;this.paused=false;this.cooldowns=new Map();this.grids={};this.build();this.buildGuidedTracks();this.reset();}
- get physics(){return this.config.physicsModel==='arcade'?this.arcadeParameters:this.config.physicsModel==='vpx2d'?this.vpxParameters:this.config;}
+ constructor(g){this.g=g;this.random=Math.random;this.config={...CONFIG,ballRadius:g.ball_radius};this.input={left:false,right:false,launch:false};this.events=[];this.onEvent=null;this.time=0;this.paused=false;this.cooldowns=new Map();this.grids={};this.build();this.buildGuidedTracks();this.reset();}
+ get physics(){return this.config;}
  // Map subclasses supply geometry and rules; the engine owns integration/CCD.
  edgeEnabled(){return true;}
  handleCollision(){return false;}
@@ -147,14 +120,14 @@ class CoreGame {
  set trail(value){this.ball.trail=value;}
  emit(type,data={}){this.mapEvent(type,data);const e={type,time:this.time,...data};this.events.push(e);if(this.events.length>200)this.events.shift();if(this.onEvent)this.onEvent(e);}
  scoreHit(id,points,cooldown=.12){if((this.cooldowns.get(id)||0)>this.time)return;this.cooldowns.set(id,this.time+cooldown);if(this.scoringEnabled!==false){this.score+=points;this.emit('score',{id,points,position:[...this.ball.p]});}else this.emit('score-hit',{id,position:[...this.ball.p]});this.recordTarget(id);}
- reset(){this.arcadeRemainder=0;this.vpxRemainder=0;this.score=0;this.extraLives=0;this.ballNumber=1;this.hasLaunchedOnce=false;this.gameOver=false;this.time=0;this.events=[];this.cooldowns.clear();this.input.left=this.input.right=this.input.launch=false;this.charge=0;this.paused=false;this.newBall();this.emit('new-game');}
+ reset(){this.score=0;this.extraLives=0;this.ballNumber=1;this.hasLaunchedOnce=false;this.gameOver=false;this.time=0;this.events=[];this.cooldowns.clear();this.input.left=this.input.right=this.input.launch=false;this.charge=0;this.paused=false;this.newBall();this.emit('new-game');}
  launchLayer(){return this.g.plunger.layer||'lower';}
  launchHeight(){return this.launchLayer()==='top'?this.physics.rampHeight*2:this.launchLayer()==='tavern'?this.physics.rampHeight:0;}
- newBall(preserveTable=false){this.lifeLaunched=false;this.ball={p:[this.g.plunger.x,this.g.plunger.rest_y-this.physics.ballRadius],v:[0,0],layer:this.launchLayer(),z:this.launchHeight(),state:'ready',immunity:0,saverAvailable:true};this.balls=[this.ball];if(!preserveTable)this.resetMapBall();this.plungerReleasedAt=-10;this.plungerReleaseCharge=0;this.charge=0;this.chargeElapsed=0;this.nudges=0;this.drainTimer=0;this.lastPortal=-10;this.trail=[];if(preserveTable){for(const gate of this.gates){gate.pending=false;gate.pendingBall=null;if(gate.id==='shooter-return')gate.closed=false;}}else{this.resetGates();this.resetTargets();for(const f of this.flippers){f.angle=f.rest;f.omega=0;f.cadet=null;VpxFlipper.reset(f);}}}
- limitSpeed(){if(this.config.physicsModel==='arcade'){const speed=len(this.ball.v),cap=this.arcadeConfig.arcadeMaxSpeed;if(speed>cap)this.ball.v=mul(this.ball.v,cap/speed);return;}if(this.config.physicsModel==='vpx2d')return;const speed=len(this.ball.v),cap=Math.min(this.ball.speedLimit||this.config.maxSpeed,this.config.maxSpeed);if(speed>cap)this.ball.v=mul(this.ball.v,cap/speed);}
+ newBall(preserveTable=false){this.kickbackAt?.clear();this.lifeLaunched=false;this.ball={p:[this.g.plunger.x,this.g.plunger.rest_y-this.physics.ballRadius],v:[0,0],layer:this.launchLayer(),z:this.launchHeight(),state:'ready',immunity:0,saverAvailable:true};this.balls=[this.ball];if(!preserveTable)this.resetMapBall();this.plungerReleasedAt=-10;this.plungerReleaseCharge=0;this.charge=0;this.chargeElapsed=0;this.nudges=0;this.drainTimer=0;this.lastPortal=-10;this.trail=[];if(preserveTable){for(const gate of this.gates){gate.pending=false;gate.pendingBall=null;if(gate.id==='shooter-return')gate.closed=false;}}else{this.resetGates();this.resetTargets();for(const f of this.flippers){f.angle=f.rest;f.omega=0;f.cadet=null;}}}
+ limitSpeed(){const speed=len(this.ball.v),cap=Math.min(this.ball.speedLimit||this.config.maxSpeed,this.config.maxSpeed);if(speed>cap)this.ball.v=mul(this.ball.v,cap/speed);}
  chargePower(seconds){const p=this.g.plunger,step=p.charge_step_seconds||0,duration=p.charge_seconds||1;return clamp(step?(Math.floor(seconds/step)+1)*step/duration:seconds/duration,0,1);}
- launch(power=.7){if(this.ball.state!=='ready'||this.gameOver)return;if(this.ball.saverAvailable&&this.ball.saverUntil===undefined)this.ball.saverUntil=this.time+(this.g.gameplay?.ball_saver_seconds||0);this.lifeLaunched=true;this.hasLaunchedOnce=true;this.plungerReleasedAt=this.time;power=clamp(power,0,1);this.plungerReleaseCharge=power;this.ball.state='playing';const p=this.g.plunger,speed=p.launch_min!==undefined?p.launch_min+(p.launch_max-p.launch_min)*power:(640+180*power)*this.physics.speedScale;if(this.config.physicsModel!=='legacy')delete this.ball.speedLimit;else this.ball.speedLimit=this.config.maxSpeed;this.ball.v=[0,-speed*(this.config.physicsModel!=='legacy'?1:1+this.random()*.1)];this.limitSpeed();this.emit('launch',{power,speed:len(this.ball.v)});}
- nudge(){if(this.gameOver||this.ball.state!=='playing')return;if(this.nudges>=3){this.emit('tilt');return;}this.nudges++;this.ball.v=add(this.ball.v,this.config.physicsModel==='arcade'?[(this.nudges%2?32:-32),-65]:this.config.physicsModel==='vpx2d'?[(this.nudges%2?1:-1)*this.vpxConfig.vpxNudgeX*this.vpxConfig.vpxLengthScale*100,-this.vpxConfig.vpxNudgeY*this.vpxConfig.vpxLengthScale*100]:[(this.nudges%2?32:-32)*this.physics.speedScale,-65*this.physics.speedScale]);this.limitSpeed();this.emit('nudge');}
+ launch(power=.7){if(this.ball.state!=='ready'||this.gameOver)return;if(this.ball.saverAvailable&&this.ball.saverUntil===undefined)this.ball.saverUntil=this.time+(this.g.gameplay?.ball_saver_seconds||0);this.lifeLaunched=true;this.hasLaunchedOnce=true;this.plungerReleasedAt=this.time;power=clamp(power,0,1);this.plungerReleaseCharge=power;this.ball.state='playing';const p=this.g.plunger,speed=p.launch_min!==undefined?p.launch_min+(p.launch_max-p.launch_min)*power:(640+180*power)*this.physics.speedScale;this.ball.speedLimit=this.config.maxSpeed;this.ball.v=[0,-speed*(1+this.random()*.1)];this.limitSpeed();this.emit('launch',{power,speed:len(this.ball.v)});}
+ nudge(){if(this.gameOver||this.ball.state!=='playing')return;if(this.nudges>=3){this.emit('tilt');return;}this.nudges++;this.ball.v=add(this.ball.v,[(this.nudges%2?32:-32)*this.physics.speedScale,-65*this.physics.speedScale]);this.limitSpeed();this.emit('nudge');}
  setBall(p,v=[0,0],layer='lower'){this.ball={p:[...p],v:[...v],layer,z:layer==='lower'?0:22,state:'playing',immunity:0};this.balls=[this.ball];this.gameOver=false;this.paused=false;this.lastPortal=-10;this.limitSpeed();}
  resetGates(){this.gates=this.g.one_way_gates.map(g=>({...g,n:unit(g.normal),closed:false,pending:false,unlocked:false}));}
  updateGates(previous,previousLayer){const b=this.ball,r=this.physics.ballRadius;if(previousLayer!==b.layer)return;
@@ -172,9 +145,8 @@ class CoreGame {
  }
  gravityAt(position,layer){
   const zone=this.gravityRegionAt(position,layer);if(!zone)return null;
-  return zone.slopeAngle===undefined?[...zone.acceleration]:this.config.physicsModel!=='legacy'?slopeAcceleration(zone.slopeAngle,zone.acceleration,this.physics.verticalGravity):mul(zone.acceleration,this.physics.verticalGravity*Math.sin(zone.slopeAngle*Math.PI/180));
+  return zone.slopeAngle===undefined?[...zone.acceleration]:mul(zone.acceleration,this.physics.verticalGravity*Math.sin(zone.slopeAngle*Math.PI/180));
  }
- supportGravityAt(position,layer){const zone=this.gravityRegionAt(position,layer),angle=zone?.slopeAngle??this.vpxConfig.vpxTableSlope;return this.physics.verticalGravity*Math.cos(angle*Math.PI/180);}
  buildGuidedTracks(){
   this.guidedTracks=(this.g.guided_tracks||[]).map(track=>{const distances=[0];for(let i=1;i<track.points.length;i++)distances.push(distances.at(-1)+len(sub(track.points[i],track.points[i-1])));return {...track,distances,length:distances.at(-1),entry:unit(sub(track.points[1],track.points[0])),exit:unit(sub(track.points.at(-1),track.points.at(-2)))};});
  }
@@ -224,7 +196,7 @@ class CoreGame {
  }
  advanceGuidedTrack(dt){
   const b=this.ball,current=this.guidedTracks.find(t=>t.id===b.track.id);
-  if(!(current.ballSpeed>0)&&(this.config.physicsModel!=='legacy'||(this.g.gravity_zones||[]).some(z=>z.layer===(current.layer||'lower'))))return this.advanceGravityTrack(dt);
+  if(!(current.ballSpeed>0)&&(this.g.gravity_zones||[]).some(z=>z.layer===(current.layer||'lower')))return this.advanceGravityTrack(dt);
   while(dt>EPS){
    const track=this.guidedTracks.find(t=>t.id===b.track.id);
    let i=1;while(i<track.distances.length-1&&track.distances[i]<=b.track.distance)i++;
@@ -244,10 +216,9 @@ class CoreGame {
   return 0;
  }
  collide(dt){
-  if(this.config.physicsModel==='arcade'){ArcadePhysics.collide(this,dt);return;}
   const b=this.ball,r=this.physics.ballRadius;let remaining=dt;
-  if(this.config.physicsModel!=='vpx2d'){b.slingshotContacts??=new Map();
-  for(const [id,state]of b.slingshotContacts){const edges=(this.edges?.[b.layer]||[]).filter(e=>e.id===id&&e.slingshot&&e.slingshotFace&&this.edgeEnabled(e));if(!edges.some(e=>len(sub(b.p,nearest(b.p,e.a,e.b).p))<=r+(e.thickness||0)/2+.2))state.released=true;}}
+  b.slingshotContacts??=new Map();
+  for(const [id,state]of b.slingshotContacts){const edges=(this.edges?.[b.layer]||[]).filter(e=>e.id===id&&e.slingshot&&e.slingshotFace&&this.edgeEnabled(e));if(!edges.some(e=>len(sub(b.p,nearest(b.p,e.a,e.b).p))<=r+(e.thickness||0)/2+.2))state.released=true;}
   if(this.targetRehitRequiresExit){
    b.targetContacts??=new Map();
    for(const [id,contact] of b.targetContacts){
@@ -255,28 +226,27 @@ class CoreGame {
     if(!touching)b.targetContacts.delete(id);
    }
   }
-  const contactFlippers=new Set(),contactEdges=new Set();
   for(let pass=0;pass<10&&remaining>1e-6;pass++){
    this.limitSpeed();
    const d=mul(b.v,remaining),portal=this.portalHit(b.p,d),trackHit=this.guidedTrackHit(b.p,d);let best=null;
    for(const e of [...this.grids[b.layer].query(b.p,d,Math.max(5,r)),...this.dynamicEdges()]){
     if(this.targetHits.has(e.id))continue;
     if((e.kind==='plunger'||e.kind==='rescue-kicker')&&d[1]<=0)continue;
-    if(!this.edgeEnabled(e)||contactEdges.has(e))continue;
+    if(!this.edgeEnabled(e))continue;
     // A flap passes forward travel; it blocks reverse travel only after the
     // complete ball has crossed, so it cannot close through a straddling ball.
     if(e.retractUp&&(b.v[1]<0||b.p[1]>e.c[1]))continue;
     if(e.n&&(dot(d,e.n)>=-EPS||dot(sub(b.p,e.a),e.n)<r-.08))continue;
-   const h=this.config.physicsModel==='vpx2d'?(e.c?VpxPhysics.hitCircle(b.p,b.v,e.c,e.r,r,remaining,this.physics):VpxPhysics.hitLine(b.p,b.v,e.a,e.b,r,remaining,this.physics,e.faceOnly,e.thickness||0,e.vpxSide||0)):e.c?circleHit(b.p,d,e.c,r+e.r):segmentHit(b.p,d,e.a,e.b,r+(e.thickness||0)/2);
+   const h=e.c?circleHit(b.p,d,e.c,r+e.r):segmentHit(b.p,d,e.a,e.b,r+(e.thickness||0)/2);
     // A lane's launch face must not catch balls on its rounded end caps
     // through the adjacent divider. Check the impact, not the frame start.
     if(h&&e.faceOnly){const q=h.position||add(b.p,mul(d,h.t)),axis=sub(e.b,e.a),along=dot(sub(q,e.a),axis);if(along<0||along>dot(axis,axis))continue;}
     if(h&&(!best||h.t<best.t))best={...h,e};
    }
    for(const f of this.flippers){
-    if(b.layer!==(f.layer||'lower')||contactFlippers.has(f))continue;
-    if(this.config.physicsModel!=='vpx2d'&&!f.cadet)f.cadet=new CadetFlipper(f,this.config);
-    const h=this.config.physicsModel==='vpx2d'?vpxFlipperHit(b.p,b.v,f,r,dt-remaining,remaining,this.physics):f.cadet.find(b.p,b.v,(this.collisionTime??this.time)+dt-remaining,remaining);
+    if(b.layer!==(f.layer||'lower'))continue;
+    if(!f.cadet)f.cadet=new CadetFlipper(f,this.config);
+    const h=f.cadet.find(b.p,b.v,(this.collisionTime??this.time)+dt-remaining,remaining);
     if(h&&(!best||h.t<best.t))best={...h,e:{id:f.id,kind:'flipper',f}};
    }
    if(trackHit&&(!best||trackHit.t<=best.t+1e-5)&&(!portal||trackHit.t<=portal.t)){this.enterGuidedTrack(trackHit.track);remaining=this.advanceGuidedTrack(remaining*(1-trackHit.t));if(b.state==='guided')return;continue;}
@@ -289,27 +259,17 @@ class CoreGame {
    const hitDistance=best.distance??len(d)*best.t,incomingSpeed=len(b.v);
    b.p=best.position||add(add(b.p,mul(d,best.t)),mul(best.n,best.depth+.012));
    const e=best.e;if(e.kind==='plunger'&&b.v[1]>0&&best.n[1]<-.5){b.state='ready';b.v=[0,0];b.p[1]=this.g.plunger.rest_y-r;this.charge=0;this.chargeElapsed=0;this.emit('plunger-ready');return;}
-   if(this.handleCollision(e)){if(b.state!=='playing')return;remaining-=this.config.physicsModel==='vpx2d'?remaining*clamp(best.t,0,1):(len(b.v)>1e-9?Math.abs(hitDistance/len(b.v)):remaining);continue;}
-   const approach=Math.abs(dot(b.v,best.n)),restingRail=e.kind==='rail'&&!e.mechanic&&approach<5,active=e.kind==='active'||e.mechanic==='active_rebound',c=this.physics,sling=c.physicsModel==='vpx2d'?e.vpxSlingshot===true&&best.part!=='endcap':e.slingshot;
-   let boost=0,threshold=1e9,elasticity=c.physicsModel==='vpx2d'?c.vpxElasticity:e.material==='roughWall'?c.roughWallElasticity:c.elasticity,smoothness=c.physicsModel==='vpx2d'?0:e.material==='roughWall'?c.roughWallSmoothness:c.collisionSmoothness;
-   if(e.kind==='bumper'&&c.physicsModel!=='vpx2d'){boost=(e.material==='upperBumper'?c.upperBumperBoost:c.bumperBoost)*(e.bumperStrength==='strong'?1:.5);threshold=(this.bumperHitUntil.get(e.id)||0)>this.time?1e9:c.bumperThreshold;elasticity=c.bumperElasticity;smoothness=c.bumperSmoothness;}
-   if(e.kind==='bumper'&&c.physicsModel==='vpx2d'){boost=c.vpxBumperForce*c.vpxLengthScale*100;elasticity=c.vpxBumperElasticity;threshold=c.vpxBumperThreshold*c.vpxLengthScale*100;}
-   if(c.physicsModel!=='vpx2d'&&active&&(!e.slingshot||e.slingshotFace)){boost=c.activeBoost*(e.reboundStrength==='strong'?1:.5);threshold=c.activeThreshold;elasticity=c.activeElasticity;smoothness=c.activeSmoothness;}
-   if(e.kind==='flipper'&&c.physicsModel!=='vpx2d')({boost,threshold,elasticity,smoothness}=e.f.cadet.response());
+   if(this.handleCollision(e)){if(b.state!=='playing')return;remaining-=(len(b.v)>1e-9?Math.abs(hitDistance/len(b.v)):remaining);continue;}
+   const approach=Math.abs(dot(b.v,best.n)),restingRail=e.kind==='rail'&&!e.mechanic&&approach<5,active=e.kind==='active'||e.mechanic==='active_rebound',c=this.physics,sling=e.slingshot;
+   let boost=0,threshold=1e9,elasticity=e.material==='roughWall'?c.roughWallElasticity:c.elasticity,smoothness=e.material==='roughWall'?c.roughWallSmoothness:c.collisionSmoothness;
+   if(e.kind==='bumper'){boost=(e.material==='upperBumper'?c.upperBumperBoost:c.bumperBoost)*(e.bumperStrength==='strong'?1:.5);threshold=(this.bumperHitUntil.get(e.id)||0)>this.time?1e9:c.bumperThreshold;elasticity=c.bumperElasticity;smoothness=c.bumperSmoothness;}
+   if(active&&(!e.slingshot||e.slingshotFace)){boost=c.activeBoost*(e.reboundStrength==='strong'?1:.5);threshold=c.activeThreshold;elasticity=c.activeElasticity;smoothness=c.activeSmoothness;}
+   if(e.kind==='flipper')({boost,threshold,elasticity,smoothness}=e.f.cadet.response());
    {let slingFired=false;
-    if(e.kind==='flipper'&&c.physicsModel==='vpx2d'){
-     const time=dt-remaining+best.t*remaining;
-     if(best.isContact){VpxFlipper.contact(b,e.f,best.n,c,remaining*(1-best.t),this.field().a,best.angularVelocity,best.gap||0);contactFlippers.add(e.f);}
-     else if(vpxFlipperResponse(b,e.f,best.n,c,best.angularVelocity,best.gap||0)>0)this.emit('flipper-hit',{id:e.id});
-     VpxFlipper.react(e.f,time,c);
-    }else if(c.physicsModel==='vpx2d'&&best.isContact){VpxPhysics.contact(b,best.n,this.field().a,remaining*(1-best.t),sling?c.vpxSlingFriction:e.kind==='bumper'?c.vpxBumperFriction:c.vpxWallFriction,c,best.orgNormalVelocity);contactEdges.add(e);
-    }else if(sling){const normalSpeed=dot(b.v,best.n),tangent=sub(b.v,mul(best.n,normalSpeed)),state=c.physicsModel==='vpx2d'?null:b.slingshotContacts.get(e.id);
-     slingFired=e.slingshotFace&&normalSpeed<=-(c.physicsModel==='vpx2d'?c.vpxSlingThreshold*c.vpxLengthScale*100:EPS)&&(c.physicsModel==='vpx2d'||!state||state.released&&this.time>=state.readyAt);
-     if(c.physicsModel==='vpx2d'){const out=VpxPhysics.slingshot(b,e,best.n,c,slingFired,best.gap||0);b.v=out.velocity;b.spin=out.spin;if(out.positionShift)b.p=add(b.p,out.positionShift);}else b.v=add(mul(tangent,smoothness),mul(best.n,Math.max(0,-normalSpeed)*elasticity+(slingFired?boost:0)));
-     if(slingFired){if(c.physicsModel==='vpx2d'){const previous=b.vpxLastSlingEventPosition||[0,0],distance=dot(sub(previous,b.p),sub(previous,b.p));b.vpxLastSlingEventPosition=[...b.p];if(distance>.25*c.vpxLengthScale*c.vpxLengthScale)this.emit('slingshot-hit',{id:e.id});}else {b.slingshotContacts.set(e.id,{released:false,readyAt:this.time+.1});this.emit('slingshot-hit',{id:e.id});}}
-    }else if(c.physicsModel==='vpx2d'){
-     const bumper=e.kind==='bumper',out=VpxPhysics.collision(b.v,best.n,b.spin||0,r,bumper?c.vpxBumperElasticity:c.vpxElasticity,bumper?c.vpxBumperFriction:c.vpxWallFriction,bumper?0:c.vpxElasticityFalloff,c.vpxLengthScale,threshold,boost,best.gap||0);
-     b.v=out.velocity;b.spin=out.spin;if(out.positionShift)b.p=add(b.p,out.positionShift);
+    if(sling){const normalSpeed=dot(b.v,best.n),tangent=sub(b.v,mul(best.n,normalSpeed)),state=b.slingshotContacts.get(e.id);
+     slingFired=e.slingshotFace&&normalSpeed<=-EPS&&(!state||state.released&&this.time>=state.readyAt);
+     b.v=add(mul(tangent,smoothness),mul(best.n,Math.max(0,-normalSpeed)*elasticity+(slingFired?boost:0)));
+     if(slingFired){b.slingshotContacts.set(e.id,{released:false,readyAt:this.time+.1});this.emit('slingshot-hit',{id:e.id});}
     }else if(restingRail){
      // Resting contact is sliding, not a new impact every gravity substep.
      // Apply surface damping per second, preserving gravity's tangent motion.
@@ -317,7 +277,7 @@ class CoreGame {
     }else b.v=basicCollision(b.v,best.n,elasticity,smoothness,threshold,boost);
     if(!best.isContact&&(!sling||slingFired))this.collisionEffect(e,approach);
     // TBumper::Fire disables its booster until the 0.1-second timer expires.
-    if(!best.isContact&&e.kind==='bumper'&&approach>threshold){if(c.physicsModel!=='vpx2d')this.bumperHitUntil.set(e.id,this.time+c.bumperCooldown);this.scoreHit(e.id,500*this.bumperLevel(e.id),c.physicsModel==='vpx2d'?.1:c.bumperCooldown);}
+    if(!best.isContact&&e.kind==='bumper'&&approach>threshold){this.bumperHitUntil.set(e.id,this.time+c.bumperCooldown);this.scoreHit(e.id,500*this.bumperLevel(e.id),c.bumperCooldown);}
     if(!best.isContact&&(!sling||slingFired)&&(active||e.kind==='rebound'||e.kind==='target')){
      const repeatedTarget=this.targetRehitRequiresExit&&e.kind==='target'&&b.targetContacts.has(e.id);
      if(!repeatedTarget){
@@ -328,14 +288,14 @@ class CoreGame {
     if(e.kind==='flipper'&&boost>10)this.emit('flipper-hit',{id:e.id});
    }
    // pb::collide consumes distance / POST-collision speed; clamp at the next ray.
-   remaining-=c.physicsModel==='vpx2d'?remaining*clamp(best.t,0,1):e.slingshot||restingRail?(incomingSpeed>1e-9?Math.max(0,hitDistance)/incomingSpeed:remaining):(len(b.v)>1e-9?Math.abs(hitDistance/len(b.v)):remaining);
+   remaining-=e.slingshot||restingRail?(incomingSpeed>1e-9?Math.max(0,hitDistance)/incomingSpeed:remaining):(len(b.v)>1e-9?Math.abs(hitDistance/len(b.v)):remaining);
    if(this.rulesInterrupted())return;
   }
  }
  capture(id,p,release,layer,direction,points){const b=this.ball;if(this.time<b.immunity||b.state!=='playing'||this.balls.some(other=>other!==b&&other.state==='captured'&&other.held?.id===id))return;
   this.held={id,remaining:.65,speed:len(b.v),incoming:[...b.v],release,layer,direction};b.p=[...p];b.state='captured';this.scoreHit(id,points);this.emit('capture',{id});this.onCapture(id);
  }
- release(){const h=this.held,b=this.ball;let speed=this.config.physicsModel!=='legacy'?this.physics.kickbackSpeed:clamp(h.speed*.68+90*this.physics.speedScale,160*this.physics.speedScale,380*this.physics.speedScale);b.p=[...h.release];b.layer=h.layer;b.z=0;
+ release(){const h=this.held,b=this.ball;let speed=clamp(h.speed*.68+90*this.physics.speedScale,160*this.physics.speedScale,380*this.physics.speedScale);b.p=[...h.release];b.layer=h.layer;b.z=0;
   b.v=mul(unit(h.direction),speed);
   b.state='playing';b.immunity=this.time+.5;this.held=null;this.limitSpeed();this.emit('release',{id:h.id,speed});}
  drain(){if(this.ball.state!=='playing')return;const b=this.ball;if(b.saverAvailable&&this.time<b.saverUntil){b.saverAvailable=false;b.state='saver-return';b.v=[0,0];b.saveReturnAt=this.time+.35;this.emit('ball-saved');return;}this.ball.state='drained';this.drainTimer=1.1;this.emit('drain');}
@@ -345,23 +305,15 @@ class CoreGame {
   for(let i=0;i<this.balls.length;i++)for(let j=i+1;j<this.balls.length;j++){const a=this.balls[i],b=this.balls[j];
    if(a.state!=='playing'||b.state!=='playing'||a.layer!==b.layer||Math.abs(a.z-b.z)>2*r)continue;
    const delta=sub(b.p,a.p),distance=len(delta);if(distance>=2*r)continue;const n=distance>EPS?mul(delta,1/distance):[1,0],closing=dot(sub(b.v,a.v),n);
-   if(this.config.physicsModel==='vpx2d'){const out=VpxPhysics.ballCollision(a.v,b.v,n,distance-2*r,this.physics);if(out){a.v=out.a;b.v=out.b;a.p=sub(a.p,out.shift);b.p=add(b.p,out.shift);}continue;}
    if(closing<0){const impulse=mul(n,-closing*.95);a.v=sub(a.v,impulse);b.v=add(b.v,impulse);}
    const shift=mul(n,(2*r-distance+.012)/2),pa=sub(a.p,shift),pb=add(b.p,shift);
    if(clear(pa,a.layer,a))a.p=pa;if(clear(pb,b.layer,b))b.p=pb;
-   if(this.config.physicsModel!=='vpx2d')for(const ball of [a,b]){const speed=len(ball.v),cap=this.config.physicsModel==='arcade'?this.physics.maxSpeed:Math.min(ball.speedLimit||this.config.maxSpeed,this.config.maxSpeed);if(speed>cap)ball.v=mul(ball.v,cap/speed);}
+   for(const ball of [a,b]){const speed=len(ball.v),cap=Math.min(ball.speedLimit||this.config.maxSpeed,this.config.maxSpeed);if(speed>cap)ball.v=mul(ball.v,cap/speed);}
   }
  }
  step(dt=this.physics.step){
   const frameTime=this.time;
-  if(this.config.physicsModel==='arcade'){
-   if(this.paused||this.gameOver)return;const h=1/240;this.arcadeRemainder=(this.arcadeRemainder||0)+dt;
-   while(this.arcadeRemainder>=h-1e-12){this.arcadeRemainder=Math.max(0,this.arcadeRemainder-h);this.stepFrame(h);if(this.paused||this.gameOver){this.arcadeRemainder=0;break;}}
-  }else if(this.config.physicsModel==='vpx2d'){
-   if(this.paused||this.gameOver)return;
-   this.vpxRemainder=(this.vpxRemainder||0)+dt;
-   while(this.vpxRemainder>=.001-1e-12){this.vpxRemainder=Math.max(0,this.vpxRemainder-.001);this.stepFrame(.001);if(this.paused||this.gameOver){this.vpxRemainder=0;break;}}
-  }else {this.vpxRemainder=0;this.stepFrame(dt);}
+  this.stepFrame(dt);
   if(this.time!==frameTime)for(const b of this.balls)if(b.state==='playing'){b.trail||=[];b.trail.push({p:[...b.p],layer:b.layer});if(b.trail.length>24)b.trail.shift();}
  }
  hasPendingBalls(){return this.freeBallQueue>0;}
@@ -378,13 +330,13 @@ class CoreGame {
   const ready=this.balls.find(b=>b.state==='ready');if(ready){if(this.input.launch){const duration=this.g.plunger.charge_seconds||1;this.chargeElapsed=clamp((this.chargeElapsed||0)+dt,0,duration);this.charge=this.chargePower(this.chargeElapsed);}ready.p[1]=this.g.plunger.rest_y-this.physics.ballRadius+this.g.plunger.stroke*this.charge;}
   const frameStart=this.time-dt;
   for(let i=0;i<this.flippers.length;i++){
-   const f=this.flippers[i];if(this.config.physicsModel==='arcade'){ArcadePhysics.move(f,!!this.input[f.control||(i?'right':'left')],dt,this.physics);continue;}if(this.config.physicsModel==='vpx2d'){moveVpxFlipper(f,!!this.input[f.control||(i?'right':'left')],dt,this.physics);continue;}if(!f.cadet)f.cadet=new CadetFlipper(f,this.config);else f.cadet.configure(this.config);
+   const f=this.flippers[i];if(!f.cadet)f.cadet=new CadetFlipper(f,this.config);else f.cadet.configure(this.config);
    f.cadet.motion(!!this.input[f.control||(i?'right':'left')],frameStart);
    const old=f.angle;f.angle=f.rest-f.cadet.angle(this.time);f.omega=(f.angle-old)/dt;
   }
   // pb::timed_frame: velocity += (sum of fields) * dt, without exponential drag.
   for(const b of this.balls)if(b.state==='playing'){
-   this.ball=b;this.syncRegion();const {a,drag}=this.field();if(this.config.physicsModel==='vpx2d')VpxPhysics.accelerate(b,a,this.supportGravityAt(b.p,b.layer),dt,this.physics);else b.v=add(b.v,mul(sub(a,mul(b.v,drag)),dt));this.limitSpeed();
+   this.ball=b;this.syncRegion();const {a,drag}=this.field();b.v=add(b.v,mul(sub(a,mul(b.v,drag)),dt));this.limitSpeed();
   }
   // One continuous collision loop per ball per frame (pb::timed_frame).
   // Extra spatial substeps reset flipper edge suppression and apply duplicate boosts.
@@ -405,7 +357,7 @@ class CoreGame {
  }
  advance(seconds){for(let t=0;t<seconds;t+=this.physics.step)this.step(Math.min(this.physics.step,seconds-t));}
 }
-const api={ARCADE_CONFIG:ArcadePhysics.CONFIG,VPX_CONFIG:VpxPhysics.CONFIG,CoreGame,Grid,EPS,clamp,cross,CONFIG,taperedGeometry,taperedOutline,taperedHit,basicCollision,vpxCollision,slopeAcceleration,flipperSurface,vpxFlipperResponse,moveVpxFlipper,vpxFlipperHit,segmentHit,circleHit,inside,nearest,unit,sub,add,mul,dot,len,mix};
+const api={CoreGame,Grid,EPS,clamp,cross,CONFIG,taperedGeometry,taperedOutline,taperedHit,basicCollision,segmentHit,circleHit,inside,nearest,unit,sub,add,mul,dot,len,mix};
 // Compatibility for existing consumers; new maps subclass CoreGame directly.
 let defaultGame;Object.defineProperty(api,'Game',{get(){if(!defaultGame){const map=typeof module!=='undefined'&&module.exports?require('./table-mechanics.js'):root.TableMechanics;if(!map)throw Error('Load table-mechanics.js before creating the game');defaultGame=map.createGame(api);}return defaultGame;}});
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.PiratePhysics=api;

@@ -41,6 +41,11 @@ TheaterFrame.positionFrames=function(element,frames){
 };
 }
 
+// Apply position conversion only to disposable effects, never persistent actors.
+TheaterFrame.effectFrames=function(element,frames){
+ return ['effects','attack-layer','tentacle-behind','tentacle-ahead'].includes(element.parentElement?.id)?TheaterFrame.positionFrames(element,frames):frames;
+};
+
 // Keep decoded sources alive for the current theater, and normalize logical PNG
 // aliases before comparing URLs. Clearing the iframe releases the whole cache.
 {
@@ -53,6 +58,33 @@ TheaterFrame.positionFrames=function(element,frames){
    images.set(url,entry);
   }
   return images.get(url).ready;
+ };
+ const tints=new Map();
+ const tintKey=(src,filter)=>PinballRuntimeImages.resolve(src)+'|'+filter;
+ // Color-only filters commute with scaling. Bake them once at source size;
+ // keep CSS shadows, which depend on display size, on their original path.
+ TheaterFrame.preloadTint=function(src,filter){
+  const key=tintKey(src,filter);if(tints.has(key))return tints.get(key).ready;
+  const entry={};tints.set(key,entry);
+  entry.ready=TheaterFrame.preloadImage(src).then(async image=>{
+   const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+   try{
+   const ctx=canvas.getContext('2d');
+   if('filter' in ctx){ctx.filter=filter;ctx.drawImage(image,0,0);}
+   else{
+    ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,canvas.width,canvas.height),brightness=Number(filter.match(/brightness\(([\d.]+)\)/)?.[1]??1),saturation=Number(filter.match(/saturate\(([\d.]+)\)/)?.[1]??1),p=pixels.data;
+    for(let i=0;i<p.length;i+=4){const r=p[i]*brightness,g=p[i+1]*brightness,b=p[i+2]*brightness,l=.213*r+.715*g+.072*b;p[i]=l+(r-l)*saturation;p[i+1]=l+(g-l)*saturation;p[i+2]=l+(b-l)*saturation;}
+    ctx.putImageData(pixels,0,0);
+   }
+   const result=new Image();result.src=canvas.toDataURL('image/png');
+   await PinballRuntimeImages.decode(result);entry.image=result;return result;
+   }finally{canvas.width=canvas.height=0;}
+  }).catch(error=>{if(error.name==='SecurityError'){entry.image=null;return null;}tints.delete(key);throw error;});return entry.ready;
+ };
+ TheaterFrame.setTint=function(image,src,filter){
+  const tinted=filter?tints.get(tintKey(src,filter))?.image:null;
+  const url=tinted?.src||TheaterFrame.imageSource(src);if(image.src!==url)image.src=url;
+  image.style.filter=tinted||!filter?'none':filter;return true;
  };
  TheaterFrame.preloadImages=sources=>Promise.all([...new Set(sources.filter(Boolean))].map(TheaterFrame.preloadImage));
  TheaterFrame.imageSource=function(src){const url=PinballRuntimeImages.resolve(src);return images.get(url)?.image.src||url;};

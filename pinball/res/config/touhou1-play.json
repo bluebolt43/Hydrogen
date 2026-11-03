@@ -2403,12 +2403,12 @@
           "kind": "ball",
           "value": 1,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png",
+            "src": "res/img/touhou/touhou-bonus-ball-plus-1.svg",
             "crop": [
               0,
               0,
-              18,
-              9
+              160,
+              96
             ]
           }
         },
@@ -2416,12 +2416,12 @@
           "kind": "multi",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiball.png",
+            "src": "res/img/touhou/touhou-bonus-multiball.svg",
             "crop": [
               0,
               0,
-              19,
-              18
+              160,
+              112
             ]
           }
         },

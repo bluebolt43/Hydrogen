@@ -22,6 +22,7 @@ function draw(){
  health.setAttribute('aria-label',`Boss 生命 ${hp} / ${config().health}`);
 }
 function animate(element,frames,milliseconds,easing='ease-in-out'){
+ frames=TheaterFrame.effectFrames(element,frames);
  const duration=matchMedia('(prefers-reduced-motion:reduce)').matches?0:milliseconds*Number($('speed').value)/1000;
  const a=element.animate(frames,{duration,easing,fill:'forwards'});running.add(a);if(isPaused())a.pause();
  return a.finished.catch(e=>{if(e.name!=='AbortError')throw e;}).finally(()=>running.delete(a));
@@ -149,7 +150,7 @@ async function defeat(token){
 async function attack(command){
  const kind={ball:'lv1',barrel:'lv2',airdrop:'lv3',kraken:'lv4'}[command]||command,a=data.attacks[kind];
  if(!a)throw Error('Unknown Saga attack: '+command);
- if(!loaded||busy||isPaused()||hp===0)return false;
+ if(!loaded||busy||isPaused()||hp===0||enemies.hidden)return false;
  busy=true;draw();const token=generation,previous=hp;
  const weapon=effect('strike');weapon.dataset.attack=kind;weapon.dataset.phase='approach';weapon.style.width=a.width+'%';const image=document.createElement('img');image.src=TheaterFrame.imageSource(a.src);image.alt='';weapon.append(image);
  try{
@@ -189,7 +190,7 @@ document.querySelector('label:has(#speed)').firstChild.textContent='動畫速度
 for(const b of document.querySelectorAll('[data-attack]'))b.onclick=()=>attack(b.dataset.attack).catch(showError);
 applyScene();enemies.hidden=true;
 const sources=[...new Set(levels.flatMap(b=>[b.background,...b.states.map(state=>state.src)]).concat(Object.values(data.attacks).flatMap(a=>[a.src,a.secondarySrc].filter(Boolean)),[data.wavesSrc,data.lightningSrc,data.electricSrc,data.electricBurstSrc,'img/theater-curtain-right.png','img/health-heart.svg','img/pirate/pirate-explosion-smoke.png']))];
-const ready=TheaterFrame.preloadImages(sources).then(async()=>{loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();});
+const ready=TheaterFrame.preloadImages(sources).then(async()=>{await TheaterFrame.preloadTint(data.wavesSrc,'brightness(.86)');for(const image of document.querySelectorAll('.saga-water-back .saga-wave'))TheaterFrame.setTint(image,data.wavesSrc,'brightness(.86)');loaded=true;if(!embedded)await enter(params.has('skip-warning'));draw();});
 ready.catch(e=>{$('status').textContent='素材載入失敗：'+e.message;});
 window.SagaTheater={attack,choose,reset,pause,state,get ready(){return loaded;}};
 window.viewReady=ready;window.viewAPI={play:()=>choose(level,true),suspend:()=>pause(true),resume:()=>pause(false)};

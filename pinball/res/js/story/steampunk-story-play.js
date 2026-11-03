@@ -98,7 +98,6 @@ function paintLabArrival(panel,layout,t){
    bubble.dataset.speaker=step.speaker;
    bubble.style.left=step.speaker==='hero'?'18%':'39%';
    bubble.style.top=(inset.y-cam.y+14)/cam.height*100+'%';
-   bubble.style.width='24%';bubble.style.height=inset.height*.36/cam.height*100+'%';
   }
   for(const message of bubble.querySelectorAll('.lab-message'))message.style.display=Number(message.dataset.message)===index?'block':'none';
  }
@@ -193,18 +192,18 @@ function paintRescueSequence(panel,layout,t){
  move('image-002','image-001','image-002',ease((t-timing.heroEntry)/timing.entryDuration),false);
  move('image-004','image-003','image-004',ease((t-timing.girlEntry)/timing.entryDuration),true);
  const inset=objects['rectangle-001'];
- function bubbleBox(el,x,y,w,h){el.style.left=(x-cam.x)/cam.width*100+'%';el.style.top=(y-cam.y)/cam.height*100+'%';el.style.width=w/cam.width*100+'%';el.style.height=h/cam.height*100+'%';}
+ function bubbleBox(el,x,y,w,h){el.style.left=(x-cam.x)/cam.width*100+'%';el.style.top=(y-cam.y)/cam.height*100+'%';if(w!==undefined){el.style.width=w/cam.width*100+'%';el.style.height=h/cam.height*100+'%';}}
  for(const [selector,id] of [['.rescue-exclaim','rectangle-002'],['.rescue-bubble','rectangle-003']]){
-  const b=objects[id];bubbleBox(panel.querySelector(selector),b.x,b.y,b.width,b.height);
+  const b=objects[id];bubbleBox(panel.querySelector(selector),b.x,b.y);
  }
  const mark=panel.querySelector('.rescue-exclaim');mark.style.opacity=t>=timing.exclaim&&t<timing.exclaimEnd?1:0;
  const bubble=panel.querySelector('.rescue-bubble');bubble.style.opacity=t>=timing.dialogue&&t<timing.bubbleEnd?1:0;
  const girl=panel.querySelector('.rescue-girl'),ship=panel.querySelector('.rescue-ship'),prayer=panel.querySelector('.rescue-prayer'),skull=panel.querySelector('.rescue-skull');
  const together=t>=timing.together&&t<timing.bubbleEnd;
  girl.style.opacity=(t>=timing.dialogue&&t<timing.prayer)||together?1:0;
- girl.style.left='50%';girl.style.top=together?'12%':'50%';girl.style.transform=together?'translateX(-50%)':'translate(-50%,-50%)';
+ girl.style.left=together?'25%':'50%';girl.style.top='50%';girl.style.transform='translate(-50%,-50%)';
  ship.style.opacity=(t>=timing.ship&&t<timing.together)||together?1:0;
- ship.style.right='15%';ship.style.width='70%';ship.style.top=together?'30%':'20%';
+ ship.style.right=together?'4%':'15%';ship.style.width=together?'52%':'70%';ship.style.top='18%';ship.style.height='64%';
  prayer.style.opacity=t>=timing.prayer&&t<timing.ship?1:0;
  const drift=clamp((t-timing.skull)/timing.skullDuration),pilot=objects['image-004'];
  bubbleBox(skull,pilot.x+pilot.width*.6,pilot.y+pilot.height*.35-drift*inset.height*.3,pilot.width*.18,pilot.height*.3);
@@ -304,7 +303,7 @@ function paint(index,elapsed){
   const cam=d.camera;
   const bubble=panel.querySelector('.villain-dialogue');
   const bx=d.x/100*941,by=d.y/100*1672,bw=d.w/100*941,bh=d.h/100*1672;
-  Object.assign(bubble.style,{left:(bx-cam.x)/cam.width*100+'%',top:(by-cam.y)/cam.height*100+'%',width:bw/cam.width*100+'%',height:bh/cam.height*100+'%'});
+  Object.assign(bubble.style,{left:(bx-cam.x)/cam.width*100+'%',top:(by-cam.y)/cam.height*100+'%'});
   for(const [selector,box] of [['.villain-anger',d.shipBox],['.villain-ship',d.shipBox],['.villain-count',d.countBox]])Object.assign(panel.querySelector(selector).style,{left:(box.x-bx)/bw*100+'%',top:(box.y-by)/bh*100+'%',width:box.width/bw*100+'%',height:box.height/bh*100+'%',bottom:'auto',objectFit:'contain'});
 
   panel.querySelector('.villain-dialogue').style.opacity=t>=d.angerAt?1:0;
@@ -327,7 +326,10 @@ function paint(index,elapsed){
   const footage=panel.querySelector('.record-footage'),noise=panel.querySelector('.record-noise'),scratches=panel.querySelector('.record-scratches');
   footage.style.opacity=recording?1:0;
   const current=(cfg.screens||[]).filter(screen=>t>=screen.at).pop();
-  if(current&&footage.getAttribute('src')!==current.src)footage.setAttribute('src',current.src);
+  if(current){
+   const src=PinballRuntimeImages.resolve(current.src);
+   if(footage.src!==src)footage.src=src;
+  }
   if(recording)signal.style.opacity=0;
   noise.style.opacity=noiseOn?(recording?.13:1):0;
   scratches.style.opacity=recording?.22+.12*Math.sin(t*37):0;

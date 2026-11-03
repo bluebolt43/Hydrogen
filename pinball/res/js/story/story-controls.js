@@ -17,6 +17,7 @@ function keyboard(event){
 }
 document.addEventListener('keydown',keyboard,{capture:true});
 function apply(){
+ for(const label of document.querySelectorAll('[data-story-development]'))label.textContent=root.PinballI18n.t('story.development');
  for(const canvas of document.querySelectorAll('[data-story-ending-caption]')){
   if(document.body?.dataset?.storyChapter&&(document.body.dataset.storyChapter!=='8'||document.body.dataset.storyPart!=='end'))continue;
   const text=root.PinballI18n.t('story.toBeContinued'),ctx=canvas.getContext('2d');

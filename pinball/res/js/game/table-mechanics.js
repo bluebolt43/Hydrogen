@@ -9,7 +9,7 @@ function createGame(core){
  transition(){}
  rescueState(layer='lower'){if(layer==='lower')return {available:this.kickbacks,hits:this.kickbackHits};return this.rescueLayers[layer]||(this.rescueLayers[layer]={available:{left:true,right:true},hits:{left:false,right:false}});}
  resetRescue(){
-  this.rescueLayers={};this.kickbacks={left:true,right:true};this.kickbackHits={left:false,right:false};this.rescueCompletedAt?.clear();
+  this.kickbackAt?.clear();this.rescueLayers={};this.kickbacks={left:true,right:true};this.kickbackHits={left:false,right:false};this.rescueCompletedAt?.clear();
   for(const gate of this.gates||[])if(gate.mechanic==='rescue-return'||gate.id==='left-return'||gate.id==='right-return')Object.assign(gate,{closed:false,pending:false,pendingBall:null,unlocked:false});
  }
  edgeEnabled(e,ball=this.ball){if(e.launchOnly&&!ball.launchGuard)return false;return !(e.kind==='rescue-kicker'&&!this.rescueState(ball.layer).available[e.side]);}
@@ -24,6 +24,7 @@ function createGame(core){
  visualPlane(ball){return ball.layer==='tavern'?'upper':'lower';}
  mapEvent(type,data){
   if(type==='drain'&&this.balls.every(ball=>ball.state==='drained')&&!this.hasPendingBalls())this.resetRescue();
+  if(['plunger-ready','gap-ball-ready'].includes(type))this.kickbackAt?.clear();
   if(type==='launch')this.ball.launchGuard=true;
   if(['capture','plunger-ready','drain'].includes(type))this.ball.launchGuard=false;
   if(type==='free-ball-launch'||type==='release'&&this.sockets.some(s=>s.id===data.id&&s.mechanic==='shark-inlet'))this.sharkFlashAt=this.time;
@@ -39,7 +40,7 @@ function createGame(core){
  tickRules(){this.updateTargetGroups();}
  afterBallStep(previous,layer,dt){this.sensors(dt);}
  afterSubstep(){this.spawnFreeBall();}
- resetMapBall(){this.resetRescue();this.centerPostRaised=false;this.centerPostHitsLeft=0;this.centerPostHitAt=-Infinity;this.centerPostHitUntil=0;this.freeBallQueue=0;this.freeBallRewardPositions=[];this.multiballAwards=0;}
+ resetMapBall(){this.resetRescue();this.centerPostRaised=false;this.centerPostHitsLeft=0;this.centerPostHitAt=-Infinity;this.centerPostHitUntil=0;this.freeBallQueue=0;this.freeBallRewardPositions=[];this.freeBallSources=[];this.multiballAwards=0;}
  build(){
   const g=this.g;this.launchGateExitY=Math.max(-Infinity,...[...g.lower,...g.upper_parts].filter(o=>o.collisionMode==='launch-only').flatMap(o=>(o.points||[]).map(p=>p[1])));this.reboundIds=new Set([...g.lower,...g.upper_parts].filter(o=>o.kind==='rebound'||o.kind==='active'||o.mechanic==='active_rebound').map(o=>o.id));this.flippers=g.lower.filter(o=>o.kind==='flipper').map(o=>({...o,angle:Math.atan2(o.tip[1]-o.pivot[1],o.tip[0]-o.pivot[0]),rest:Math.atan2(o.tip[1]-o.pivot[1],o.tip[0]-o.pivot[0]),up:Math.atan2(o.raised[1]-o.pivot[1],o.raised[0]-o.pivot[0]),length:len(sub(o.tip,o.pivot)),omega:0}));
   // Unwrap flipper angles across ±pi before interpolation.
@@ -48,7 +49,7 @@ function createGame(core){
    if(!['wall','rail','active','rebound','bumper','test-post','target'].includes(o.kind))continue;
    const material=o.material||null;
    if(o.center){edges.push({id:o.id,c:o.center,r:o.radius,kind:o.kind,material,bumperStrength:o.bumperStrength,retractUp:o.mechanic==='retract_for_upward_ball'});continue;}
-   const ps=o.points||[];let slingEdge=1;const area=o.closed===true?ps.reduce((sum,p,i)=>{const q=ps[(i+1)%ps.length];return sum+p[0]*q[1]-q[0]*p[1];},0):0,vpxSide=area>0?-1:area<0?1:0;if((o.slingshot||o.vpxSlingshot||o.kind==='active'||o.kind==='rebound'||o.mechanic==='active_rebound')&&ps.length>2)for(let i=2;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>len(sub(ps[slingEdge],ps[slingEdge-1])))slingEdge=i;for(let i=1;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>EPS)edges.push({id:o.id,a:ps[i-1],b:ps[i],kind:o.kind,material,mechanic:o.mechanic,reboundStrength:o.reboundStrength,slingshot:o.slingshot===true,vpxSlingshot:o.vpxSlingshot??(o.kind==='active'||o.kind==='rebound'||o.mechanic==='active_rebound'),slingshotFace:i===slingEdge,vpxSide,n:o.pass_normal,thickness:o.thickness||0,launchOnly:o.collisionMode==='launch-only'});
+   const ps=o.points||[];let slingEdge=1;if((o.slingshot||o.kind==='active'||o.kind==='rebound'||o.mechanic==='active_rebound')&&ps.length>2)for(let i=2;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>len(sub(ps[slingEdge],ps[slingEdge-1])))slingEdge=i;for(let i=1;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>EPS)edges.push({id:o.id,a:ps[i-1],b:ps[i],kind:o.kind,material,mechanic:o.mechanic,reboundStrength:o.reboundStrength,slingshot:o.slingshot===true,slingshotFace:i===slingEdge,n:o.pass_normal,thickness:o.thickness||0,launchOnly:o.collisionMode==='launch-only'});
   }return edges;};
   this.edges={lower:objectsToEdges(g.lower),tavern:objectsToEdges(g.upper_parts)};
   for(const [layer,es]of Object.entries(this.edges))this.grids[layer]=new Grid(es);
@@ -59,7 +60,7 @@ function createGame(core){
  recordTarget(){}
  bumperLevel(){return 1;}
  updateTargetGroups(){for(const group of this.targetGroups){if(!group.complete||this.time<group.resetAt)continue;for(const id of group.targets)this.targetHits.delete(id);group.hits.clear();group.complete=false;this.emit('target-group-reset',{id:group.id});}}
- resetTargets(){this.rescueCompletedAt=new Map();this.holeCaptureCounts=new Map();this.targetVisualAt=new Map();this.layerEnteredAt=new Map();this.flipperHitAt=new Map();this.sensorHitAt=new Map();this.reboundHitAt=new Map();this.sharkFlashAt=null;this.flagHitAt=new Map();this.holeReleasedAt=new Map();this.holeCapturedAt=new Map();this.enemyIntroPending=false;this.enemyActive=false;this.bumperHitUntil=new Map();this.vortexActive=false;this.vortexActivatedAt=this.vortexActive?this.time:null;this.freezeRemaining=0;this.targetHitAt=new Map();this.targetHits=new Set();this.targetGroups=[];for(const o of [...this.g.lower,...this.g.upper_parts]){if(!o.target_group)continue;let group=this.targetGroups.find(g=>g.id===o.target_group);if(!group){group={id:o.target_group,targets:[],hits:new Set(),complete:false,completions:0,resetAt:0};this.targetGroups.push(group);}group.targets.push(o.id);}}
+ resetTargets(){this.kickbackAt=new Map();this.rescueCompletedAt=new Map();this.holeCaptureCounts=new Map();this.targetVisualAt=new Map();this.layerEnteredAt=new Map();this.flipperHitAt=new Map();this.sensorHitAt=new Map();this.reboundHitAt=new Map();this.sharkFlashAt=null;this.flagHitAt=new Map();this.holeReleasedAt=new Map();this.holeCapturedAt=new Map();this.enemyIntroPending=false;this.enemyActive=false;this.bumperHitUntil=new Map();this.vortexActive=false;this.vortexActivatedAt=this.vortexActive?this.time:null;this.freezeRemaining=0;this.targetHitAt=new Map();this.targetHits=new Set();this.targetGroups=[];for(const o of [...this.g.lower,...this.g.upper_parts]){if(!o.target_group)continue;let group=this.targetGroups.find(g=>g.id===o.target_group);if(!group){group={id:o.target_group,targets:[],hits:new Set(),complete:false,completions:0,resetAt:0};this.targetGroups.push(group);}group.targets.push(o.id);}}
  syncRegion(){}
  field(){
   const b=this.ball,g=this.physics,zoneGravity=this.gravityAt(b.p,b.layer);let a=zoneGravity||[0,g.gravity],drag=g.drag;
@@ -96,21 +97,22 @@ function createGame(core){
   state.available[side]=false;if(this.config.physicsModel!=='legacy')delete this.ball.speedLimit;else this.ball.speedLimit=this.config.maxSpeed;const rebound=this.config.physicsModel!=='legacy'?mul(direction,speed):basicCollision(this.ball.v,direction,.2,.7,0,speed);
   // Both rescue launchers fire vertically, regardless of the layout aim.
   this.ball.v=[0,-len(rebound)];this.limitSpeed();
+  const eventId=kickerId||this.g.rescue_kickers?.find(k=>k.side===side&&(k.layer||'lower')===layer)?.id;if(eventId)this.kickbackAt.set(eventId,this.time);
   this.emit('kickback',{side,layer,speed:len(this.ball.v)});state.hits[side]=true;this.emit('kickback-lane',{side,layer});
-  if(state.hits.left&&state.hits.right)this.awardMultiball(triggerPosition,layer);
+  if(state.hits.left&&state.hits.right)this.awardMultiball(triggerPosition,layer,'plunger');
  }
  awardExtraLife(source,position=this.ball.p){const reserve=4-this.ballNumber-(this.lifeLaunched?1:0)+(this.extraLives||0);if(this.gameOver||reserve>=99)return false;this.extraLives=(this.extraLives||0)+1;this.emit('extra-life-awarded',{source,remaining:reserve+1,position:[...position]});return true;}
- awardMultiball(position=this.ball.p,layer=this.ball.layer){const state=this.rescueState(layer);if(state.hits.left&&state.hits.right)this.rescueCompletedAt.set(layer,this.time);Object.assign(state.available,{left:true,right:true});Object.assign(state.hits,{left:false,right:false});
+ awardMultiball(position=this.ball.p,layer=this.ball.layer,source=this.g.gameplay?.multiballHole){const state=this.rescueState(layer);if(state.hits.left&&state.hits.right)this.rescueCompletedAt.set(layer,this.time);Object.assign(state.available,{left:true,right:true});Object.assign(state.hits,{left:false,right:false});
   for(const gate of this.gates)if(gate.layer===layer&&(gate.mechanic==='rescue-return'||gate.id==='left-return'||gate.id==='right-return')){gate.closed=false;gate.pending=false;gate.pendingBall=null;gate.unlocked=true;}
   if(this.balls.filter(b=>b.state!=='drained').length+this.freeBallQueue>=3){this.awardExtraLife('multiball',position);return;}
-  this.freeBallRewardPositions.push([...position]);this.freeBallQueue++;this.multiballAwards++;this.emit('multiball-awarded',{count:this.multiballAwards});
+  this.freeBallRewardPositions.push([...position]);this.freeBallSources.push(source);this.freeBallQueue++;this.multiballAwards++;this.emit('multiball-awarded',{count:this.multiballAwards});
  }
- spawnFreeBall(){if(!this.freeBallQueue)return;if(this.balls.filter(b=>b.state!=='drained').length>=3){this.freeBallQueue--;this.awardExtraLife('multiball',this.freeBallRewardPositions.shift()||this.ball.p);return;}const p=[this.g.plunger.x,this.g.plunger.rest_y-this.physics.ballRadius-18];
+ spawnFreeBall(){if(!this.freeBallQueue)return;if(this.balls.filter(b=>b.state!=='drained').length>=3){this.freeBallQueue--;this.freeBallSources.shift();this.awardExtraLife('multiball',this.freeBallRewardPositions.shift()||this.ball.p);return;}const p=[this.g.plunger.x,this.g.plunger.rest_y-this.physics.ballRadius-18];
   const layer=this.launchLayer();
   if(this.balls.some(b=>b.state!=='drained'&&b.layer===layer&&len(sub(b.p,p))<this.physics.ballRadius*2+3))return;
   const gate=this.gates.find(g=>g.id==='shooter-return');if(gate){gate.closed=false;gate.pending=false;}
   this.balls.push({p,v:[0,-(this.config.physicsModel!=='legacy'?this.g.plunger.launch_max:this.config.maxSpeed)],layer,z:this.launchHeight(),state:'playing',immunity:0,lastPortal:-10,trail:[],free:true,launchGuard:true});
-  this.freeBallQueue--;this.freeBallRewardPositions.shift();this.plungerReleasedAt=this.time;this.plungerReleaseCharge=1;this.emit('free-ball-launch');
+  this.freeBallQueue--;this.freeBallSources.shift();this.freeBallRewardPositions.shift();this.plungerReleasedAt=this.time;this.plungerReleaseCharge=1;this.emit('free-ball-launch');
  }
 
  };

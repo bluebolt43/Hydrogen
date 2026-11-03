@@ -1,11 +1,185 @@
 {
-  "theme": "touhou1",
+  "theme": "touhou2",
   "artLayers": [
+    {
+      "id": "art-touhou2-ball-lower",
+      "src": "res/hd_img/touhou/touhou2-transparent.png",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "ball-layer",
+      "runtimeSource": "res/img/touhou/touhou2-transparent.png"
+    },
+    {
+      "id": "art-touhou2-static-floor",
+      "src": "res/hd_img/touhou/touhou2-hall-floor.png",
+      "x": 173,
+      "y": 235,
+      "width": 360,
+      "height": 474,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1440,
+        1894
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-hall-floor.png"
+    },
+    {
+      "id": "art-touhou2-static-left-return-panel",
+      "src": "res/hd_img/touhou/touhou2-flipper-panel-left.png",
+      "x": 88,
+      "y": 389,
+      "width": 91,
+      "height": 124,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        363,
+        497
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-flipper-panel-left.png"
+    },
+    {
+      "id": "art-touhou2-static-right-return-panel",
+      "src": "res/hd_img/touhou/touhou2-flipper-panel-right.png",
+      "x": 260,
+      "y": 392,
+      "width": 67,
+      "height": 120,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        269,
+        479
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-flipper-panel-right.png"
+    },
+    {
+      "id": "art-touhou2-mechanism-flipper-002",
+      "src": "res/hd_img/touhou/touhou-flipper.png",
+      "x": 143,
+      "y": 449,
+      "width": 49,
+      "height": 16,
+      "angle": 27.8,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        2170,
+        725
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": false,
+      "flipY": false,
+      "bind": "flipper-002",
+      "runtimeSource": "res/img/touhou/touhou-flipper.png"
+    },
+    {
+      "id": "art-touhou2-mechanism-flipper-001",
+      "src": "res/hd_img/touhou/touhou-flipper.png",
+      "x": 215,
+      "y": 449,
+      "width": 49,
+      "height": 16,
+      "angle": -27.80000000000001,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        2170,
+        725
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "flipY": false,
+      "bind": "flipper-001",
+      "runtimeSource": "res/img/touhou/touhou-flipper.png"
+    },
+    {
+      "id": "art-touhou2-static-library-library-room",
+      "src": "res/hd_img/touhou/touhou2-library-library-room.png",
+      "x": 260,
+      "y": 97,
+      "width": 164,
+      "height": 214,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        656,
+        855
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-library-library-room.png"
+    },
+    {
+      "id": "art-touhou2-static-basement",
+      "src": "res/hd_img/touhou/touhou2-basement.png",
+      "x": 129,
+      "y": 96,
+      "width": 148,
+      "height": 169,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        592,
+        676
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-basement.png"
+    },
     {
       "id": "art-001",
       "src": "res/hd_img/plunger-rod.png",
       "x": 322,
-      "y": 421,
+      "y": 424,
       "width": 30,
       "height": 91,
       "angle": 0,
@@ -24,7 +198,7 @@
       "layoutBind": "plunger-001",
       "layoutAnchor": [
         321.72,
-        378.762
+        381.762
       ],
       "runtimeSource": "res/img/plunger-rod.png"
     },
@@ -32,7 +206,7 @@
       "id": "art-002",
       "src": "res/hd_img/plunger-collar.png",
       "x": 323,
-      "y": 413,
+      "y": 416,
       "width": 50,
       "height": 38,
       "angle": 0,
@@ -51,9 +225,2252 @@
       "layoutBind": "plunger-001",
       "layoutAnchor": [
         321.72,
-        378.762
+        381.762
       ],
       "runtimeSource": "res/img/plunger-collar.png"
+    },
+    {
+      "id": "art-touhou2-static-line-001",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 311,
+      "y": 229,
+      "width": 3,
+      "height": 5,
+      "angle": 89.76225954070699,
+      "opacity": 1,
+      "crop": [
+        43,
+        238,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-001",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 74,
+      "y": 348,
+      "width": 3,
+      "height": 5,
+      "angle": 90.76342943543284,
+      "opacity": 1,
+      "crop": [
+        662,
+        805,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-002",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 50,
+      "y": 333,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        453,
+        527,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-003",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 288,
+      "y": 333,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        453,
+        527,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-005",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 223,
+      "y": 31,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        662,
+        805,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-006",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 252,
+      "y": 33,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        662,
+        805,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-gallery-shadows",
+      "src": "res/hd_img/touhou/touhou2-upper-shadows.png",
+      "x": 180,
+      "y": 238,
+      "width": 360,
+      "height": 488,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        120,
+        1440,
+        1952
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-upper-shadows.png"
+    },
+    {
+      "id": "art-touhou2-static-stair-center",
+      "src": "res/hd_img/touhou/touhou2-stair-center.png",
+      "x": 142,
+      "y": 59,
+      "width": 64,
+      "height": 104,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        256,
+        416
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-stair-center.png"
+    },
+    {
+      "id": "art-touhou2-static-stair-left",
+      "src": "res/hd_img/touhou/touhou2-stair-left.png",
+      "x": 85,
+      "y": 96,
+      "width": 74,
+      "height": 184,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        296,
+        736
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-stair-left.png"
+    },
+    {
+      "id": "art-touhou2-static-stair-right",
+      "src": "res/hd_img/touhou/touhou2-stair-right.png",
+      "x": 280,
+      "y": 129,
+      "width": 104,
+      "height": 144,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        416,
+        576
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-stair-right.png"
+    },
+    {
+      "id": "art-touhou2-static-gallery",
+      "src": "res/hd_img/touhou/touhou2-upper-floor.png",
+      "x": 180,
+      "y": 238,
+      "width": 360,
+      "height": 488,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        120,
+        1440,
+        1952
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-upper-floor.png"
+    },
+    {
+      "id": "art-touhou2-static-gallery-rails",
+      "src": "res/hd_img/touhou/touhou2-upper-handrails.png",
+      "x": 180,
+      "y": 237,
+      "width": 360,
+      "height": 488,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        120,
+        1440,
+        1952
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-upper-handrails.png"
+    },
+    {
+      "id": "art-006",
+      "src": "res/hd_img/touhou/touhou2-prop-alice-doll.png",
+      "x": 168,
+      "y": 29,
+      "width": 26,
+      "height": 24,
+      "angle": -18.480530181256043,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-004"
+        }
+      }
+    },
+    {
+      "id": "art-007",
+      "src": "res/hd_img/touhou/touhou2-prop-flandre-doll.png",
+      "x": 7,
+      "y": 7,
+      "width": 29,
+      "height": 26,
+      "angle": -36.11603547638738,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1330,
+        1182
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-003"
+        }
+      }
+    },
+    {
+      "id": "art-008",
+      "src": "res/hd_img/touhou/touhou2-prop-remilia-bat-doll.png",
+      "x": 90,
+      "y": 8,
+      "width": 29,
+      "height": 26,
+      "angle": 29.55460460000851,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1330,
+        1182
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-003"
+        }
+      }
+    },
+    {
+      "id": "art-010",
+      "src": "res/hd_img/touhou/touhou2-prop-books-tall.png",
+      "x": 128,
+      "y": 5,
+      "width": 21,
+      "height": 17,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1402,
+        1122
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-014",
+      "src": "res/hd_img/touhou/touhou2-vase-table.png",
+      "x": 12,
+      "y": 245,
+      "width": 38,
+      "height": 42,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1195,
+        1316
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
+    },
+    {
+      "id": "art-015",
+      "src": "res/hd_img/touhou/touhou2-prop-books-corner.png",
+      "x": 272,
+      "y": 48,
+      "width": 181,
+      "height": 104,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1646,
+        956
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": ""
+    },
+    {
+      "id": "art-016",
+      "src": "res/hd_img/touhou/touhou2-patchouli-hat.png",
+      "x": 320,
+      "y": 125,
+      "width": 33,
+      "height": 22,
+      "angle": 54.94446565147416,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1536,
+        1024
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "sensor",
+          "source": "sensor-005"
+        }
+      }
+    },
+    {
+      "id": "art-touhou2-static-vine-left",
+      "src": "res/hd_img/touhou/touhou2-vine-left.png",
+      "x": 56,
+      "y": 298,
+      "width": 44,
+      "height": 103,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        175,
+        414
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vine-left.png"
+    },
+    {
+      "id": "art-touhou2-static-vine-right",
+      "src": "res/hd_img/touhou/touhou2-vine-right.png",
+      "x": 309,
+      "y": 285,
+      "width": 91,
+      "height": 127,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        366,
+        510
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vine-right.png"
+    },
+    {
+      "id": "art-touhou2-static-vine-center",
+      "src": "res/hd_img/touhou/touhou2-vine-center.png",
+      "x": 138,
+      "y": 186,
+      "width": 148,
+      "height": 326,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        592,
+        1306
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vine-center.png"
+    },
+    {
+      "id": "art-touhou2-static-left-library-solid",
+      "src": "res/hd_img/touhou/touhou2-library-wood-panel.png",
+      "x": 37,
+      "y": 265,
+      "width": 51,
+      "height": 156,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        204,
+        624
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-library-wood-panel.png"
+    },
+    {
+      "id": "art-touhou2-mechanism-line-018",
+      "src": "res/hd_img/touhou/touhou-slingshot-off.png",
+      "x": 113,
+      "y": 371,
+      "width": 49,
+      "height": 70,
+      "angle": 2.109315020276199,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": false,
+      "flipY": false,
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-slingshot-off.png",
+        "on": "res/hd_img/touhou/touhou-slingshot-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "line-018"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.28
+        },
+        "group": "touhou2-slingshots"
+      },
+      "runtimeSource": "res/img/touhou/touhou-slingshot-off.png"
+    },
+    {
+      "id": "art-touhou2-mechanism-line-019",
+      "src": "res/hd_img/touhou/touhou-slingshot-off.png",
+      "x": 252,
+      "y": 371,
+      "width": 49,
+      "height": 73,
+      "angle": -2.149284218584663,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "flipY": false,
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-slingshot-off.png",
+        "on": "res/hd_img/touhou/touhou-slingshot-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rebound",
+          "source": "line-019"
+        },
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.28
+        },
+        "group": "touhou2-slingshots"
+      },
+      "runtimeSource": "res/img/touhou/touhou-slingshot-off.png"
+    },
+    {
+      "id": "art-touhou2-mechanism-centerPost-001",
+      "src": "res/hd_img/touhou/touhou-shrine-coin-off.png",
+      "x": 179,
+      "y": 461,
+      "width": 19,
+      "height": 19,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "center-post",
+      "flipX": false,
+      "flipY": false,
+      "bind": "centerPost-001",
+      "indicator": {
+        "off": "",
+        "on": "res/hd_img/touhou/touhou-shrine-coin-off.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "post",
+          "source": "centerPost-001"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/touhou/touhou-shrine-coin-off.png"
+    },
+    {
+      "id": "art-touhou2-static-gate-corner",
+      "src": "res/hd_img/touhou/touhou2-mansion-gate.png",
+      "x": 253,
+      "y": 368,
+      "width": 215,
+      "height": 228,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        860,
+        911
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-mansion-gate.png",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-mansion-gate-open.png",
+        "on": "res/hd_img/touhou/touhou2-mansion-gate.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rescue-closed",
+          "source": "line-021"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false
+      }
+    },
+    {
+      "id": "art-touhou2-static-clock-corner",
+      "src": "res/hd_img/touhou/touhou2-clock-tower.png",
+      "x": 102,
+      "y": 401,
+      "width": 204,
+      "height": 162,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        815,
+        650
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-clock-tower.png",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-clock-tower.png",
+        "on": "res/hd_img/touhou/touhou2-clock-tower-stopped.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "rescue-closed",
+          "source": "line-022"
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "group": "touhou2-clock"
+      }
+    },
+    {
+      "id": "art-touhou2-upgrade-target-002",
+      "src": "res/hd_img/touhou/touhou2-upgrade-bookcase-level-1.png",
+      "x": 235,
+      "y": 163,
+      "width": 23,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        93,
+        153
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/touhou/touhou2-upgrade-bookcase-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou2-upgrade-bookcase-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou2-upgrade-bookcase-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-006"
+        },
+        "keepLevelOnHit": true,
+        "group": "touhou2-bumpers"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-upgrade-bookcase-level-1.png"
+    },
+    {
+      "id": "art-touhou2-chair-01",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 98,
+      "y": 17,
+      "width": 22,
+      "height": 20,
+      "angle": -27.945258148165774,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-02",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 86,
+      "y": 24,
+      "width": 22,
+      "height": 20,
+      "angle": -32.82188713274961,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-04",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 65,
+      "y": 41,
+      "width": 22,
+      "height": 20,
+      "angle": -43.23990021551213,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-05",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 55,
+      "y": 51,
+      "width": 22,
+      "height": 20,
+      "angle": -48.62595064428626,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-06",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 47,
+      "y": 61,
+      "width": 22,
+      "height": 20,
+      "angle": -53.73724679532313,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-07",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 39,
+      "y": 73,
+      "width": 22,
+      "height": 20,
+      "angle": -58.89860104377905,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-08",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 33,
+      "y": 84,
+      "width": 22,
+      "height": 20,
+      "angle": -63.461441751723676,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-09",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 27,
+      "y": 97,
+      "width": 22,
+      "height": 20,
+      "angle": -67.78728161589663,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-10",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 22,
+      "y": 110,
+      "width": 22,
+      "height": 20,
+      "angle": -71.8489090420452,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-chair-13",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 17,
+      "y": 156,
+      "width": 22,
+      "height": 20,
+      "angle": -88.15437763253844,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-chair.png"
+    },
+    {
+      "id": "art-touhou2-rollover-rollover-001",
+      "src": "res/hd_img/touhou/touhou-ofuda-off.png",
+      "x": 277,
+      "y": 360,
+      "width": 25,
+      "height": 25,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-ofuda-off.png",
+        "on": "res/hd_img/touhou/touhou-ofuda-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "rollover-001",
+          "kind": "rollover"
+        },
+        "group": "touhou2-rollovers"
+      },
+      "runtimeSource": "res/img/touhou/touhou-ofuda-off.png"
+    },
+    {
+      "id": "art-touhou2-rollover-rollover-002",
+      "src": "res/hd_img/touhou/touhou-ofuda-off.png",
+      "x": 63,
+      "y": 360,
+      "width": 25,
+      "height": 25,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-ofuda-off.png",
+        "on": "res/hd_img/touhou/touhou-ofuda-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "rollover-002",
+          "kind": "rollover"
+        },
+        "group": "touhou2-rollovers"
+      },
+      "runtimeSource": "res/img/touhou/touhou-ofuda-off.png"
+    },
+    {
+      "id": "art-touhou2-rollover-rollover-003",
+      "src": "res/hd_img/touhou/touhou-ofuda-off.png",
+      "x": 85,
+      "y": 360,
+      "width": 25,
+      "height": 25,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-ofuda-off.png",
+        "on": "res/hd_img/touhou/touhou-ofuda-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "rollover-003",
+          "kind": "rollover"
+        },
+        "group": "touhou2-rollovers"
+      },
+      "runtimeSource": "res/img/touhou/touhou-ofuda-off.png"
+    },
+    {
+      "id": "art-touhou2-rollover-rollover-004",
+      "src": "res/hd_img/touhou/touhou-magatama-off.png",
+      "x": 210,
+      "y": 45,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-magatama-off.png",
+        "on": "res/hd_img/touhou/touhou-magatama-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "rollover-004",
+          "kind": "rollover"
+        },
+        "group": "touhou2-rollovers"
+      },
+      "runtimeSource": "res/img/touhou/touhou-magatama-off.png"
+    },
+    {
+      "id": "art-touhou2-rollover-rollover-005",
+      "src": "res/hd_img/touhou/touhou-magatama-off.png",
+      "x": 239,
+      "y": 45,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-magatama-off.png",
+        "on": "res/hd_img/touhou/touhou-magatama-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "rollover-005",
+          "kind": "rollover"
+        },
+        "group": "touhou2-rollovers"
+      },
+      "runtimeSource": "res/img/touhou/touhou-magatama-off.png"
+    },
+    {
+      "id": "art-touhou2-rollover-rollover-006",
+      "src": "res/hd_img/touhou/touhou-magatama-off.png",
+      "x": 268,
+      "y": 45,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-magatama-off.png",
+        "on": "res/hd_img/touhou/touhou-magatama-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "rollover-006",
+          "kind": "rollover"
+        },
+        "group": "touhou2-rollovers"
+      },
+      "runtimeSource": "res/img/touhou/touhou-magatama-off.png"
+    },
+    {
+      "id": "art-touhou2-boss-target-003",
+      "src": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+      "x": 124,
+      "y": 88,
+      "width": 23,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+        "on": "res/hd_img/touhou/touhou2-boss-candle-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "source": "target-003-1",
+          "kind": "enemy-target"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1.5,
+          "offSeconds": 0.5
+        },
+        "group": "touhou2-targets",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "complete": ""
+      },
+      "runtimeSource": "res/img/touhou/touhou2-boss-candle-off.png"
+    },
+    {
+      "id": "art-touhou2-boss-target-004",
+      "src": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+      "x": 57,
+      "y": 224,
+      "width": 23,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+        "on": "res/hd_img/touhou/touhou2-boss-candle-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "source": "target-004-1",
+          "kind": "enemy-target"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1.5,
+          "offSeconds": 0.5
+        },
+        "group": "touhou2-targets",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "complete": ""
+      },
+      "runtimeSource": "res/img/touhou/touhou2-boss-candle-off.png"
+    },
+    {
+      "id": "art-touhou2-flag-flag-001",
+      "src": "res/hd_img/touhou/touhou2-bat.png",
+      "x": 264,
+      "y": 167,
+      "width": 46,
+      "height": 23,
+      "angle": 7.1740855552846625,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 1.1,
+        "amplitude": 12,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-001"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-bat.png"
+    },
+    {
+      "id": "art-touhou2-flag-flag-002",
+      "src": "res/hd_img/touhou/touhou2-bat.png",
+      "x": 89,
+      "y": 153,
+      "width": 44,
+      "height": 22,
+      "angle": 15.16371481236932,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 1.1,
+        "amplitude": 12,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-002"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-bat.png"
+    },
+    {
+      "id": "art-touhou2-flag-flag-003",
+      "src": "res/hd_img/touhou/touhou2-bat.png",
+      "x": 148,
+      "y": 80,
+      "width": 48,
+      "height": 24,
+      "angle": -26.684749706655282,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 1.1,
+        "amplitude": 12,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-003"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-bat.png"
+    },
+    {
+      "id": "art-touhou2-spike-oneway-001",
+      "src": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
+      "x": 310,
+      "y": 223,
+      "width": 48,
+      "height": 108,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        192,
+        432
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
+        "on": "res/hd_img/saga/saga-ground-spikes-right-retracted.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "sensor-001",
+          "kind": "sensor"
+        }
+      },
+      "runtimeSource": "res/img/saga/saga-ground-spikes-right-raised.png"
+    },
+    {
+      "id": "art-touhou2-static-circle-005",
+      "src": "res/hd_img/touhou/touhou2-vase-table.png",
+      "x": 287,
+      "y": 276,
+      "width": 24,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1195,
+        1316
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
+    },
+    {
+      "id": "art-touhou2-static-circle-009",
+      "src": "res/hd_img/touhou/touhou2-vase-table.png",
+      "x": 192,
+      "y": 119,
+      "width": 30,
+      "height": 33,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1195,
+        1316
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
+    },
+    {
+      "id": "art-touhou2-counter-satori",
+      "src": "res/hd_img/touhou/touhou2-eye-satori-closed.png",
+      "x": 43,
+      "y": 202,
+      "width": 38,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        152,
+        152
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-eye-satori-closed.png",
+        "on": "res/hd_img/touhou/touhou2-eye-satori-open.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/touhou/touhou2-eye-satori-open.png",
+        "trigger": {
+          "kind": "hole-count",
+          "source": "hole-002",
+          "threshold": 2
+        },
+        "group": "touhou2-counters",
+        "attractState": "complete"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-eye-satori-closed.png"
+    },
+    {
+      "id": "art-touhou2-counter-koishi",
+      "src": "res/hd_img/touhou/touhou2-eye-koishi-closed.png",
+      "x": 43,
+      "y": 222,
+      "width": 35,
+      "height": 35,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        142,
+        142
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-eye-koishi-closed.png"
+    },
+    {
+      "id": "art-touhou2-counter-koishi-heart",
+      "src": "res/hd_img/touhou/touhou2-koishi-heart-side.png",
+      "x": 36,
+      "y": 215,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        990,
+        255,
+        485,
+        440
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "",
+        "on": "",
+        "complete": "res/hd_img/touhou/touhou2-koishi-heart-side.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "kind": "hole-count",
+          "source": "hole-002",
+          "threshold": 2
+        },
+        "group": "touhou2-counters",
+        "attractState": "complete"
+      }
+    },
+    {
+      "id": "art-touhou2-gate-oneway-002",
+      "src": "res/hd_img/touhou/touhou2-rescue-knife.png",
+      "x": 35,
+      "y": 418,
+      "width": 54,
+      "height": 47,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        133,
+        115
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "oneway-002",
+      "runtimeSource": "res/img/touhou/touhou2-rescue-knife.png"
+    },
+    {
+      "id": "art-touhou2-gate-oneway-003",
+      "src": "res/hd_img/touhou/touhou2-rescue-broom.png",
+      "x": 295,
+      "y": 421,
+      "width": 59,
+      "height": 48,
+      "angle": -14.408914300373482,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        110,
+        90
+      ],
+      "plane": "foreground",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "oneway-003",
+      "runtimeSource": "res/img/touhou/touhou2-rescue-broom.png"
+    },
+    {
+      "id": "art-touhou2-bumper-circle-006",
+      "src": "res/hd_img/touhou/touhou2-orb-level-1.png",
+      "x": 198,
+      "y": 96,
+      "width": 47,
+      "height": 47,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/touhou/touhou2-orb-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou2-orb-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou2-orb-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-006"
+        },
+        "keepLevelOnHit": true,
+        "group": "touhou2-bumpers"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png"
+    },
+    {
+      "id": "art-touhou2-bumper-circle-007",
+      "src": "res/hd_img/touhou/touhou2-orb-level-1.png",
+      "x": 275,
+      "y": 93,
+      "width": 47,
+      "height": 47,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/touhou/touhou2-orb-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou2-orb-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou2-orb-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-007"
+        },
+        "keepLevelOnHit": true,
+        "group": "touhou2-bumpers"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png"
+    },
+    {
+      "id": "art-touhou2-bumper-circle-008",
+      "src": "res/hd_img/touhou/touhou2-orb-level-1.png",
+      "x": 245,
+      "y": 145,
+      "width": 47,
+      "height": 47,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "type": "bumper",
+        "lv1": "res/hd_img/touhou/touhou2-orb-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou2-orb-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou2-orb-level-3.png",
+        "defaultState": "lv1",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-008"
+        },
+        "keepLevelOnHit": true,
+        "group": "touhou2-bumpers"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png"
+    },
+    {
+      "id": "art-touhou2-ball-top",
+      "src": "res/hd_img/touhou/touhou2-transparent.png",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "plane": "top",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "ball-layer",
+      "runtimeSource": "res/img/touhou/touhou2-transparent.png"
+    },
+    {
+      "id": "art-touhou2-ball-upper",
+      "src": "res/hd_img/touhou/touhou2-transparent.png",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "ball-layer",
+      "runtimeSource": "res/img/touhou/touhou2-transparent.png"
+    },
+    {
+      "id": "art-touhou2-rescue-left",
+      "src": "res/hd_img/touhou/touhou-yin-yang-off.png",
+      "x": 38,
+      "y": 360,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-yin-yang-off.png",
+        "on": "res/hd_img/touhou/touhou-yin-yang-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "line-022",
+          "kind": "kickback"
+        },
+        "group": "touhou2-rescue"
+      },
+      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
+    },
+    {
+      "id": "art-touhou2-rescue-right",
+      "src": "res/hd_img/touhou/touhou-yin-yang-off.png",
+      "x": 300,
+      "y": 360,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-yin-yang-off.png",
+        "on": "res/hd_img/touhou/touhou-yin-yang-on.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "line-021",
+          "kind": "kickback"
+        },
+        "group": "touhou2-rescue"
+      },
+      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
+    },
+    {
+      "id": "art-touhou2-static-line-001-middle",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 312,
+      "y": 349,
+      "width": 236,
+      "height": 5,
+      "angle": 89.76225954070699,
+      "opacity": 1,
+      "crop": [
+        74,
+        238,
+        1389,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-line-001-end",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 312,
+      "y": 468,
+      "width": 3,
+      "height": 5,
+      "angle": 89.76225954070699,
+      "opacity": 1,
+      "crop": [
+        1463,
+        238,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-001-middle",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 74,
+      "y": 360,
+      "width": 21,
+      "height": 5,
+      "angle": 90.76342943543284,
+      "opacity": 1,
+      "crop": [
+        693,
+        805,
+        151,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-001-end",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 74,
+      "y": 372,
+      "width": 3,
+      "height": 5,
+      "angle": 90.76342943543284,
+      "opacity": 1,
+      "crop": [
+        844,
+        805,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-002-middle",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 50,
+      "y": 368,
+      "width": 66,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        484,
+        527,
+        569,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-002-end",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 50,
+      "y": 402,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        1053,
+        527,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-003-middle",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 288,
+      "y": 371,
+      "width": 72,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        484,
+        527,
+        569,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-003-end",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 288,
+      "y": 408,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        1053,
+        527,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-005-middle",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 223,
+      "y": 40,
+      "width": 14,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        693,
+        805,
+        151,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-005-end",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 223,
+      "y": 48,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        844,
+        805,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-006-middle",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 252,
+      "y": 41,
+      "width": 12,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        693,
+        805,
+        151,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-touhou2-static-thickline-006-end",
+      "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
+      "x": 252,
+      "y": 48,
+      "width": 3,
+      "height": 5,
+      "angle": 90,
+      "opacity": 1,
+      "crop": [
+        844,
+        805,
+        31,
+        61
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-iron-dividers.png"
+    },
+    {
+      "id": "art-017",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 255,
+      "y": 196,
+      "width": 30,
+      "height": 30,
+      "angle": 17.36944847647736,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
+      "indicator": {
+        "group": "touhou2-attack-arrows",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1,
+          "offSeconds": 1
+        }
+      }
+    },
+    {
+      "id": "art-018",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 97,
+      "y": 183,
+      "width": 30,
+      "height": 30,
+      "angle": -12.947742508204499,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
+      "indicator": {
+        "group": "touhou2-attack-arrows",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1,
+          "offSeconds": 1
+        }
+      }
+    },
+    {
+      "id": "art-019",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 145,
+      "y": 109,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
+      "indicator": {
+        "group": "touhou2-attack-arrows",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1,
+          "offSeconds": 1
+        }
+      }
+    },
+    {
+      "id": "art-020",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 115,
+      "y": 123,
+      "width": 30,
+      "height": 30,
+      "angle": -17.83346020519167,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
+      "indicator": {
+        "group": "touhou2-attack-arrows",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1,
+          "offSeconds": 1
+        }
+      }
+    },
+    {
+      "id": "art-021",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 278,
+      "y": 28,
+      "width": 30,
+      "height": 30,
+      "angle": 231.82200079328902,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
+      "indicator": {
+        "group": "touhou2-attack-arrows",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "enemy-active"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1,
+          "offSeconds": 1
+        }
+      }
+    },
+    {
+      "id": "art-022",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 36,
+      "y": 182,
+      "width": 30,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "hole-002",
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "gap-output",
+          "source": "hole-002"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.4,
+          "offSeconds": 0.4
+        },
+        "releaseBehavior": {
+          "mode": "repeat",
+          "onSeconds": 0.1,
+          "offSeconds": 0.1
+        },
+        "impactFlash": false,
+        "group": "touhou2-multiball"
+      }
     }
   ],
   "gameplay": {
@@ -68,7 +2485,7 @@
           "kind": "score",
           "value": 1000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-1000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-1000.png",
             "crop": [
               0,
               0,
@@ -81,7 +2498,7 @@
           "kind": "score",
           "value": 2500,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-2500.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-2500.png",
             "crop": [
               0,
               0,
@@ -94,7 +2511,7 @@
           "kind": "score",
           "value": 5000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-5000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-5000.png",
             "crop": [
               0,
               0,
@@ -107,7 +2524,7 @@
           "kind": "multiplier",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-2.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-2.png",
             "crop": [
               0,
               0,
@@ -120,7 +2537,7 @@
           "kind": "multiplier",
           "value": 3,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-3.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-3.png",
             "crop": [
               0,
               0,
@@ -133,12 +2550,12 @@
           "kind": "ball",
           "value": 1,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-ball-plus-1.png",
+            "src": "res/img/touhou/touhou-bonus-ball-plus-1.svg",
             "crop": [
               0,
               0,
-              18,
-              9
+              160,
+              96
             ]
           }
         },
@@ -146,12 +2563,12 @@
           "kind": "multi",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiball.png",
+            "src": "res/img/touhou/touhou-bonus-multiball.svg",
             "crop": [
               0,
               0,
-              19,
-              18
+              160,
+              112
             ]
           }
         },
@@ -159,7 +2576,7 @@
           "kind": "enemy",
           "value": 0,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-enemy.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-enemy.png",
             "crop": [
               0,
               0,
@@ -174,17 +2591,34 @@
       },
       "attackArt": {
         "src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png",
-        "duration": 1.55
+        "duration": 1.55,
+        "fullscreen": true
       },
       "trigger": "circle-entry",
-      "entryCooldown": 0.5,
+      "entryCooldown": 1,
       "countLayer": "lower"
     },
     "holeMultiball": {
       "hole": "hole-002",
-      "hits": 3
+      "hits": 3,
+      "balls": 3
     },
-    "multiballHole": "hole-002"
+    "multiballHole": "hole-002",
+    "tutorial": {
+      "attackIndicators": {
+        "lv1": [
+          "art-020"
+        ],
+        "lv2": [
+          "art-018",
+          "art-019",
+          "art-017"
+        ],
+        "lv3": [
+          "art-021"
+        ]
+      }
+    }
   },
   "screenLayout": {
     "width": 360,
@@ -257,7 +2691,7 @@
       "type": "plunger",
       "layer": "lower",
       "x": 321.72,
-      "y": 378.762,
+      "y": 381.762,
       "angle": 0
     },
     {
@@ -1035,10 +3469,10 @@
       "id": "line-074",
       "type": "line",
       "layer": "upper",
-      "x1": 6.184000000000001,
-      "y1": 49.259,
-      "x2": 6.558,
-      "y2": 97.336
+      "x1": 5,
+      "y1": 39,
+      "x2": 5.558,
+      "y2": 96.336
     },
     {
       "id": "line-075",
@@ -1046,8 +3480,8 @@
       "layer": "upper",
       "x1": 25.277,
       "y1": 97.336,
-      "x2": 26,
-      "y2": 51
+      "x2": 25,
+      "y2": 43
     },
     {
       "id": "line-076",
@@ -1101,52 +3535,52 @@
       "id": "arc-014",
       "type": "arc",
       "layer": "upper",
-      "x1": 81,
-      "y1": 28,
-      "qx": 62,
-      "qy": -4,
-      "x2": 28,
-      "y2": 11
+      "x1": 80,
+      "y1": 20,
+      "qx": 61,
+      "qy": -12,
+      "x2": 27,
+      "y2": 3
     },
     {
       "id": "arc-015",
       "type": "arc",
       "layer": "upper",
-      "x1": 28,
-      "y1": 11,
-      "qx": 8,
-      "qy": 25,
-      "x2": 6,
-      "y2": 49
+      "x1": 27,
+      "y1": 3,
+      "qx": 7,
+      "qy": 17,
+      "x2": 5,
+      "y2": 41
     },
     {
       "id": "arc-016",
       "type": "arc",
       "layer": "upper",
-      "x1": 67,
-      "y1": 57,
-      "qx": 64,
-      "qy": 25,
-      "x2": 42,
-      "y2": 28
+      "x1": 66,
+      "y1": 49,
+      "qx": 63,
+      "qy": 17,
+      "x2": 41,
+      "y2": 20
     },
     {
       "id": "arc-017",
       "type": "arc",
       "layer": "upper",
-      "x1": 41,
-      "y1": 28,
-      "qx": 27,
-      "qy": 32,
-      "x2": 26,
-      "y2": 51
+      "x1": 40,
+      "y1": 20,
+      "qx": 26,
+      "qy": 24,
+      "x2": 25,
+      "y2": 43
     },
     {
       "id": "line-078",
       "type": "line",
       "layer": "upper",
-      "x1": 82,
-      "y1": 30,
+      "x1": 80,
+      "y1": 21,
       "x2": 107,
       "y2": 164
     },
@@ -1154,8 +3588,8 @@
       "id": "line-079",
       "type": "line",
       "layer": "upper",
-      "x1": 67,
-      "y1": 59,
+      "x1": 66,
+      "y1": 50,
       "x2": 72,
       "y2": 172
     },
@@ -1174,12 +3608,12 @@
       "id": "arc-018",
       "type": "arc",
       "layer": "upper",
-      "x1": 63,
-      "y1": 39,
-      "qx": 43,
-      "qy": 16,
-      "x2": 28,
-      "y2": 41
+      "x1": 62,
+      "y1": 31,
+      "qx": 42,
+      "qy": 8,
+      "x2": 27,
+      "y2": 33
     },
     {
       "id": "line-080",
@@ -1666,6 +4100,371 @@
       "qy": 302.47,
       "x2": 50,
       "y2": 285
+    },
+    {
+      "id": "line-095",
+      "type": "line",
+      "layer": "top",
+      "x1": 26,
+      "y1": 468,
+      "x2": 26,
+      "y2": 1
+    },
+    {
+      "id": "line-096",
+      "type": "line",
+      "layer": "top",
+      "x1": 330,
+      "y1": 467,
+      "x2": 330,
+      "y2": 0
+    },
+    {
+      "id": "line-097",
+      "type": "line",
+      "layer": "top",
+      "x1": 14,
+      "y1": 19,
+      "x2": 347,
+      "y2": 19
+    },
+    {
+      "id": "line-098",
+      "type": "line",
+      "layer": "top",
+      "x1": 99,
+      "y1": 469,
+      "x2": 0,
+      "y2": 401
+    },
+    {
+      "id": "line-099",
+      "type": "line",
+      "layer": "top",
+      "x1": 245,
+      "y1": 469,
+      "x2": 360,
+      "y2": 377
+    },
+    {
+      "id": "circle-011",
+      "type": "circle",
+      "layer": "top",
+      "cx": 179,
+      "cy": 20,
+      "r": 20.91,
+      "mechanic": "solid-circle"
+    },
+    {
+      "id": "rect-001",
+      "type": "rect",
+      "layer": "top",
+      "x": 319.5,
+      "y": 108,
+      "angle": 0,
+      "width": 23,
+      "height": 66
+    },
+    {
+      "id": "line-104",
+      "type": "line",
+      "layer": "top",
+      "x1": 84,
+      "y1": 19,
+      "x2": 109,
+      "y2": 163
+    },
+    {
+      "id": "line-105",
+      "type": "line",
+      "layer": "top",
+      "x1": 79,
+      "y1": 20,
+      "x2": 107,
+      "y2": 165
+    },
+    {
+      "id": "line-106",
+      "type": "line",
+      "layer": "top",
+      "x1": 73,
+      "y1": 169,
+      "x2": 61,
+      "y2": 20
+    },
+    {
+      "id": "line-107",
+      "type": "line",
+      "layer": "top",
+      "x1": 74,
+      "y1": 167,
+      "x2": 107,
+      "y2": 162
+    },
+    {
+      "id": "line-108",
+      "type": "line",
+      "layer": "top",
+      "x1": 245,
+      "y1": 176,
+      "x2": 273,
+      "y2": 185
+    },
+    {
+      "id": "line-109",
+      "type": "line",
+      "layer": "top",
+      "x1": 274,
+      "y1": 185,
+      "x2": 294,
+      "y2": 122
+    },
+    {
+      "id": "arc-041",
+      "type": "arc",
+      "layer": "top",
+      "x1": 308,
+      "y1": 75,
+      "qx": 272,
+      "qy": 75,
+      "x2": 246,
+      "y2": 174
+    },
+    {
+      "id": "arc-042",
+      "type": "arc",
+      "layer": "top",
+      "x1": 308,
+      "y1": 71,
+      "qx": 269,
+      "qy": 72,
+      "x2": 243,
+      "y2": 171
+    },
+    {
+      "id": "arc-043",
+      "type": "arc",
+      "layer": "top",
+      "x1": 308,
+      "y1": 107,
+      "qx": 296.5,
+      "qy": 112.5,
+      "x2": 294,
+      "y2": 123
+    },
+    {
+      "id": "line-110",
+      "type": "line",
+      "layer": "top",
+      "x1": 308,
+      "y1": 70,
+      "x2": 308,
+      "y2": 76
+    },
+    {
+      "id": "line-111",
+      "type": "line",
+      "layer": "top",
+      "x1": 288,
+      "y1": 81,
+      "x2": 288,
+      "y2": 84
+    },
+    {
+      "id": "line-112",
+      "type": "line",
+      "layer": "top",
+      "x1": 261,
+      "y1": 119,
+      "x2": 262,
+      "y2": 124
+    },
+    {
+      "id": "line-113",
+      "type": "line",
+      "layer": "top",
+      "x1": 244,
+      "y1": 165,
+      "x2": 244,
+      "y2": 175
+    },
+    {
+      "id": "line-114",
+      "type": "line",
+      "layer": "top",
+      "x1": 83,
+      "y1": 18,
+      "x2": 83,
+      "y2": 32
+    },
+    {
+      "id": "line-115",
+      "type": "line",
+      "layer": "top",
+      "x1": 89,
+      "y1": 45,
+      "x2": 89,
+      "y2": 59
+    },
+    {
+      "id": "line-116",
+      "type": "line",
+      "layer": "top",
+      "x1": 99,
+      "y1": 97,
+      "x2": 97,
+      "y2": 108
+    },
+    {
+      "id": "line-117",
+      "type": "line",
+      "layer": "top",
+      "x1": 106,
+      "y1": 148,
+      "x2": 105,
+      "y2": 152
+    },
+    {
+      "id": "line-118",
+      "type": "line",
+      "layer": "top",
+      "x1": 109,
+      "y1": 159,
+      "x2": 108,
+      "y2": 163
+    },
+    {
+      "id": "arc-044",
+      "type": "arc",
+      "x1": 161,
+      "y1": 87,
+      "qx": 154,
+      "qy": 27,
+      "x2": 158,
+      "y2": 19,
+      "layer": "top"
+    },
+    {
+      "id": "arc-045",
+      "type": "arc",
+      "x1": 130,
+      "y1": 89,
+      "qx": 125,
+      "qy": 35,
+      "x2": 134,
+      "y2": 20,
+      "layer": "top"
+    },
+    {
+      "id": "arc-046",
+      "type": "arc",
+      "x1": 127,
+      "y1": 89,
+      "qx": 122,
+      "qy": 35,
+      "x2": 131,
+      "y2": 20,
+      "layer": "top"
+    },
+    {
+      "id": "line-119",
+      "type": "line",
+      "x1": 129,
+      "y1": 24,
+      "x2": 130,
+      "y2": 29,
+      "layer": "top"
+    },
+    {
+      "id": "line-120",
+      "type": "line",
+      "x1": 127,
+      "y1": 39,
+      "x2": 129,
+      "y2": 46,
+      "layer": "top"
+    },
+    {
+      "id": "line-121",
+      "type": "line",
+      "x1": 127,
+      "y1": 63,
+      "x2": 128,
+      "y2": 68,
+      "layer": "top"
+    },
+    {
+      "id": "line-122",
+      "type": "line",
+      "x1": 127,
+      "y1": 77,
+      "x2": 128,
+      "y2": 82,
+      "layer": "top"
+    },
+    {
+      "id": "line-123",
+      "type": "line",
+      "x1": 132,
+      "y1": 90,
+      "x2": 160,
+      "y2": 88,
+      "layer": "top"
+    },
+    {
+      "id": "line-124",
+      "type": "line",
+      "x1": 84,
+      "y1": 19,
+      "x2": 44,
+      "y2": 19,
+      "layer": "top"
+    },
+    {
+      "id": "line-125",
+      "type": "line",
+      "x1": 166,
+      "y1": 19,
+      "x2": 131,
+      "y2": 19,
+      "layer": "top"
+    },
+    {
+      "id": "rect-002",
+      "type": "rect",
+      "x": 39,
+      "y": 245,
+      "width": 24,
+      "height": 80,
+      "angle": 0,
+      "layer": "top"
+    },
+    {
+      "id": "line-126",
+      "type": "line",
+      "x1": 147,
+      "y1": 32,
+      "x2": 108,
+      "y2": 52,
+      "layer": "top"
+    },
+    {
+      "id": "line-127",
+      "type": "line",
+      "x1": 262,
+      "y1": 1,
+      "x2": 339,
+      "y2": 1,
+      "layer": "top"
+    },
+    {
+      "id": "line-128",
+      "type": "line",
+      "x1": 339,
+      "y1": 3,
+      "x2": 331,
+      "y2": 74,
+      "layer": "top"
     }
   ],
   "gravityRegions": [
@@ -2385,11 +5184,11 @@
       "id": "gravityZone-002",
       "type": "gravityZone",
       "layer": "upper",
-      "x": 54.5,
-      "y": 23.6064,
+      "x": 53.5,
+      "y": 15.6064,
+      "angle": 0,
       "width": 53,
       "height": 34.7872,
-      "angle": 0,
       "outline": [
         [
           0.5,

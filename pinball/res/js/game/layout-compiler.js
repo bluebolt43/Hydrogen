@@ -63,7 +63,7 @@ function compileLayout(layout,base){
    if(o.bidirectional)g.editor_transitions.push({id:key,points:points(),n:n.map(v=>-v),from:layers[o.toLayer],to:layers[o.fromLayer],stopOnEntry:o.stopOnEntry,initialSpeed:o.initialSpeed});
   }else if(o.mechanic==='active-rebound'){
    if(t!=='line'||![o.x1,o.y1,o.x2,o.y2].every(Number.isFinite)||dist(...points())<.5)throw Error('彈片線尺寸不合法：'+key);
-   poly(key,points(),'rebound',false,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak',slingshot:o.slingshot!==false,vpxSlingshot:o.slingshot!==false});
+   poly(key,points(),'rebound',false,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak',slingshot:o.slingshot!==false});
   }else if(o.mechanic==='guided-rail'){
    if(!['line','arc'].includes(t)||!['x1','y1','x2','y2',...(t==='arc'?['qx','qy']:[])].every(k=>Number.isFinite(o[k]))||dist(...points())<.5||!Number.isFinite(o.trackWidth)||o.trackWidth<14||o.trackWidth>60)throw Error('高架軌道尺寸不合法：'+key);
    const n=t==='arc'?Math.max(8,Math.ceil((Math.hypot(o.qx-o.x1,o.qy-o.y1)+Math.hypot(o.x2-o.qx,o.y2-o.qy))/1.5)):1;
@@ -88,12 +88,12 @@ function compileLayout(layout,base){
    const rest=Math.atan2(src.tip[1]-src.pivot[1],src.tip[0]-src.pivot[0]),raised=Math.atan2(src.raised[1]-src.pivot[1],src.raised[0]-src.pivot[0]),a=rad(o.angle)+Math.atan2(Math.sin(raised-rest),Math.cos(raised-rest));destination.push({id:key,kind:'flipper',pivot,tip,raised:[pivot[0]+length*Math.cos(a),pivot[1]+length*Math.sin(a)],radii:[ra,rb],control:side,profile:'tapered'});
   }else if(t==='oneway'){const dx=o.x2-o.x1,dy=o.y2-o.y1,length=Math.hypot(dx,dy);if(length<.5||![-1,1].includes(o.direction))throw Error('Invalid one-way line: '+key);const n=[-dy/length*o.direction,dx/length*o.direction];poly(key,points(),'rail',false,{pass_normal:n});if(o.initialSpeed>0)g.oneway_speeds.push({id:key,points:points(),n,layer:layer==='upper'?'tavern':layer,stopOnEntry:o.stopOnEntry,initialSpeed:o.initialSpeed});}
   else if(t==='arc'){const n=Math.max(8,Math.ceil((Math.hypot(o.qx-o.x1,o.qy-o.y1)+Math.hypot(o.x2-o.qx,o.y2-o.qy))/1.5));poly(key,Array.from({length:n+1},(_,i)=>{const t=i/n;return[(1-t)**2*o.x1+2*(1-t)*t*o.qx+t*t*o.x2,(1-t)**2*o.y1+2*(1-t)*t*o.qy+t*t*o.y2]}),'rail')}
-  else if(t==='rebound'){const length=layout.templates[t].width-1;poly(key,[transform(o,[-length/2,0]),transform(o,[length/2,0])],'rebound',false,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak',slingshot:o.slingshot!==false,vpxSlingshot:o.slingshot!==false})}
+  else if(t==='rebound'){const length=layout.templates[t].width-1;poly(key,[transform(o,[-length/2,0]),transform(o,[length/2,0])],'rebound',false,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak',slingshot:o.slingshot!==false})}
   else if(t==='targets'||t==='target'){let i=0;for(const m of layout.templates[t].markup.matchAll(/<polygon points="([^"]+)"/g)){const ps=m[1].trim().split(/\s+/).map(p=>transform(o,p.split(',').map(Number)));poly(key+'-'+(++i),ps,'target',true,{target_group:rules[key]||key})}}
   else if(t==='triangleLeft'||t==='triangleRight'){
    const match=layout.templates?.[t]?.markup.match(/<polygon points="([^"]+)"/);
    if(!match)throw Error('三角擋板缺少輪廓：'+key);
-   poly(key,match[1].trim().split(/\s+/).map(p=>transform(o,p.split(',').map(Number))),'rebound',true,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak',slingshot:o.slingshot!==false,vpxSlingshot:o.slingshot!==false});
+   poly(key,match[1].trim().split(/\s+/).map(p=>transform(o,p.split(',').map(Number))),'rebound',true,{mechanic:'active_rebound',reboundStrength:o.reboundStrength||'weak',slingshot:o.slingshot!==false});
   }
   else if(t==='ublock')poly(key,[[-12,11],[-12,-11],[12,-11],[12,11],[9,11],[9,-8],[-9,-8],[-9,11]].map(p=>transform(o,p)),'wall',true);
   else if(t==='blockhole'||t==='hole'&&o.mechanic==='vortex-center')destination.push({id:key,kind:'field',mechanic:'vortex-center',center:[o.x,o.y],radius:5.5,layer,collision:false});

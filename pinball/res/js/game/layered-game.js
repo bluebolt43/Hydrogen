@@ -10,7 +10,7 @@ function createGame(core){
    for(const o of parts){
     if(['wall','rail','active','rebound','bumper','test-post','target'].includes(o.kind)){
      if(o.center)edges.push({id:o.id,c:o.center,r:o.radius,kind:o.kind,bumperStrength:o.bumperStrength});
-     else {let slingEdge=1;const ps=o.points||[];const area=o.closed===true?ps.reduce((sum,p,i)=>{const q=ps[(i+1)%ps.length];return sum+p[0]*q[1]-q[0]*p[1];},0):0,vpxSide=area>0?-1:area<0?1:0;if((o.slingshot||o.vpxSlingshot||o.kind==='active'||o.kind==='rebound'||o.mechanic==='active_rebound')&&ps.length>2)for(let i=2;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>len(sub(ps[slingEdge],ps[slingEdge-1])))slingEdge=i;for(let i=1;i<(o.points||[]).length;i++)edges.push({id:o.id,a:o.points[i-1],b:o.points[i],kind:o.kind,n:o.pass_normal,thickness:o.thickness||0,mechanic:o.mechanic,reboundStrength:o.reboundStrength,slingshot:o.slingshot===true,vpxSlingshot:o.vpxSlingshot??(o.kind==='active'||o.kind==='rebound'||o.mechanic==='active_rebound'),slingshotFace:i===slingEdge,vpxSide,launchOnly:o.collisionMode==='launch-only'});}
+     else {let slingEdge=1;const ps=o.points||[];if((o.slingshot||o.kind==='active'||o.kind==='rebound'||o.mechanic==='active_rebound')&&ps.length>2)for(let i=2;i<ps.length;i++)if(len(sub(ps[i],ps[i-1]))>len(sub(ps[slingEdge],ps[slingEdge-1])))slingEdge=i;for(let i=1;i<(o.points||[]).length;i++)edges.push({id:o.id,a:o.points[i-1],b:o.points[i],kind:o.kind,n:o.pass_normal,thickness:o.thickness||0,mechanic:o.mechanic,reboundStrength:o.reboundStrength,slingshot:o.slingshot===true,slingshotFace:i===slingEdge,launchOnly:o.collisionMode==='launch-only'});}
     }
    }
    this.edges.top=edges;this.grids.top=new Grid(edges);

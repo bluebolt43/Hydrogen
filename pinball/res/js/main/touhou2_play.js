@@ -1,2 +1,2 @@
 const PLAYTEST_THEME="touhou2";
-const TableTutorial=null;
+const TableTutorial=Touhou2Tutorial;

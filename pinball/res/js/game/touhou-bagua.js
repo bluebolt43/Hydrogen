@@ -14,11 +14,12 @@ class Controller{
  reset(){this.count=0;this.phase='idle';this.winner=-1;this.phaseAt=this.clock;this.attackAge=Infinity;this.entryAt=-Infinity;}
  event(type,data){
   if(type==='new-game'){this.multiplier=1;this.reset();}
+  if(type==='drain'&&this.game.g.gameplay?.touhouBagua&&!this.game.storyMode&&!this.game.preserveTableOnDrain&&!this.game.hasPendingBalls()&&this.game.balls.every(b=>b.state==='drained')){this.multiplier=1;this.reset();}
   if(this.config.trigger==='circle-entry'||type!=='configured-attack'||data.kind!=='lv1'||this.game.gameOver)return;
   this.progress();
  }
  crossCircle(ball,previous,layer){
-  if(this.config.trigger!=='circle-entry')return;
+  if(this.config.trigger!=='circle-entry'||this.phase==='spin'||this.phase==='winflash')return;
   const o=this.geometry,countLayer=this.config.countLayer||o.layer,expected=countLayer==='upper'?'tavern':countLayer||'lower';
   if(this.game.paused||this.game.gameOver||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
   const a=[previous[0]-(o.cx??o.x),previous[1]-(o.cy??o.y)],v=[ball.p[0]-previous[0],ball.p[1]-previous[1]],r=o.r??o.attractionRadius??this.config.radius;
@@ -31,8 +32,8 @@ class Controller{
   }
  }
  progress(){
-  if(this.game.gameOver)return;
-  if(this.phase==='settled'){this.phase='idle';this.winner=-1;}
+  if(this.game.gameOver||this.phase==='spin'||this.phase==='winflash')return;
+  if(this.phase==='settled')this.phase='idle';
   this.count++;this.game.emit('bagua-progress',{count:this.count,total:this.config.threshold});
   if(this.phase==='idle'||this.phase==='settled')this.start();
  }
