@@ -17,6 +17,14 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  let combo=0,lastHit=-10,popAt=-10,shakeAt=-10,shakePower=0;
  let hudText=null,hudPlacement=null,hudFrame=null;
  const hudRasters=new Map();
+ const ringSprites=new Map();
+ function prepareRings(){
+  if(!ballsLast||ringSprites.size||typeof document==='undefined')return;
+  for(const color of ['#ffd36d','#a9edff','#ffe69c','#e9b575','#a1f3de','#fff0bb','#ffe49b']){
+   const Art=typeof PinballArt==='undefined'?null:PinballArt,canvas=Art?Art.rasterCanvas(64,64,renderer.bitmapCacheEnabled):document.createElement('canvas');canvas.width=canvas.height=64;const c=canvas.getContext('2d');c.strokeStyle=color;c.lineWidth=2;c.beginPath();c.arc(32,32,28,0,Math.PI*2);c.stroke();ringSprites.set(color,Art?Art.rasterImage(canvas):canvas);
+  }
+ }
+ globalThis.addEventListener?.('pagehide',()=>{for(const sprite of ringSprites.values())sprite.close?.();ringSprites.clear();},{once:true});
  const intersects=(a,b)=>a[0]<b[2]&&b[0]<a[2]&&a[1]<b[3]&&b[1]<a[3];
  const fixedLayout=renderer.observedArt?.has(artLayers);
  function comboText(){
@@ -181,7 +189,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
    ctx.beginPath();ctx.rect(...bounds);ctx.moveTo(b.p[0]+game.physics.ballRadius,b.p[1]);
    ctx.arc(...b.p,game.physics.ballRadius,0,Math.PI*2);ctx.clip('evenodd');
   }
-  if(!game.webglEffectsActive){for(const r of row.rings)ImpactHitEffects.drawRing(ctx,r,game.time);for(const s of row.swings)ImpactHitEffects.drawRing(ctx,s,game.time);}
+  if(!game.webglEffectsActive){for(const r of row.rings)ImpactHitEffects.drawRing(ctx,r,game.time,false,ringSprites.get(r.color));for(const s of row.swings)ImpactHitEffects.drawRing(ctx,s,game.time);}
   ctx.save();
   for(const q of row.lamps){const a=q.art,age=game.time-q.at;
    const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
@@ -287,6 +295,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   ctx.drawImage(comboFlash.canvas,comboFlash.left,comboFlash.top,comboFlash.width,comboFlash.height);ctx.restore();
  },async prepareShadows(scale){
   if(!renderer.rasterCacheEnabled||!renderer.prepareShadowRaster)return;
+  prepareRings();
   await prepareComboFlash(scale);
   const entries=[],images=new Set();
   for(const a of artLayers){if(a.hidden||!a.indicator||a.indicator.impactFlash===false)continue;
