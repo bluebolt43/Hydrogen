@@ -41,15 +41,19 @@ function createRenderer(list){
  const planes=new Map();
  for(const e of list){if(!planes.has(e.plane))planes.set(e.plane,[]);planes.get(e.plane).push(e);}
  const planeIds=new Map([...planes].map(([plane,items])=>[plane,new Set(items.map(e=>e.id))]));
- return {draw(ctx,game,settings=game?.g?.gameplay,plane='upper'){
-  const items=planes.get(plane);if(!items?.length)return;
+ function state(game,settings,plane){
   const hidden=new Set(game?.hiddenObjects||[]),rotated=game?.rotatedObjects||new Set();
   // Rescue flaps are open space until the physical gate has actually closed.
   for(const gate of game?.gates||[])if(gate.mechanic==='rescue-return'&&(!gate.closed||gate.unlocked))hidden.add(gate.id);
+  const ids=planeIds.get(plane)||new Set();return {hidden,rotated,key:(settings?.neonBorderColor||'pink')+':'+[...hidden].filter(id=>ids.has(id)).sort().join(',')+':'+[...rotated].filter(id=>ids.has(id)).sort().join(',')};
+ }
+ return {key(game,settings,plane){return state(game,settings,plane).key;},draw(ctx,game,settings=game?.g?.gameplay,plane='upper'){
+  const items=planes.get(plane);if(!items?.length)return;
+  const {hidden,rotated,key:stateKey}=state(game,settings,plane);
   if(items.every(e=>hidden.has(e.id)))return;
   const transform=ctx.getTransform(),scale=Math.max(.25,Math.min(4,Math.hypot(transform.a,transform.b)));
   let {cache,key,x=0,y=-170.5,width=360,height=640}=caches.get(plane)||{};
-  const ids=planeIds.get(plane),next=(settings?.neonBorderColor||'pink')+':'+scale+':'+[...hidden].filter(id=>ids.has(id)).sort().join(',')+':'+[...rotated].filter(id=>ids.has(id)).sort().join(',');
+  const next=scale+':'+stateKey;
   if(!cache||next!==key){
    cache?.close?.();key=next;cache=Art.rasterCanvas(Math.ceil(360*scale),Math.ceil(640*scale),true);
    const c=cache.getContext('2d');c.scale(scale,scale);c.translate(0,170.5);c.lineCap=c.lineJoin='round';

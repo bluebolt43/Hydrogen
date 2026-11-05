@@ -1,6 +1,7 @@
 /* Shared image-layer renderer. Coordinates use the layout's world units. */
 (function(root){
 'use strict';
+const drawRuntimeImage=globalThis.PinballRuntimeImages?.draw||((ctx,...args)=>ctx.drawImage(...args));
 const defaultMap=()=>typeof module!=='undefined'&&module.exports?require('../indicator-lights.js').artMap():root.IndicatorLights.artMap();
 const animation=()=>typeof module!=='undefined'&&module.exports?require('../art-animation.js'):root.ArtAnimation;
 function rasterScale(ctx,t=ctx.getTransform()){return Math.max(1/64,Math.round(Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d))*64)/64);}
@@ -12,6 +13,12 @@ function rasterCanvas(width,height,bitmap){
 function recycleRasterCanvas(canvas){canvas.width=0;canvas.height=0;if(canvas.transferToImageBitmap&&rasterPool.length<4)rasterPool.push(canvas);}
 function rasterImage(canvas){if(!canvas.transferToImageBitmap)return canvas;const bitmap=canvas.transferToImageBitmap();recycleRasterCanvas(canvas);return bitmap;}
 function releaseRaster(entry){if(!entry?.canvas)return;if(entry.canvas.close)entry.canvas.close();else {entry.canvas.width=0;entry.canvas.height=0;}}
+class ImageCache extends Map{
+ constructor(entries,changed){super(entries);this.changed=changed;}
+ set(key,value){const different=this.get(key)!==value;super.set(key,value);if(different)this.changed?.(value);return this;}
+ delete(key){const removed=super.delete(key);if(removed)this.changed?.();return removed;}
+ clear(){if(this.size){super.clear();this.changed?.();}}
+}
 const planes=['background','lower','upper','top','foreground'];
 function samePlacement(a,b,compareSource=true){
  if(!b)return false;
@@ -94,15 +101,42 @@ function validate(items){
 }
 class Renderer{
  constructor(base='',map=defaultMap(),preparedImages=new Map()){
-  this.map=map;this.base=base;this.cache=preparedImages;
+  this.map=map;this.base=base;
+  this.layoutRevision=0;this.imageRevision=0;this.observedArt=new WeakSet();this.observedLists=new WeakMap();this.observedImages=new WeakSet();this.liveItems=new WeakSet();
+  this.cache=new ImageCache(preparedImages,img=>{if(img)this.observeImage(img);this.invalidateImages();});
+  for(const img of preparedImages.values())this.observeImage(img);
  }
- image(src){if(!this.cache.has(src)){const img=new Image();if(src){const url=src.startsWith('blob:')?src:this.base+src;img.src=root.PinballRuntimeImages?.resolve(url)??url;}this.cache.set(src,img);}return this.cache.get(src);}
+ // Play owns these layout copies. Editors that mutate unobserved objects retain
+ // the validation path; nested writes/deletes on observed copies invalidate it.
+ observeLayout(items){
+  const proxies=new WeakMap(),wrap=value=>{
+   if(!value||typeof value!=='object'||this.observedArt.has(value))return value;
+   if(proxies.has(value))return proxies.get(value);
+   const copy=Array.isArray(value)?[...value]:{...value};
+   const proxy=new Proxy(copy,{
+    set:(o,k,v)=>{v=wrap(v);if(Object.is(o[k],v))return true;const ok=Reflect.set(o,k,v);if(ok)this.layoutRevision++;return ok;},
+    deleteProperty:(o,k)=>{const had=Object.hasOwn(o,k),ok=Reflect.deleteProperty(o,k);if(ok&&had)this.layoutRevision++;return ok;},
+    defineProperty:(o,k,d)=>{if('value' in d)d={...d,value:wrap(d.value)};const ok=Reflect.defineProperty(o,k,d);if(ok)this.layoutRevision++;return ok;}
+   });proxies.set(value,proxy);this.observedArt.add(proxy);for(const key of Object.keys(copy))copy[key]=wrap(copy[key]);return proxy;
+  };
+  return wrap(items);
+ }
+ trackedList(items){
+  let record=this.observedLists.get(items);
+  if(!record||record.revision!==this.layoutRevision){record={revision:this.layoutRevision,tracked:this.observedArt.has(items)&&items.every(o=>this.observedArt.has(o.layoutSource||o))};this.observedLists.set(items,record);}
+  return record.tracked;
+ }
+ invalidateImages(){this.imageRevision++;}
+ observeImage(img){
+  if(!this.observedImages.has(img)){root.PinballRuntimeImages?.prepare?.(img);this.observedImages.add(img);for(const name of ['load','error'])img.addEventListener?.(name,()=>{this.imageKeys?.delete(img);this.invalidateImages();});}
+ }
+ image(src){let img=this.cache.get(src);if(!img){img=new Image();if(src){const url=src.startsWith('blob:')?src:this.base+src;img.src=root.PinballRuntimeImages?.resolve(url)??url;}this.cache.set(src,img);}return img;}
  decodeImages(images){
   return Promise.all([...images].map(img=>root.PinballRuntimeImages.decode(img)));
  }
  missionGroupKey(o){
   const c=o.indicator;
-  if(!c?.group||c.type==='bumper'||!c.on||!c.off||c.behavior?.mode!=='repeat'||c.extraTriggers?.length||c.completion||c.releaseBehavior||c.captureBehavior||c.fade?.enabled||c.glow||c.halo||c.screenMask||o.hidden||o.opacity!==1||o.animation?.enabled||o.dynamicPose||o.frames>1||o.state&&o.state!=='static'||o.blendMode&&o.blendMode!=='source-over')return null;
+  if(!c?.group||c.type==='bumper'||!c.on||!c.off||c.extraTriggers?.length||c.completion||c.releaseBehavior||c.captureBehavior||c.fade?.enabled||c.glow||c.halo||c.screenMask||o.hidden||o.opacity!==1||o.animation?.enabled||o.dynamicPose||o.frames>1||o.state&&o.state!=='static'||o.blendMode&&o.blendMode!=='source-over')return null;
   return JSON.stringify([c.group,o.bind,c.trigger,c.behavior,c.defaultState]);
  }
  async prepareMissionLights(items,scale,brightness=this.brightness,e=0,f=0){
@@ -138,21 +172,26 @@ class Renderer{
   for(const g of this.missionGroups||[])for(const v of Object.values(g.variants))releaseRaster(v);
   this.missionGroups=prepared;this.missionHeads=prepared.length?members:null;this.missionPixels=pixels;
  }
- drawMissionGroup(ctx,items,start,plane,game,group,t){
+ drawMissionGroup(ctx,items,start,plane,game,group,t,states=null,commands=null){
   if(group.plane!==plane||group.brightness!==this.brightness)return 0;
   if(ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur>0||ctx.shadowOffsetX||ctx.shadowOffsetY||ctx.shadowColor!==group.shadowColor||ctx.filter&&ctx.filter!=='none'||!group.disjoint&&ctx.globalAlpha!==1)return 0;
   if(t.b||t.c||t.a!==t.d||t.a!==group.scale)return 0;
-  let chosen=null;
+  const stable=group.validatedItems===items&&group.validatedStart===start&&group.layoutRevision===this.layoutRevision&&group.imageRevision===this.imageRevision&&group.imageLookup===this.image;
+  let chosen=null,tracked=this.observedArt.has(items);
   for(let i=0;i<group.items.length;i++){
-   const o=items[start+i],source=o&&(o.layoutSource||o),saved=group.layout[i];
-   if(source!==group.items[i]||o.plane!==plane||o.hidden||o.dynamicPose||o.animation?.enabled||o.indicator?.halo||o.state!==saved.state||o.bind!==saved.bind||o.frames!==saved.frames||o.blendMode&&o.blendMode!=='source-over'||!samePlacement(source,saved)||!samePlacement(o,saved,false)||o.bind&&(game.targetHits.has(o.bind)||game.targetHits.has(o.bind+'-1')||game.flippers.some(f=>f.id===o.bind)))return 0;
-   const state=this.map.artState(o,game,this);if(!state||(state.alpha??1)!==1||state.glow?.alpha>0||state.frame||state.baseSrc!==state.src)return 0;
+   const o=items[start+i],source=o&&(o.layoutSource||o),saved=group.layout[i],command=commands?.[start+i];
+   if(!stable&&(source!==group.items[i]||o.plane!==plane||o.hidden||o.dynamicPose||o.animation?.enabled||o.indicator?.halo||o.state!==saved.state||o.bind!==saved.bind||o.frames!==saved.frames||o.blendMode&&o.blendMode!=='source-over'||!samePlacement(source,saved)||!samePlacement(o,saved,false)||o.bind&&(game.targetHits.has(o.bind)||game.targetHits.has(o.bind+'-1')||(command?!!command.flipper:game.flippers.some(f=>f.id===o.bind)))))return 0;
+   if(stable&&o.bind&&(game.targetHits.has(o.bind)||game.targetHits.has(o.bind+'-1')||(command?!!command.flipper:game.flippers.some(f=>f.id===o.bind))))return 0;
+   if(!stable&&(o!==source||!this.observedArt.has(source)))tracked=false;
+   const state=states?.has(o)?states.get(o):this.map.artState(o,game,this,command);states?.set(o,state);if(!state||(state.alpha??1)!==1||state.glow?.alpha>0||state.frame||state.baseSrc!==state.src)return 0;
    const c=saved.indicator,selected=state.src===c.on?'on':state.src===c.off?'off':null;
    if(!selected||chosen&&chosen!==selected)return 0;chosen=selected;
-   const ref=group.sources[selected][i],img=this.image(state.src);if(ref.src!==state.src||ref.img!==img||ref.id!==this.imageKey(img))return 0;
+   if(!stable){const ref=group.sources[selected][i],img=command?.images[state.src]||this.image(state.src);if(ref.src!==state.src||ref.img!==img||ref.id!==this.imageKey(img))return 0;}
   }
+  if(tracked){group.validatedItems=items;group.validatedStart=start;group.layoutRevision=this.layoutRevision;group.imageRevision=this.imageRevision;group.imageLookup=this.image;}
   const v=group.variants[chosen];if(ctx.imageSmoothingEnabled!==v.smoothing||ctx.imageSmoothingQuality!==v.quality)return 0;
-  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(v.canvas,v.left+t.e-v.e,v.top+t.f-v.f);ctx.restore();return group.items.length;
+  if(this.damagePixels&&ctx.canvas.id==='table'){const x=v.left+t.e-v.e,y=v.top+t.f-v.f;if(!this.damagePixels.some(b=>root.PlayDamage.intersects(b,[x,y,x+v.canvas.width,y+v.canvas.height])))return group.items.length;}
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(v.canvas,Math.round(v.left+t.e-v.e),Math.round(v.top+t.f-v.f));ctx.restore();return group.items.length;
  }
  imageKey(img){
   this.imageKeys??=new WeakMap();const src=img.src;let key=this.imageKeys.get(img);
@@ -165,7 +204,7 @@ class Renderer{
   if(!this.rasterCacheEnabled)return;
   const tasks=[],images=new Set(),brightness=this.brightness;
   for(const a of items){if(a.hidden)continue;
-   const c=a.indicator,sources=new Set([a.src,...['off','on','complete','lv1','lv2','lv3'].map(k=>c?.[k])].filter(Boolean));
+   const sources=this.drawSources(a);
    for(const src of sources){const img=this.image(src);images.add(img);tasks.push({a,img});}
   }
   await this.decodeImages(images);
@@ -173,16 +212,18 @@ class Renderer{
   const previousBrightness=this.brightness;this.brightness=brightness;
   try{for(const {a,img} of tasks){const [x,y,w,h]=a.crop,colors=new Set([a.indicator?.glow?.on,a.indicator?.glow?.complete,a.indicator?.glow?.preview?.color].filter(Boolean));
    for(let frame=0;frame<(a.frames||1);frame++){const sx=x+(a.frameAxis==='y'?0:frame*(a.frameStride||w)),sy=y+(a.frameAxis==='y'?frame*(a.frameStride||h):0);
-    if(sx+w>img.naturalWidth+.01||sy+h>img.naturalHeight+.01)continue;
+    if(sx+w>(img.runtimeWidth??img.naturalWidth)+.01||sy+h>(img.runtimeHeight??img.naturalHeight)+.01)continue;
     this.drawRaster(brush,img,sx,sy,w,h,a.width,a.height);
     for(const color of colors)this.drawGlow(brush,img,sx,sy,w,h,a.width,a.height,{color,alpha:0});
    }
   }}finally{this.brightness=previousBrightness;canvas.width=canvas.height=0;}
  }
- drawRaster(ctx,img,sx,sy,sw,sh,width,height,x=0,y=0,scaleHint=null){
-  if(!this.rasterCacheEnabled){ctx.drawImage(img,sx,sy,sw,sh,x-width/2,y-height/2,width,height);return;}
+ drawRaster(ctx,img,sx,sy,sw,sh,width,height,x=0,y=0,scaleHint=null,pixelTransform=null){
+  if(!this.rasterCacheEnabled){drawRuntimeImage(ctx,img,sx,sy,sw,sh,x-width/2,y-height/2,width,height);return;}
   const scale=scaleHint??rasterScale(ctx);
-  const w=Math.max(1,Math.min(2048,Math.ceil(width*scale))),h=Math.max(1,Math.min(2048,Math.ceil(height*scale)));
+  const aligned=pixelTransform&&!pixelTransform.b&&!pixelTransform.c&&pixelTransform.a!==0&&pixelTransform.d!==0;
+  const deviceWidth=aligned?Math.max(1,Math.round(width*Math.abs(pixelTransform.a))):0,deviceHeight=aligned?Math.max(1,Math.round(height*Math.abs(pixelTransform.d))):0;
+  const w=Math.max(1,Math.min(2048,aligned?deviceWidth:Math.ceil(width*scale))),h=Math.max(1,Math.min(2048,aligned?deviceHeight:Math.ceil(height*scale)));
   const brightness=this.brightness??1,id=this.imageKey(img),previous=this.rasterLastKeys?.get(img);
   let key;
   if(previous&&previous.id===id&&previous.sx===sx&&previous.sy===sy&&previous.sw===sw&&previous.sh===sh&&previous.w===w&&previous.h===h&&previous.brightness===brightness)key=previous.key;
@@ -194,7 +235,7 @@ class Renderer{
   let entry=this.rasters.get(key);
   if(!entry){
    const canvas=rasterCanvas(w,h,this.bitmapCacheEnabled);
-   const c=canvas.getContext('2d');c.drawImage(img,sx,sy,sw,sh,0,0,w,h);
+   const c=canvas.getContext('2d');drawRuntimeImage(c,img,sx,sy,sw,sh,0,0,w,h);
    if(brightness<1){c.globalCompositeOperation='source-atop';c.fillStyle=`rgba(0,0,0,${1-brightness})`;c.fillRect(0,0,w,h);}
    entry={canvas:rasterImage(canvas),pixels:w*h};
    // Bound prepared pixels to 64 MiB, including obsolete viewport sizes.
@@ -202,7 +243,16 @@ class Renderer{
    this.rasterPixels+=entry.pixels;
   }
   this.rasters.delete(key);this.rasters.set(key,entry);
-  ctx.drawImage(entry.canvas,x-width/2,y-height/2,width,height);
+  if(aligned){
+   // Submit integer pixels in a unit transform. Canvas does not need to
+   // cancel fractional world coordinates against a fractional scale.
+   const t=pixelTransform,left=Math.round((x-width/2)*t.a+t.e),top=Math.round((y-height/2)*t.d+t.f);
+   const fx=t.a<0?-1:1,fy=t.d<0?-1:1;
+   ctx.setTransform(fx,0,0,fy,0,0);
+   if(deviceWidth===w&&deviceHeight===h)ctx.drawImage(entry.canvas,left*fx,top*fy);
+   else ctx.drawImage(entry.canvas,left*fx,top*fy,deviceWidth,deviceHeight);
+   ctx.setTransform(t.a,t.b,t.c,t.d,t.e,t.f);
+  }else ctx.drawImage(entry.canvas,x-width/2,y-height/2,width,height);
  }
  // Keep the original image separate: fading a flattened image+shadow changes
  // their overlap. Only the expensive blurred silhouette is immutable.
@@ -224,7 +274,7 @@ class Renderer{
     c.imageSmoothingEnabled=ctx.imageSmoothingEnabled;c.imageSmoothingQuality=ctx.imageSmoothingQuality;
     // Put the image outside the canvas; its offset shadow lands inside it.
     c.shadowColor=ctx.shadowColor;c.shadowBlur=blur;c.shadowOffsetX=w+pad;
-    c.drawImage(img,sx,sy,sw,sh,-w,pad,width*scale,height*scale);
+    drawRuntimeImage(c,img,sx,sy,sw,sh,-w,pad,width*scale,height*scale);
     entry={canvas:rasterImage(canvas),pixels,key,pad,imageId,sx,sy,sw,sh,width,height,scale,blur,color,smoothing,quality};
     while(this.shadowPixels+pixels>1048576&&this.shadowRasters.size){const id=this.shadowRasters.keys().next().value,old=this.shadowRasters.get(id);this.shadowPixels-=old.pixels;releaseRaster(old);this.shadowRasters.delete(id);}
     this.shadowPixels+=pixels;
@@ -237,13 +287,13 @@ class Renderer{
  drawImageWithShadow(ctx,img,sx,sy,sw,sh,width,height,scaleHint=null,shadowStyle=null){
   const entry=this.prepareShadowRaster(shadowStyle||ctx,img,sx,sy,sw,sh,width,height,scaleHint);
   if(!entry){
-   if(!shadowStyle)return ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);
+   if(!shadowStyle)return drawRuntimeImage(ctx,img,sx,sy,sw,sh,-width/2,-height/2,width,height);
    ctx.save();ctx.shadowBlur=shadowStyle.shadowBlur;ctx.shadowColor=shadowStyle.shadowColor;
-   ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();return;
+   drawRuntimeImage(ctx,img,sx,sy,sw,sh,-width/2,-height/2,width,height);ctx.restore();return;
   }
   const {canvas,pad,scale}=entry;
   if(!shadowStyle){ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';}
-  ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);ctx.drawImage(img,sx,sy,sw,sh,-width/2,-height/2,width,height);if(!shadowStyle)ctx.restore();
+  ctx.drawImage(canvas,-width/2-pad/scale,-height/2-pad/scale,canvas.width/scale,canvas.height/scale);drawRuntimeImage(ctx,img,sx,sy,sw,sh,-width/2,-height/2,width,height);if(!shadowStyle)ctx.restore();
  }
  // Cache the colored silhouette and soft edge once, rather than filtering each frame.
  drawGlow(ctx,img,sx,sy,sw,sh,width,height,glow){
@@ -252,7 +302,7 @@ class Renderer{
   const key=JSON.stringify([this.imageKey(img),sx,sy,sw,sh,w,h,glow.color]);let canvas=this.glows.get(key);
   if(!canvas){
    const mask=document.createElement('canvas');mask.width=w;mask.height=h;const m=mask.getContext('2d');
-   m.drawImage(img,sx,sy,sw,sh,0,0,w,h);m.globalCompositeOperation='source-in';m.fillStyle=glow.color;m.fillRect(0,0,w,h);
+   drawRuntimeImage(m,img,sx,sy,sw,sh,0,0,w,h);m.globalCompositeOperation='source-in';m.fillStyle=glow.color;m.fillRect(0,0,w,h);
    canvas=document.createElement('canvas');canvas.width=w+pad*2;canvas.height=h+pad*2;const c=canvas.getContext('2d');
    c.shadowColor=glow.color;c.shadowBlur=pad*.7;c.globalAlpha=.7;c.drawImage(mask,pad,pad);c.shadowBlur=0;
    c.globalCompositeOperation='destination-out';c.globalAlpha=1;c.drawImage(mask,pad,pad);
@@ -308,9 +358,10 @@ class Renderer{
   if(!items.length)return this.emptyCompositionPlan??=[];
   this.layoutPlans??=new Map();const key=plane+':'+items[0].id,flippers=game?.flippers;
   let record=this.layoutPlans.get(key),valid=record?.entries.length===items.length&&record.flippers===flippers;
-  if(valid)for(let i=0;i<(flippers?.length||0);i++){const f=flippers[i],old=record.pivots[i];if(!old||old.ref!==f||old.id!==f.id||old.x!==f.pivot[0]||old.y!==f.pivot[1]){valid=false;break;}}
-  if(valid&&record.pivots.length!==(flippers?.length||0))valid=false;
-  if(valid)for(let i=0;i<items.length;i++){
+  const unchanged=valid&&record.input===items&&record.tracked&&record.revision===this.layoutRevision;
+  if(valid&&!unchanged)for(let i=0;i<(flippers?.length||0);i++){const f=flippers[i],old=record.pivots[i];if(!old||old.ref!==f||old.id!==f.id||old.x!==f.pivot[0]||old.y!==f.pivot[1]){valid=false;break;}}
+  if(valid&&!unchanged&&record.pivots.length!==(flippers?.length||0))valid=false;
+  if(valid)for(const i of unchanged?record.liveIndices:items.keys()){
    const o=items[i],source=o.layoutSource||o,old=record.entries[i],opaque=unknownBounds(o);
    // Grouping depends on geometry, not texture/crop/opacity. Static rasters
    // validate their own appearance separately in drawStaticCache.
@@ -319,31 +370,101 @@ class Renderer{
    if(o.motionBounds)for(let j=0;j<4;j++)if(o.motionBounds[j]!==old.motion[j]){valid=false;break;}
    if(!valid)break;
   }
-  if(valid){for(const binding of record.bindings)binding.batch.items[binding.index]=items[binding.sourceIndex];return record.plan;}
+  if(valid){record.input=items;record.revision=this.layoutRevision;record.tracked=this.trackedList(items);for(const binding of record.bindings)binding.batch.items[binding.index]=items[binding.sourceIndex];return record.plan;}
   const plan=this.compositionPlan(items,plane,game),indices=new Map(items.map((o,i)=>[o,i]));
   if(indices.size!==items.length)return plan;
-  record={flippers,pivots:(flippers||[]).map(f=>({ref:f,id:f.id,x:f.pivot[0],y:f.pivot[1]})),entries:items.map(o=>{
+  record={input:items,tracked:this.trackedList(items),revision:this.layoutRevision,liveIndices:items.flatMap((o,i)=>o.layoutSource||this.liveItems.has(o)?[i]:[]),flippers,pivots:(flippers||[]).map(f=>({ref:f,id:f.id,x:f.pivot[0],y:f.pivot[1]})),entries:items.map(o=>{
    const source=o.layoutSource||o;
    return {source,plane:o.plane,hidden:o.hidden,state:o.state,bind:o.bind,cached:this.cacheable(o,plane),opaque:unknownBounds(o),bounds:[source.x,source.y,source.width,source.height,source.angle],enabled:source.animation?.enabled,effect:source.animation?.effect,amplitude:source.animation?.amplitude,motion:o.motionBounds?[...o.motionBounds]:null};
   }),plan:plan.map(b=>({cached:b.cached,items:[...b.items],indices:b.items.map(o=>indices.get(o))}))};
   record.bindings=[];
-  for(const batch of record.plan)for(let i=0;i<batch.items.length;i++)if(batch.items[i].layoutSource)record.bindings.push({batch,index:i,sourceIndex:batch.indices[i]});
+  if(record.tracked)for(const batch of record.plan)this.observedArt.add(batch.items);
+  for(const batch of record.plan)for(let i=0;i<batch.items.length;i++)if(record.liveIndices.includes(batch.indices[i]))record.bindings.push({batch,index:i,sourceIndex:batch.indices[i]});
   if(this.layoutPlans.size>=32)this.layoutPlans.delete(this.layoutPlans.keys().next().value);
   this.layoutPlans.set(key,record);return record.plan;
  }
  draw(ctx,items,plane,game=null){
+  if(!items.length)return;
+  if(this.targetRegionCacheEnabled&&game&&!this.beforeDraw&&this.drawTargetRegions(ctx,items,plane,game))return;
+  if(!this.buildingBackground&&this.beforeDraw&&this.drawTable&&this.trackedList(items))return this.drawUncached(ctx,items,plane,game);
   if(this.buildingBackground||!(plane==='background'?this.backgroundCacheEnabled:this.staticCacheEnabled))return this.drawUncached(ctx,items,plane,game);
   this.compositionDepth=(this.compositionDepth||0)+1;
   try{for(const batch of this.preparedCompositionPlan(items,plane,game))if(!batch.cached||!this.drawStaticCache(ctx,batch.items,plane,game))this.drawUncached(ctx,batch.items,plane,game);}
   finally{this.compositionDepth--;}
  }
+ targetRegionPlan(items,plane,game){
+  const commands=this.drawCommands(items,game);if(!commands)return null;
+  this.targetRegionPlans??=new WeakMap();let plans=this.targetRegionPlans.get(items);
+  if(!plans){plans=new Map();this.targetRegionPlans.set(items,plans);}let plan=plans.get(plane);if(plan)return plan;
+  plan=[];let group=[];
+  const flush=()=>{if(!group.length)return;const targets=group.filter(o=>this.drawTable.bySource.get(o)?.targetId),list=this.observeLayout(group);
+   plan.push({items:list,targets,retained:targets.length>0&&group.length>1});group=[];
+  };
+  for(let i=0;i<items.length;i++){
+   const o=items[i],command=commands[i];
+   const target=command.targetId&&!o.indicator&&!o.animation?.enabled&&!this.liveItems.has(o)&&(!o.state||o.state==='static'||o.state==='target')&&(!o.blendMode||o.blendMode==='source-over');
+   if(!o.hidden&&o.plane===plane&&(target||this.cacheable(o,plane))){group.push(o);continue;}
+   flush();plan.push({items:this.observeLayout([o]),targets:[],retained:false});
+  }
+  flush();const merged=[];
+  for(const group of plan){const last=merged.at(-1);if(!group.retained&&last&&!last.retained)last.items=this.observeLayout([...last.items,...group.items]);else merged.push(group);}
+  plans.set(plane,merged);return merged;
+ }
+ drawTargetRegions(ctx,items,plane,game){
+  if(ctx.canvas.width*ctx.canvas.height>1048576||ctx.globalAlpha!==1||ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur||ctx.filter&&ctx.filter!=='none')return false;
+  const t=ctx.getTransform();if(t.b||t.c||t.a<=0||t.d<=0)return false;
+  const plan=this.targetRegionPlan(items,plane,game);if(!plan?.some(g=>g.retained))return false;
+  this.targetRegionCaches??=new Map();
+  // Retain the reference raster during small shakes, including fractional ones.
+  // Overscan keeps edge pixels available when the viewport moves.
+  for(const group of plan)if(group.retained){const c=this.targetRegionCaches.get(group);if(c&&c.width===ctx.canvas.width&&c.height===ctx.canvas.height&&c.a===t.a&&c.d===t.d&&(Math.abs(c.e-t.e)>8||Math.abs(c.f-t.f)>8))return false;}
+  for(const group of plan){
+   if(!group.retained){
+    for(const batch of this.preparedCompositionPlan(group.items,plane,game))if(!batch.cached||!this.drawStaticCache(ctx,batch.items,plane,game))this.drawUncached(ctx,batch.items,plane,game);continue;
+   }
+   let cached=this.targetRegionCaches.get(group);
+   if(!cached||cached.width!==ctx.canvas.width||cached.height!==ctx.canvas.height||cached.a!==t.a||cached.d!==t.d||cached.brightness!==this.brightness||cached.smoothing!==ctx.imageSmoothingEnabled||cached.quality!==ctx.imageSmoothingQuality){
+    if(cached){this.targetRegionPixels-=cached.pixels;releaseRaster(cached);this.targetRegionCaches.delete(group);}
+    const pad=8,pixels=(ctx.canvas.width+pad*2)*(ctx.canvas.height+pad*2);
+    this.targetRegionPixels??=0;
+    while(this.targetRegionPixels+pixels>4194304&&this.targetRegionCaches.size){const oldest=this.targetRegionCaches.keys().next().value,c=this.targetRegionCaches.get(oldest);this.targetRegionPixels-=c.pixels;releaseRaster(c);this.targetRegionCaches.delete(oldest);}
+    const canvas=rasterCanvas(ctx.canvas.width+pad*2,ctx.canvas.height+pad*2,false),brush=canvas.getContext('2d');
+    brush.setTransform(t.a,0,0,t.d,t.e+pad,t.f+pad);brush.imageSmoothingEnabled=ctx.imageSmoothingEnabled;brush.imageSmoothingQuality=ctx.imageSmoothingQuality;
+    const bounds=o=>{const angle=o.angle*Math.PI/180,c=Math.abs(Math.cos(angle)),s=Math.abs(Math.sin(angle)),w=(o.width*c+o.height*s)/2,h=(o.width*s+o.height*c)/2;return [Math.max(0,Math.floor((o.x-w)*t.a+t.e+pad)-2),Math.max(0,Math.floor((o.y-h)*t.d+t.f+pad)-2),Math.min(canvas.width,Math.ceil((o.x+w)*t.a+t.e+pad)+2),Math.min(canvas.height,Math.ceil((o.y+h)*t.d+t.f+pad)+2)];};
+    const boxes=group.items.map(bounds),union=[Math.min(...boxes.map(b=>b[0])),Math.min(...boxes.map(b=>b[1])),Math.max(...boxes.map(b=>b[2])),Math.max(...boxes.map(b=>b[3]))];
+    const patches=group.targets.map(o=>{const box=bounds(o),contributors=this.observeLayout(group.items.filter((a,i)=>{const b=boxes[i];return b[0]<box[2]&&b[2]>box[0]&&b[1]<box[3]&&b[3]>box[1];}));return {art:o,id:this.drawTable.bySource.get(o).targetId,box,contributors,alpha:null};});
+    this.drawUncached(brush,group.items,plane,game);
+    cached={canvas,brush,patches,union,pad,pixels,width:ctx.canvas.width,height:ctx.canvas.height,a:t.a,d:t.d,e:t.e,f:t.f,brightness:this.brightness,smoothing:ctx.imageSmoothingEnabled,quality:ctx.imageSmoothingQuality};
+    for(const p of patches)p.alpha=game.targetHits.has(p.id)?Math.max(0,1-(game.time-(game.targetHitAt?.get(p.id)??game.time))/.2):1;
+    this.targetRegionCaches.set(group,cached);this.targetRegionPixels+=pixels;
+   }else{
+    for(const p of cached.patches){
+     const alpha=game.targetHits.has(p.id)?Math.max(0,1-(game.time-(game.targetHitAt?.get(p.id)??game.time))/.2):1;
+     if(alpha===p.alpha)continue;
+     const [x0,y0,x1,y1]=p.box,c=cached.brush;p.alpha=alpha;
+     if(x1<=x0||y1<=y0)continue;
+     c.save();c.setTransform(1,0,0,1,0,0);c.beginPath();c.rect(x0,y0,x1-x0,y1-y0);c.clip();c.clearRect(x0,y0,x1-x0,y1-y0);c.setTransform(cached.a,0,0,cached.d,cached.e+cached.pad,cached.f+cached.pad);
+     try{this.drawUncached(c,p.contributors,plane,game);}finally{c.restore();}
+    }
+   }
+   const [x0,y0,x1,y1]=cached.union;if(x1>x0&&y1>y0){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(cached.canvas,x0,y0,x1-x0,y1-y0,Math.round(x0-cached.pad+t.e-cached.e),Math.round(y0-cached.pad+t.f-cached.f),x1-x0,y1-y0);ctx.restore();}
+  }
+  return true;
+ }
  drawStaticCache(ctx,items,plane,game){
-  let count=0;
-  while(count<items.length&&this.cacheable(items[count],plane,game))count++;
+  const previous=this.staticCaches?.get(plane+':'+items[0]?.id);
+  const unchanged=previous?.validatedItems===items&&previous.layoutRevision===this.layoutRevision&&previous.imageRevision===this.imageRevision&&previous.imageLookup===this.image&&!this.beforeDraw;
+  this.staticBatchChecks??=new WeakMap();
+  const check=this.staticBatchChecks.get(items),checked=!this.beforeDraw&&check?.revision===this.layoutRevision&&check.plane===plane;
+  let count=unchanged?items.length:checked?check.count:0;
+  if(!unchanged&&!checked){
+   while(count<items.length&&this.cacheable(items[count],plane,game))count++;
+   if(!this.beforeDraw&&this.trackedList(items))this.staticBatchChecks.set(items,{revision:this.layoutRevision,plane,count});
+  }
   if(count<2)return false;
   const batch=count===items.length?items:items.slice(0,count),t=ctx.getTransform(),slot=plane+':'+batch[0].id;
   let cached=this.staticCaches?.get(slot),ready=true,imagesChanged=cached?.images.length!==batch.length,layoutChanged=cached?.layout?.length!==batch.length;
-  for(let i=0;i<batch.length;i++){const a=batch[i],im=this.image(a.src);if(!im.complete||!im.naturalWidth)ready=false;if(im!==cached?.images[i]||this.imageKey(im)!==cached?.imageIds?.[i])imagesChanged=true;if(!samePlacement(a,cached?.layout?.[i]))layoutChanged=true;}
+  if(!unchanged)for(let i=0;i<batch.length;i++){const a=batch[i],im=this.image(a.src);if(!im.complete||!(im.runtimeWidth??im.naturalWidth))ready=false;if(im!==cached?.images[i]||this.imageKey(im)!==cached?.imageIds?.[i])imagesChanged=true;if(!samePlacement(a,cached?.layout?.[i]))layoutChanged=true;}
   if(t.b||t.c||t.a<=0||t.d<=0||ctx.globalAlpha!==1||ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur>0||ctx.filter&&ctx.filter!=='none'||!ready)return false;
   this.staticCaches??=new Map();
   if(!cached||layoutChanged||imagesChanged||cached.scaleX!==t.a||cached.scaleY!==t.d||cached.brightness!==this.brightness||cached.smoothing!==ctx.imageSmoothingEnabled||cached.quality!==ctx.imageSmoothingQuality){
@@ -358,29 +479,129 @@ class Renderer{
    releaseRaster(this.staticCaches.get(slot));this.staticCaches.delete(slot);
    while([...this.staticCaches.values()].reduce((n,c)=>n+c.canvas.width*c.canvas.height,0)+width*height>4194304){const oldest=this.staticCaches.keys().next().value;releaseRaster(this.staticCaches.get(oldest));this.staticCaches.delete(oldest);}
    cached={images,imageIds:images.map(img=>this.imageKey(img)),layout:batch.map(a=>({...a,crop:[...a.crop]})),scaleX:t.a,scaleY:t.d,brightness:this.brightness,smoothing:ctx.imageSmoothingEnabled,quality:ctx.imageSmoothingQuality,canvas:rasterImage(canvas),left,top,e:t.e,f:t.f};this.staticCaches.set(slot,cached);
-  }else for(const a of batch)this.beforeDraw?.(ctx,a);
-  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(cached.canvas,cached.left+t.e-cached.e,cached.top+t.f-cached.f);ctx.restore();
+  }else if(this.beforeDraw)for(const a of batch)this.beforeDraw(ctx,a);
+  if(count===items.length&&this.trackedList(items)){cached.validatedItems=items;cached.layoutRevision=this.layoutRevision;cached.imageRevision=this.imageRevision;cached.imageLookup=this.image;}
+  if(this.damagePixels&&ctx.canvas.id==='table'){const x=cached.left+t.e-cached.e,y=cached.top+t.f-cached.f;if(!this.damagePixels.some(b=>root.PlayDamage.intersects(b,[x,y,x+cached.canvas.width,y+cached.canvas.height])))return true;}
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(cached.canvas,Math.round(cached.left+t.e-cached.e),Math.round(cached.top+t.f-cached.f));ctx.restore();
   if(count<items.length)Renderer.prototype.draw.call(this,ctx,items.slice(count),plane,game);return true;
  }
- drawUncached(ctx,items,plane,game=null){
+ drawSources(o){return new Set([o.src,...['off','on','complete','lv1','lv2','lv3'].map(k=>o.indicator?.[k])].filter(Boolean));}
+ prepareDrawTable(items,game){
+  for(const cached of this.targetRegionCaches?.values()||[])releaseRaster(cached);
+  this.targetRegionCaches=new Map();this.targetRegionPixels=0;this.targetRegionPlans=new WeakMap();
+  for(const cached of this.lightComposites?.values()||[])releaseRaster(cached);
+  this.lightComposites=new Map();this.lightPixels=0;
+  const targets=new Set((game.targetGroups||[]).flatMap(g=>g.targets)),flippers=new Map((game.flippers||[]).map(f=>[f.id,f])),gates=new Map((game.gates||[]).map(o=>[o.id,o])),shapes=new Map((game.g?.lower||[]).map(o=>[o.id,o]));
+  const knownImages=new Map([...this.cache.values()].map(img=>[img.src,img]));
+  const table={items,game,commands:[],byPlane:new Map(planes.map(p=>[p,[]])),bySource:new WeakMap(),images:new Map(),imageRefs:Object.create(null),groups:game.targetGroups,flippers:game.flippers,gates:game.gates,posts:game.configuredPosts,imageLookup:this.image};
+  const imageFor=src=>{
+   let img=table.images.get(src);if(img)return img;
+   img=this.cache.get(src);
+   if(!img&&root.PinballRuntimeImages&&typeof document!=='undefined'&&document.baseURI){const url=root.PinballRuntimeImages.resolve(src.startsWith('blob:')?src:this.base+src);img=knownImages.get(new URL(url,document.baseURI).href);if(img)this.cache.set(src,img);}
+   img??=this.image(src);this.observeImage(img);table.images.set(src,img);table.imageRefs[src]=img;knownImages.set(img.src,img);return img;
+  };
+  if(game.bonus?.config){
+   const controller=game.bonus,images=table.imageRefs,collect=value=>{
+    if(typeof value==='string'&&/^res\/(?:img|hd_img)\/.+\.(?:png|jpe?g|webp|svg)$/i.test(value))images[value]=imageFor(value);
+    else if(value&&typeof value==='object')for(const v of Object.values(value))collect(v);
+   };collect(controller.config);controller.drawImages=images;
+   table.producer={controller,images,plane:controller.config.displayPlane||controller.geometry?.layer||'lower',enabled:!!controller.config.object,draw:controller.draw?.bind(controller),attack:controller.drawAttackOverlay?.bind(controller)};
+  }
+  for(const o of items){
+   const images=Object.create(null);for(const src of this.drawSources(o))images[src]=imageFor(src);
+   const targetId=o.bind&&(targets.has(o.bind)?o.bind:targets.has(o.bind+'-1')?o.bind+'-1':null);
+   const command={bounds:this.artBounds(o,game),angleCos:Math.cos(o.angle*Math.PI/180),angleSin:Math.sin(o.angle*Math.PI/180),art:o,baseState:{src:o.src,baseSrc:o.src,frame:0},kind:o.id===game.bonus?.config.artId?'producer':o.state==='ball-layer'?'ball-marker':this.cacheable(o,o.plane)&&!this.liveItems.has(o)?'static':'dynamic',images,targetId:targetId||(o.state==='target'?o.bind:null),flipper:flippers.get(o.bind),gate:gates.get(o.bind),post:game.configuredPosts?.get(o.bind),vortexCenter:shapes.get(o.bind)?.center};
+   command.compositeLight=!!o.indicator&&!o.bind&&!o.hidden&&(!o.state||o.state==='static')&&!o.animation?.enabled&&!o.indicator.fade?.enabled&&!o.indicator.glow&&!o.indicator.halo&&!o.indicator.screenMask&&!(o.frames>1)&&(!o.blendMode||o.blendMode==='source-over')&&!this.liveItems.has(o);
+   table.commands.push(command);table.byPlane.get(o.plane)?.push(command);table.bySource.set(o,command);
+  }
+  table.layoutRevision=this.layoutRevision;table.imageRevision=this.imageRevision;this.drawTable=table;this.drawPasses=new WeakMap();
+  table.passes=[];for(const pass of this.drawPassDefinitions||[])this.prepareDrawPass(pass.items,pass.plane,game);
+  return table;
+ }
+ refreshDrawTable(game){
+  const table=this.drawTable;if(!table||table.game!==game)return null;
+  return table.layoutRevision===this.layoutRevision&&table.imageRevision===this.imageRevision&&table.groups===game.targetGroups&&table.flippers===game.flippers&&table.gates===game.gates&&table.posts===game.configuredPosts&&(table.producer?.controller||null)===(game.bonus||null)&&table.imageLookup===this.image?table:this.prepareDrawTable(table.items,game);
+ }
+ drawCommands(items,game){
+  const table=this.refreshDrawTable(game);if(!table||!this.trackedList(items))return null;
+  const saved=this.drawPasses.get(items);if(saved)return saved;
+  const commands=items.map(o=>table.bySource.get(o.layoutSource||o));if(commands.some(c=>!c))return null;
+  if(this.stateLightCacheEnabled){
+   commands.lightRuns=Object.create(null);
+   for(let start=0;start<commands.length;){
+    let end=start;while(end<commands.length&&commands[end].compositeLight&&commands[end].art.plane===commands[start].art.plane&&items[end]===commands[end].art)end++;
+    if(end-start>1){const runItems=items.slice(start,end),runCommands=commands.slice(start,end);this.observedArt.add(runItems);this.drawPasses.set(runItems,runCommands);commands.lightRuns[start]={items:runItems,commands:runCommands,signature:[]};}
+    start=end>start?end:start+1;
+   }
+  }
+  this.drawPasses.set(items,commands);return commands;
+ }
+ setDrawPasses(passes,game){
+  this.drawPassDefinitions=passes;this.drawTable.passes=[];for(const pass of passes)this.prepareDrawPass(pass.items,pass.plane,game);
+ }
+ prepareDrawPass(items,plane,game){
+  if(!items.length)return;
+  this.drawCommands(items,game);
+  const batches=this.preparedCompositionPlan(items,plane,game);
+  for(const batch of batches)this.drawCommands(batch.items,game);
+  this.drawTable?.passes.push({plane,items,batches});
+ }
+ drawLightRun(ctx,run,plane,game,states){
+  if(ctx.canvas.width*ctx.canvas.height>1048576||this.buildingLightComposite||this.beforeDraw||ctx.globalAlpha!==1||ctx.globalCompositeOperation!=='source-over'||ctx.shadowBlur>0||ctx.shadowOffsetX||ctx.shadowOffsetY||ctx.filter&&ctx.filter!=='none'||ctx.shadowColor&&ctx.shadowColor!=='transparent'&&ctx.shadowColor!=='rgba(0, 0, 0, 0)')return false;
+  const t=ctx.getTransform();if(t.b||t.c||t.a<=0||t.d<=0)return false;
+  let changed=false;
+  for(let i=0;i<run.items.length;i++){
+   const o=run.items[i],state=states.has(o)?states.get(o):this.map.artState(o,game,this,run.commands[i]);states.set(o,state);
+   if(state&&((state.alpha??1)!==1||state.frame||state.glow?.alpha>0))return false;
+   const old=run.signature[i];if(!old||old.src!==state?.src||old.baseSrc!==state?.baseSrc)changed=true;
+  }
+  let cached=this.lightComposites.get(run);
+  if(!cached||changed||cached.scaleX!==t.a||cached.scaleY!==t.d||cached.fractionX!==t.e%1||cached.fractionY!==t.f%1||cached.sourceWidth!==ctx.canvas.width||cached.sourceHeight!==ctx.canvas.height||cached.clipped&&(cached.e!==t.e||cached.f!==t.f)||cached.brightness!==this.brightness||cached.smoothing!==ctx.imageSmoothingEnabled||cached.quality!==ctx.imageSmoothingQuality){
+   let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+   for(const o of run.items){const angle=o.angle*Math.PI/180,c=Math.abs(Math.cos(angle)),s=Math.abs(Math.sin(angle)),w=(o.width*c+o.height*s)/2,h=(o.width*s+o.height*c)/2;x0=Math.min(x0,o.x-w);x1=Math.max(x1,o.x+w);y0=Math.min(y0,o.y-h);y1=Math.max(y1,o.y+h);}
+   const left=Math.floor(x0*t.a+t.e)-1,top=Math.floor(y0*t.d+t.f)-1,width=Math.ceil(x1*t.a+t.e)-left+1,height=Math.ceil(y1*t.d+t.f)-top+1;
+   if(width*height>1048576)return false;
+   const staging=rasterCanvas(ctx.canvas.width,ctx.canvas.height,this.bitmapCacheEnabled),c=staging.getContext('2d');c.setTransform(t.a,0,0,t.d,t.e,t.f);c.imageSmoothingEnabled=ctx.imageSmoothingEnabled;c.imageSmoothingQuality=ctx.imageSmoothingQuality;
+   // Keep original device coordinates while rasterizing. Re-origining directly
+   // into the crop changes Skia's fractional sampling at some scales.
+   this.buildingLightComposite=true;try{this.drawUncached(c,run.items,plane,game,states);}finally{this.buildingLightComposite=false;}
+   const canvas=rasterCanvas(width,height,this.bitmapCacheEnabled);canvas.getContext('2d').drawImage(staging,left,top,width,height,0,0,width,height);recycleRasterCanvas(staging);
+   if(cached){this.lightPixels-=cached.pixels;releaseRaster(cached);this.lightComposites.delete(run);}
+   while(this.lightPixels+width*height>1048576&&this.lightComposites.size){const oldest=this.lightComposites.keys().next().value,entry=this.lightComposites.get(oldest);this.lightPixels-=entry.pixels;releaseRaster(entry);this.lightComposites.delete(oldest);}
+   cached={canvas:rasterImage(canvas),pixels:width*height,left,top,e:t.e,f:t.f,fractionX:t.e%1,fractionY:t.f%1,sourceWidth:ctx.canvas.width,sourceHeight:ctx.canvas.height,clipped:left<0||top<0||left+width>ctx.canvas.width||top+height>ctx.canvas.height,scaleX:t.a,scaleY:t.d,brightness:this.brightness,smoothing:ctx.imageSmoothingEnabled,quality:ctx.imageSmoothingQuality};this.lightComposites.set(run,cached);this.lightPixels+=cached.pixels;
+   for(let i=0;i<run.items.length;i++){const state=states.get(run.items[i]);run.signature[i]={src:state?.src,baseSrc:state?.baseSrc};}
+  }
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(cached.canvas,Math.round(cached.left+t.e-cached.e),Math.round(cached.top+t.f-cached.f));ctx.restore();return true;
+ }
+ bindingIndex(game){
+  this.bindingIndices??=new WeakMap();let index=this.bindingIndices.get(game);
+  if(!index||index.groups!==game.targetGroups||index.parts!==game.flippers||index.revision!==this.layoutRevision){
+   index={groups:game.targetGroups,parts:game.flippers,revision:this.layoutRevision,targets:new Set((game.targetGroups||[]).flatMap(g=>g.targets)),flippers:new Map((game.flippers||[]).map(f=>[f.id,f]))};this.bindingIndices.set(game,index);
+  }
+  return index;
+ }
+ drawUncached(ctx,items,plane,game=null,stateOverrides=null){
   const transform=this.rasterCacheEnabled?ctx.getTransform():null,scale=transform?rasterScale(ctx,transform):null;
   const missions=this.rasterCacheEnabled&&this.missionCacheEnabled&&game&&game.ball.state!=='ready'&&!this.beforeDraw?this.missionHeads:null;
-  for(let i=0;i<items.length;i++){const o=items[i];if(o.state==='ball-layer'||o.plane!==plane||o.hidden)continue;
-   const group=missions?.get(o.layoutSource||o),grouped=group?this.drawMissionGroup(ctx,items,i,plane,game,group,transform):0;if(grouped){i+=grouped-1;continue;}
+  let states=stateOverrides||this.frameArtStates;const commands=game?this.drawCommands(items,game):null,bindings=!commands&&game&&this.trackedList(items)?this.bindingIndex(game):null;
+  for(let i=0;i<items.length;i++){const o=items[i],command=commands?.[i];if(this.staticOnly&&!(command?command.kind==='static':this.cacheable(o,plane)))continue;if(o.state==='ball-layer'||o.plane!==plane||o.hidden)continue;
+   const run=commands?.lightRuns?.[i];if(run&&this.drawLightRun(ctx,run,plane,game,states??=new Map())){i+=run.items.length-1;continue;}
+   const group=missions?.get(o.layoutSource||o),grouped=group?this.drawMissionGroup(ctx,items,i,plane,game,group,transform,states??=new Map(),commands):0;if(grouped){i+=grouped-1;continue;}
+   if(this.damageRects&&ctx.canvas.id==='table'&&command?.bounds&&!o.id.startsWith('frame-')&&!this.damageRects.some(b=>root.PlayDamage.intersects(b,command.bounds)))continue;
    this.beforeDraw?.(ctx,o);
-   const targetId=game&&o.bind&&(game.targetGroups?.some(g=>g.targets.includes(o.bind))?o.bind:game.targetGroups?.some(g=>g.targets.includes(o.bind+'-1'))?o.bind+'-1':null);
+   const targetId=command?command.targetId:game&&o.bind&&(bindings?(bindings.targets.has(o.bind)?o.bind:bindings.targets.has(o.bind+'-1')?o.bind+'-1':null):(game.targetGroups?.some(g=>g.targets.includes(o.bind))?o.bind:game.targetGroups?.some(g=>g.targets.includes(o.bind+'-1'))?o.bind+'-1':null));
    let targetAlpha=1;
    const hitId=targetId||(o.state==='target'?o.bind:null);
    if(game&&game.targetHits.has(hitId)){const age=game.time-(game.targetHitAt?.get(hitId)??game.time);targetAlpha=Math.max(0,1-age/.2);if(!targetAlpha)continue;}
-   const state=this.map.artState(o,game,this);if(!state)continue;
-   const {src,baseSrc,frame}=state,baseImage=this.image(baseSrc),img=this.image(src);
+   const state=states?.has(o)?states.get(o):command?.kind==='static'?command.baseState:this.map.artState(o,game,this,command);states?.set(o,state);if(!state)continue;
+   const {src,baseSrc,frame}=state,baseImage=command?.images[baseSrc]||this.image(baseSrc),img=src===baseSrc?baseImage:command?.images[src]||this.image(src);
    let [sx,sy,sw,sh]=o.crop;if(o.frameAxis==='y')sy+=frame*(o.frameStride||sh);else sx+=frame*(o.frameStride||sw);
-   const ready=(image,x,y)=>image.complete&&image.naturalWidth&&x+sw<=image.naturalWidth+.01&&y+sh<=image.naturalHeight+.01;
+   const ready=(image,x,y)=>image.complete&&(image.runtimeWidth??image.naturalWidth)&&x+sw<=(image.runtimeWidth??image.naturalWidth)+.01&&y+sh<=(image.runtimeHeight??image.naturalHeight)+.01;
    if(!ready(baseImage,o.crop[0],o.crop[1])&&!ready(img,sx,sy))continue;
-   const f=game&&o.bind&&game.flippers.find(f=>f.id===o.bind);
+   const f=command?command.flipper:game&&o.bind&&(bindings?bindings.flippers.get(o.bind):game.flippers.find(f=>f.id===o.bind));
    if((!o.state||o.state==='static')&&!o.angle&&!o.flipX&&!o.flipY&&!o.animation?.enabled&&!f&&!game?.flagHitAt?.has(o.bind)&&o.opacity===1&&targetAlpha===1&&(state.alpha??1)===1&&!o.indicator?.halo&&!(state.glow?.alpha>0)&&(!o.blendMode||o.blendMode==='source-over')){
-    if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height,o.x,o.y,scale);
-    if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height,o.x,o.y,scale);
+    if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height,o.x,o.y,scale,this.beforeDraw?null:transform);
+    if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height,o.x,o.y,scale,this.beforeDraw?null:transform);
     continue;
    }
    ctx.save();ctx.globalAlpha*=o.opacity*targetAlpha*(state.alpha??1);
@@ -414,10 +635,20 @@ class Renderer{
    }
    if(vortexAge!==null){
     // The vortex core is not necessarily the sprite rectangle's midpoint.
-    const center=game.g.lower.find(shape=>shape.id===o.bind)?.center||[x,y];
+    const center=command?command.vortexCenter||[x,y]:game.g.lower.find(shape=>shape.id===o.bind)?.center||[x,y];
     ctx.translate(...center);ctx.rotate(Math.min(vortexAge,15)*Math.PI/3);ctx.translate(-center[0],-center[1]);
    }
-   ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway);ctx.scale(o.flipX?-1:1,o.flipY?-1:1);
+   let pixelPlacement=null;
+   if(transform&&command&&!this.beforeDraw&&!f&&vortexAge===null&&!sway&&o.angle===command.art.angle){
+    const t=transform,c=command.angleCos,s=command.angleSin,fx=o.flipX?-1:1,fy=o.flipY?-1:1;
+    // Match Canvas' float matrix translation before choosing device pixels.
+    const e=Math.fround(t.a*x+t.c*y+t.e),h=Math.fround(t.b*x+t.d*y+t.f);
+    ctx.setTransform((t.a*c+t.c*s)*fx,(t.b*c+t.d*s)*fx,(-t.a*s+t.c*c)*fy,(-t.b*s+t.d*c)*fy,e,h);
+    if(!t.b&&!t.c&&c===1&&s===0&&o.animation?.effect!=='flip'){
+     pixelPlacement=this.pixelPlacement??={a:0,b:0,c:0,d:0,e:0,f:0};
+     pixelPlacement.a=t.a*fx;pixelPlacement.d=t.d*fy;pixelPlacement.e=e;pixelPlacement.f=h;
+    }
+   }else{ctx.translate(x,y);ctx.rotate(o.angle*Math.PI/180+sway);ctx.scale(o.flipX?-1:1,o.flipY?-1:1);}
    if(o.animation?.effect==='flip'){ctx.translate(0,-o.height/2);ctx.scale(1,animation().flipScale(o,game));ctx.translate(0,o.height/2);}
    if(o.indicator?.halo&&src===o.indicator.on){
     const radius=Math.min(o.width,o.height)*.75,glow=ctx.createRadialGradient(0,0,0,0,0,radius);
@@ -426,8 +657,8 @@ class Renderer{
     ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,radius,0,Math.PI*2);ctx.fill();
    }
    // Keep the default image underneath every state/frame overlay.
-   if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height,0,0,scale);
-   if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height,0,0,scale);
+   if(ready(baseImage,o.crop[0],o.crop[1]))this.drawRaster(ctx,baseImage,o.crop[0],o.crop[1],sw,sh,o.width,o.height,0,0,scale,pixelPlacement);
+   if((src!==baseSrc||frame!==0)&&ready(img,sx,sy))this.drawRaster(ctx,img,sx,sy,sw,sh,o.width,o.height,0,0,scale,pixelPlacement);
    if(state.glow?.alpha>0&&ready(img,sx,sy))this.drawGlow(ctx,img,sx,sy,sw,sh,o.width,o.height,state.glow);
    ctx.restore();
   }

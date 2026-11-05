@@ -17,17 +17,19 @@ function beamExitScale(beam,aspect){
  return near<=1&&far>1&&Number.isFinite(far)?far:1;
 }
 class TouhouSpellMask{
- constructor(canvas,{onComplete=()=>{},data=root.TouhouSpellcards}={}){this.liveSimulation=true;this.densityStride=2;this.renderFPS=60;this.data=data;this.canvas=canvas;this.ctx=canvas.getContext('2d',{willReadFrequently:true});this.onComplete=onComplete;this.elapsed=0;this.active=false;this.paused=false;this.frame=0;this.tick=this.tick.bind(this);}
+ constructor(canvas,{onComplete=()=>{},data=root.TouhouSpellcards,external=false}={}){this.external=external;this.liveSimulation=true;this.densityStride=2;this.renderFPS=60;this.data=data;this.canvas=canvas;this.ctx=canvas.getContext('2d',{willReadFrequently:true});this.onComplete=onComplete;this.elapsed=0;this.active=false;this.paused=false;this.frame=0;this.tick=this.tick.bind(this);}
  start(stage,origin,variant){
   const entry=this.data.bosses.find(c=>c.stage===Number(stage));if(!entry)throw Error('Unknown spell stage '+stage);
   const spells=entry.spells||[entry],sequence=variant===undefined&&spells.length>1;
   if(this.entry&&this.entry!==entry)this.clearBulletRaster();
-  this.clear();this.duration=entry.duration??this.data.duration;this.entry=entry;this.cards=sequence?spells:[spells[(variant??0)%spells.length]];this.card=sequence?entry:this.cards[0];this.origin=origin??this.card.origin;this.attacks=sequence&&entry.attackSequence?entry.attackSequence.map(part=>({...part,card:spells[part.spell],origin:origin??spells[part.spell].origin})):null;this.aims=new Map();this.sampleStates=new Map();this.sampleTime=-1;this.elapsed=0;this.lastRenderAt=-Infinity;this.hasRendered=false;this.active=true;this.paused=false;this.last=performance.now();this.frame=requestAnimationFrame(this.tick);return this.card;
+  this.clear();this.duration=entry.duration??this.data.duration;this.entry=entry;this.cards=sequence?spells:[spells[(variant??0)%spells.length]];this.card=sequence?entry:this.cards[0];this.origin=origin??this.card.origin;this.attacks=sequence&&entry.attackSequence?entry.attackSequence.map(part=>({...part,card:spells[part.spell],origin:origin??spells[part.spell].origin})):null;this.aims=new Map();this.sampleStates=new Map();this.sampleTime=-1;this.elapsed=0;this.lastRenderAt=-Infinity;this.hasRendered=false;this.active=true;this.paused=false;this.last=performance.now();if(!this.external)this.frame=requestAnimationFrame(this.tick);return this.card;
  }
 
  onEvent(event){if(event.type==='boss-spell')return this.start(event.stage);if(['new-game','boss-defeated','boss-changed'].includes(event.type))this.clear();if(event.type==='pause')this.pause(event.paused);}
  pause(value){if(this.paused===!!value)return;this.paused=!!value;this.last=performance.now();}
- clear(){cancelAnimationFrame(this.frame);this.active=false;this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);}
+ clear(){cancelAnimationFrame(this.frame);this.active=false;if(!this.external)this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);}
+ advance(dt){if(!this.active||this.paused)return;this.elapsed+=Math.max(0,Math.min(.05,dt));if(this.elapsed>=this.duration+(this.entry.castLeadIn??0)&&(!this.naturalDrain||this.card.drainOnEnd===false||!this.remainingParticles)){this.active=false;this.onComplete(this.card);}}
+ renderTo(ctx,x,y){if(!this.active)return;const original=this.ctx;ctx.save();ctx.translate(x,y);ctx.beginPath();ctx.rect(0,0,this.canvas.width,this.canvas.height);ctx.clip();this.ctx=ctx;try{this.render(this.elapsed);}finally{this.ctx=original;ctx.restore();}}
  tick(now){
   if(!this.active)return;
   const dt=Math.max(0,Math.min(.05,(now-this.last)/1000));this.last=Math.max(this.last,now);if(!this.paused)this.elapsed+=dt;
@@ -43,7 +45,7 @@ class TouhouSpellMask{
  render(t){
   const {canvas,ctx:c,card}=this;if(!card)return;
   const castTime=t,lead=this.entry.castLeadIn??0;t-=lead;
-  if(t<0){this.remainingParticles=0;c.clearRect(0,0,canvas.width,canvas.height);this.drawCurrentAura(castTime,lead);return;}
+  if(t<0){this.remainingParticles=0;if(!this.external)c.clearRect(0,0,canvas.width,canvas.height);this.drawCurrentAura(castTime,lead);return;}
   // Duo bosses take turns firing; earlier bullets keep their original paths.
   const span=this.duration/this.cards.length;
   const sampleKey=[this.origin?.x,this.origin?.y,canvas.width,canvas.height,this.densityStride,this.data.densityStride,this.liveSimulation].join(':');
@@ -71,7 +73,7 @@ class TouhouSpellMask{
   }
 
   this.remainingParticles=sample.bullets.length+sample.beams.length;
-  c.clearRect(0,0,canvas.width,canvas.height);c.save();
+  if(!this.external)c.clearRect(0,0,canvas.width,canvas.height);c.save();
   if(lead)this.drawCurrentAura(castTime,lead);
   // Pixel coordinates keep round bullets round and laser widths constant even
   // when the combined stage/table canvas changes aspect ratio.

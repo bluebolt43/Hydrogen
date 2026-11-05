@@ -1,12 +1,13 @@
 'use strict';
 window.UnlockLayout=(()=>{
+const drawRuntimeImage=globalThis.PinballRuntimeImages?.draw||((ctx,...args)=>ctx.drawImage(...args));
 const labelKeys=Object.freeze({title:'purchase.single',single:'purchase.single',all:'purchase.all','best-value':'purchase.bestValue',cancel:'common.cancel'});
 function label(o){return labelKeys[o.id]?window.PinballI18n.t(labelKeys[o.id]):o.label||'';}
 function pack(layout){const result=JSON.parse(JSON.stringify(layout));for(const o of result.objects)if(labelKeys[o.id]||o.label==='')delete o.label;return result;}
-function material(ctx,o,image){const img=image(o.src);if(!img)return;const [x,y,w,h]=o.crop.map((v,i)=>v*(i%2?img.naturalHeight:img.naturalWidth));
+function material(ctx,o,image){const img=image(o.src);if(!img)return;const [x,y,w,h]=o.crop.map((v,i)=>v*(i%2?(img.runtimeHeight??img.naturalHeight):(img.runtimeWidth??img.naturalWidth)));
  ctx.save();ctx.globalAlpha=o.opacity??1;
- if(o.paperInset){const s=Math.min(110,w/3,h/3),t=Math.min(o.paperInset,o.width/3,o.height/3),sx=[x,x+s,x+w-s],sy=[y,y+s,y+h-s],sw=[s,w-2*s,s],sh=[s,h-2*s,s],dx=[o.x,o.x+t,o.x+o.width-t],dy=[o.y,o.y+t,o.y+o.height-t],dw=[t,o.width-2*t,t],dh=[t,o.height-2*t,t];for(let row=0;row<3;row++)for(let col=0;col<3;col++)ctx.drawImage(img,sx[col],sy[row],sw[col],sh[row],dx[col],dy[row],dw[col],dh[row]);}
- else ctx.drawImage(img,x,y,w,h,o.x,o.y,o.width,o.height);ctx.restore();
+ if(o.paperInset){const s=Math.min(110,w/3,h/3),t=Math.min(o.paperInset,o.width/3,o.height/3),sx=[x,x+s,x+w-s],sy=[y,y+s,y+h-s],sw=[s,w-2*s,s],sh=[s,h-2*s,s],dx=[o.x,o.x+t,o.x+o.width-t],dy=[o.y,o.y+t,o.y+o.height-t],dw=[t,o.width-2*t,t],dh=[t,o.height-2*t,t];for(let row=0;row<3;row++)for(let col=0;col<3;col++)drawRuntimeImage(ctx,img,sx[col],sy[row],sw[col],sh[row],dx[col],dy[row],dw[col],dh[row]);}
+ else drawRuntimeImage(ctx,img,x,y,w,h,o.x,o.y,o.width,o.height);ctx.restore();
 }
 function drawText(ctx,o){
  const text=label(o);if(!text&&!o.price)return;
@@ -28,7 +29,7 @@ function draw(ctx,layout,image,allDisabled=false){
    if(o.fill){ctx.save();ctx.fillStyle=o.fill;
     if(o.type==='frame'){ctx.shadowColor='rgba(35,15,0,.8)';ctx.shadowBlur=8;ctx.shadowOffsetY=5;}
     ctx.beginPath();ctx.roundRect(o.x,o.y,o.width,o.height,radius);ctx.fill();ctx.restore();}
-   if(o.texture){const wood=image('res/img/app-wood-texture.png');if(wood){ctx.save();ctx.beginPath();ctx.roundRect(o.x,o.y,o.width,o.height,radius);ctx.clip();ctx.drawImage(wood,0,0,wood.naturalWidth,wood.naturalHeight*.3,o.x,o.y,o.width,o.height);ctx.restore();}}
+   if(o.texture){const wood=image('res/img/app-wood-texture.png');if(wood){ctx.save();ctx.beginPath();ctx.roundRect(o.x,o.y,o.width,o.height,radius);ctx.clip();drawRuntimeImage(ctx,wood,0,0,(wood.runtimeWidth??wood.naturalWidth),(wood.runtimeHeight??wood.naturalHeight)*.3,o.x,o.y,o.width,o.height);ctx.restore();}}
    if(o.type==='frame')SystemLayout.frame(ctx,o,image,640,360);
   }
   drawText(ctx,o);

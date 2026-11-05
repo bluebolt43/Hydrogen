@@ -32,24 +32,33 @@ function attractLight(game,o){
 
 
 const {signal}=typeof module!=='undefined'&&module.exports?require('./art-events.js'):root.ArtEvents;
-const visualStates=new WeakMap();
+const visualStates=new WeakMap(),triggerPlans=new WeakMap(),emptyTriggers=[],emptyTrigger={};
+function triggerPlan(c){
+ const first=c.trigger||emptyTrigger,extras=c.extraTriggers||emptyTriggers;let plan=triggerPlans.get(c);
+ let valid=plan&&plan.first===first&&plan.linked.length===extras.length+1;
+ if(valid)for(let i=0;i<plan.linked.length;i++){const t=i?extras[i-1]:first;if(t!==plan.linked[i]||t.kind!==plan.kinds[i]||t.source!==plan.sources[i]){valid=false;break;}}
+ if(valid)return plan;
+ const linked=[first,...extras],capture=linked.find(t=>t.kind==='hole-active');
+ plan={first,linked,kinds:linked.map(t=>t.kind),sources:linked.map(t=>t.source),captureSource:capture?.source,hasGapLaunch:linked.some(t=>t.kind==='gap-launch'),normal:linked.filter(t=>t.kind!=='gap-launch'),gapSources:linked.filter(t=>t.kind==='gap-launch').map(t=>t.source)};
+ triggerPlans.set(c,plan);return plan;
+}
 function presentation(o,g){
  const c=o.indicator,initial=c.defaultState||(c.type==='bumper'?'lv1':'off');
  if(!g)return {state:initial,alpha:1,on:initial==='on'};
  const attract=attractLight(g,o);if(attract!==null)return {state:c.type==='bumper'?(attract?'lv3':'lv1'):(attract?(c.attractState||'on'):'off'),alpha:1,on:false,attract:true};
  if(c.trigger?.kind==='hole-count'){const count=g.holeCaptureCounts?.get(c.trigger.source)||0,state=count>=(c.trigger.threshold||2)?'complete':count>0?'on':'off';return {state,alpha:1,on:state!=='off'};}
- const linkedTriggers=[c.trigger||{},...(c.extraTriggers||[])],captureSource=linkedTriggers.find(t=>t.kind==='hole-active')?.source;
+ const plan=triggerPlan(c),linkedTriggers=plan.linked,captureSource=plan.captureSource;
  // Boss replacement balls retain locks, but paired gaps stay visually closed
  // until a ball is back in play. A live multiball must not close the pair.
  if(g.storyMode&&g.preserveTableOnDrain&&captureSource===g.g.gameplay?.touhouGap?.hole&&
-    linkedTriggers.some(t=>t.kind==='gap-launch')&&g.balls.every(ball=>['ready','drained','saver-return'].includes(ball.state)))
+    plan.hasGapLaunch&&g.balls.every(ball=>['ready','drained','saver-return'].includes(ball.state)))
   return {state:'off',alpha:1,on:false};
  if(captureSource&&c.captureBehavior&&g.balls.some(ball=>ball.state==='captured'&&ball.held?.id===captureSource)){
   const b=c.captureBehavior,on=b.onSeconds||.2,off=b.offSeconds||.2,age=Math.max(0,g.time-(g.holeCapturedAt.get(captureSource)??g.time)),lit=age%(on+off)<on;
   return {state:lit?'on':'off',alpha:1,on:lit};
  }
  if(c.releaseBehavior){
-  const stamp=Math.max(...linkedTriggers.filter(t=>t.kind==='gap-launch').map(t=>g.gapLaunchAt?.get(t.source)??-Infinity));
+  let stamp=-Infinity;for(const source of plan.gapSources)stamp=Math.max(stamp,g.gapLaunchAt?.get(source)??-Infinity);
   const b=c.releaseBehavior,on=b.onSeconds||.15,off=b.offSeconds||.15,age=g.time-stamp;
   const duration=b.mode==='once'?on:b.mode==='burst'?(on+off)*(b.cycles||3):Infinity;
   if(Number.isFinite(stamp)&&age>=0&&age<duration){const lit=['repeat','burst'].includes(b.mode)?age%(on+off)<on:true;return {state:lit?'on':'off',alpha:1,on:lit};}
@@ -77,7 +86,7 @@ function presentation(o,g){
  if(c.type==='bumper'){const id=c.trigger?.source||o.bind;let n=g.bumperLevel(id);if(!c.keepLevelOnHit&&(g.bumperHitUntil?.get(id)||0)>g.time)n=n%3+1;return {state:'lv'+n,alpha:1,on:false};}
  let cache=visualStates.get(g);if(!cache||cache.epoch!==g.attackRemaining){cache={epoch:g.attackRemaining,items:new Map()};visualStates.set(g,cache)}
  let v=cache.items.get(o);if(!v){v={active:false,start:null,stamp:undefined,lastOn:false,alpha:0,time:g.time};cache.items.set(o,v)}
- const triggers=c.releaseBehavior?linkedTriggers.filter(t=>t.kind!=='gap-launch'):linkedTriggers;
+ const triggers=c.releaseBehavior?plan.normal:linkedTriggers;
  const inputs=v.signals||(v.signals=[]);inputs.length=triggers.length;
  for(let i=0;i<triggers.length;i++)inputs[i]=signal(o,g,triggers[i]);
  let completion=null;
@@ -125,22 +134,22 @@ function presentation(o,g){
 }
 function configuredState(o,g){return presentation(o,g).state;}
 function maskActive(o,g){return !!o.indicator?.screenMask&&presentation(o,g).on;}
-function basicState(o,g){
- if(g&&o.state==='return-gate'&&!g.gates.some(p=>p.id===o.bind&&p.closed&&!p.unlocked))return null;
- if(g&&o.state==='center-post'&&!g.configuredPosts?.get(o.bind)?.raised)return null;
+function basicState(o,g,renderer,command){
+ if(g&&o.state==='return-gate'&&!(command?command.gate?.closed&&!command.gate.unlocked:g.gates.some(p=>p.id===o.bind&&p.closed&&!p.unlocked)))return null;
+ if(g&&o.state==='center-post'&&!(command?command.post:g.configuredPosts?.get(o.bind))?.raised)return null;
  const active=!!(g&&o.state==='vortex'&&(g.armedHoles?.has(o.bind)||g.balls?.some(b=>b.state==='captured'&&b.held?.id===o.bind)));
  return {src:o.src,baseSrc:o.src,frame:Math.min(active?1:0,(o.frames||1)-1),active};
 }
-function artMap(base={}){return {...base,artState(o,g,renderer){
- if(g&&o.state==='return-gate'&&!g.gates.some(p=>p.id===o.bind&&p.closed&&!p.unlocked))return null;
- if(!o.indicator)return (base.artState||basicState)(o,g,renderer);
+function artMap(base={}){return {...base,artState(o,g,renderer,command){
+ if(g&&o.state==='return-gate'&&!(command?command.gate?.closed&&!command.gate.unlocked:g.gates.some(p=>p.id===o.bind&&p.closed&&!p.unlocked)))return null;
+ if(!o.indicator)return (base.artState||basicState)(o,g,renderer,command);
  const p=presentation(o,g),src=o.indicator[p.attract&&o.indicator.glow?.attractUseOff?'off':p.state];if(!src)return null;
  const glow=o.indicator.glow,preview=glow?.preview;
  let color=glow?.[p.state],period=p.attract?null:glow?.pulse?.[p.state];
  // Preview light never changes the collected state; collected progress stays steady.
  if(!p.attract&&p.state==='off'&&g&&preview&&signal(o,g,preview.trigger).active){color=preview.color;period=preview.pulseSeconds;}
  const alpha=period&&g?.time!=null?((g.time%period+period)%period<period/2?1:0):1;
- renderer.image(src);return {src,baseSrc:src,frame:0,alpha:p.alpha,glow:color?{color,alpha}:null};
+ return {src,baseSrc:src,frame:0,alpha:p.alpha,glow:color?{color,alpha}:null};
 }};}
 const api={attractLight,artMap,configuredState,maskActive,presentation};if(typeof module!=='undefined')module.exports=api;else root.IndicatorLights=api;
 })(globalThis);

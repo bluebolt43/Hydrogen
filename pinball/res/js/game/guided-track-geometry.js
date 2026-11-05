@@ -80,7 +80,7 @@ function createRenderer(tracks){
    while([...caches.values()].reduce((n,e)=>n+e.canvas.width*e.canvas.height,0)+width*height>budget){const oldest=caches.keys().next().value;Art.releaseRaster(caches.get(oldest));caches.delete(oldest);}
    entry={canvas:Art.rasterImage(canvas),sx:m.a,sy:m.d,e:m.e,f:m.f,left,top};caches.set(plane,entry);
   }
-  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(entry.canvas,entry.left+m.e-entry.e,entry.top+m.f-entry.f);ctx.restore();
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(entry.canvas,Math.round(entry.left+m.e-entry.e),Math.round(entry.top+m.f-entry.f));ctx.restore();
  }};
 }
 const api={editorTrack,outlines,drawRails,createRenderer};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.GuidedTrackGeometry=api;

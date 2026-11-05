@@ -314,7 +314,7 @@ class CoreGame {
  step(dt=this.physics.step){
   const frameTime=this.time;
   this.stepFrame(dt);
-  if(this.time!==frameTime)for(const b of this.balls)if(b.state==='playing'){b.trail||=[];b.trail.push({p:[...b.p],layer:b.layer});if(b.trail.length>24)b.trail.shift();}
+  if(this.time!==frameTime)for(const b of this.balls){if(this.g.gameplay?.ballTrails===false){if(b.trail?.length)b.trail.length=0;continue;}if(b.state==='playing'){b.trail||=[];b.trail.push({p:[...b.p],layer:b.layer});if(b.trail.length>24)b.trail.shift();}}
  }
  hasPendingBalls(){return this.freeBallQueue>0;}
  stepFrame(dt){if(this.paused||this.gameOver||this.beforeStep(dt)===false)return;this.time+=dt;this.tickRules(dt);

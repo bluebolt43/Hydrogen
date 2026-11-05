@@ -510,7 +510,8 @@
           "kind": "sensor",
           "source": "sensor-004"
         }
-      }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-prop-alice-doll.png"
     },
     {
       "id": "art-007",
@@ -541,7 +542,8 @@
           "kind": "sensor",
           "source": "sensor-003"
         }
-      }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-prop-flandre-doll.png"
     },
     {
       "id": "art-008",
@@ -572,7 +574,8 @@
           "kind": "sensor",
           "source": "sensor-003"
         }
-      }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-prop-remilia-bat-doll.png"
     },
     {
       "id": "art-010",
@@ -593,7 +596,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou2-prop-books-tall.png"
     },
     {
       "id": "art-014",
@@ -636,7 +640,8 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": ""
+      "bind": "",
+      "runtimeSource": "res/img/touhou/touhou2-prop-books-corner.png"
     },
     {
       "id": "art-016",
@@ -667,7 +672,8 @@
           "kind": "sensor",
           "source": "sensor-005"
         }
-      }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-patchouli-hat.png"
     },
     {
       "id": "art-touhou2-static-vine-left",
@@ -1737,7 +1743,8 @@
         },
         "group": "touhou2-counters",
         "attractState": "complete"
-      }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-koishi-heart-side.png"
     },
     {
       "id": "art-touhou2-gate-oneway-002",
@@ -2590,7 +2597,7 @@
         "fadeSeconds": 0.8
       },
       "attackArt": {
-        "src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png",
+        "src": "res/hd_img/touhou/touhou-attack-lv4-fantasy-seal.png",
         "duration": 1.55,
         "fullscreen": true
       },
@@ -3190,10 +3197,10 @@
       "id": "oneway-005",
       "type": "oneway",
       "layer": "lower",
-      "x1": 70,
-      "y1": 111,
-      "x2": 95,
-      "y2": 107,
+      "x1": 75,
+      "y1": 162,
+      "x2": 102,
+      "y2": 157,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -3939,9 +3946,9 @@
       "type": "oneway",
       "layer": "lower",
       "x1": 133,
-      "y1": 80,
+      "y1": 83,
       "x2": 159,
-      "y2": 79,
+      "y2": 82,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -4102,42 +4109,6 @@
       "y2": 285
     },
     {
-      "id": "line-095",
-      "type": "line",
-      "layer": "top",
-      "x1": 26,
-      "y1": 468,
-      "x2": 26,
-      "y2": 1
-    },
-    {
-      "id": "line-096",
-      "type": "line",
-      "layer": "top",
-      "x1": 330,
-      "y1": 467,
-      "x2": 330,
-      "y2": 0
-    },
-    {
-      "id": "line-097",
-      "type": "line",
-      "layer": "top",
-      "x1": 14,
-      "y1": 19,
-      "x2": 347,
-      "y2": 19
-    },
-    {
-      "id": "line-098",
-      "type": "line",
-      "layer": "top",
-      "x1": 99,
-      "y1": 469,
-      "x2": 0,
-      "y2": 401
-    },
-    {
       "id": "line-099",
       "type": "line",
       "layer": "top",
@@ -4147,323 +4118,21 @@
       "y2": 377
     },
     {
-      "id": "circle-011",
-      "type": "circle",
-      "layer": "top",
-      "cx": 179,
-      "cy": 20,
-      "r": 20.91,
-      "mechanic": "solid-circle"
-    },
-    {
-      "id": "rect-001",
-      "type": "rect",
-      "layer": "top",
-      "x": 319.5,
-      "y": 108,
-      "angle": 0,
-      "width": 23,
-      "height": 66
-    },
-    {
-      "id": "line-104",
-      "type": "line",
-      "layer": "top",
-      "x1": 84,
-      "y1": 19,
-      "x2": 109,
-      "y2": 163
-    },
-    {
-      "id": "line-105",
-      "type": "line",
-      "layer": "top",
-      "x1": 79,
-      "y1": 20,
-      "x2": 107,
-      "y2": 165
-    },
-    {
-      "id": "line-106",
-      "type": "line",
-      "layer": "top",
-      "x1": 73,
-      "y1": 169,
-      "x2": 61,
-      "y2": 20
-    },
-    {
-      "id": "line-107",
-      "type": "line",
-      "layer": "top",
-      "x1": 74,
-      "y1": 167,
-      "x2": 107,
-      "y2": 162
-    },
-    {
-      "id": "line-108",
-      "type": "line",
-      "layer": "top",
-      "x1": 245,
-      "y1": 176,
-      "x2": 273,
-      "y2": 185
-    },
-    {
-      "id": "line-109",
-      "type": "line",
-      "layer": "top",
-      "x1": 274,
-      "y1": 185,
-      "x2": 294,
-      "y2": 122
-    },
-    {
-      "id": "arc-041",
-      "type": "arc",
-      "layer": "top",
-      "x1": 308,
-      "y1": 75,
-      "qx": 272,
-      "qy": 75,
-      "x2": 246,
-      "y2": 174
-    },
-    {
-      "id": "arc-042",
-      "type": "arc",
-      "layer": "top",
-      "x1": 308,
-      "y1": 71,
-      "qx": 269,
-      "qy": 72,
-      "x2": 243,
-      "y2": 171
-    },
-    {
-      "id": "arc-043",
-      "type": "arc",
-      "layer": "top",
-      "x1": 308,
-      "y1": 107,
-      "qx": 296.5,
-      "qy": 112.5,
-      "x2": 294,
-      "y2": 123
-    },
-    {
-      "id": "line-110",
-      "type": "line",
-      "layer": "top",
-      "x1": 308,
-      "y1": 70,
-      "x2": 308,
-      "y2": 76
-    },
-    {
-      "id": "line-111",
-      "type": "line",
-      "layer": "top",
-      "x1": 288,
-      "y1": 81,
-      "x2": 288,
-      "y2": 84
-    },
-    {
-      "id": "line-112",
-      "type": "line",
-      "layer": "top",
-      "x1": 261,
-      "y1": 119,
-      "x2": 262,
-      "y2": 124
-    },
-    {
-      "id": "line-113",
-      "type": "line",
-      "layer": "top",
-      "x1": 244,
-      "y1": 165,
-      "x2": 244,
-      "y2": 175
-    },
-    {
-      "id": "line-114",
-      "type": "line",
-      "layer": "top",
-      "x1": 83,
-      "y1": 18,
-      "x2": 83,
-      "y2": 32
-    },
-    {
-      "id": "line-115",
-      "type": "line",
-      "layer": "top",
-      "x1": 89,
-      "y1": 45,
-      "x2": 89,
-      "y2": 59
-    },
-    {
-      "id": "line-116",
-      "type": "line",
-      "layer": "top",
-      "x1": 99,
-      "y1": 97,
-      "x2": 97,
-      "y2": 108
-    },
-    {
-      "id": "line-117",
-      "type": "line",
-      "layer": "top",
-      "x1": 106,
-      "y1": 148,
-      "x2": 105,
-      "y2": 152
-    },
-    {
-      "id": "line-118",
-      "type": "line",
-      "layer": "top",
-      "x1": 109,
-      "y1": 159,
-      "x2": 108,
-      "y2": 163
-    },
-    {
-      "id": "arc-044",
-      "type": "arc",
-      "x1": 161,
-      "y1": 87,
-      "qx": 154,
-      "qy": 27,
-      "x2": 158,
-      "y2": 19,
-      "layer": "top"
-    },
-    {
-      "id": "arc-045",
-      "type": "arc",
-      "x1": 130,
-      "y1": 89,
-      "qx": 125,
-      "qy": 35,
-      "x2": 134,
-      "y2": 20,
-      "layer": "top"
-    },
-    {
-      "id": "arc-046",
-      "type": "arc",
-      "x1": 127,
-      "y1": 89,
-      "qx": 122,
-      "qy": 35,
-      "x2": 131,
-      "y2": 20,
-      "layer": "top"
-    },
-    {
-      "id": "line-119",
-      "type": "line",
-      "x1": 129,
-      "y1": 24,
-      "x2": 130,
-      "y2": 29,
-      "layer": "top"
-    },
-    {
-      "id": "line-120",
-      "type": "line",
-      "x1": 127,
-      "y1": 39,
-      "x2": 129,
-      "y2": 46,
-      "layer": "top"
-    },
-    {
-      "id": "line-121",
-      "type": "line",
-      "x1": 127,
-      "y1": 63,
-      "x2": 128,
-      "y2": 68,
-      "layer": "top"
-    },
-    {
-      "id": "line-122",
-      "type": "line",
-      "x1": 127,
-      "y1": 77,
-      "x2": 128,
-      "y2": 82,
-      "layer": "top"
-    },
-    {
-      "id": "line-123",
-      "type": "line",
-      "x1": 132,
-      "y1": 90,
-      "x2": 160,
-      "y2": 88,
-      "layer": "top"
-    },
-    {
-      "id": "line-124",
-      "type": "line",
-      "x1": 84,
-      "y1": 19,
-      "x2": 44,
-      "y2": 19,
-      "layer": "top"
-    },
-    {
-      "id": "line-125",
-      "type": "line",
-      "x1": 166,
-      "y1": 19,
-      "x2": 131,
-      "y2": 19,
-      "layer": "top"
-    },
-    {
-      "id": "rect-002",
-      "type": "rect",
-      "x": 39,
-      "y": 245,
-      "width": 24,
-      "height": 80,
-      "angle": 0,
-      "layer": "top"
-    },
-    {
-      "id": "line-126",
-      "type": "line",
-      "x1": 147,
-      "y1": 32,
-      "x2": 108,
-      "y2": 52,
-      "layer": "top"
-    },
-    {
       "id": "line-127",
       "type": "line",
+      "layer": "top",
       "x1": 262,
       "y1": 1,
       "x2": 339,
-      "y2": 1,
-      "layer": "top"
+      "y2": 1
     },
     {
       "id": "line-128",
       "type": "line",
-      "x1": 339,
-      "y1": 3,
-      "x2": 331,
-      "y2": 74,
+      "x1": 313,
+      "y1": 416,
+      "x2": 360,
+      "y2": 416,
       "layer": "top"
     }
   ],

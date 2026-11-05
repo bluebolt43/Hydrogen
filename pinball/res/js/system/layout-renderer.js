@@ -1,6 +1,7 @@
 /* Shared system-menu layout format and frame drawing; classic script for file://. */
 (function(root){
 'use strict';
+const drawRuntimeImage=globalThis.PinballRuntimeImages?.draw||((ctx,...args)=>ctx.drawImage(...args));
 const MIN_FRAME=64;
 const fixedBackground={src:'res/img/app_background.png',fit:'cover'};
 const widthPresets={full:.9022,half:.4442,third:.2912};
@@ -19,8 +20,8 @@ const lockDefaults={src:'res/img/system-lock.png',widthRatio:.17472,heightRatio:
 // stable in saved projects while runtime textures can be rebuilt at any density.
 const cropReferenceSize={'res/img/system-button.png':[1902,827],'res/img/system-lock.png':[1435,1096]};
 function drawPixelCrop(ctx,image,src,crop,x,y,w,h){
- const reference=cropReferenceSize[src],sx=reference?image.naturalWidth/reference[0]:1,sy=reference?image.naturalHeight/reference[1]:1;
- ctx.drawImage(image,crop[0]*sx,crop[1]*sy,crop[2]*sx,crop[3]*sy,x,y,w,h);
+ const reference=cropReferenceSize[src],sx=reference?(image.runtimeWidth??image.naturalWidth)/reference[0]:1,sy=reference?(image.runtimeHeight??image.naturalHeight)/reference[1]:1;
+ drawRuntimeImage(ctx,image,crop[0]*sx,crop[1]*sy,crop[2]*sx,crop[3]*sy,x,y,w,h);
 }
 function visibility(o){return {title:false,button:o.content!=='lock',lock:o.content==='lock',marker:false,clear:false,...o.visible};}
 function lockRect(o,canvasWidth,canvasHeight=640){
@@ -121,7 +122,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
  const bossReveal=darkBoss?Math.max(0,Math.min(1,o.bossRevealProgress??0)):0;
  for(const [key,layer] of [['background',o.background],['foreground',o.foreground],['lockMask',visibility(o).lock||o.action==='endless'?o.lockMask:null]]){
   if(!layer)continue;const img=getImage(layer.src);if(!img)continue;
-  const [x,y,cw,ch]=key==='background'?layer.crop:[0,0,1,1];let sw=cw*img.naturalWidth,sh=ch*img.naturalHeight,sx=x*img.naturalWidth,sy=y*img.naturalHeight;
+  const [x,y,cw,ch]=key==='background'?layer.crop:[0,0,1,1];let sw=cw*(img.runtimeWidth??img.naturalWidth),sh=ch*(img.runtimeHeight??img.naturalHeight),sx=x*(img.runtimeWidth??img.naturalWidth),sy=y*(img.runtimeHeight??img.naturalHeight);
   const ratio=w/h;if(key==='background'){if(sw/sh>ratio){const n=sh*ratio;sx+=(sw-n)/2;sw=n;}else{const n=sw/ratio;sy+=(sh-n)/2;sh=n;}}
   const scale=layer.scale??1,fit=key==='background'?1:Math.min(w/sw,h/sh),dw=(key==='background'?w:sw*fit)*scale,dh=(key==='background'?h:sh*fit)*scale;
   ctx.save();ctx.beginPath();ctx.roundRect(o.x+1,o.y+1,w-2,h-2,Math.min(c*.75,w/2-1,h/2-1));ctx.clip();
@@ -131,28 +132,28 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
   }
   if(key==='foreground'&&darkBoss){
    ctx.filter='brightness(0)';ctx.globalAlpha=1-bossReveal;
-   ctx.drawImage(img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
+   drawRuntimeImage(ctx,img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
    ctx.filter='none';ctx.globalAlpha=bossReveal;
   }else if(key==='lockMask')ctx.globalAlpha=Math.max(0,Math.min(1,o.maskAlpha??1))*(1-lockFade);
-  if(key!=='foreground'||!darkBoss||bossReveal>0)ctx.drawImage(img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
+  if(key!=='foreground'||!darkBoss||bossReveal>0)drawRuntimeImage(ctx,img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
   ctx.restore();
  }
  ctx.save();ctx.translate(o.x,o.y);
  function drawEdge(x,y,length,angle){
   if(!edge||length<=0)return;ctx.save();ctx.translate(x,y);ctx.rotate(angle);
-  if(o.edgeMode==='stretch')ctx.drawImage(edge,0,0,length,t);
-  else{const tile=edge.naturalWidth*t/edge.naturalHeight;for(let x=0;x<length;x+=tile){const n=Math.min(tile,length-x);ctx.drawImage(edge,0,0,edge.naturalWidth*n/tile,edge.naturalHeight,x,0,n,t);}}
+  if(o.edgeMode==='stretch')drawRuntimeImage(ctx,edge,0,0,length,t);
+  else{const tile=(edge.runtimeWidth??edge.naturalWidth)*t/(edge.runtimeHeight??edge.naturalHeight);for(let x=0;x<length;x+=tile){const n=Math.min(tile,length-x);drawRuntimeImage(ctx,edge,0,0,(edge.runtimeWidth??edge.naturalWidth)*n/tile,(edge.runtimeHeight??edge.naturalHeight),x,0,n,t);}}
   ctx.restore();
  }
  drawEdge(c,0,w-2*c,0);drawEdge(w,c,h-2*c,Math.PI/2);
  drawEdge(w-c,h,w-2*c,Math.PI);drawEdge(0,h-c,h-2*c,-Math.PI/2);
- if(corner)for(const [x,y,a] of [[0,0,0],[w,0,Math.PI/2],[w,h,Math.PI],[0,h,-Math.PI/2]]){ctx.save();ctx.translate(x,y);ctx.rotate(a);ctx.drawImage(corner,0,0,c,c);ctx.restore();}
+ if(corner)for(const [x,y,a] of [[0,0,0],[w,0,Math.PI/2],[w,h,Math.PI],[0,h,-Math.PI/2]]){ctx.save();ctx.translate(x,y);ctx.rotate(a);drawRuntimeImage(ctx,corner,0,0,c,c);ctx.restore();}
  ctx.restore();
  const visible=visibility(o);
  const markerSize=canvasWidth*.07;
  for(const [key,src,x] of [['marker','res/img/card-marker-empty.png',o.x],['clear','res/img/card-marker-complete.png',o.x+o.width-markerSize]]){
   if(!visible[key])continue;const image=getImage(src);if(!image)continue;
-  const y=o.y;ctx.drawImage(image,x,y,markerSize,markerSize);
+  const y=o.y;drawRuntimeImage(ctx,image,x,y,markerSize,markerSize);
   if(key==='marker'&&o.showMarkerText!==false){
    const text=o.markerText??'1';ctx.save();let size=markerSize*.52;ctx.font='800 '+size+'px Arial, sans-serif';
    const measured=ctx.measureText(text).width;if(measured>markerSize*.65){size*=markerSize*.65/measured;ctx.font='800 '+size+'px Arial, sans-serif';}
@@ -161,7 +162,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
    ctx.strokeText(text,x+markerSize/2,baseline);ctx.fillText(text,x+markerSize/2,baseline);ctx.restore();
   }
  }
- if(visible.title&&!(o.action==='endless'&&visible.lock)){const image=getImage(o.title?.src||'res/img/card-title.png');if(image){const width=o.title?.width??o.width*.8,height=width*image.naturalHeight/image.naturalWidth;const x=o.x+(o.width-width)/2,y=o.y+(o.title?.yOffset??-height/2);ctx.drawImage(image,x,y,width,height);
+ if(visible.title&&!(o.action==='endless'&&visible.lock)){const image=getImage(o.title?.src||'res/img/card-title.png');if(image){const width=o.title?.width??o.width*.8,height=width*(image.runtimeHeight??image.naturalHeight)/(image.runtimeWidth??image.naturalWidth);const x=o.x+(o.width-width)/2,y=o.y+(o.title?.yOffset??-height/2);drawRuntimeImage(ctx,image,x,y,width,height);
    const text=o.action==='endless'?(root.PinballI18n?.t('menu.endlessTitle')??'ENDLESS MODE'):(o.title?.text??'');if(text&&o.title?.showText!==false)titleText(ctx,text,x+width/2,y+height*.43+(o.title?.textY??0),height*.48,width*.78,o.title?.arc??0);
 }}
  if(visible.lock){
@@ -169,7 +170,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
   if(image&&r.width>0&&r.height>0){
    ctx.save();ctx.globalAlpha=1-lockFade;ctx.translate(o.lockShake??0,0);
    drawPixelCrop(ctx,image,lock.src,lock.crop,r.x,r.y,r.width,r.height);
-   if(lock.badge){const badge=getImage(lock.badge.src),size=r.width*lock.badge.width;if(badge)ctx.drawImage(badge,r.x+r.width*lock.badge.x,r.y+r.height*lock.badge.y,size,size);}
+   if(lock.badge){const badge=getImage(lock.badge.src),size=r.width*lock.badge.width;if(badge)drawRuntimeImage(ctx,badge,r.x+r.width*lock.badge.x,r.y+r.height*lock.badge.y,size,size);}
    ctx.font='800 '+r.height*.19+'px Arial, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
    ctx.fillStyle='#fff8d9';ctx.strokeStyle='#111a23';ctx.lineWidth=Math.max(.5,r.height*.025);ctx.lineJoin='round';
    const label=root.PinballI18n?.t(lock.kind==='purchase'?'menu.purchaseRequired':'menu.locked')??(lock.kind==='purchase'?'PURCHASE':'LOCKED'),measured=ctx.measureText(label).width;if(measured>r.width*.8)ctx.font='800 '+(r.height*.19*r.width*.8/measured)+'px Arial, sans-serif';
@@ -192,9 +193,9 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
  }
 }
 function draw(ctx,d,getImage){
- if(d.background){const b=d.background,img=getImage(b.src);if(img){const ratio=(b.fit==='cover'?Math.max:Math.min)(d.canvas.width/img.naturalWidth,d.canvas.height/img.naturalHeight);const w=img.naturalWidth*ratio,h=img.naturalHeight*ratio;ctx.save();ctx.drawImage(img,(d.canvas.width-w)/2,(d.canvas.height-h)/2,w,h);ctx.restore();}}
+ if(d.background){const b=d.background,img=getImage(b.src);if(img){const ratio=(b.fit==='cover'?Math.max:Math.min)(d.canvas.width/(img.runtimeWidth??img.naturalWidth),d.canvas.height/(img.runtimeHeight??img.naturalHeight));const w=(img.runtimeWidth??img.naturalWidth)*ratio,h=(img.runtimeHeight??img.naturalHeight)*ratio;ctx.save();drawRuntimeImage(ctx,img,(d.canvas.width-w)/2,(d.canvas.height-h)/2,w,h);ctx.restore();}}
  for(const o of d.objects){
-  if(o.type==='image'){const img=getImage(o.src);if(img)ctx.drawImage(img,o.x,o.y,o.width,o.height);}
+  if(o.type==='image'){const img=getImage(o.src);if(img)drawRuntimeImage(ctx,img,o.x,o.y,o.width,o.height);}
   else frame(ctx,o,getImage,d.canvas.height,d.canvas.width);
  }
 }

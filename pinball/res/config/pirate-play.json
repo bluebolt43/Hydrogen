@@ -3290,7 +3290,9 @@
       "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png"
     }
   ],
-  "gameplay": {},
+  "gameplay": {
+    "ballTrails": false
+  },
   "screenLayout": {
     "width": 360,
     "height": 640,

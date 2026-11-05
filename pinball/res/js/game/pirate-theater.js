@@ -248,7 +248,7 @@ async function tentacleAttack(){
   stage.dataset.attackPhase='lightning';message.textContent='落雷！';
   const lightning=add(fx,bolt,w*.24,'attack-sprite');
   lightning.style.left=(cx-w*.12)+'px';lightning.style.top='0';lightning.style.height=(targetY+w*.015)+'px';
-  lightning.style.objectFit='fill';lightning.style.transformOrigin='50% 0';
+  PinballRuntimeImages.objectFit(lightning,'fill');lightning.style.transformOrigin='50% 0';
   await play(lightning,[{transform:'scaleY(0)',opacity:0},{transform:'scaleY(1)',opacity:1}],180,'ease-in');
   stage.dataset.attackPhase='explosion';sound('explosion');
   const puffSize=w*.256,puff=add(fx,smoke,puffSize,'attack-sprite');

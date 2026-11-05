@@ -77,7 +77,7 @@ TheaterFrame.effectFrames=function(element,frames){
     ctx.putImageData(pixels,0,0);
    }
    const result=new Image();result.src=canvas.toDataURL('image/png');
-   await PinballRuntimeImages.decode(result);entry.image=result;return result;
+   await PinballRuntimeImages.decode(result);PinballRuntimeImages.associate(result,image);entry.image=result;return result;
    }finally{canvas.width=canvas.height=0;}
   }).catch(error=>{if(error.name==='SecurityError'){entry.image=null;return null;}tints.delete(key);throw error;});return entry.ready;
  };

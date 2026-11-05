@@ -1,33 +1,28 @@
-/* Visual-only spring face, sparks and bumper light pulses. Does not alter collision geometry. */
+/* Simple collision rings. Does not alter collision geometry or collision audio. */
 function createReboundEffects(game,sound){
- const hits=new Map(),original=game.collisionEffect.bind(game);
+ const hits=new Map(),byPlane=new Map(),original=game.collisionEffect.bind(game);
+ function remember(id,hit){
+  const old=hits.get(id);if(old)byPlane.get(old.plane)?.delete(id);
+  let floor=byPlane.get(hit.plane);if(!floor){floor=new Map();byPlane.set(hit.plane,floor);}floor.set(id,hit);hits.set(id,hit);
+ }
  game.collisionEffect=(edge,approach)=>{
   original(edge,approach);
   const bumper=edge.kind==='bumper'&&edge.c;
   if(approach<=0||(!bumper&&(!(edge.kind==='rebound'||edge.kind==='active'||edge.mechanic==='active_rebound')||!edge.a||!edge.b)))return;
   const previous=hits.get(edge.id);if(previous&&game.time-previous.at<.12)return;
-  if(bumper){hits.set(edge.id,{kind:'bumper',plane:game.visualPlane(game.ball),at:game.time,center:[...edge.c],radius:edge.r});return;}
+  if(bumper){remember(edge.id,{kind:'bumper',plane:game.visualPlane(game.ball),at:game.time,center:[...edge.c],radius:edge.r});return;}
   const [a,b]=[edge.a,edge.b],dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);if(!length)return;
-  let n=[-dy/length,dx/length];if((game.ball.p[0]-a[0])*n[0]+(game.ball.p[1]-a[1])*n[1]<0)n=n.map(v=>-v);
   const t=Math.max(0,Math.min(1,((game.ball.p[0]-a[0])*dx+(game.ball.p[1]-a[1])*dy)/(length*length)));
-  hits.set(edge.id,{plane:game.visualPlane(game.ball),at:game.time,a:[...a],b:[...b],n,p:[a[0]+dx*t,a[1]+dy*t]});
+  remember(edge.id,{plane:game.visualPlane(game.ball),at:game.time,p:[a[0]+dx*t,a[1]+dy*t]});
   // The existing collision plays metal above this threshold; avoid doubling it.
   if(approach<8)sound.play('metal');
  };
- const event=game.onEvent;game.onEvent=e=>{if(e.type==='new-game'||e.type==='ready')hits.clear();event?.(e);};
- return {draw(ctx,plane){
-  for(const [id,h] of hits){const age=game.time-h.at;if(age<0||age>.24){hits.delete(id);continue;}
-   if(h.plane!==plane)continue;
-   if(h.kind==='bumper'){
-    const fade=1-age/.24;ctx.save();ctx.globalAlpha*=fade;ctx.shadowColor='#83eaff';ctx.shadowBlur=18*fade;
-    ctx.beginPath();ctx.arc(...h.center,h.radius,0,Math.PI*2);ctx.strokeStyle='#edffff';ctx.lineWidth=2.2;ctx.stroke();
-    ctx.shadowBlur=8*fade;ctx.beginPath();ctx.arc(...h.center,h.radius+age*20,0,Math.PI*2);ctx.strokeStyle='#62dfff';ctx.lineWidth=1.2;ctx.stroke();ctx.restore();continue;
-   }
-   const fade=1-age/.24,push=2.5*Math.sin(Math.PI*Math.min(1,age/.14));
-   ctx.save();ctx.globalAlpha*=fade;ctx.lineCap='round';ctx.shadowColor='#ffae42';ctx.shadowBlur=12*fade;
-   ctx.beginPath();ctx.moveTo(h.a[0]+h.n[0]*push,h.a[1]+h.n[1]*push);ctx.lineTo(h.b[0]+h.n[0]*push,h.b[1]+h.n[1]*push);
-   ctx.strokeStyle='#ffad42';ctx.lineWidth=3.2;ctx.stroke();ctx.strokeStyle='#fff3bf';ctx.lineWidth=1.1;ctx.stroke();ctx.shadowBlur=0;
-   for(let i=0;i<5;i++){const angle=Math.atan2(h.n[1],h.n[0])+(i-2)*.35,r=age*(30+i*7),x=h.p[0]+Math.cos(angle)*r,y=h.p[1]+Math.sin(angle)*r;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(angle)*1.7,y+Math.sin(angle)*1.7);ctx.stroke();}
+ const event=game.onEvent;game.onEvent=e=>{if(e.type==='new-game'||e.type==='ready'){hits.clear();byPlane.clear();}event?.(e);};
+ return {damageBounds(plane=null){const boxes=[];for(const [id,h] of hits){const age=game.time-h.at;if(age>.24){hits.delete(id);byPlane.get(h.plane)?.delete(id);continue;}if(age<0||plane!==null&&h.plane!==plane)continue;const p=h.center||h.p,r=(h.center?h.radius+age*20:3+age*30)+3;boxes.push([p[0]-r,p[1]-r,p[0]+r,p[1]+r]);}return boxes;},draw(ctx,plane){
+  const floor=byPlane.get(plane);if(!floor)return;
+  for(const [id,h] of floor){const age=game.time-h.at;if(age<0||age>.24){hits.delete(id);floor.delete(id);continue;}
+   ctx.save();ctx.globalAlpha*=1-age/.24;ctx.shadowBlur=0;ctx.strokeStyle=h.center?'#62dfff':'#ffad42';ctx.lineWidth=1.2;
+   ctx.beginPath();ctx.arc(...(h.center||h.p),h.center?h.radius+age*20:3+age*30,0,Math.PI*2);ctx.stroke();
    ctx.restore();
   }
  }};

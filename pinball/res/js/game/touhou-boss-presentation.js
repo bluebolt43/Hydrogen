@@ -2,15 +2,16 @@
 (function(root){'use strict';
 const FIRST_CAST_DELAY=8;
 class TouhouBossPresentation{
- constructor(game,theme='touhou1'){
+ constructor(game,theme='touhou1',{external=false}={}){
+  this.external=external;
   this.game=game;this.theme=theme;this.data=root.TouhouSpellcardSets?.[theme]??root.TouhouSpellcards;this.stage=0;this.elapsed=0;this.hasCast=false;this.originPending=false;this.musicWanted=false;
   this.audio=new Audio();this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.6;this.audio.dataset.role='touhou-boss-bgm';document.body.append(this.audio);
   if(this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
   this.previousMasks=[];this.mask=this.createMask();
  }
  createMask(){
-  const canvas=document.createElement('canvas');canvas.width=360;canvas.height=610;canvas.dataset.role='touhou-boss-spell';canvas.style.cssText='position:fixed;pointer-events:none;z-index:5;will-change:transform';canvas.hidden=true;document.body.append(canvas);
-  const mask=new root.TouhouSpellMask(canvas,{data:this.data});mask.naturalDrain=true;mask.extendBeamsToViewport=true;
+  const canvas=document.createElement('canvas');canvas.width=360;canvas.height=610;canvas.dataset.role='touhou-boss-spell';canvas.style.cssText='position:fixed;pointer-events:none;z-index:5;will-change:transform';canvas.hidden=true;if(!this.external)document.body.append(canvas);
+  const mask=new root.TouhouSpellMask(canvas,{data:this.data,external:this.external});mask.naturalDrain=true;mask.extendBeamsToViewport=true;
   mask.targetProvider=()=>this.target??{x:.5,y:.9};return mask;
  }
  clearSpells(){this.originPending=false;this.mask.clear();for(const mask of this.previousMasks){mask.destroy();mask.canvas.remove();}this.previousMasks=[];}
@@ -55,9 +56,10 @@ class TouhouBossPresentation{
   this.syncMusic(sound,false,musicPaused);
   const running=!!this.stage&&!this.defeated&&this.game.enemyActive&&!this.game.enemyIntroPending&&!this.game.paused&&!this.game.theaterFrozen&&this.game.balls.some(b=>b.state==='playing');
   this.mask.pause(!running);
-  this.previousMasks=this.previousMasks.filter(mask=>{if(!mask.active){mask.destroy();mask.canvas.remove();return false;}mask.pause(!running);return true;});
+  if(this.external)this.mask.advance(dt);
+  if(this.previousMasks.length)this.previousMasks=this.previousMasks.filter(mask=>{if(!mask.active){mask.destroy();mask.canvas.remove();return false;}mask.pause(!running);if(this.external)mask.advance(dt);return true;});
   if(!running)return;
-  if(this.mask.active||this.previousMasks.some(mask=>mask.active)||this.originPending)return;
+  if(this.mask.active||this.previousMasks.length||this.originPending)return;
   if(!this.hasCast){this.elapsed+=dt;if(this.elapsed+1e-9<FIRST_CAST_DELAY)return;}
   if(this.canCast&&!this.canCast())return;
   if(!this.origin&&this.requestOrigin){this.originPending=true;this.requestOrigin(this.stage);}else this.cast(this.stage);
@@ -74,10 +76,17 @@ class TouhouBossPresentation{
   const ball=this.game.balls.find(b=>b.state==='playing');
   if(ball?.p){const [x,y]=ball.p;this.target={x:(r.left+(m.a*x+m.c*y+m.e)*r.width/ctx.canvas.width-left)/width,y:(r.top+(m.b*x+m.d*y+m.f)*sy-top)/height};}
   const pixels=Math.round(360*height/width);
+  if(this.external){
+   const sx=ctx.canvas.width/r.width,sy=ctx.canvas.height/r.height;this.canvasBounds={x:Math.round((left-r.left)*sx),y:Math.round((top-r.top)*sy),width:Math.max(1,Math.round(width*sx)),height:Math.max(1,Math.round(height*sy))};
+   for(const mask of masks){if(mask.canvas.width!==this.canvasBounds.width)mask.canvas.width=this.canvasBounds.width;if(mask.canvas.height!==this.canvasBounds.height)mask.canvas.height=this.canvasBounds.height;}
+   if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();return;
+  }
   const style={left:left+'px',top:top+'px',width:width+'px',height:height+'px'};
   for(const mask of masks){const c=mask.canvas;if(c.height!==pixels)c.height=pixels;for(const key in style)if(c.style[key]!==style[key])c.style[key]=style[key];}
   if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();
  }
+ get active(){return this.mask.active||this.previousMasks.some(m=>m.active);}
+ paint(ctx){if(!this.external||!this.canvasBounds)return;ctx.save();ctx.setTransform(1,0,0,1,0,0);for(const mask of [...this.previousMasks,this.mask])mask.renderTo(ctx,this.canvasBounds.x,this.canvasBounds.y);ctx.restore();}
 
  destroy(){this.choose(0);this.clearSpells();this.mask.destroy();this.mask.canvas.remove();this.audio.removeAttribute('src');this.audio.load();this.audio.remove();}
 }

@@ -1,6 +1,7 @@
 /* Attack- or entry-powered bagua lottery. The display never captures or freezes a ball. */
 (function(root){
 'use strict';
+const drawRuntimeImage=globalThis.PinballRuntimeImages?.draw||((ctx,...args)=>ctx.drawImage(...args));
 const trigrams=[7,3,5,1,6,2,4,0];
 function drawYinYang(ctx,radius){
  const white='#f6f4ea',black='#151a21';
@@ -41,7 +42,9 @@ class Controller{
   if(this.count<this.config.threshold)return;
   this.count-=this.config.threshold;this.phase='spin';this.phaseAt=this.clock;this.winner=-1;
   this.available=this.availableRewards();
-  this.target=this.pick();this.attackAge=0;
+  this.target=this.pick();
+  // The lottery still runs without a Boss; only its Lv4 attack overlay is gated.
+  this.attackAge=this.game.g.gameplay?.runicTurntable||this.game.enemyActive&&!this.game.enemyIntroPending?0:Infinity;
   if(!this.game.g.gameplay?.runicTurntable)this.game.emit('configured-attack',{kind:'lv4',id:'touhou-bagua',position:[this.geometry.x,this.geometry.y]});
   this.game.emit('bagua-spin',{total:this.config.threshold});
   if(this.config.spinSound)this.game.emit('sound',{name:'runic-spin'});
@@ -99,8 +102,8 @@ class Controller{
   const visual=this.visual();
   if(visual.prize>=0&&visual.prizeOpacity>0){
    ctx.save();ctx.globalAlpha*=visual.prizeOpacity;
-   const art=this.config.rewards[visual.prize].art,im=renderer.image(art.src);
-   if(im.complete&&im.naturalWidth){const crop=art.crop||[0,0,im.naturalWidth,im.naturalHeight],w=42,h=w*crop[3]/crop[2];ctx.drawImage(im,...crop,-w/2,-h/2,w,h);}
+   const art=this.config.rewards[visual.prize].art,im=(this.drawImages?.[art.src]||renderer.image(art.src));
+   if(im.complete&&(im.runtimeWidth??im.naturalWidth)){const crop=art.crop||[0,0,(im.runtimeWidth??im.naturalWidth),(im.runtimeHeight??im.naturalHeight)],w=42,h=w*crop[3]/crop[2];drawRuntimeImage(ctx,im,...crop,-w/2,-h/2,w,h);}
    ctx.restore();
   }
   if(visual.yinOpacity>0){
@@ -112,21 +115,21 @@ class Controller{
   for(let i=0;i<this.config.threshold;i++){const a=(-90+i*360/this.config.threshold)*Math.PI/180;ctx.beginPath();ctx.arc(Math.cos(a)*63,Math.sin(a)*63,1.4,0,Math.PI*2);ctx.fillStyle=i<this.count?'#ffe49a':'#56616b';ctx.fill();}
   const effect=this.config.attackArt;
   if(effect&&!effect.fullscreen&&this.attackAge<effect.duration){
-   const im=renderer.image(effect.src),t=this.attackAge/effect.duration,size=105*(.3+Math.min(1,t*3));
-   if(im.complete&&im.naturalWidth){ctx.save();ctx.globalAlpha*=Math.min(1,t*8)*Math.min(1,(1-t)*3);ctx.rotate(t*Math.PI/3);ctx.drawImage(im,-size/2,-size/2,size,size);ctx.restore();}
+   const im=(this.drawImages?.[effect.src]||renderer.image(effect.src)),t=this.attackAge/effect.duration,size=105*(.3+Math.min(1,t*3));
+   if(im.complete&&(im.runtimeWidth??im.naturalWidth)){ctx.save();ctx.globalAlpha*=Math.min(1,t*8)*Math.min(1,(1-t)*3);ctx.rotate(t*Math.PI/3);drawRuntimeImage(ctx,im,-size/2,-size/2,size,size);ctx.restore();}
   }
   ctx.restore();
  }
  drawAttackOverlay(ctx,renderer,view){
   const effect=this.config.attackArt;
   if(!effect?.fullscreen||this.attackAge>=effect.duration)return;
-  const image=renderer.image(effect.src);
-  if(!image.complete||!image.naturalWidth)return;
+  const image=(this.drawImages?.[effect.src]||renderer.image(effect.src));
+  if(!image.complete||!(image.runtimeWidth??image.naturalWidth))return;
   const t=this.attackAge/effect.duration,p=1-(1-t)**3;
   const start=105*.3*this.config.radius/68,size=start+(Math.hypot(view[2],view[3])*1.5-start)*p;
   const x=this.geometry.x+(view[0]+view[2]/2-this.geometry.x)*p,y=this.geometry.y+(view[1]+view[3]/2-this.geometry.y)*p;
   ctx.save();ctx.globalAlpha*=1-t;ctx.translate(x,y);ctx.rotate(t*Math.PI/3);
-  ctx.drawImage(image,-size/2,-size/2,size,size);ctx.restore();
+  drawRuntimeImage(ctx,image,-size/2,-size/2,size,size);ctx.restore();
  }
 }
 // Same prize rules as bagua, with a passable circle and a flat stone presentation.
@@ -164,7 +167,7 @@ class RunicController extends Controller{
   const o=this.geometry,r=this.config.radius,spin=this.phase==='spin';
   // Rotation is evaluated from elapsed time; the central reward stays upright.
   const angle=this.rotationAngle();
-  const bitmap=(art,size)=>{const im=renderer.image(art.src);if(!im.complete||!im.naturalWidth)return;const uv=art.uv||[0,0,1,1],w=im.naturalWidth,h=im.naturalHeight;ctx.drawImage(im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-size/2,-size/2,size,size);};
+  const bitmap=(art,size)=>{const im=(this.drawImages?.[art.src]||renderer.image(art.src));if(!im.complete||!(im.runtimeWidth??im.naturalWidth))return;const uv=art.uv||[0,0,1,1],w=(im.runtimeWidth??im.naturalWidth),h=(im.runtimeHeight??im.naturalHeight);drawRuntimeImage(ctx,im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-size/2,-size/2,size,size);};
   ctx.save();ctx.translate(o.cx,o.cy);ctx.scale(r/100,r/100);
   ctx.save();ctx.rotate(angle);bitmap(this.config.rotorArt,136);
   ctx.scale(.68,.68);ctx.lineCap='round';ctx.lineJoin='round';
@@ -175,7 +178,7 @@ class RunicController extends Controller{
   }
   ctx.beginPath();ctx.arc(0,0,29,0,Math.PI*2);ctx.lineWidth=1.3;ctx.strokeStyle='#514938';ctx.stroke();ctx.restore();
   bitmap(this.config.ringArt,200);
-  if(this.winner>=0){ctx.save();ctx.globalAlpha*=this.visual().prizeOpacity;const art=this.config.rewards[this.winner].art,im=renderer.image(art.src);if(im.complete&&im.naturalWidth){const uv=art.uv,w=im.naturalWidth,h=im.naturalHeight,ratio=uv[2]*w/(uv[3]*h),dw=38*Math.min(1,ratio),dh=38*Math.min(1,1/ratio);ctx.drawImage(im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-dw/2,-dh/2,dw,dh);}ctx.restore();}
+  if(this.winner>=0){ctx.save();ctx.globalAlpha*=this.visual().prizeOpacity;const art=this.config.rewards[this.winner].art,im=(this.drawImages?.[art.src]||renderer.image(art.src));if(im.complete&&(im.runtimeWidth??im.naturalWidth)){const uv=art.uv,w=(im.runtimeWidth??im.naturalWidth),h=(im.runtimeHeight??im.naturalHeight),ratio=uv[2]*w/(uv[3]*h),dw=38*Math.min(1,ratio),dh=38*Math.min(1,1/ratio);drawRuntimeImage(ctx,im,uv[0]*w,uv[1]*h,uv[2]*w,uv[3]*h,-dw/2,-dh/2,dw,dh);}ctx.restore();}
   ctx.restore();
  }
 }

@@ -19,7 +19,7 @@ body{display:grid;place-items:center}
 #table-loading p{margin:16px 0 0}
 .loading-ball{display:block;width:42px;height:42px;border:2px solid #ffffff40;border-top-color:#fff;border-radius:50%;animation:table-loading-spin 1s linear infinite}
 @keyframes table-loading-spin{to{transform:rotate(360deg)}}
-.loading-prayer{display:none;width:160px;height:160px;background:url('../img/touhou/touhou-loading-suika.webp') center/contain no-repeat}
+.loading-prayer{display:none;width:160px;height:160px;object-fit:contain}
 #table-loading[data-theme="touhou"] .loading-ball{display:none}
 #table-loading[data-theme="touhou"] .loading-prayer{display:block;animation:touhou-loading-prayer 1.2s step-end infinite}
 #table-loading[data-theme="touhou"] p{margin-top:4px;color:#f5ead4;font-family:Georgia,"Noto Serif CJK TC",serif;font-size:24px;letter-spacing:.14em}

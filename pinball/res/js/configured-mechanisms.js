@@ -353,7 +353,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  this.emit('center-post-up',{id:p.id});
  }
  // Target-controlled blockers and per-ball collision hooks.
- isBlockerDisabled(id){return (this.blockerOwners?.get(id)||[]).some(({rule,index})=>index<rule.unlocked);
+ isBlockerDisabled(id){const owners=this.blockerOwners?.get(id);return owners?owners.some(({rule,index})=>index<rule.unlocked):false;
  }
  resetBlockers(sensorId){for(const r of this.blockerResets.get(sensorId)||[]){r.unlocked=0;
  const state=r.groupState||r;state.last=this.time;

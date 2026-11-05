@@ -5,10 +5,11 @@ class LayoutTheater{
  constructor(theme='pirate'){
   this.theme=['saga','norse','ragnarok'].includes(theme)?'saga':['space','sci-fi','cosmic-dessert'].includes(theme)?'space':['touhou1','touhou-horrors'].includes(theme)?'touhou1':['touhou2','touhou-black-knight-2000'].includes(theme)?'touhou2':theme==='steampunk'?'steampunk':'pirate';
   this.pending=[];this.activeCommands=new Map();this.ready=false;this.curtainClosing=true;this.paused=null;this.generation=0;
-  this.frame=document.createElement('iframe');this.frame.title=this.theme==='saga'?'黑曜石傳奇劇場':this.theme==='space'?'宇宙點心劇場':['touhou1','touhou2'].includes(this.theme)?'東方賽銭録劇場':this.theme==='steampunk'?'蒸氣龐克劇場':'海盜劇場';
+  this.canvasBackend=this.theme==='pirate'?(root.PirateTheaterCanvas?.requested()?new root.PirateTheaterCanvas(this):null):new root.PlayTheaterCanvas(this);
+  this.frame=this.canvasBackend?{style:{},getBoundingClientRect:()=>{const s=this.frame.style,left=parseFloat(s.left)||0,top=parseFloat(s.top)||0,width=parseFloat(s.width)||0,height=parseFloat(s.height)||0;return {left,top,width,height,right:left+width,bottom:top+height};},contentWindow:{postMessage:message=>this.canvasBackend.receive(message)}}:document.createElement('iframe');this.frame.title=this.theme==='saga'?'黑曜石傳奇劇場':this.theme==='space'?'宇宙點心劇場':['touhou1','touhou2'].includes(this.theme)?'東方賽銭録劇場':this.theme==='steampunk'?'蒸氣龐克劇場':'海盜劇場';
   this.frame.style.cssText='position:fixed;border:0;pointer-events:none;z-index:2;visibility:hidden';
-  document.body.append(this.frame);
-  addEventListener('message',e=>{
+  if(!this.canvasBackend)document.body.append(this.frame);
+  this.receive=e=>{
    if(e.source!==this.frame.contentWindow||e.data?.channel!=='pinball-theater')return;
    if(['complete','error'].includes(e.data.type)&&e.data.id&&!e.data.id.startsWith(this.generation+':'))return;
    if(e.data.type==='boss-stage'&&['touhou1','touhou2'].includes(this.theme)&&Number.isInteger(e.data.stage)&&e.data.stage>=0&&e.data.stage<=8){if(e.data.defeated)this.onBossDefeated?.();else this.onBossChanged?.(e.data.stage);return;}
@@ -32,7 +33,8 @@ class LayoutTheater{
     if(!remaining)this.onCommandComplete?.(e.data);
    }
    if(e.data.type==='error')console.error('Theater:',e.data.message);
-  });
+  };
+  if(!this.canvasBackend)addEventListener('message',this.receive);
   this.reset();
  }
  showWarning(token){
@@ -46,7 +48,7 @@ class LayoutTheater{
  blocksTable(){return this.theme==='touhou1'||this.theme==='touhou2'?this.hasEnemyCommand():this.activeCommands.size>0;}
  syncGameState(){if(this.game){this.game.theaterFrozen=this.blocksTable();this.game.enemyIntroPending=this.hasEnemyCommand();}}
 
- reset(){this.onBossChanged?.(0);this.hudState=null;this.bossDefeated=false;this.warning?.cancel();this.warning=null;this.generation++;this.pending=[];this.activeCommands.clear();this.syncGameState();this.curtainClosing=true;if(this.ready)this.send({command:'reset',id:this.generation+':reset:0'});else this.frame.src='res/'+this.theme+'-theater.html?embed=1&session='+this.generation;}
+ reset(){this.onBossChanged?.(0);this.hudState=null;this.bossDefeated=false;this.warning?.cancel();this.warning=null;this.generation++;this.pending=[];this.activeCommands.clear();this.syncGameState();this.curtainClosing=true;if(this.ready)this.send({command:'reset',id:this.generation+':reset:0'});else if(!this.canvasBackend)this.frame.src='res/'+this.theme+'-theater.html?embed=1&session='+this.generation;}
  onEvent(e){
   if(e.type==='ready'&&this.theme==='space'&&this.game?.spaceEndlessMode&&(this.game.enemyActive||this.game.enemyIntroPending))return;
   if(e.type==='new-game'||(e.type==='ready'&&!this.bossStage)){this.reset();return;}
@@ -60,7 +62,7 @@ class LayoutTheater{
   this.syncGameState();
   if(this.ready)this.send(message);else this.pending.push(message);
  }
- update(dt,game){this.game=game;this.syncGameState();if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
+ update(dt,game){if(this.game!==game){this.game=game;this.syncGameState();}if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
  drawAttackMessage(ctx,x,y,width,height,time){
   ctx.save();ctx.beginPath();ctx.rect(x,y,width,height);ctx.clip();
   ctx.font='bold 15px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
@@ -104,7 +106,7 @@ class LayoutTheater{
   const previous=this.framePosition||(this.framePosition={});
   for(const [key,value] of Object.entries(position))if(previous[key]!==value){this.frame.style[key]=value;previous[key]=value;}
  }
- draw(ctx,game,top=-170.5){
+ draw(ctx,game,top=-170.5,clearWindow=true){
   this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
   if(this.panelElement){const box=this.viewport(this.panelElement),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
   const canvas=ctx.canvas,r=this.viewport(canvas,true),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
@@ -114,7 +116,7 @@ class LayoutTheater{
   const left=Math.round((r.left-shakeX*this.viewportCssScale.x)*64)/64,topY=Math.round((r.top-shakeY*this.viewportCssScale.y)*64)/64;
   this.positionFrame({left:(left+m.e*sx)+'px',top:(topY+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden',zIndex:'2'});
   // Reveal the theater iframe beneath the table artwork.
-  ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
+  if(clearWindow&&!this.canvasBackend)ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
   const viewport={rect:r,transform:m};
   if(this.customScore)return viewport;
   ctx.save();ctx.fillStyle='#36251e';ctx.fillRect(0,top,360,scoreH);ctx.strokeStyle='#ba9456';ctx.lineWidth=1;ctx.strokeRect(1,top+1,358,scoreH-2);ctx.fillStyle='#ffe5a6';ctx.textAlign='left';ctx.font='bold 12px monospace';if(this.bossStage)this.drawAttackMessage(ctx,12,top+6,220,20,game.time);else ctx.fillText('SCORE '+String(game.score).padStart(12,'0'),12,top+20);ctx.textAlign='right';ctx.font='bold 10px monospace';ctx.fillText('BALL '+game.ballNumber+' / 3',348,top+20);ctx.restore();
