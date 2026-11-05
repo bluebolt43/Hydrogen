@@ -117,13 +117,15 @@ class TouhouSpellMask{
   this.bulletRasterDrawing=true;
   const fastBase=['water-elf','shanghai-dolls','release-of-id','magical-r360'].includes(this.entry.pattern)?c.getTransform():null;
   let fastTransformed=false;
-  let leafTransformed=false,leafColor,leafRadius,leafSprite,leafAlpha;
+  let leafTransformed=false,leafColor,leafRadius,leafSprite;
+  let bulletAlpha;
   for(const b of sample.bullets){
    const {kind,color}=b,index=b.drawAngleIndex,angle=DRAW_ANGLES[index],r=b.drawRadiusPixels,px=b.drawX,py=b.drawY;
    if((b.alpha??1)===0||b.drawX+b.drawExtent<0||b.drawX-b.drawExtent>canvas.width||b.drawY+b.drawExtent<0||b.drawY-b.drawExtent>canvas.height)continue;
+   const alpha=fade*(b.alpha??1);if(alpha!==bulletAlpha){c.globalAlpha=alpha;bulletAlpha=alpha;}
    if(rasterBullets&&(b.rasterRotation||fade===1&&(b.alpha??1)===1&&(iceSprites||b.headingFixed||['round','orb','bubble','glow'].includes(kind)))){
     const tile=this.bulletRaster(b,kind,color,r,angle);
-    if(tile){if(fastTransformed){c.setTransform(fastBase);fastTransformed=false;}c.globalAlpha=fade*(b.alpha??1);const dx=px-tile.pad,dy=py-tile.pad;c.drawImage(tile.canvas,tile.x,tile.y,tile.side,tile.side,dx,dy,tile.pad*2,tile.pad*2);continue;}
+    if(tile){if(fastTransformed){c.setTransform(fastBase);fastTransformed=false;}const dx=px-tile.pad,dy=py-tile.pad;c.drawImage(tile.canvas,tile.x,tile.y,tile.side,tile.side,dx,dy,tile.pad*2,tile.pad*2);continue;}
    }
    // A4..B8 share glyphs. Reuse their unrotated sprite and set the affine
    // transform directly, avoiding per-particle Canvas save/rotate/restore.
@@ -136,7 +138,7 @@ class TouhouSpellMask{
      const circular=kind==='bubble'||kind==='round'||kind==='orb'||kind==='glow';
      const m=fastBase,co=circular?1:DRAW_COS[index],si=circular?0:DRAW_SIN[index];
      c.setTransform(m.a*co+m.c*si,m.b*co+m.d*si,m.c*co-m.a*si,m.d*co-m.b*si,m.a*px+m.c*py+m.e,m.b*px+m.d*py+m.f);
-     c.globalAlpha=fade*(b.alpha??1);c.drawImage(tile.canvas,-tile.pad,-tile.pad,tile.pad*2,tile.pad*2);fastTransformed=true;continue;
+     c.drawImage(tile.canvas,-tile.pad,-tile.pad,tile.pad*2,tile.pad*2);fastTransformed=true;continue;
     }
    }
    if(fastTransformed){c.setTransform(fastBase);fastTransformed=false;}
@@ -145,27 +147,25 @@ class TouhouSpellMask{
      const tile=this.leafRaster(b,color,r,angle);
      if(tile){
       if(leafTransformed){c.setTransform(leafBase);leafTransformed=false;}
-      const alpha=fade*(b.alpha??1);if(alpha!==leafAlpha){c.globalAlpha=alpha;leafAlpha=alpha;}
       c.drawImage(tile.canvas,tile.x,tile.y,tile.side,tile.side,px-tile.pad,py-tile.pad,tile.pad*2,tile.pad*2);continue;
      }
     }
     if(color!==leafColor||r!==leafRadius){leafSprite=this.sprite(kind,color,r);leafColor=color;leafRadius=r;}
     if(leafSprite){
-     const co=DRAW_COS[index],si=DRAW_SIN[index],m=leafBase,alpha=fade*(b.alpha??1);
-     if(alpha!==leafAlpha){c.globalAlpha=alpha;leafAlpha=alpha;}
+     const co=DRAW_COS[index],si=DRAW_SIN[index],m=leafBase;
      c.setTransform(m.a*co+m.c*si,m.b*co+m.d*si,m.c*co-m.a*si,m.d*co-m.b*si,m.a*px+m.c*py+m.e,m.b*px+m.d*py+m.f);
      c.drawImage(leafSprite.canvas,-leafSprite.pad,-leafSprite.pad,leafSprite.pad*2,leafSprite.pad*2);leafTransformed=true;continue;
     }
    }
-   if(leafTransformed){c.setTransform(leafBase);leafTransformed=false;leafAlpha=undefined;}
+   if(leafTransformed){c.setTransform(leafBase);leafTransformed=false;}
    if(graySprites&&(kind==='round'||kind==='rice')&&(b.alpha??1)===1){
     const tile=this.grayRaster(b,kind,color,r,angle);
-    if(tile){c.globalAlpha=1;c.drawImage(tile.canvas,tile.x,tile.y,tile.side,tile.side,px-tile.pad,py-tile.pad,tile.pad*2,tile.pad*2);continue;}
+    if(tile){c.drawImage(tile.canvas,tile.x,tile.y,tile.side,tile.side,px-tile.pad,py-tile.pad,tile.pad*2,tile.pad*2);continue;}
    }
    if(kind==='capsule'||kind==='round'||kind==='orb'||kind==='rice'||kind==='fire'){
-    c.globalAlpha=fade*(b.alpha??1);this.drawBullet(c,kind,color,r,px,py,angle);continue;
+    this.drawBullet(c,kind,color,r,px,py,angle);continue;
    }
-   c.save();c.translate(px,py);c.rotate(angle);c.globalAlpha=fade*(b.alpha??1);
+   c.save();c.translate(px,py);c.rotate(angle);
    const sprite=kind==='petal'||kind==='leaf'||kind==='glow'||kind==='bubble'||this.entry.rasterGlyphs&&fade*(b.alpha??1)===1?this.sprite(kind,color,r):null;
    if(sprite)c.drawImage(sprite.canvas,-sprite.pad,-sprite.pad,sprite.pad*2,sprite.pad*2);
    else if(kind==='round'||kind==='orb'||kind==='rice'||kind==='fire'||kind==='leaf'||typeof Path2D==='undefined')this.drawBullet(c,kind,color,r);

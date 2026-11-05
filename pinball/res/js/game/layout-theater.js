@@ -64,10 +64,11 @@ class LayoutTheater{
  }
  update(dt,game){if(this.game!==game){this.game=game;this.syncGameState();}if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
  drawAttackMessage(ctx,x,y,width,height,time){
+  if(Math.floor(time)%2)return;
   ctx.save();ctx.beginPath();ctx.rect(x,y,width,height);ctx.clip();
   ctx.font='bold 15px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
   ctx.fillStyle='#ffe6a3';
-  const text=PinballI18n.t('table.defeatBoss'),span=ctx.measureText(text).width+45,offset=(time*35)%span;
+  const text=PinballI18n.t('table.defeatBoss'),span=ctx.measureText(text).width;
   if(typeof document!=='undefined'&&ctx.drawImage&&ctx.getTransform){
    const m=ctx.getTransform(),sx=Math.hypot(m.a,m.b),sy=Math.hypot(m.c,m.d),pad=Math.ceil((2*(ctx.shadowBlur||0)+Math.abs(ctx.shadowOffsetX||0)+Math.abs(ctx.shadowOffsetY||0)+2)/Math.min(sx,sy));
    const key=JSON.stringify([text,span,height,ctx.font,sx,sy,ctx.shadowBlur,ctx.shadowColor,ctx.shadowOffsetX,ctx.shadowOffsetY]);
@@ -78,9 +79,29 @@ class LayoutTheater{
     this.attackMessageRaster={key,canvas:Art?Art.rasterImage(canvas):canvas};
    }
    ctx.shadowColor='transparent';ctx.shadowBlur=0;
-   for(let at=x-offset;at<x+width;at+=span)ctx.drawImage(this.attackMessageRaster.canvas,at-pad,y-pad,this.attackMessageRaster.canvas.width/sx,this.attackMessageRaster.canvas.height/sy);
-  }else for(let at=x-offset;at<x+width;at+=span)ctx.fillText(text,at,y+height/2);
+   const fit=Math.min(1,width/span);ctx.drawImage(this.attackMessageRaster.canvas,x+(width-span*fit)/2-pad*fit,y-pad,this.attackMessageRaster.canvas.width/sx*fit,this.attackMessageRaster.canvas.height/sy);
+  }else{ctx.textAlign='center';ctx.fillText(text,x+width/2,y+height/2,width);}
   ctx.restore();
+ }
+ clearScoreShadows(){for(const entry of this.scoreShadows?.glyphs||[])root.PinballArt?.releaseRaster(entry);this.scoreShadows=null;}
+ prepareScoreShadows(ctx,fit=1){
+  const m=ctx.getTransform(),sx=Math.round(Math.hypot(m.a,m.b)*fit*65536)/65536,sy=Math.round(Math.hypot(m.c,m.d)*65536)/65536;
+  if(!(sx>0&&sy>0)||!ctx.shadowBlur)return null;
+  const key=JSON.stringify([ctx.font,ctx.textBaseline,sx,sy,ctx.shadowBlur,ctx.shadowColor,ctx.shadowOffsetX,ctx.shadowOffsetY]);if(this.scoreShadows?.key===key)return this.scoreShadows;
+  this.clearScoreShadows();const glyphs=[],pad=Math.ceil(ctx.shadowBlur*2+Math.abs(ctx.shadowOffsetX)+Math.abs(ctx.shadowOffsetY)+2),Art=root.PinballArt;
+  for(let digit=0;digit<10;digit++){
+   const canvas=Art.rasterCanvas(1,1,true),c=canvas.getContext('2d');c.font=ctx.font;c.textBaseline=ctx.textBaseline;c.textAlign='left';const metrics=c.measureText(String(digit)),left=metrics.actualBoundingBoxLeft,right=metrics.actualBoundingBoxRight,ascent=metrics.actualBoundingBoxAscent,descent=metrics.actualBoundingBoxDescent;
+   const x=pad+left*sx,y=pad+ascent*sy,w=Math.ceil((left+right)*sx)+pad*2+2,h=Math.ceil((ascent+descent)*sy)+pad*2+2,far=w*2;
+   canvas.width=w;canvas.height=h;c.setTransform(sx,0,0,sy,0,y);c.font=ctx.font;c.textAlign='left';c.textBaseline=ctx.textBaseline;c.fillStyle='#fff';c.shadowColor=ctx.shadowColor;c.shadowBlur=ctx.shadowBlur;c.shadowOffsetX=far+x+ctx.shadowOffsetX;c.shadowOffsetY=ctx.shadowOffsetY;c.fillText(String(digit),-far/sx,0);
+   glyphs.push({canvas:Art.rasterImage(canvas),x:x/sx,y:y/sy,w:w/sx,h:h/sy});
+  }
+  return this.scoreShadows={key,glyphs};
+ }
+ drawScoreText(ctx,text,maxWidth){
+  if(!/^\d+$/.test(text)||!root.PinballArt)return ctx.fillText(text,0,0,maxWidth);
+  const width=ctx.measureText(text).width,fit=Math.min(1,maxWidth/width),prepared=this.prepareScoreShadows(ctx,fit);if(!prepared)return ctx.fillText(text,0,0,maxWidth);
+  ctx.save();ctx.shadowBlur=0;ctx.shadowColor='transparent';ctx.save();ctx.scale(fit,1);const advance=width/text.length;
+  for(let i=0;i<text.length;i++){const g=prepared.glyphs[Number(text[i])];ctx.drawImage(g.canvas,-width/2+i*advance-g.x,-g.y,g.w,g.h);}ctx.restore();ctx.fillText(text,0,0,maxWidth);ctx.restore();
  }
  invalidateViewport(){this.viewportRect=null;this.onViewportChange?.();}
  viewport(target,translated=false){

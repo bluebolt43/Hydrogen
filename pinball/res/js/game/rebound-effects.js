@@ -1,7 +1,9 @@
 /* Simple collision rings. Does not alter collision geometry or collision audio. */
 function createReboundEffects(game,sound){
  const hits=new Map(),byPlane=new Map(),original=game.collisionEffect.bind(game);
+ const queue=game.collisionVisualQueue||(game.collisionVisualQueue=[]);
  function remember(id,hit){
+  queue.push(hit);if(queue.length>5)queue.shift().suppressed=true;
   const old=hits.get(id);if(old)byPlane.get(old.plane)?.delete(id);
   let floor=byPlane.get(hit.plane);if(!floor){floor=new Map();byPlane.set(hit.plane,floor);}floor.set(id,hit);hits.set(id,hit);
  }
@@ -17,10 +19,10 @@ function createReboundEffects(game,sound){
   // The existing collision plays metal above this threshold; avoid doubling it.
   if(approach<8)sound.play('metal');
  };
- const event=game.onEvent;game.onEvent=e=>{if(e.type==='new-game'||e.type==='ready'){hits.clear();byPlane.clear();}event?.(e);};
- return {damageBounds(plane=null){const boxes=[];for(const [id,h] of hits){const age=game.time-h.at;if(age>.24){hits.delete(id);byPlane.get(h.plane)?.delete(id);continue;}if(age<0||plane!==null&&h.plane!==plane)continue;const p=h.center||h.p,r=(h.center?h.radius+age*20:3+age*30)+3;boxes.push([p[0]-r,p[1]-r,p[0]+r,p[1]+r]);}return boxes;},draw(ctx,plane){
+ const event=game.onEvent;game.onEvent=e=>{if(e.type==='new-game'||e.type==='ready'){hits.clear();byPlane.clear();for(const h of queue)h.suppressed=true;queue.length=0;}event?.(e);};
+ return {damageBounds(plane=null){const boxes=[];for(const [id,h] of hits){const age=game.time-h.at;if(age>.24){hits.delete(id);byPlane.get(h.plane)?.delete(id);continue;}if(h.suppressed||age<0||plane!==null&&h.plane!==plane)continue;const p=h.center||h.p,r=(h.center?h.radius+age*20:3+age*30)+3;boxes.push([p[0]-r,p[1]-r,p[0]+r,p[1]+r]);}return boxes;},draw(ctx,plane){
   const floor=byPlane.get(plane);if(!floor)return;
-  for(const [id,h] of floor){const age=game.time-h.at;if(age<0||age>.24){hits.delete(id);floor.delete(id);continue;}
+  for(const [id,h] of floor){const age=game.time-h.at;if(h.suppressed||age<0||age>.24){hits.delete(id);floor.delete(id);continue;}
    ctx.save();ctx.globalAlpha*=1-age/.24;ctx.shadowBlur=0;ctx.strokeStyle=h.center?'#62dfff':'#ffad42';ctx.lineWidth=1.2;
    ctx.beginPath();ctx.arc(...(h.center||h.p),h.center?h.radius+age*20:3+age*30,0,Math.PI*2);ctx.stroke();
    ctx.restore();

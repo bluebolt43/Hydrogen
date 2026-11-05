@@ -37,10 +37,11 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  }
  const multiplier=n=>n>=30?4:n>=20?3:n>=10?2:n>=5?1.5:1;
  const plane=()=>game.visualPlane(game.ball),position=e=>e.position||game.ball.p;
- const cap=(list,n)=>{if(list.length>n)list.splice(0,list.length-n);};
+ const queue=game.collisionVisualQueue||(game.collisionVisualQueue=[]);
+ const cap=list=>{queue.push(list[list.length-1]);if(queue.length>5)queue.shift().suppressed=true;if(list.length>5)list.splice(0,list.length-5);};
  function burst(p,color,strength=1){
   cleanDirty=true;effectRevision++;
-  rings.push({p:[...p],color,at:game.time,plane:plane(),strength});cap(rings,32);
+  rings.push({p:[...p],color,at:game.time,plane:plane(),strength});cap(rings);
  }
  function pulse(source,all=false){
   if(ballsLast&&!all)return;
@@ -124,7 +125,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   if(['new-game','ready','drain','game-over'].includes(e.type)){
    comboFlashAt=-Infinity;
    combo=0;lastHit=-10;game.combo={count:0,multiplier:1,expiresAt:0};recent.clear();
-   if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;rings.length=swings.length=0;lampPulses.clear();}
+   if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;rings.length=swings.length=0;queue.length=0;lampPulses.clear();}
   }
   if(e.type==='score'||e.type==='score-hit'){
    hit(e.id);
@@ -135,7 +136,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   if(e.type==='rollover'||e.type==='sensor'){hit(e.id);pulse(e.id);burst(position(e),'#a1f3de',.45);}
   if(e.type==='slingshot-hit'){hit(e.id);pulse(e.id);}
   if(e.type==='flipper-hit'){
-   const key='swing:'+e.id;if((recent.get(key)??-10)<=game.time-.1){recent.set(key,game.time);swings.push({p:[...game.ball.p],angle:Math.atan2(game.ball.v[1],game.ball.v[0]),at:game.time,plane:plane()});cap(swings,12);}
+   const key='swing:'+e.id;if((recent.get(key)??-10)<=game.time-.1){recent.set(key,game.time);swings.push({p:[...game.ball.p],angle:Math.atan2(game.ball.v[1],game.ball.v[0]),at:game.time,plane:plane()});cap(swings);}
   }
   if(['target-group-complete','configured-attack','bumper-upgraded','multiball-awarded','center-post-up','vortex-activated'].includes(e.type)){
    burst(position(e),e.type==='configured-attack'?'#fff0bb':'#ffe49b',e.type==='configured-attack'?2:1.4);pulse(null,true);shakeAt=game.time;shakePower=e.type==='configured-attack'?1.3:.7;
@@ -160,8 +161,8 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   if(!force&&!dirty&&preparedEffectRevision===effectRevision&&preparedAt===game.time&&preparedRevision===renderer.layoutRevision&&preparedBallEffects===game.g.gameplay?.ballEffects&&preparedBallTrails===game.g.gameplay?.ballTrails)return;
   preparedAt=game.time;preparedEffectRevision=effectRevision;preparedRevision=renderer.layoutRevision;preparedBallEffects=game.g.gameplay?.ballEffects;preparedBallTrails=game.g.gameplay?.ballTrails;
   for(const row of floors.values())row.rings.length=row.swings.length=row.lamps.length=row.balls.length=0;
-  for(const r of rings)floorEffects(r.plane).rings.push(r);
-  for(const s of swings)if(game.time-s.at<=.18)floorEffects(s.plane).swings.push(s);
+  for(const r of rings)if(!r.suppressed)floorEffects(r.plane).rings.push(r);
+  for(const s of swings)if(!s.suppressed&&game.time-s.at<=.18)floorEffects(s.plane).swings.push(s);
   if(!comboFlashActive())for(const [id,q] of lampPulses){const a=artById.get(id);if(a&&!a.hidden&&game.time>=q.at)floorEffects(a.plane).lamps.push(q);}
   if(game.g.gameplay?.ballEffects!==false&&game.g.gameplay?.ballTrails!==false)for(const b of game.balls){
    if(b.state!=='playing')continue;const speed=Math.hypot(...b.v);if(speed<180)continue;
@@ -313,7 +314,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  },preview(kind){
   cleanDirty=true;effectRevision++;
   const p=[180,230];
-  if(kind==='flipper')swings.push({p,angle:-Math.PI/2,at:game.time,plane:plane()});
+  if(kind==='flipper'){swings.push({p,angle:-Math.PI/2,at:game.time,plane:plane()});cap(swings);}
   else burst(p,kind==='bumper'?'#a9edff':kind==='slingshot'?'#e9b575':'#ffe49b',kind==='complete'?2:1);
   if(kind==='combo'){combo=19;lastHit=game.time;recent.clear();hit('preview-combo');}
   if(kind==='combo')pulseCombo();else pulse(null,true);

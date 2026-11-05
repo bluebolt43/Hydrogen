@@ -83,21 +83,44 @@ class Controller{
   const reveal=this.winner<0?0:this.phase==='winflash'?Math.max(0,Math.min(1,age/this.config.yinYang.fadeSeconds)):1;
   return {prize:this.winner,prizeOpacity:reveal,yinOpacity:1-reveal};
  }
- draw(ctx,renderer){
-  const o=this.geometry,r=this.config.radius,centerRadius=31,age=this.clock-this.phaseAt,spin=this.phase==='spin';
-  ctx.save();ctx.translate(o.x,o.y);ctx.rotate((o.angle||0)*Math.PI/180);ctx.scale(r/68,r/68);ctx.lineWidth=.65;
-  const flashOn=Math.floor(age/.16)%2===0;
-  const glowing=spin?flashOn:this.phase==='idle'&&this.count>0;
-  let glow;
+ visualKey(){
+  if(this.game.g.gameplay?.runicTurntable)return null;
+  const effect=this.config.attackArt;
+  return [this.phase,this.count,this.winner,this.phase==='spin'?Math.floor((this.clock-this.phaseAt)/.16)%2:0,this.phase==='winflash'?this.visual().prizeOpacity:0,effect&&!effect.fullscreen&&this.attackAge<effect.duration?this.attackAge:0].join('|');
+ }
+ paintFace(ctx,litCount,count){
+  const glowing=litCount>0;let glow;
   if(glowing){glow=ctx.createRadialGradient(0,0,35,0,0,66);glow.addColorStop(0,'#d89b2c');glow.addColorStop(.55,'#ffe39a');glow.addColorStop(1,'#dba936');}
   for(let i=0;i<8;i++){
-   const a=(-112.5+i*45)*Math.PI/180,b=a+Math.PI/4;
-   const lit=spin?flashOn:this.phase==='idle'&&i<this.count;
+   const a=(-112.5+i*45)*Math.PI/180,b=a+Math.PI/4,lit=i<litCount;
    ctx.beginPath();ctx.arc(0,0,66,a,b);ctx.arc(0,0,35,b,a,true);ctx.closePath();ctx.fillStyle=lit?glow:'#252b32';ctx.fill();ctx.strokeStyle=lit?'#ffe7a0':'#7d7055';ctx.stroke();
    ctx.save();ctx.rotate(i*Math.PI/4);ctx.strokeStyle=lit?'#fff4c3':'#625e51';ctx.lineWidth=2.3;
    for(let j=0;j<3;j++){const y=-56+j*5;ctx.beginPath();if(trigrams[i]&(1<<j)){ctx.moveTo(-10,y);ctx.lineTo(10,y);}else{ctx.moveTo(-10,y);ctx.lineTo(-3,y);ctx.moveTo(3,y);ctx.lineTo(10,y);}ctx.stroke();}ctx.restore();
   }
-  ctx.beginPath();ctx.arc(0,0,centerRadius,0,Math.PI*2);ctx.fillStyle='#17202a';ctx.fill();
+  ctx.beginPath();ctx.arc(0,0,31,0,Math.PI*2);ctx.fillStyle='#17202a';ctx.fill();
+  for(let i=0;i<this.config.threshold;i++){const a=(-90+i*360/this.config.threshold)*Math.PI/180;ctx.beginPath();ctx.arc(Math.cos(a)*63,Math.sin(a)*63,1.4,0,Math.PI*2);ctx.fillStyle=i<count?'#ffe49a':'#56616b';ctx.fill();}
+ }
+ faceSprite(scale,litCount,count){
+  scale=Math.max(1/64,Math.round(scale*64)/64);const Art=root.PinballArt;
+  if(this.faceScale!==scale){this.clearFaces();this.faceScale=scale;this.faces=new Map();}
+  const key=litCount+':'+count;let entry=this.faces.get(key);if(entry)return entry;
+  const half=Math.ceil(68*scale)+1,canvas=Art.rasterCanvas(half*2,half*2,true),c=canvas.getContext('2d');c.setTransform(scale,0,0,scale,half,half);c.lineWidth=.65;this.paintFace(c,litCount,count);
+  entry={canvas:Art.rasterImage(canvas),half,scale};if(this.faces.size>=32){const id=this.faces.keys().next().value;Art.releaseRaster(this.faces.get(id));this.faces.delete(id);}this.faces.set(key,entry);return entry;
+ }
+ prepareArtwork(scale){
+  if(!this.config.yinYang)return;
+  scale*=this.config.radius/68;
+  for(let count=0;count<Math.min(16,this.config.threshold);count++)this.faceSprite(scale,Math.min(8,count),count);
+  this.faceSprite(scale,8,0);
+ }
+ clearFaces(){for(const entry of this.faces?.values()||[])root.PinballArt.releaseRaster(entry);this.faces?.clear();}
+ destroy(){this.clearFaces();}
+ draw(ctx,renderer){
+  const o=this.geometry,r=this.config.radius,centerRadius=31,age=this.clock-this.phaseAt,spin=this.phase==='spin';
+  ctx.save();ctx.translate(o.x,o.y);ctx.rotate((o.angle||0)*Math.PI/180);ctx.scale(r/68,r/68);ctx.lineWidth=.65;
+  const flashOn=Math.floor(age/.16)%2===0;
+  const litCount=spin?(flashOn?8:0):this.phase==='idle'?Math.min(8,this.count):0;
+  if(renderer.rasterCacheEnabled&&root.PinballArt){const t=ctx.getTransform(),sprite=this.faceSprite(Math.max(Math.hypot(t.a,t.b),Math.hypot(t.c,t.d)),litCount,this.count);ctx.drawImage(sprite.canvas,-sprite.half/sprite.scale,-sprite.half/sprite.scale,sprite.canvas.width/sprite.scale,sprite.canvas.height/sprite.scale);}else this.paintFace(ctx,litCount,this.count);
   ctx.save();ctx.beginPath();ctx.arc(0,0,centerRadius,0,Math.PI*2);ctx.clip();
   const visual=this.visual();
   if(visual.prize>=0&&visual.prizeOpacity>0){
@@ -112,7 +135,6 @@ class Controller{
   }
   ctx.restore();
   ctx.beginPath();ctx.arc(0,0,centerRadius,0,Math.PI*2);ctx.strokeStyle='#b5a57d';ctx.lineWidth=.65;ctx.stroke();
-  for(let i=0;i<this.config.threshold;i++){const a=(-90+i*360/this.config.threshold)*Math.PI/180;ctx.beginPath();ctx.arc(Math.cos(a)*63,Math.sin(a)*63,1.4,0,Math.PI*2);ctx.fillStyle=i<this.count?'#ffe49a':'#56616b';ctx.fill();}
   const effect=this.config.attackArt;
   if(effect&&!effect.fullscreen&&this.attackAge<effect.duration){
    const im=(this.drawImages?.[effect.src]||renderer.image(effect.src)),t=this.attackAge/effect.duration,size=105*(.3+Math.min(1,t*3));
