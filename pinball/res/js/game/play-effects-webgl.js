@@ -16,7 +16,6 @@ varying vec2 q;varying vec4 s;varying vec4 tint;varying vec2 pixel;
 void main(){
  for(int i=0;i<3;i++){if(bodies[i].z>0.&&distance(pixel,bodies[i].xy)<bodies[i].z)discard;}
  if(maskSize.x>0.){vec2 p=floor(pixel);if(p.x>=0.&&p.y>=0.&&p.x<maskSize.x&&p.y<maskSize.y){float bit=p.y*maskSize.x+p.x;float byte=floor(bit/8.);vec2 uv=(vec2(mod(byte,maskSize.z),floor(byte/maskSize.z))+.5)/maskSize.zw;float value=floor(texture2D(mask,uv).r*255.+.5);if(mod(floor(value/exp2(mod(bit,8.))),2.)>.5)discard;}}
- if(s.w< -1.5){float d=length(q);if(d<s.x)discard;float t=clamp((d-s.x*.65)/(s.y-s.x*.65),0.,1.);vec4 a=vec4(1.,.980392,.862745,.8),b=vec4(1.,.858824,.529412,.45),c=vec4(1.,.858824,.529412,0.);vec4 g=t<.45?mix(a,b,t/.45):mix(b,c,(t-.45)/.55);float alpha=g.a*tint.a;gl_FragColor=vec4(g.rgb*alpha,alpha);return;}
  float d;
  if(s.w<0.){d=length(vec2(max(abs(q.x)-s.x,0.),q.y))-s.y;}
  else{d=abs(length(q)-s.x)-s.y;if(s.w<6.28){float angle=mod(atan(q.y,q.x)-s.z+6.2831853,6.2831853);if(angle>s.w){vec2 a=vec2(cos(s.z),sin(s.z))*s.x;vec2 b=vec2(cos(s.z+s.w),sin(s.z+s.w))*s.x;d=min(distance(q,a),distance(q,b))-s.y;}}}
@@ -50,7 +49,6 @@ void main(){
   for(let i=0;i<12;i+=2){const a=corners[i]*w,b=corners[i+1]*h,at=this.used;this.data[at]=x+a*co-b*si;this.data[at+1]=y+a*si+b*co;this.data[at+2]=a;this.data[at+3]=b;this.data[at+4]=radius*scale;this.data[at+5]=halfWidth*scale;this.data[at+6]=start;this.data[at+7]=span;this.data[at+8]=rgb[0];this.data[at+9]=rgb[1];this.data[at+10]=rgb[2];this.data[at+11]=alpha;this.used+=12;}this.stats.shapes++;
  }
  ring(x,y,radius,width,color,alpha,start=0,span=TAU){const extent=radius+width/2+1/this.scale;this.quad(x,y,extent,extent,radius,width/2,start,span,color,alpha);}
- glow(x,y,radius,level){if(!level)return;const strength=level/4,outer=radius*(1.25+strength*1.25);this.quad(x,y,outer+1/this.scale,outer+1/this.scale,radius,outer,0,-2,'#ffffff',.45+.55*strength);}
  line(a,b,width,color,alpha){const dx=b[0]-a[0],dy=b[1]-a[1],half=Math.hypot(dx,dy)/2,r=width/2,pad=1/this.scale;this.quad((a[0]+b[0])/2,(a[1]+b[1])/2,half+r+pad,r+pad,half,r,0,-1,color,alpha,Math.atan2(dy,dx));}
  flush(){if(!this.used||this.lost)return;this.startFrame();this.uploadMask();const g=this.gl;g.bindBuffer(g.ARRAY_BUFFER,this.buffer);g.bufferData(g.ARRAY_BUFFER,this.data.subarray(0,this.used),g.STREAM_DRAW);g.drawArrays(g.TRIANGLES,0,this.used/12);this.stats.drawCalls++;this.used=0;}
  end(){this.flush();if(!this.frameStarted&&this.painted){this.startFrame();}this.painted=this.stats.shapes>0;this.canvas.hidden=!this.painted;}

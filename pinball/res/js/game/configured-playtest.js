@@ -393,10 +393,10 @@ function prepareSceneUnits(key){
   for(let slot=0;slot<3;slot++){
    const ball=()=>balls()[slot],trails=()=>{const b=ball();return !right&&b?impactPresentation.trailBounds(b):[];};
    const u={fixed:false,ballPlane:plane,moving:true,ballSlot:slot};u.active=()=>!!ball();
-   u.directSprite=()=>{const b=ball();if(!b||!ballImages.sprites||trails().length)return null;const sprite=ballImages.glowing[game.webglEffectsActive?0:impactPresentation.ballGlowLevel(b)],scale=canvas.width/view[2];return {image:sprite.canvas,x:u.x+Math.round(Math.fround(scale)*b.p[0]+Math.fround(-view[0]*scale-u.x)-sprite.half),y:u.y+Math.round(Math.fround(scale)*b.p[1]+Math.fround(-view[1]*scale-u.y)-sprite.half)};};
-   u.prepare=()=>{const b=ball(),glowLevel=game.webglEffectsActive?0:impactPresentation.ballGlowLevel(b),scale=canvas.width/view[2],sprite=ballImages.glowing?.[glowLevel],maskRadius=(sprite?sprite.half/scale:game.physics.ballRadius*(glowLevel?1.25+glowLevel/4*1.25:1))+1/scale,r=G.gameplay?.ballOutline===false?maskRadius:Math.max(maskRadius,5+2.5/scale);u.preparedBalls=b?[{ball:b,bounds:[b.p[0]-r,b.p[1]-r,b.p[0]+r,b.p[1]+r],maskBounds:[b.p[0]-maskRadius,b.p[1]-maskRadius,b.p[0]+maskRadius,b.p[1]+maskRadius]}]:[];};
+   u.directSprite=()=>{const b=ball();if(!b||!ballImages.sprites||trails().length)return null;const sprite=ballImages.glowing[impactPresentation.ballGlowLevel(b)],scale=canvas.width/view[2];return {image:sprite.canvas,x:u.x+Math.round(Math.fround(scale)*b.p[0]+Math.fround(-view[0]*scale-u.x)-sprite.half),y:u.y+Math.round(Math.fround(scale)*b.p[1]+Math.fround(-view[1]*scale-u.y)-sprite.half)};};
+   u.prepare=()=>{const b=ball(),glowLevel=impactPresentation.ballGlowLevel(b),scale=canvas.width/view[2],sprite=ballImages.glowing?.[glowLevel],maskRadius=(sprite?sprite.half/scale:game.physics.ballRadius*(glowLevel?1.25+glowLevel/4*1.25:1))+1/scale,r=G.gameplay?.ballOutline===false?maskRadius:Math.max(maskRadius,5+2.5/scale);u.preparedBalls=b?[{ball:b,bounds:[b.p[0]-r,b.p[1]-r,b.p[0]+r,b.p[1]+r],maskBounds:[b.p[0]-maskRadius,b.p[1]-maskRadius,b.p[0]+maskRadius,b.p[1]+maskRadius]}]:[];};
    u.bounds=()=>{const boxes=[...(u.preparedBalls||[]).map(row=>row.bounds),...trails()];return boxes.length?[Math.min(...boxes.map(b=>b[0])),Math.min(...boxes.map(b=>b[1])),Math.max(...boxes.map(b=>b[2])),Math.max(...boxes.map(b=>b[3]))]:[0,0,1,1];};
-   u.key=()=>{const b=ball();return b?JSON.stringify([b.p,b.state,b.layer,game.webglEffectsActive||game.g.gameplay?.ballTrails===false?null:b.trail,game.webglEffectsActive?0:impactPresentation.ballGlowLevel(b)]):'empty';};
+   u.key=()=>{const b=ball();return b?JSON.stringify([b.p,b.state,b.layer,game.webglEffectsActive||game.g.gameplay?.ballTrails===false?null:b.trail,impactPresentation.ballGlowLevel(b)]):'empty';};
    u.paint=paint(()=>{const trail=trails().length>0;u.skipSprite=!trail;u.hiddenBalls=0;const b=ball();if(trail)impactPresentation.drawTrails(ctx,plane,b);for(const row of u.preparedBalls){if(row.visibility==='hidden'){u.hiddenBalls++;continue;}u.skipSprite=false;drawBall(row.ball);}});
    u.outline=paint(()=>{const b=ball();if(b)drawBallOutlines([b]);});sceneUnits.push(u);
   }
@@ -475,7 +475,6 @@ function draw(){
   effectsGL.begin(view,game.balls,game.physics.ballRadius,ballMasks);
   if(!game.theaterFrozen&&!theaterCanvas?.warning&&!fullscreenBonus){
    effectsGL.useMask(null);reboundEffects.drawGPU(effectsGL);impactPresentation.drawGPU(effectsGL,ballMasks);
-   for(const plane of ['lower','upper','top']){effectsGL.useMask(ballMasks.get(plane));for(const b of ballsByPlane.get(plane)||[])effectsGL.glow(...b.p,game.physics.ballRadius,impactPresentation.ballGlowLevel(b));}
   }
   effectsGL.end();
  }
@@ -488,10 +487,10 @@ function drawReserveBallIcons(reserve,x,y,spacing){
  ctx.setTransform(t.a,t.b,t.c,t.d,t.e,t.f);
 }
 function drawBall(b,t=null){
- if(b.state==='drained')return;if(!game.webglEffectsActive&&(!layeredRenderingEnabled||!ballImages.sprites))impactPresentation.drawBallGlow(ctx,b);
+ if(b.state==='drained')return;if(!layeredRenderingEnabled||!ballImages.sprites)impactPresentation.drawBallGlow(ctx,b);
  if(ballImages.sprites){
   t??=ctx.getTransform();ctx.setTransform(1,0,0,1,0,0);
-  ballImages.draw(ctx,'ball',t.a*b.p[0]+t.c*b.p[1]+t.e,t.b*b.p[0]+t.d*b.p[1]+t.f,layeredRenderingEnabled&&!game.webglEffectsActive?impactPresentation.ballGlowLevel(b):0);
+  ballImages.draw(ctx,'ball',t.a*b.p[0]+t.c*b.p[1]+t.e,t.b*b.p[0]+t.d*b.p[1]+t.f,layeredRenderingEnabled?impactPresentation.ballGlowLevel(b):0);
   ctx.setTransform(t.a,t.b,t.c,t.d,t.e,t.f);
  }else{ctx.save();circle(b.p,game.physics.ballRadius,'#e7eff5','#4c6677');circle([b.p[0]-1,b.p[1]-1],.9,'white');ctx.restore();}
 }
@@ -549,7 +548,7 @@ function suspendGame(){
 function resumeGame(){if(suspendedGameState===null)return;const paused=suspendedGameState;suspendedGameState=null;if(game.paused===paused)syncAudioPause();else game.paused=paused;}
 function applyPhysicsModel(value){value='legacy';game.config.physicsModel=value;for(const f of game.flippers){f.angle=f.rest;f.omega=0;delete f.cadet;}for(const ball of game.balls){ball.spin=0;delete ball.rollingSpin;delete ball.slingshotContacts;}$('physicsModel').value=value;localStorage.setItem('pinball-physics-model',value);}
 function setEffectsRenderer(value,failed=false){
- value=value==='webgl'?'webgl':'2d';if(!failed&&value===effectsRequested)return;
+ value=value==='webgl'&&['touhou1','touhou2'].includes(PLAYTEST_THEME)?'webgl':'2d';if(!failed&&value===effectsRequested)return;
  effectsRequested=value;effectsGL?.destroy();effectsGL=null;
  if(value==='webgl'&&!failed)try{effectsGL=new PlayEffectsWebGL(canvas,()=>setEffectsRenderer('webgl',true));}catch{}
  HitEffects.state(game).setWebGL(!!effectsGL);
