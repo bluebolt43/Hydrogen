@@ -8,7 +8,7 @@ const G=PIRATE_GEOMETRY,P=PiratePhysics,Game=ConfiguredMechanisms.createGame(Lay
 const layeredRenderingEnabled=true;
 const retainedCanvasEnabled=false;
 const combinedCacheEnabled=true;
-let ctx=gameContext,effectsGL=null,effectsRequested=null,gpuForegroundActive=false;
+let ctx=gameContext,effectsGL=null,effectsRequested=null;
 addEventListener('pagehide',()=>effectsGL?.destroy(),{once:true});
 const canvasLayers=layeredRenderingEnabled?new PlayCanvasLayers(canvas,{interactive:retainedCanvasEnabled,cachedOutput:combinedCacheEnabled}):null;
 addEventListener('pagehide',()=>canvasLayers?.destroy(),{once:true});
@@ -401,7 +401,7 @@ function prepareSceneUnits(key){
    u.outline=paint(()=>{const b=ball();if(b)drawBallOutlines([b]);});sceneUnits.push(u);
   }
  };
- if(theaterCanvas)for(const id of theaterCanvas.retainedIds)sceneUnits.push({fixed:false,unmasked:true,separateCache:true,theaterActor:id,bounds:()=>theaterCanvas.drawRows.get(id)?.bounds||[0,0,0,0],key:()=>[theaterCanvas.gpuAttack?'gpu-hidden':theaterCanvas.drawRows.get(id)?.key||'hidden',theaterCanvas.stageClip?.key].join('|'),paint:paint(()=>theaterCanvas.paintPrepared(ctx,id))});
+ if(theaterCanvas)for(const id of theaterCanvas.retainedIds)sceneUnits.push({fixed:false,unmasked:true,separateCache:true,theaterActor:id,bounds:()=>theaterCanvas.drawRows.get(id)?.bounds||[0,0,0,0],key:()=>[theaterCanvas.drawRows.get(id)?.key||'hidden',theaterCanvas.stageClip?.key].join('|'),paint:paint(()=>theaterCanvas.paintPrepared(ctx,id))});
  if(theaterCanvas)sceneUnits.push({fixed:false,separateCache:true,theaterHearts:true,bounds:()=>theaterCanvas.heartBounds(canvasTheaterBounds()),key:()=>theaterCanvas.heartKey(),paint:paint(()=>theaterCanvas.paintHearts(ctx,canvasTheaterBounds()))});
  addArt('background',backgroundBelowBall);addBalls('background',true);addArt('background',backgroundAboveBall);
  addBonus('background');
@@ -418,26 +418,12 @@ function prepareSceneUnits(key){
  if(spaceTheme)for(const plane of ['lower','upper','top']){const posts=[...(game.configuredPosts?.values()||[])].filter(p=>(p.layer==='tavern'?'upper':p.layer)===plane);if(posts.length)sceneUnits.push({fixed:false,bounds:[Math.min(...posts.map(p=>p.center[0]-14)),Math.min(...posts.map(p=>p.center[1]-14)),Math.max(...posts.map(p=>p.center[0]+14)),Math.max(...posts.map(p=>p.center[1]+14))],key:()=>posts.map(p=>[p.raised,p.left].join(':')).join('|'),paint:paint(()=>ConfiguredMechanisms.drawPostCounts(game,ctx,plane,'#000'))});}
  return sceneUnits;
 }
-function drawAttackForegroundGPU(gpu,hud){
- const scale=canvas.width/view[2],score=canvasLayers.layers.get('ui-values');gpu.spritePx(score,0,0,score.width,score.height,{revision:canvasLayers.keys.get('ui-values')});
- for(const reward of floatingRewards)if(reward.bounds)gpu.spritePx(reward.raster.canvas,reward.px,reward.py,reward.raster.width,reward.raster.height,{alpha:Math.min(1,(1.3-(game.time-reward.start))/.35)});
- for(const part of hud.parts)gpu.spritePx(part.raster.canvas,(part.x-view[0])*scale,(part.y-view[1])*scale,part.w*scale,part.h*scale);
- if(hud.bar)gpu.fillRectPx((hud.bar.x-view[0])*scale,(hud.bar.y-view[1])*scale,hud.bar.width*scale,hud.bar.height*scale,hud.bar.color,.8);
- for(const u of sceneCache.authoredUnits){
-  if(u.active&&!u.active()||u.skipSprite||!u.w||!u.h)continue;
-  if(u.visibleSprite){const p=u.visibleSprite;gpu.spritePx(p.image,p.x,p.y,p.image.width,p.image.height);}
-  else gpu.spritePx(u.cache,u.x,u.y,u.w,u.h,{revision:u.signature,uv:[0,0,u.w/u.cache.width,u.h/u.cache.height]});
- }
- for(const u of sceneCache.outlineUnits)if(u.outlineVisible&&u.outlineCache&&u.w&&u.h&&(!u.active||u.active()))gpu.spritePx(u.outlineCache,u.x,u.y,u.w,u.h,{revision:u.signature,uv:[0,0,u.w/u.outlineCache.width,u.h/u.outlineCache.height]});
-}
 function draw(){
  if(!artworkReady){drawRequested=true;return;}
  drawRequested=false;drawnGameTime=game.time;drawnBonusClock=bonusVisualTime();drawnHudState=theater.hudState;drawnPaused=game.paused;drawnFrozen=game.theaterFrozen;
  artRenderer.refreshDrawTable(game);if(sceneTable!==artRenderer.drawTable){sceneTable=artRenderer.drawTable;sceneEpoch++;}updateScreenDim();impactPresentation.update();
  artRenderer.frameArtKeys=new Map();artRenderer.frameArtStates=new Map();artRenderer.frameArtPoses=new Map();
- const attackArt=game.bonus?.config.attackArt,fullscreenBonus=controls.art&&attackArt?.fullscreen&&game.bonus.attackAge<attackArt.duration,gpuBonus=!!effectsGL&&!!fullscreenBonus,previousForeground=gpuForegroundActive;
- if(theaterCanvas)theaterCanvas.gpuAttack=!!effectsGL&&!theaterCanvas.closed&&!theaterCanvas.curtainDynamic&&!theaterCanvas.warning&&!!(theaterCanvas.attackActive||theaterCanvas.effects.length);
- gpuForegroundActive=!!(gpuBonus||theaterCanvas?.gpuAttack&&theater.theme.startsWith('touhou')&&theaterCanvas.effects.length);
+ const attackArt=game.bonus?.config.attackArt,fullscreenBonus=controls.art&&attackArt?.fullscreen&&game.bonus.attackAge<attackArt.duration;
  const scale=canvas.width/view[2],baseKey=[sceneEpoch,theaterCanvas?.staticKey()||0,canvasLayers.revision,artRenderer.layoutRevision,artRenderer.imageRevision,controls.art,controls.screenMask!==false,playAspect,...view].join('|');
  if(theaterCanvas){theaterCanvas.setView(canvasTheaterBounds(),scale);theaterCanvas.prepareState(canvasTheaterBounds(),view,scale);}
  const frameOffset=controls.art&&playAspect!=='landscape'?topOffset():0;
@@ -465,16 +451,14 @@ function draw(){
  canvasLayers.setScoreHeight(scoreHeight);let scoreChanged=false;
  const values=[baseKey,game.score,game.ballNumber,game.extraLives,game.lifeLaunched,game.gameOver,theater.hudState,bossStage?Math.floor(game.time)%2:0].join('|');
  scoreChanged=paintLayer('ui-values',values,()=>paintScore(frameOffset));
- const attackHud=impactPresentation.prepareHud(scale,view);
  prepareFloatingRewards(scale);
  const fx=impactPresentation.damage(),extra=fx.bounds.map(b=>[b[0]-4,b[1]-4,b[2]+4,b[3]+4]);
  for(const reward of floatingRewards)if(reward.bounds)extra.push(reward.bounds);
  if(scoreChanged)extra.push(...scoreDamage(frameOffset,scoreHeight));
  const theaterBounds=canvasTheaterBounds(),theaterDamage=theaterCanvas?theaterCanvas.prepare(theaterBounds):[],isolated=[...fx.isolated,...theaterDamage];
  if(theaterCanvas?.warning||theaterCanvas?.wasWarning){extra.push([view[0],view[1],view[0]+view[2],view[1]+view[3]]);theaterCanvas.wasWarning=theaterCanvas.warning;}
- if(previousForeground!==gpuForegroundActive){for(const u of sceneCache.authoredUnits)if(u.active?.())extra.push([view[0]+u.x/scale,view[1]+u.y/scale,view[0]+(u.x+u.w)/scale,view[1]+(u.y+u.h)/scale]);extra.push([view[0],view[1],view[0]+view[2],view[1]+scoreHeight/scale],...attackHud.parts.map(p=>p.bounds));if(attackHud.bar)extra.push(attackHud.bar.bounds);}
  const bossActive=!!bossPresentation?.active&&!bossPresentation.overlay;
- const regions=canvasLayers.regions(sceneCache.regions('moving',extra,fx.full||bossActive||bossWasActive||!!$('geometryToggle')?.checked||fullscreenBonus&&!gpuBonus,isolated));
+ const regions=canvasLayers.regions(sceneCache.regions('moving',extra,fx.full||bossActive||bossWasActive||!!$('geometryToggle')?.checked||fullscreenBonus,isolated));
  bossWasActive=bossActive;
  const worldRegions=regions.map(b=>[view[0]+b[0]/scale,view[1]+b[1]/scale,view[0]+b[2]/scale,view[1]+b[3]/scale]);
  ctx=mainContext;ctx.save();ctx.setTransform(1,0,0,1,0,0);if(combinedCacheEnabled)canvasLayers.restoreRectangles(ctx,'composite',regions);ctx.beginPath();for(const b of regions)ctx.rect(b[0],b[1],b[2]-b[0],b[3]-b[1]);ctx.clip();if(!combinedCacheEnabled)for(const b of regions)ctx.clearRect(b[0],b[1],b[2]-b[0],b[3]-b[1]);
@@ -482,20 +466,17 @@ function draw(){
  if(theaterCanvas&&!theaterCanvas.stableFrame&&(!theaterCanvas.closed||theaterCanvas.curtainDynamic)){ctx.save();ctx.setTransform(scale,0,0,scale,-view[0]*scale,-view[1]*scale);theaterCanvas.paintDynamic(ctx,theaterBounds,worldRegions);ctx.restore();}
  sceneCache.draw(ctx,{background:false,frequency:'moving',update:false,regions,content:'objects'});
  ctx.setTransform(scale,0,0,scale,-view[0]*scale,-view[1]*scale);
- const viewport=theater.draw(ctx,game,view[1],false,gpuForegroundActive);bossPresentation?.draw(ctx,theater,viewport);controls.drawGeometry?.();
+ const viewport=theater.draw(ctx,game,view[1],false);bossPresentation?.draw(ctx,theater,viewport);controls.drawGeometry?.();
  for(const plane of PinballArt.planes)if(impactPresentation.hasEffects(plane)){const layer=plane==='upper'?'tavern':plane;withLayoutLayer(layer,()=>impactPresentation.draw(ctx,plane,view),activeBallLayers.has(layer));}
- impactPresentation.drawComboFlash(ctx,view,worldRegions,true);if(controls.art&&fullscreenBonus&&!gpuBonus)artRenderer.drawTable?.producer?.attack?.(ctx,artRenderer,view);
- if(!gpuForegroundActive&&theater.customScore&&regions.some(b=>b[1]<scoreHeight&&b[3]>0))canvasLayers.blitScore(ctx,scoreHeight);
- if(!gpuForegroundActive){drawFloatingRewards();impactPresentation.drawHud(ctx,view,{regions:worldRegions});sceneCache.draw(ctx,{background:false,frequency:'moving',update:false,regions,content:'balls'});}bossPresentation?.paint(ctx);theaterCanvas?.paintWarning(ctx,view);ctx.restore();
+ impactPresentation.drawComboFlash(ctx,view,worldRegions,true);if(controls.art&&fullscreenBonus)artRenderer.drawTable?.producer?.attack?.(ctx,artRenderer,view);
+ if(theater.customScore&&regions.some(b=>b[1]<scoreHeight&&b[3]>0))canvasLayers.blitScore(ctx,scoreHeight);
+ drawFloatingRewards();impactPresentation.drawHud(ctx,view,{regions:worldRegions});sceneCache.draw(ctx,{background:false,frequency:'moving',update:false,regions,content:'balls'});bossPresentation?.paint(ctx);theaterCanvas?.paintWarning(ctx,view);ctx.restore();
  if(effectsGL){
   effectsGL.begin(view,game.balls,game.physics.ballRadius,ballMasks);
-  theaterCanvas?.paintAttackGPU(effectsGL,theaterBounds,view);
-  if(gpuBonus)game.bonus.drawAttackGPU(effectsGL,artRenderer,view);
   if(!game.theaterFrozen&&!theaterCanvas?.warning&&!fullscreenBonus){
    effectsGL.useMask(null);reboundEffects.drawGPU(effectsGL);impactPresentation.drawGPU(effectsGL,ballMasks);
    for(const plane of ['lower','upper','top']){effectsGL.useMask(ballMasks.get(plane));for(const b of ballsByPlane.get(plane)||[])effectsGL.glow(...b.p,game.physics.ballRadius,impactPresentation.ballGlowLevel(b));}
   }
-  if(gpuForegroundActive)drawAttackForegroundGPU(effectsGL,attackHud);
   effectsGL.end();
  }
  artRenderer.frameArtKeys=null;artRenderer.frameArtStates=null;artRenderer.frameArtPoses=null;
@@ -572,7 +553,6 @@ function setEffectsRenderer(value,failed=false){
  effectsRequested=value;effectsGL?.destroy();effectsGL=null;
  if(value==='webgl'&&!failed)try{effectsGL=new PlayEffectsWebGL(canvas,()=>setEffectsRenderer('webgl',true));}catch{}
  HitEffects.state(game).setWebGL(!!effectsGL);
- if(effectsGL)game.bonus?.prepareAttackGPU?.(effectsGL,artRenderer);
  sceneEpoch++;drawRequested=true;
 }
 function applyAppSettings(values){if(values.effectsRenderer)setEffectsRenderer(values.effectsRenderer);if(values.physicsModel&&values.physicsModel!==game.config.physicsModel)applyPhysicsModel(values.physicsModel);if(values.playAspect)applyPlayAspect('portrait');if(values.spellRenderer&&bossPresentation){bossPresentation.setRenderer(values.spellRenderer);drawRequested=true;}soundEnabled=values.sound;launchMode=values.launchMode; controls.setLaunchMode?.(launchMode);syncSound();}
@@ -618,7 +598,7 @@ artworkReady=true;
 draw();
 previous=performance.now();accumulator=0;
 requestAnimationFrame(frame);
-try{setEffectsRenderer(localStorage.getItem('pinball-effects-renderer'));}catch{setEffectsRenderer('2d');}
+try{setEffectsRenderer(localStorage.getItem('pinball-effects-renderer')||'webgl');}catch{setEffectsRenderer('webgl');}
 window.viewAPI={hasSettingsControl:true,game,get effectsRenderer(){return effectsGL?'webgl':'2d';},get spellRenderer(){return bossPresentation?.renderer||null;},applyLocale,applySettings:applyAppSettings,suspend:suspendGame,resume:resumeGame};
 
 }

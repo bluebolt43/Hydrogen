@@ -130,7 +130,7 @@ class Controller{
   this.faceSprite(scale,8,0);
  }
  clearFaces(){for(const entry of this.faces?.values()||[])root.PinballArt.releaseRaster(entry);this.faces?.clear();}
- destroy(){this.clearFaces();if(this.attackRaster)root.PinballArt.releaseRaster(this.attackRaster);this.attackRaster=null;}
+ destroy(){this.clearFaces();}
  draw(ctx,renderer){
   const o=this.geometry,r=this.config.radius,centerRadius=31,age=this.clock-this.phaseAt,spin=this.phase==='spin';
   ctx.save();ctx.translate(o.x,o.y);ctx.rotate((o.angle||0)*Math.PI/180);ctx.scale(r/68,r/68);ctx.lineWidth=.65;
@@ -164,21 +164,11 @@ class Controller{
   const t=this.attackAge/effect.duration,p=1-(1-t)**3,start=105*.3*this.config.radius/68,size=start+(Math.hypot(view[2],view[3])*1.5-start)*p;
   return {image,size,x:this.geometry.x+(view[0]+view[2]/2-this.geometry.x)*p,y:this.geometry.y+(view[1]+view[3]/2-this.geometry.y)*p,angle:t*Math.PI/3,alpha:1-t};
  }
- attackSprite(renderer){
-  const effect=this.config.attackArt;if(!effect?.fullscreen)return null;const image=this.drawImages?.[effect.src]||renderer.image(effect.src);if(!image.complete||!image.naturalWidth)return null;
-  if(this.attackRaster?.source===image)return this.attackRaster.canvas;
-  if(this.attackRaster)root.PinballArt.releaseRaster(this.attackRaster);
-  const r=root.PinballRuntimeImages,w=r.width(image),h=r.height(image),scale=Math.min(1,1024/Math.max(w,h)),canvas=root.PinballArt.rasterCanvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale)),true);r.draw(canvas.getContext('2d'),image,0,0,canvas.width,canvas.height);this.attackRaster={source:image,canvas:root.PinballArt.rasterImage(canvas)};return this.attackRaster.canvas;
- }
- prepareAttackGPU(gpu,renderer){const sprite=this.attackSprite(renderer);if(sprite)gpu.texture(sprite);}
  drawAttackOverlay(ctx,renderer,view){
   const p=this.attackPose(renderer,view);if(!p)return;
   ctx.save();ctx.globalAlpha*=p.alpha;ctx.translate(p.x,p.y);ctx.rotate(p.angle);drawRuntimeImage(ctx,p.image,-p.size/2,-p.size/2,p.size,p.size);ctx.restore();
  }
- drawAttackGPU(gpu,renderer,view){
-  const p=this.attackPose(renderer,view);if(!p)return;const sprite=this.attackSprite(renderer);if(!sprite)return;const scale=gpu.canvas.width/view[2];
-  gpu.spritePx(sprite,(p.x-view[0])*scale,(p.y-view[1])*scale,p.size*scale,p.size*scale,{origin:[.5,.5],angle:p.angle*180/Math.PI,alpha:p.alpha});
- }
+
 
 }
 // Same prize rules as bagua, with a passable circle and a flat stone presentation.

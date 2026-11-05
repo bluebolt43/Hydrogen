@@ -127,7 +127,7 @@ class LayoutTheater{
   const previous=this.framePosition||(this.framePosition={});
   for(const [key,value] of Object.entries(position))if(previous[key]!==value){this.frame.style[key]=value;previous[key]=value;}
  }
- draw(ctx,game,top=-170.5,clearWindow=true,hideScore=false){
+ draw(ctx,game,top=-170.5,clearWindow=true){
   this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
   if(this.panelElement){const box=this.viewport(this.panelElement),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
   const canvas=ctx.canvas,r=this.viewport(canvas,true),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
@@ -139,7 +139,7 @@ class LayoutTheater{
   // Reveal the theater iframe beneath the table artwork.
   if(clearWindow&&!this.canvasBackend)ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
   const viewport={rect:r,transform:m};
-  if(this.customScore||hideScore)return viewport;
+  if(this.customScore)return viewport;
   this.paintScorePanel(ctx,game,top);
   return viewport;
  }

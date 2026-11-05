@@ -7,7 +7,7 @@ class TouhouBossPresentation{
   this.game=game;this.theme=theme;this.data=root.TouhouSpellcardSets?.[theme]??root.TouhouSpellcards;this.stage=0;this.elapsed=0;this.hasCast=false;this.originPending=false;this.musicWanted=false;
   this.audio=new Audio();this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.6;this.audio.dataset.role='touhou-boss-bgm';document.body.append(this.audio);
   if(this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
-  if(overlay){let selected=renderer;try{selected??=new URLSearchParams(root.location.search).get('spellRenderer')||localStorage.getItem('pinball-spell-renderer');}catch{}this.requestedRenderer=selected||'2d';this.createOverlay(this.requestedRenderer);}
+  if(overlay){let selected=renderer;try{selected??=new URLSearchParams(root.location.search).get('spellRenderer')||localStorage.getItem('pinball-spell-renderer');}catch{}this.requestedRenderer=selected||'webgl';this.createOverlay(this.requestedRenderer);}
   this.previousMasks=[];this.mask=this.createMask();
  }
  createOverlay(renderer){

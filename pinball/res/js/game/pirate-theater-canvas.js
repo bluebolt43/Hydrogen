@@ -191,19 +191,18 @@ class PirateTheaterCanvas{
   this.drawRows=next;
  }
  paintPrepared(c,id){
-  if(this.gpuAttack)return;
   const row=this.drawRows.get(id);if(!row)return;
   const matrix=c.getTransform(),dx=Math.round(matrix.e-this.drawMatrix.e),dy=Math.round(matrix.f-this.drawMatrix.f),sprite=this.spriteRaster(row.item,row.wpx,row.hpx);
   c.save();c.setTransform(1,0,0,1,dx,dy);if(this.stageClip?.path)c.clip(this.stageClip.path);c.setTransform(1,0,0,1,0,0);c.globalAlpha=row.opacity;c.translate(row.x+dx,row.y+dy);if(row.angle)c.rotate(row.angle*Math.PI/180);if(row.sx!==1||row.sy!==1)c.scale(row.sx,row.sy);c.drawImage(sprite.image,-row.px,-row.py);c.restore();
  }
  prepare(bounds){
-  if(this.stableFrame){this.oldBounds=[];this.previousHeart=this.hearts.key;this.wasCurtainDynamic=false;return [];}
-  const scale=bounds.width/360,boxes=[];for(const item of this.items)if(!this.gpuAttack&&!this.drawRows.has(item.id))boxes.push(this.itemBox(item));this.dirty=[...this.oldBounds,...boxes];this.previousHeart=this.hearts.key;if(this.curtainDynamic||this.wasCurtainDynamic)this.dirty.push([0,0,360,this.height]);this.wasCurtainDynamic=this.curtainDynamic;this.oldBounds=boxes;
+  if(this.stableFrame&&!this.oldBounds.length&&!this.wasCurtainDynamic){this.oldBounds=[];this.previousHeart=this.hearts.key;this.wasCurtainDynamic=false;return [];}
+  const scale=bounds.width/360,boxes=[];for(const item of this.items)if(!this.drawRows.has(item.id))boxes.push(this.itemBox(item));this.dirty=[...this.oldBounds,...boxes];this.previousHeart=this.hearts.key;if(this.curtainDynamic||this.wasCurtainDynamic)this.dirty.push([0,0,360,this.height]);this.wasCurtainDynamic=this.curtainDynamic;this.oldBounds=boxes;
   return this.dirty.filter(b=>b[2]>b[0]&&b[3]>b[1]).map(b=>[(bounds.x||0)+b[0]*scale,b[1]*scale+bounds.y,(bounds.x||0)+b[2]*scale,b[3]*scale+bounds.y]);
  }
  effectOverflow(item){return this.theme?.startsWith('touhou')&&this.effects.includes(item);}
  paintDynamic(c,bounds,regions=[],legacy=false){
-  if(this.closed&&!this.curtainDynamic||this.gpuAttack&&!legacy)return;
+  if(this.closed&&!this.curtainDynamic)return;
   c.save();c.translate(bounds.x||0,bounds.y);c.scale(bounds.width/360,bounds.width/360);
   const native=c.getTransform(),scale=Math.abs(native.a);
   for(const a of this.items||[]){
@@ -217,17 +216,6 @@ class PirateTheaterCanvas{
   if(this.present&&(this.curtainDynamic||legacy&&!this.closed)){const h=this.hearts;c.drawImage(h.canvas,h.box[0],h.box[1],h.box[2],h.box[3]);}
   if(this.curtainDynamic)this.paintCurtains(c,this.open);c.restore();
  }
- paintAttackGPU(gpu,bounds,view){
-  if(!this.gpuAttack)return;
-  const scale=gpu.canvas.width/view[2],stageScale=scale*bounds.width/360,offsetX=((bounds.x||0)-view[0])*scale,offsetY=(bounds.y-view[1])*scale,clip=gpu.stageMask(this);
-  for(const a of this.items||[]){
-   const row=this.drawRows.get(a.id);if(row){const sprite=this.spriteRaster(a,row.wpx,row.hpx);gpu.spritePx(sprite.image,row.x,row.y,row.wpx,row.hpx,{origin:[row.px/row.wpx,row.py/row.hpx],angle:row.angle,sx:row.sx,sy:row.sy,alpha:row.opacity,clip});continue;}
-   const image=this.images.get(a.src),r=root.PinballRuntimeImages,h=a.height||a.width*r.height(image)/r.width(image),[ox,oy]=a.origin||[.5,.5],wpx=Math.max(1,Math.round(a.width*stageScale)),hpx=Math.max(1,Math.round(h*stageScale)),sprite=this.spriteRaster(a,a.maskScale===undefined?wpx:128,a.maskScale===undefined?hpx:128);
-   gpu.spritePx(sprite.image,Math.round((a.x+a.width*ox)*stageScale+offsetX),Math.round((a.y+h*oy)*stageScale+offsetY),wpx,hpx,{origin:[Math.round(wpx*ox)/wpx,Math.round(hpx*oy)/hpx],angle:a.angle,sx:a.sx,sy:a.sy,alpha:a.opacity,clip:this.effectOverflow(a)?null:clip});
-  }
-  if(this.present&&!this.closed&&!this.curtainDynamic){const h=this.hearts;gpu.spritePx(h.canvas,offsetX+h.box[0]*stageScale,offsetY+h.box[1]*stageScale,h.box[2]*stageScale,h.box[3]*stageScale,{revision:h.key,clip});}
- }
-
  spriteRaster(item,width,height){
   const key=[item.src,width,height,item.filter||'',!!item.contain].join('|');let entry=this.spriteCache.get(key);
   if(entry){this.spriteCache.delete(key);this.spriteCache.set(key,entry);return entry;}
@@ -239,9 +227,9 @@ class PirateTheaterCanvas{
   return entry;
  }
  setView(bounds,scale){this.height=bounds.height/(bounds.width/360);this.pixelScale=scale*(bounds.width/360);this.prepareHearts();}
- heartKey(){return [this.hearts.key,this.present,this.closed,this.curtainDynamic,!!this.gpuAttack].join('|');}
+ heartKey(){return [this.hearts.key,this.present,this.closed,this.curtainDynamic].join('|');}
  heartBounds(bounds){const [x,y,w,h]=this.hearts.box,s=bounds.width/360;return [(bounds.x||0)+x*s,bounds.y+y*s,(bounds.x||0)+(x+w)*s,bounds.y+(y+h)*s];}
- paintHearts(c,bounds){if(this.gpuAttack||!this.present||this.closed||this.curtainDynamic)return;const h=this.hearts;c.save();c.translate(bounds.x||0,bounds.y);c.scale(bounds.width/360,bounds.width/360);c.drawImage(h.canvas,h.box[0],h.box[1],h.box[2],h.box[3]);c.restore();}
+ paintHearts(c,bounds){if(!this.present||this.closed||this.curtainDynamic)return;const h=this.hearts;c.save();c.translate(bounds.x||0,bounds.y);c.scale(bounds.width/360,bounds.width/360);c.drawImage(h.canvas,h.box[0],h.box[1],h.box[2],h.box[3]);c.restore();}
  prepareStageClip(key,suffix,width,height,scale,view,paintFrame,bounds){
   if(this.closed&&!this.curtainDynamic){this.stageClip=null;return;}
   if(this.stageClip?.key!==key){
