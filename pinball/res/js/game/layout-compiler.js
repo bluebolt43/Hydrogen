@@ -6,12 +6,13 @@ const SlopeRegions=typeof module!=='undefined'&&module.exports?require('./slope-
 const FLIPPER_REFERENCE={"left":{"pivot":[127.73488354682922,407.82425594329834],"tip":[159.8123854994774,430.25012969970703],"raised":[159.8123854994774,385.6379671096802],"radii":[6.530601114034653,4.059467911720276]},"right":{"pivot":[232.26900172233582,407.82425594329834],"tip":[200.18100053071976,430.25012969970703],"raised":[200.18100053071976,385.6379671096802],"radii":[6.530601114034653,4.059467911720276]}};
 const SHOOTER_FLOOR_ORIGIN=[316.5,448];
 const LEGACY_CENTER_POST={"id":"test-post-center","kind":"test-post","center":[180,435],"radius":6.5,"layer":"lower","mechanic":"rollover_post"};
+const BALL_PRESENTATION=Object.freeze({ballTrails:false,ballEffects:true,ballOutline:true});
 function compileLayout(layout,base){
  const copy=v=>JSON.parse(JSON.stringify(v)),rad=v=>(v||0)*Math.PI/180,dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
  if(layout?.format!=='pinball-layout-editor'||!Array.isArray(layout.objects)||!Array.isArray(layout.lockedLayout))throw Error('不是有效的布局 JSON');
  for(const art of layout.artLayers||[])if(art.state!=='ball-layer'&&(!/^res\/(?:img|hd_img)\/(?:(?:pirate|steampunk|space|touhou|saga)\/)?[^/\\?#]+\.(png|webp|jpg|jpeg)$/i.test(art.src||'')||art.src.includes('..')))throw Error('請指定 res/img 或 res/hd_img 中的圖片：'+art.id);
  const g=copy(base);
- g.layout_preview=true;g.artLayers=copy(layout.artLayers||[]);g.art_layout_objects=copy(layout.objects);g.art_layout_templates=copy(layout.templates||{});g.gameplay=copy(layout.gameplay||{});
+ g.layout_preview=true;g.artLayers=copy(layout.artLayers||[]);g.art_layout_objects=copy(layout.objects);g.art_layout_templates=copy(layout.templates||{});g.gameplay={...copy(layout.gameplay||{}),...BALL_PRESENTATION};
  if(g.gameplay.ballImage!==undefined&&(typeof g.gameplay.ballImage!=='string'||!/^res\/(?:img|hd_img)\/(?:[\w-]+\/)*[\w.-]+\.(?:png|webp|jpe?g)$/i.test(g.gameplay.ballImage)||g.gameplay.ballImage.includes('..')))throw Error('球圖片必須指定 res/img 或 res/hd_img 中的圖片');
  for(const art of g.artLayers)if((art.src||'').endsWith('/plunger-rod.png')&&(art.state||'static')==='static')Object.assign(art,{state:'plunger',bind:'plunger'});
  const rescueGates=new Set(layout.objects.filter(o=>o.mechanic==='rescue-return').map(o=>o.id));
@@ -34,7 +35,7 @@ function compileLayout(layout,base){
  const launcher=layout.objects.find(o=>o.type==='plunger');if(launcher){const dx=launcher.x-g.plunger.x;for(const k of ['x','left','right'])g.plunger[k]+=dx;g.plunger.rest_y=launcher.y-4}
  g.plunger.layer=({lower:'lower',upper:'tavern',top:'top'}[launcher?.layer]||'lower');
  g.plunger.enabled=(layout.version||1)<6||!!(launcher||rod||floor);
- const collar=g.artLayers.find(o=>(o.src||'').endsWith('/plunger-collar.png')&&!o.hidden);if(collar)g.plunger.stroke=Math.max(0,collar.y-Math.cos(rad(collar.angle))*collar.height/2-g.plunger.rest_y);
+ const collar=g.artLayers.find(o=>/\/plunger-collar(?:-plain)?(?:\.runtime)?\.(?:png|webp)$/.test(o.src||'')&&!o.hidden);if(collar)g.plunger.stroke=Math.max(0,collar.y-Math.cos(rad(collar.angle))*collar.height/2-g.plunger.rest_y);
  if((layout.version||1)<6)poly('shooter-divider-lower',[[311,300],[311,448],[316,448],[316,300]]);
  if((layout.version||1)>=6){const upper=copy(layout.upperLayout||[]);g.deck=upper.find(o=>o.kind==='deck')||{points:[]};g.ramp_triangles=upper.filter(o=>o.kind==='ramp-floor').map(o=>o.points);g.upper_parts=upper.filter(o=>!['deck','ramp-floor','portal','drop'].includes(o.kind));g.deck_exit=upper.find(o=>o.kind==='drop')||null;g.portals=g.portals.map(o=>upper.find(u=>u.kind==='portal'&&u.id===o.id)||o)}
  g.guided_tracks=[];g.visual_tracks=[];
@@ -81,7 +82,7 @@ function compileLayout(layout,base){
   else if(t==='rect')poly(key,[[-o.width/2,-o.height/2],[o.width/2,-o.height/2],[o.width/2,o.height/2],[-o.width/2,o.height/2]].map(p=>transform(o,p)),'wall',true);
   else if(t==='line')poly(key,points(),'rail');
   else if(t==='plunger')continue;
-  else if(t==='sensor')poly(key,points(),'sensor',false,{layer,collision:false});
+  else if(t==='sensor')poly(key,points(),'sensor',false,{layer,collision:false,...(o.combo===false?{combo:false}:{})});
   else if(t==='thickline'){if(o.thickness!==5)throw Error('Invalid thick line: '+key);poly(key,points(),'rail',false,{thickness:5})}
   else if(t==='flipper'){
    const original=FLIPPER_REFERENCE.left,[ra,rb]=original.radii,length=dist(original.pivot,original.tip),local=-(length+ra+rb)/2+ra,pivot=transform(o,[local,0]),tip=transform(o,[local+length,0]),side=tip[0]>pivot[0]?'left':'right',src=FLIPPER_REFERENCE[side];

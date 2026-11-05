@@ -1,0 +1,92 @@
+/* Optional GPU collision and attack effects. Table artwork stays on Canvas2D. */
+(function(root){'use strict';
+const corners=[-1,-1,1,-1,-1,1,-1,1,1,-1,1,1],TAU=Math.PI*2;
+class PlayEffectsWebGL{
+ constructor(table,onLost){
+  this.table=table;this.canvas=document.createElement('canvas');this.canvas.dataset.playLayer='webgl-effects';this.canvas.style.cssText='position:fixed;pointer-events:none;z-index:4';this.canvas.hidden=true;
+  this.masks=new Map();this.colors=new Map();this.data=new Float32Array(65536);this.bodies=new Float32Array(9);this.used=0;this.stats={drawCalls:0,shapes:0,maskUploads:0,spriteUploads:0,spriteDrawCalls:0};this.layoutDirty=true;
+  this.spriteTextures=new Map();this.spriteBytes=0;this.stageMasks=new Map();this.spriteColors=new Map();
+  this.onLost=e=>{e.preventDefault();this.lost=true;onLost();};this.onLayout=()=>{this.layoutDirty=true;};
+  try{
+   const g=this.gl=this.canvas.getContext('webgl',{alpha:true,antialias:false,depth:false,stencil:false,premultipliedAlpha:true});if(!g)throw Error('WebGL unavailable');
+   const shader=(type,source)=>{const s=g.createShader(type);g.shaderSource(s,source);g.compileShader(s);if(!g.getShaderParameter(s,g.COMPILE_STATUS)){const message=g.getShaderInfoLog(s);g.deleteShader(s);throw Error(message);}return s;};
+   const v=shader(g.VERTEX_SHADER,'attribute vec2 p;attribute vec2 local;attribute vec4 shape;attribute vec4 color;uniform vec2 size;varying vec2 q;varying vec4 s;varying vec4 tint;varying vec2 pixel;void main(){gl_Position=vec4(p.x/size.x*2.-1.,1.-p.y/size.y*2.,0.,1.);q=local;s=shape;tint=color;pixel=p;}');
+   const f=shader(g.FRAGMENT_SHADER,`precision highp float;
+uniform sampler2D mask;uniform vec4 maskSize;uniform vec3 bodies[3];uniform sampler2D spriteImage;uniform sampler2D clipImage;uniform float spriteMode;uniform float clipEnabled;uniform vec2 size;
+varying vec2 q;varying vec4 s;varying vec4 tint;varying vec2 pixel;
+void main(){
+ if(spriteMode>.5){vec4 value=texture2D(spriteImage,q)*tint;if(clipEnabled>.5)value*=texture2D(clipImage,pixel/size).a;gl_FragColor=value;return;}
+ for(int i=0;i<3;i++){if(bodies[i].z>0.&&distance(pixel,bodies[i].xy)<bodies[i].z)discard;}
+ if(maskSize.x>0.){vec2 p=floor(pixel);if(p.x>=0.&&p.y>=0.&&p.x<maskSize.x&&p.y<maskSize.y){float bit=p.y*maskSize.x+p.x;float byte=floor(bit/8.);vec2 uv=(vec2(mod(byte,maskSize.z),floor(byte/maskSize.z))+.5)/maskSize.zw;float value=floor(texture2D(mask,uv).r*255.+.5);if(mod(floor(value/exp2(mod(bit,8.))),2.)>.5)discard;}}
+ if(s.w< -1.5){float d=length(q);if(d<s.x)discard;float t=clamp((d-s.x*.65)/(s.y-s.x*.65),0.,1.);vec4 a=vec4(1.,.980392,.862745,.8),b=vec4(1.,.858824,.529412,.45),c=vec4(1.,.858824,.529412,0.);vec4 g=t<.45?mix(a,b,t/.45):mix(b,c,(t-.45)/.55);float alpha=g.a*tint.a;gl_FragColor=vec4(g.rgb*alpha,alpha);return;}
+ float d;
+ if(s.w<0.){d=length(vec2(max(abs(q.x)-s.x,0.),q.y))-s.y;}
+ else{d=abs(length(q)-s.x)-s.y;if(s.w<6.28){float angle=mod(atan(q.y,q.x)-s.z+6.2831853,6.2831853);if(angle>s.w){vec2 a=vec2(cos(s.z),sin(s.z))*s.x;vec2 b=vec2(cos(s.z+s.w),sin(s.z+s.w))*s.x;d=min(distance(q,a),distance(q,b))-s.y;}}}
+ float alpha=tint.a*clamp(.5-d,0.,1.);gl_FragColor=vec4(tint.rgb*alpha,alpha);
+}`);
+   this.program=g.createProgram();g.attachShader(this.program,v);g.attachShader(this.program,f);g.linkProgram(this.program);g.deleteShader(v);g.deleteShader(f);if(!g.getProgramParameter(this.program,g.LINK_STATUS))throw Error(g.getProgramInfoLog(this.program));g.useProgram(this.program);
+   this.buffer=g.createBuffer();g.bindBuffer(g.ARRAY_BUFFER,this.buffer);for(const [name,n,offset]of [['p',2,0],['local',2,8],['shape',4,16],['color',4,32]]){const a=g.getAttribLocation(this.program,name);g.enableVertexAttribArray(a);g.vertexAttribPointer(a,n,g.FLOAT,false,48,offset);}
+   this.size=g.getUniformLocation(this.program,'size');this.maskSize=g.getUniformLocation(this.program,'maskSize');this.bodyLocation=g.getUniformLocation(this.program,'bodies[0]');g.uniform1i(g.getUniformLocation(this.program,'mask'),0);g.uniform1i(g.getUniformLocation(this.program,'spriteImage'),1);g.uniform1i(g.getUniformLocation(this.program,'clipImage'),2);this.spriteMode=g.getUniformLocation(this.program,'spriteMode');this.clipEnabled=g.getUniformLocation(this.program,'clipEnabled');g.enable(g.BLEND);g.blendFunc(g.ONE,g.ONE_MINUS_SRC_ALPHA);g.pixelStorei(g.UNPACK_ALIGNMENT,1);
+   this.emptyTexture=g.createTexture();g.bindTexture(g.TEXTURE_2D,this.emptyTexture);this.textureParameters();g.texImage2D(g.TEXTURE_2D,0,g.LUMINANCE,1,1,0,g.LUMINANCE,g.UNSIGNED_BYTE,new Uint8Array(1));
+   this.canvas.addEventListener('webglcontextlost',this.onLost);root.addEventListener('resize',this.onLayout);root.addEventListener('scroll',this.onLayout,true);document.body.append(this.canvas);
+  }catch(error){this.destroy();throw error;}
+ }
+ textureParameters(){const g=this.gl;for(const name of [g.TEXTURE_WRAP_S,g.TEXTURE_WRAP_T])g.texParameteri(g.TEXTURE_2D,name,g.CLAMP_TO_EDGE);for(const name of [g.TEXTURE_MIN_FILTER,g.TEXTURE_MAG_FILTER])g.texParameteri(g.TEXTURE_2D,name,g.NEAREST);}
+ begin(view,balls,radius,masks){
+  if(this.maskLayout!==masks.revision){for(const r of this.masks.values())this.gl.deleteTexture(r.texture);this.masks.clear();this.maskLayout=masks.revision;}
+  const c=this.canvas,t=this.table;if(c.width!==t.width||c.height!==t.height){c.width=t.width;c.height=t.height;this.layoutDirty=true;}
+  if(this.layoutDirty){const r=t.getBoundingClientRect();c.style.left=r.left+'px';c.style.top=r.top+'px';c.style.width=r.width+'px';c.style.height=r.height+'px';this.layoutDirty=false;}
+  this.view=view;this.scale=t.width/view[2];this.used=0;this.frameStarted=false;this.mask=null;this.imageBatch=null;this.stats.drawCalls=this.stats.shapes=this.stats.maskUploads=this.stats.spriteUploads=this.stats.spriteDrawCalls=0;this.bodies.fill(0);
+  let i=0;for(const b of balls){if(b.state==='drained'||i===3)continue;this.bodies[i*3]=(b.p[0]-view[0])*this.scale;this.bodies[i*3+1]=(b.p[1]-view[1])*this.scale;this.bodies[i*3+2]=radius*this.scale+.5;i++;}
+ }
+ startFrame(){if(this.frameStarted)return;const g=this.gl;g.viewport(0,0,this.canvas.width,this.canvas.height);g.uniform2f(this.size,this.canvas.width,this.canvas.height);g.uniform3fv(this.bodyLocation,this.bodies);g.clearColor(0,0,0,0);g.clear(g.COLOR_BUFFER_BIT);this.frameStarted=true;}
+ useMask(mask){if(mask?.empty)mask=null;if(this.mask===mask)return;this.flush();this.mask=mask;}
+ uploadMask(){
+  const g=this.gl,m=this.mask;if(!m){g.bindTexture(g.TEXTURE_2D,this.emptyTexture);g.uniform4f(this.maskSize,0,0,1,1);return;}
+  let record=this.masks.get(m);if(!record){for(const [old,r]of this.masks)if(old.width!==m.width||old.height!==m.height){g.deleteTexture(r.texture);this.masks.delete(old);}record={texture:g.createTexture(),revision:-1,width:256,height:Math.ceil(m.bits.length/256)};record.bytes=new Uint8Array(record.width*record.height);this.masks.set(m,record);g.bindTexture(g.TEXTURE_2D,record.texture);this.textureParameters();g.texImage2D(g.TEXTURE_2D,0,g.LUMINANCE,record.width,record.height,0,g.LUMINANCE,g.UNSIGNED_BYTE,null);}
+  g.bindTexture(g.TEXTURE_2D,record.texture);if(record.revision!==m.revision){record.bytes.set(m.bits);g.texSubImage2D(g.TEXTURE_2D,0,0,0,record.width,record.height,g.LUMINANCE,g.UNSIGNED_BYTE,record.bytes);record.revision=m.revision;this.stats.maskUploads++;}g.uniform4f(this.maskSize,m.width,m.height,record.width,record.height);
+ }
+ quad(x,y,w,h,radius,halfWidth,start,span,color,alpha,angle=0){
+  if(alpha<=0||this.lost)return;if(this.imageBatch){this.flush();this.imageBatch=null;}const needed=72;if(this.used+needed>this.data.length)this.flush();let rgb=this.colors.get(color);if(!rgb){rgb=[parseInt(color.slice(1,3),16)/255,parseInt(color.slice(3,5),16)/255,parseInt(color.slice(5,7),16)/255];this.colors.set(color,rgb);}
+  const co=Math.cos(angle),si=Math.sin(angle),scale=this.scale;x=(x-this.view[0])*scale;y=(y-this.view[1])*scale;w*=scale;h*=scale;
+  for(let i=0;i<12;i+=2){const a=corners[i]*w,b=corners[i+1]*h,at=this.used;this.data[at]=x+a*co-b*si;this.data[at+1]=y+a*si+b*co;this.data[at+2]=a;this.data[at+3]=b;this.data[at+4]=radius*scale;this.data[at+5]=halfWidth*scale;this.data[at+6]=start;this.data[at+7]=span;this.data[at+8]=rgb[0];this.data[at+9]=rgb[1];this.data[at+10]=rgb[2];this.data[at+11]=alpha;this.used+=12;}this.stats.shapes++;
+ }
+ ring(x,y,radius,width,color,alpha,start=0,span=TAU){const extent=radius+width/2+1/this.scale;this.quad(x,y,extent,extent,radius,width/2,start,span,color,alpha);}
+ glow(x,y,radius,level){if(!level)return;const strength=level/4,outer=radius*(1.25+strength*1.25);this.quad(x,y,outer+1/this.scale,outer+1/this.scale,radius,outer,0,-2,'#ffffff',.45+.55*strength);}
+ line(a,b,width,color,alpha){const dx=b[0]-a[0],dy=b[1]-a[1],half=Math.hypot(dx,dy)/2,r=width/2,pad=1/this.scale;this.quad((a[0]+b[0])/2,(a[1]+b[1])/2,half+r+pad,r+pad,half,r,0,-1,color,alpha,Math.atan2(dy,dx));}
+ flush(){if(!this.used||this.lost)return;this.startFrame();const g=this.gl;if(this.imageBatch){g.uniform1f(this.spriteMode,1);g.activeTexture(g.TEXTURE1);g.bindTexture(g.TEXTURE_2D,this.imageBatch.image.texture);g.activeTexture(g.TEXTURE2);g.bindTexture(g.TEXTURE_2D,this.imageBatch.clip?.texture||this.emptyTexture);g.uniform1f(this.clipEnabled,this.imageBatch.clip?1:0);g.activeTexture(g.TEXTURE0);this.stats.spriteDrawCalls++;}else{g.uniform1f(this.spriteMode,0);g.uniform1f(this.clipEnabled,0);this.uploadMask();}g.bindBuffer(g.ARRAY_BUFFER,this.buffer);g.bufferData(g.ARRAY_BUFFER,this.data.subarray(0,this.used),g.STREAM_DRAW);g.drawArrays(g.TRIANGLES,0,this.used/12);this.stats.drawCalls++;this.used=0;}
+ texture(source,revision=null){
+  const width=source.width||source.naturalWidth,height=source.height||source.naturalHeight;if(!width||!height||this.lost)return null;
+  let row=this.spriteTextures.get(source);const bytes=width*height*4,g=this.gl;
+  if(row&&row.width===width&&row.height===height&&row.revision===revision){this.spriteTextures.delete(source);this.spriteTextures.set(source,row);return row;}
+  this.flush();
+  if(row){g.deleteTexture(row.texture);this.spriteBytes-=row.bytes;this.spriteTextures.delete(source);}
+  while(this.spriteBytes+bytes>64*1024*1024&&this.spriteTextures.size){const [image,old]=this.spriteTextures.entries().next().value;g.deleteTexture(old.texture);this.spriteBytes-=old.bytes;this.spriteTextures.delete(image);}
+  const texture=g.createTexture();g.activeTexture(g.TEXTURE1);g.bindTexture(g.TEXTURE_2D,texture);this.textureParameters();g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);g.pixelStorei(g.UNPACK_PREMULTIPLY_ALPHA_WEBGL,true);g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,source);g.activeTexture(g.TEXTURE0);
+  row={texture,width,height,bytes,revision};this.spriteTextures.set(source,row);this.spriteBytes+=bytes;this.stats.spriteUploads++;return row;
+ }
+ spritePx(source,x,y,width,height,options={}){
+  const alpha=options.alpha??1;if(alpha<=0||!width||!height||this.lost)return;
+  const image=this.texture(source,options.revision),clip=options.clip?this.texture(options.clip.image,options.clip.key):null;if(!image)return;
+  if(!this.imageBatch||this.imageBatch.image!==image||this.imageBatch.clip!==clip){this.flush();this.imageBatch={image,clip};}
+  if(this.used+72>this.data.length)this.flush();
+  const [ox,oy]=options.origin||[0,0],angle=(options.angle||0)*Math.PI/180,co=Math.cos(angle),si=Math.sin(angle),sx=options.sx??1,sy=options.sy??1,[u0,v0,u1,v1]=options.uv||[0,0,1,1],tint=options.tint||[1,1,1];
+  for(let i=0;i<12;i+=2){const u=(corners[i]+1)/2,v=(corners[i+1]+1)/2,a=(u-ox)*width*sx,b=(v-oy)*height*sy,at=this.used;this.data[at]=x+a*co-b*si;this.data[at+1]=y+a*si+b*co;this.data[at+2]=u0+(u1-u0)*u;this.data[at+3]=v0+(v1-v0)*v;this.data[at+4]=this.data[at+5]=this.data[at+6]=this.data[at+7]=0;this.data[at+8]=tint[0]*alpha;this.data[at+9]=tint[1]*alpha;this.data[at+10]=tint[2]*alpha;this.data[at+11]=alpha;this.used+=12;}this.stats.shapes++;
+ }
+ fillRectPx(x,y,width,height,color,alpha=1){
+  if(!this.white){this.white=document.createElement('canvas');this.white.width=this.white.height=1;this.white.getContext('2d').fillRect(0,0,1,1);}
+  let tint=this.spriteColors.get(color);if(!tint){const c=this.white.getContext('2d');c.clearRect(0,0,1,1);c.fillStyle=color;c.fillRect(0,0,1,1);const p=c.getImageData(0,0,1,1).data;tint=[p[0]/255,p[1]/255,p[2]/255,p[3]/255];this.spriteColors.set(color,tint);c.clearRect(0,0,1,1);c.fillStyle='#fff';c.fillRect(0,0,1,1);}
+  this.spritePx(this.white,x,y,width,height,{tint,alpha:alpha*tint[3]});
+ }
+ stageMask(theater,hearts=false){
+  const clip=theater.stageClip;if(!clip)return null;
+  const key=[clip.key,hearts?clip.heartKey:'',this.canvas.width,this.canvas.height].join('|');let records=this.stageMasks.get(theater);if(!records){records=new Map();this.stageMasks.set(theater,records);}let row=records.get(hearts);
+  if(row?.key===key)return row;
+  if(!row){row={image:document.createElement('canvas')};records.set(hearts,row);}
+  const c=row.image;c.width=this.canvas.width;c.height=this.canvas.height;const b=c.getContext('2d');b.save();b.clip(clip.path);if(hearts&&clip.heartPath)b.clip(clip.heartPath,'evenodd');b.fillStyle='#fff';b.fillRect(0,0,c.width,c.height);b.restore();row.key=key;return row;
+ }
+ end(){this.flush();if(!this.frameStarted&&this.painted){this.startFrame();}this.painted=this.stats.shapes>0;this.canvas.hidden=!this.painted;}
+ destroy(){root.removeEventListener('resize',this.onLayout);root.removeEventListener('scroll',this.onLayout,true);this.canvas.removeEventListener('webglcontextlost',this.onLost);if(this.gl&&!this.lost){for(const r of this.spriteTextures.values())this.gl.deleteTexture(r.texture);for(const r of this.masks.values())this.gl.deleteTexture(r.texture);if(this.emptyTexture)this.gl.deleteTexture(this.emptyTexture);if(this.buffer)this.gl.deleteBuffer(this.buffer);if(this.program)this.gl.deleteProgram(this.program);this.gl.getExtension('WEBGL_lose_context')?.loseContext();}this.masks.clear();this.spriteTextures.clear();this.spriteBytes=0;for(const records of this.stageMasks.values())for(const row of records.values())row.image.width=row.image.height=0;this.stageMasks.clear();if(this.white)this.white.width=this.white.height=0;this.canvas.remove();this.canvas.width=this.canvas.height=0;}
+}
+root.PlayEffectsWebGL=PlayEffectsWebGL;
+})(typeof window!=='undefined'?window:globalThis);

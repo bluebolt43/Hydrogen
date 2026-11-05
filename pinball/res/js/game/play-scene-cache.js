@@ -107,11 +107,11 @@ class PlaySceneCache{
    if(u.outline&&!authoredMask)u.outlineCache=make(1,1);
   }
   s.globalCompositeOperation='source-over';
-  this.groups=[];for(const u of units){if(u.fixed||!u.cache)continue;let g=this.groups.at(-1);if(u.moving||!g||g.moving){g={units:[],moving:!!u.moving,revision:0,boundsRevision:-1,renderedRevision:-1};this.groups.push(g);}g.units.push(u);u.group=g;}
+  this.groups=[];for(const u of units){if(u.fixed||!u.cache)continue;let g=this.groups.at(-1);if(u.moving||u.separateCache||!g||g.moving||g.separateCache){g={units:[],moving:!!u.moving,separateCache:!!u.separateCache,revision:0,boundsRevision:-1,renderedRevision:-1};this.groups.push(g);}g.units.push(u);u.group=g;}
   for(const g of this.groups)if(g.units.length>1)g.cache=make(1,1);
-  this.retainedUnits=units.filter(u=>!u.fixed&&!u.moving&&u.cache);this.movingUnits=units.filter(u=>u.moving&&u.cache);this.authoredUnits=units.filter(u=>u.authoredMask);this.outlineUnits=units.filter(u=>u.outline);
-  for(const u of this.movingUnits)if(u.cover&&!u.authoredMask)u.coverRetained=units.slice(units.indexOf(u)+1).filter(v=>!v.fixed&&!v.moving&&v.cache);
-  for(const frequency of ['all','moving','retained'])for(const content of ['all','objects','balls'])this.drawGroups[frequency+':'+content]=this.groups.filter(g=>(frequency==='all'||!!g.moving===(frequency==='moving'))&&(content==='all'||(g.units[0].ballSlot!==undefined)===(content==='balls')));
+  this.retainedUnits=units.filter(u=>!u.fixed&&(!u.moving||u.cacheWhenIdle)&&u.cache);this.movingUnits=units.filter(u=>u.moving&&!u.cacheWhenIdle&&u.cache);this.authoredUnits=units.filter(u=>u.authoredMask);this.outlineUnits=units.filter(u=>u.outline);
+  for(const u of units)if(u.moving&&u.cover&&!u.authoredMask)u.coverRetained=units.slice(units.indexOf(u)+1).filter(v=>!v.fixed&&(!v.moving||v.cacheWhenIdle)&&v.cache);
+  for(const frequency of ['all','moving','retained'])for(const content of ['all','objects','balls'])this.drawGroups[frequency+':'+content]=this.groups.filter(g=>(frequency==='all'||(frequency==='retained'?!g.moving||g.units[0].cacheWhenIdle:g.moving))&&(content==='all'||(g.units[0].ballSlot!==undefined)===(content==='balls')));
   this.revision=key;this.needsMoving=true;this.needsRetained=true;this.previousExtra=[];this.previousIsolated=[];this.stats.builds++;
  }
  prepareBallMask(u){
@@ -138,7 +138,7 @@ class PlaySceneCache{
   const old=[u.x,u.y,u.x+u.w,u.y+u.h];u.prepare?.();
   if(typeof u.bounds==='function')this.rect(u,u.bounds());if(!u.w||!u.h){u.damage=[old];u.signature=signature;return true;}
   if(u.authoredMask)this.prepareBallMask(u);
-  if(u.authoredMask&&u.maskVisibility==='visible'&&(u.visibleSprite=u.directSprite?.())){
+  if(u.authoredMask&&(u.maskVisibility==='visible'||u.preparedBalls?.length&&u.preparedBalls.every(row=>row.visibility==='visible'))&&(u.visibleSprite=u.directSprite?.())){
    u.skipSprite=false;u.hiddenBalls=0;u.outlineVisible=false;u.damage=[old,[u.x,u.y,u.x+u.w,u.y+u.h]];u.signature=signature;this.stats.updates++;return true;
   }
   size(u.cache,u.w,u.h,!!u.authoredMask||!!u.effectsOnly);
@@ -156,21 +156,34 @@ class PlaySceneCache{
   if(u.outlineVisible){const a=u.outlineCache||(u.outlineCache=make(1,1));size(a,u.w,u.h,!!u.authoredMask);const o=a.getContext('2d');o.setTransform(1,0,0,1,0,0);o.clearRect(0,0,a.width,a.height);this.world(o,u.x,u.y);u.outline(o);o.setTransform(1,0,0,1,0,0);o.save();o.globalCompositeOperation='destination-in';if(u.authoredMask){o.fillStyle='#000';o.fill(u.maskPath);}else o.drawImage(mask,maskX,maskY);o.restore();}
   u.damage=[old,[u.x,u.y,u.x+u.w,u.y+u.h]];u.signature=signature;this.stats.updates++;return true;
  }
+ repairCover(u,changed,force=false){
+  if(!u.cover||u.authoredMask||!u.coverRetained||!force&&!changed.size)return;
+  const above=u.coverRetained,regions=[];
+  if(force)regions.push([0,0,u.cover.width,u.cover.height]);
+  else for(const v of above)if(changed.has(v))for(const b of v.damage){const x0=Math.max(0,b[0]-u.coverX),y0=Math.max(0,b[1]-u.coverY),x1=Math.min(u.cover.width,b[2]-u.coverX),y1=Math.min(u.cover.height,b[3]-u.coverY);if(x1>x0&&y1>y0)regions.push([x0,y0,x1,y1]);}
+  if(!regions.length)return;
+  const c=u.cover.getContext('2d');c.globalCompositeOperation='copy';c.drawImage(u.staticCover,0,0);c.globalCompositeOperation='source-over';
+  if(!u.cacheWhenIdle||u.transient)for(const v of above)if(!v.transient&&v.x+v.w>u.coverX&&v.x<u.coverX+u.cover.width&&v.y+v.h>u.coverY&&v.y<u.coverY+u.cover.height)c.drawImage(v.cache,v.x-u.coverX,v.y-u.coverY);
+  if(u.outline)for(const region of regions)this.opaque(u,region);
+  u.maskRevision++;
+ }
  refreshMovingCovers(changed){
-  // Repair mask caches only; output regions are tracked independently.
-  for(const u of this.movingUnits){if(!u.cover||u.authoredMask)continue;
-   const above=u.coverRetained,affected=above.filter(v=>changed.has(v));if(!affected.length)continue;
-   const regions=[];for(const v of affected){const x0=Math.max(0,v.x-u.coverX),y0=Math.max(0,v.y-u.coverY),x1=Math.min(u.cover.width,v.x+v.w-u.coverX),y1=Math.min(u.cover.height,v.y+v.h-u.coverY);if(x1>x0&&y1>y0)regions.push([x0,y0,x1,y1]);}if(!regions.length)continue;
-   const c=u.cover.getContext('2d');c.globalCompositeOperation='copy';c.drawImage(u.staticCover,0,0);c.globalCompositeOperation='source-over';for(const v of above)if(v.x+v.w>u.coverX&&v.x<u.coverX+u.cover.width&&v.y+v.h>u.coverY&&v.y<u.coverY+u.cover.height)c.drawImage(v.cache,v.x-u.coverX,v.y-u.coverY);
-   if(u.outline)for(const region of regions)this.opaque(u,region);
-   u.maskRevision++;
-  }
+  for(const u of this.movingUnits)this.repairCover(u,changed);
   this.retainedRevision++;
  }
+
  update(){
   const changed=new Set();this.changedMoving=[];this.changedRetained=[];
   for(const u of this.authoredUnits)u.maskRevision=u.authoredMask.revision;
-  for(const u of this.retainedUnits)if(this.updateUnit(u,u.key())){changed.add(u);this.changedRetained.push(...u.damage);}
+  for(let i=this.retainedUnits.length-1;i>=0;i--){
+   const u=this.retainedUnits[i],key=u.key(),wasTransient=!!u.transient;u.transient=!!u.isTransient?.();
+   if(u.cacheWhenIdle&&(u.transient||wasTransient))this.repairCover(u,changed,u.transient!==wasTransient);
+   const signature=u.cacheWhenIdle?key+'|transient:'+u.transient+'|mask:'+u.maskRevision:key;
+   if(this.updateUnit(u,signature)){
+    if(u.transient||wasTransient)this.changedMoving.push(...u.damage);
+    if(!u.transient||!wasTransient){changed.add(u);this.changedRetained.push(...u.damage);}
+   }
+  }
   if(changed.size)this.refreshMovingCovers(changed);
   for(const u of this.movingUnits){
    if(u.authoredMask&&u.active&&!u.active()){
@@ -191,23 +204,33 @@ class PlaySceneCache{
  }
  draw(ctx,{background=true,clear=false,frequency='all',update=true,regions=null,content='all'}={}){
   if(update)this.update();
-  const intersects=(x,y,w,h)=>!regions||regions.some(b=>x<b[2]&&b[0]<x+w&&y<b[3]&&b[1]<y+h);
+  const intersection=(x,y,w,h)=>{
+   if(!regions)return [x,y,x+w,y+h];let left=x+w,top=y+h,right=x,bottom=y;
+   for(const b of regions){const l=Math.max(x,b[0]),t=Math.max(y,b[1]),r=Math.min(x+w,b[2]),d=Math.min(y+h,b[3]);if(r>l&&d>t){left=Math.min(left,l);top=Math.min(top,t);right=Math.max(right,r);bottom=Math.max(bottom,d);}}
+   return right>left&&bottom>top?[left,top,right,bottom]:null;
+  };
+  const blit=(image,x,y,w,h,box)=>{const [left,top,right,bottom]=box,width=right-left,height=bottom-top;ctx.drawImage(image,left-x,top-y,width,height,left,top,width,height);this.stats.blits++;};
   this.stats.blits=0;ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;if(clear)ctx.clearRect(0,0,this.width,this.height);
   if(background){ctx.globalCompositeOperation='copy';ctx.drawImage(this.base,0,0);this.stats.blits++;}ctx.globalCompositeOperation='source-over';
   for(const g of this.drawGroups[frequency+':'+content]||[]){
-   if(g.units.length===1){const u=g.units[0];if(u.active&&!u.active())continue;if(u.skipSprite||!u.w||!u.h||!intersects(u.x,u.y,u.w,u.h))continue;const sprite=u.visibleSprite;if(sprite)ctx.drawImage(sprite.image,sprite.x,sprite.y);else ctx.drawImage(u.cache,0,0,u.w,u.h,u.x,u.y,u.w,u.h);this.stats.blits++;continue;}
+   if(g.units.length===1){
+    const u=g.units[0];if(u.cacheWhenIdle&&frequency!=='all'&&(frequency==='moving')!==!!u.transient)continue;if(u.active&&!u.active()||u.skipSprite||!u.w||!u.h)continue;
+    const sprite=u.visibleSprite,x=sprite?sprite.x:u.x,y=sprite?sprite.y:u.y,w=sprite?sprite.image.width:u.w,h=sprite?sprite.image.height:u.h,box=intersection(x,y,w,h);if(!box)continue;
+    if(sprite&&box[0]===x&&box[1]===y&&box[2]===x+w&&box[3]===y+h){ctx.drawImage(sprite.image,x,y);this.stats.blits++;}else blit(sprite?sprite.image:u.cache,x,y,w,h,box);continue;
+   }
    if(g.boundsRevision!==g.revision){
     let left=this.width,top=this.height,right=0,bottom=0;
     for(const u of g.units)if(u.w&&u.h){left=Math.min(left,u.x);top=Math.min(top,u.y);right=Math.max(right,u.x+u.w);bottom=Math.max(bottom,u.y+u.h);}
     g.x=left;g.y=top;g.w=Math.max(0,right-left);g.h=Math.max(0,bottom-top);g.boundsRevision=g.revision;
    }
-   if(!g.w||!g.h||!intersects(g.x,g.y,g.w,g.h))continue;
+   if(!g.w||!g.h)continue;const box=intersection(g.x,g.y,g.w,g.h);if(!box)continue;
    if(g.renderedRevision!==g.revision){size(g.cache,g.w,g.h);const c=g.cache.getContext('2d');c.clearRect(0,0,g.w,g.h);for(const u of g.units)if(u.w&&u.h)c.drawImage(u.cache,0,0,u.w,u.h,u.x-g.x,u.y-g.y,u.w,u.h);g.renderedRevision=g.revision;this.stats.updates++;}
-   ctx.drawImage(g.cache,g.x,g.y);this.stats.blits++;
+   blit(g.cache,g.x,g.y,g.w,g.h,box);
   }
-  if(content!=='objects'&&frequency!=='retained')for(const u of this.outlineUnits)if(u.outlineVisible!==false&&u.outlineCache&&u.w&&u.h&&(!u.active||u.active())&&intersects(u.x,u.y,u.w,u.h)){ctx.drawImage(u.outlineCache,0,0,u.w,u.h,u.x,u.y,u.w,u.h);this.stats.blits++;}
+  if((content==='all'||content==='balls')&&frequency!=='retained')for(const u of this.outlineUnits)if(u.outlineVisible!==false&&u.outlineCache&&u.w&&u.h&&(!u.active||u.active())){const box=intersection(u.x,u.y,u.w,u.h);if(box)blit(u.outlineCache,u.x,u.y,u.w,u.h,box);}
   ctx.restore();
  }
+
  destroy(){for(const g of this.groups)if(g.cache)g.cache.width=g.cache.height=0;this.groups=[];for(const name of ['base','suffix'])if(this[name])this[name].width=this[name].height=0;for(const u of this.units)for(const name of ['fixedImage','staticCover','cover','opaque','cache','outlineCache','maskTile'])if(u[name])u[name].width=u[name].height=0;this.units=[];this.retainedUnits=[];this.movingUnits=[];this.authoredUnits=[];this.outlineUnits=[];this.drawGroups={};this.revision=null;}
 }
 PlaySceneCache.BallMasks=PlayBallMasks;

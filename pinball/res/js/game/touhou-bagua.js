@@ -12,7 +12,7 @@ function drawYinYang(ctx,radius){
 }
 class Controller{
  constructor(game,config){this.game=game;this.config=config;this.geometry=game.g.art_layout_objects.find(o=>o.id===config.object);this.clock=0;this.multiplier=1;this.reset();}
- reset(){this.count=0;this.phase='idle';this.winner=-1;this.phaseAt=this.clock;this.attackAge=Infinity;this.entryAt=-Infinity;}
+ reset(){this.count=0;this.phase='idle';this.winner=-1;this.phaseAt=this.clock;this.attackAge=Infinity;this.entryAt=-Infinity;this.entryLatched=new WeakSet();}
  event(type,data){
   if(type==='new-game'){this.multiplier=1;this.reset();}
   if(type==='drain'&&this.game.g.gameplay?.touhouBagua&&!this.game.storyMode&&!this.game.preserveTableOnDrain&&!this.game.hasPendingBalls()&&this.game.balls.every(b=>b.state==='drained')){this.multiplier=1;this.reset();}
@@ -20,14 +20,23 @@ class Controller{
   this.progress();
  }
  crossCircle(ball,previous,layer){
-  if(this.config.trigger!=='circle-entry'||this.phase==='spin'||this.phase==='winflash')return;
+  if(this.config.trigger!=='circle-entry')return;
   const o=this.geometry,countLayer=this.config.countLayer||o.layer,expected=countLayer==='upper'?'tavern':countLayer||'lower';
   if(this.game.paused||this.game.gameOver||this.game.theaterFrozen||ball.state!=='playing'||layer!==expected||ball.layer!==expected)return;
   const a=[previous[0]-(o.cx??o.x),previous[1]-(o.cy??o.y)],v=[ball.p[0]-previous[0],ball.p[1]-previous[1]],r=o.r??o.attractionRadius??this.config.radius;
-  if(a[0]*a[0]+a[1]*a[1]<=r*r)return;
+  const distance=a[0]*a[0]+a[1]*a[1],clearRadius=r+this.game.physics.ballRadius;
+  // A fresh entry requires the entire ball to leave, not just its center.
+  if(distance>clearRadius*clearRadius)this.entryLatched.delete(ball);
+  if(this.entryLatched.has(ball)||distance<=r*r){
+   this.entryLatched.add(ball);
+   if((a[0]+v[0])**2+(a[1]+v[1])**2>clearRadius*clearRadius)this.entryLatched.delete(ball);
+   return;
+  }
   const length=v[0]*v[0]+v[1]*v[1];if(!length)return;
   const t=Math.max(0,Math.min(1,-(a[0]*v[0]+a[1]*v[1])/length));
   if((a[0]+t*v[0])**2+(a[1]+t*v[1])**2<r*r){
+   this.entryLatched.add(ball);
+   if(this.phase==='spin'||this.phase==='winflash')return;
    if(this.game.time-this.entryAt<(this.config.entryCooldown??0))return;
    this.entryAt=this.game.time;this.progress();
   }
@@ -49,7 +58,14 @@ class Controller{
   this.game.emit('bagua-spin',{total:this.config.threshold});
   if(this.config.spinSound)this.game.emit('sound',{name:'runic-spin'});
  }
- pick(){const random=Math.max(0,Math.min(.999999,(this.game.random||Math.random)()));return this.available[Math.floor(random*this.available.length)];}
+ pick(replacement=false){
+  let random=Math.max(0,Math.min(.999999,(this.game.random||Math.random)())),reserved=0;
+  const rewards=this.config.rewards,common=this.available.filter(i=>rewards[i].probability===undefined);
+  // Fixed probabilities remain absolute when Boss or ball capacity excludes a prize.
+  // An invalidated result only falls back to common prizes, never rerolls rare ones.
+  if(!replacement)for(const i of this.available){const chance=rewards[i].probability;if(chance===undefined)continue;if(random<chance)return i;random-=chance;reserved+=chance;}
+  return common[Math.min(common.length-1,Math.floor(random/(1-reserved)*common.length))];
+ }
  availableRewards(){
   const g=this.game,full=g.balls.filter(b=>b.state!=='drained').length+g.freeBallQueue+(g.gapLock?.pending||0)>=3;
   return this.config.rewards.map((r,i)=>i).filter(i=>{
@@ -114,7 +130,7 @@ class Controller{
   this.faceSprite(scale,8,0);
  }
  clearFaces(){for(const entry of this.faces?.values()||[])root.PinballArt.releaseRaster(entry);this.faces?.clear();}
- destroy(){this.clearFaces();}
+ destroy(){this.clearFaces();if(this.attackRaster)root.PinballArt.releaseRaster(this.attackRaster);this.attackRaster=null;}
  draw(ctx,renderer){
   const o=this.geometry,r=this.config.radius,centerRadius=31,age=this.clock-this.phaseAt,spin=this.phase==='spin';
   ctx.save();ctx.translate(o.x,o.y);ctx.rotate((o.angle||0)*Math.PI/180);ctx.scale(r/68,r/68);ctx.lineWidth=.65;
@@ -142,22 +158,45 @@ class Controller{
   }
   ctx.restore();
  }
- drawAttackOverlay(ctx,renderer,view){
-  const effect=this.config.attackArt;
-  if(!effect?.fullscreen||this.attackAge>=effect.duration)return;
-  const image=(this.drawImages?.[effect.src]||renderer.image(effect.src));
-  if(!image.complete||!(image.runtimeWidth??image.naturalWidth))return;
-  const t=this.attackAge/effect.duration,p=1-(1-t)**3;
-  const start=105*.3*this.config.radius/68,size=start+(Math.hypot(view[2],view[3])*1.5-start)*p;
-  const x=this.geometry.x+(view[0]+view[2]/2-this.geometry.x)*p,y=this.geometry.y+(view[1]+view[3]/2-this.geometry.y)*p;
-  ctx.save();ctx.globalAlpha*=1-t;ctx.translate(x,y);ctx.rotate(t*Math.PI/3);
-  drawRuntimeImage(ctx,image,-size/2,-size/2,size,size);ctx.restore();
+ attackPose(renderer,view){
+  const effect=this.config.attackArt;if(!effect?.fullscreen||this.attackAge>=effect.duration)return null;
+  const image=this.drawImages?.[effect.src]||renderer.image(effect.src);if(!image.complete||!(image.runtimeWidth??image.naturalWidth))return null;
+  const t=this.attackAge/effect.duration,p=1-(1-t)**3,start=105*.3*this.config.radius/68,size=start+(Math.hypot(view[2],view[3])*1.5-start)*p;
+  return {image,size,x:this.geometry.x+(view[0]+view[2]/2-this.geometry.x)*p,y:this.geometry.y+(view[1]+view[3]/2-this.geometry.y)*p,angle:t*Math.PI/3,alpha:1-t};
  }
+ attackSprite(renderer){
+  const effect=this.config.attackArt;if(!effect?.fullscreen)return null;const image=this.drawImages?.[effect.src]||renderer.image(effect.src);if(!image.complete||!image.naturalWidth)return null;
+  if(this.attackRaster?.source===image)return this.attackRaster.canvas;
+  if(this.attackRaster)root.PinballArt.releaseRaster(this.attackRaster);
+  const r=root.PinballRuntimeImages,w=r.width(image),h=r.height(image),scale=Math.min(1,1024/Math.max(w,h)),canvas=root.PinballArt.rasterCanvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale)),true);r.draw(canvas.getContext('2d'),image,0,0,canvas.width,canvas.height);this.attackRaster={source:image,canvas:root.PinballArt.rasterImage(canvas)};return this.attackRaster.canvas;
+ }
+ prepareAttackGPU(gpu,renderer){const sprite=this.attackSprite(renderer);if(sprite)gpu.texture(sprite);}
+ drawAttackOverlay(ctx,renderer,view){
+  const p=this.attackPose(renderer,view);if(!p)return;
+  ctx.save();ctx.globalAlpha*=p.alpha;ctx.translate(p.x,p.y);ctx.rotate(p.angle);drawRuntimeImage(ctx,p.image,-p.size/2,-p.size/2,p.size,p.size);ctx.restore();
+ }
+ drawAttackGPU(gpu,renderer,view){
+  const p=this.attackPose(renderer,view);if(!p)return;const sprite=this.attackSprite(renderer);if(!sprite)return;const scale=gpu.canvas.width/view[2];
+  gpu.spritePx(sprite,(p.x-view[0])*scale,(p.y-view[1])*scale,p.size*scale,p.size*scale,{origin:[.5,.5],angle:p.angle*180/Math.PI,alpha:p.alpha});
+ }
+
 }
 // Same prize rules as bagua, with a passable circle and a flat stone presentation.
 const runePaths=['M0 -12 V12 M0 -3 L-9 -11 M0 -3 L9 -11','M-6 -12 V12 M-6 -10 L7 -2 L-6 5','M-6 -12 V12 M-6 -10 L7 -2 M-6 0 L7 10','M-7 -12 L7 12 M7 -12 L-7 12','M-6 12 V-12 L7 0 L-6 8','M-6 -12 V12 M6 -12 V12 M-6 -3 L6 3','M-7 -12 V12 M-7 -12 L8 -4 M-7 0 L5 6','M0 -12 V12 M0 -12 L-8 -3 M0 -12 L8 -3'];
 class RunicController extends Controller{
  reset(){super.reset();this.rotationBase=0;this.restAngle=0;}
+ prepareArtwork(){this.prepareRuneGroups();}
+ destroy(){super.destroy();this.runeGroups=null;this.runeShapes=null;}
+ prepareRuneGroups(){
+  if(this.runeGroups)return;
+  const paths=this.runeShapes||(this.runeShapes=runePaths.map(d=>new Path2D(d)));
+  this.runeGroups=Array.from({length:9},(_,count)=>{
+   const lit=new Path2D(),dark=new Path2D();
+   for(let i=0;i<8;i++){const a=i*Math.PI/4-Math.PI/2,m=new DOMMatrix().translate(65*Math.cos(a),65*Math.sin(a)).rotate(i*45);(i<count?lit:dark).addPath(paths[i],m);}
+   return {lit,dark};
+  });
+ }
+ visualKey(){return [this.phase,this.count,this.winner,this.rotationAngle(),this.phase==='winflash'?this.visual().prizeOpacity:0].join('|');}
  rotationAngle(){
   if(this.phase==='idle')return this.restAngle;
   const elapsed=this.phase==='spin'?Math.min(this.config.spinSeconds,this.clock-this.phaseAt):this.config.spinSeconds;
@@ -167,14 +206,7 @@ class RunicController extends Controller{
   if(this.count<this.config.threshold)return;
   this.rotationBase=this.rotationAngle();super.start();
  }
- pick(replacement=false){
-  let random=Math.max(0,Math.min(.999999,(this.game.random||Math.random)())),reserved=0;
-  const rewards=this.config.rewards,common=this.available.filter(i=>rewards[i].probability===undefined);
-  // Fixed probabilities remain absolute when Boss or ball capacity excludes a prize.
-  // An invalidated result only falls back to common prizes, never rerolls rare ones.
-  if(!replacement)for(const i of this.available){const chance=rewards[i].probability;if(chance===undefined)continue;if(random<chance)return i;random-=chance;reserved+=chance;}
-  return common[Math.min(common.length-1,Math.floor(random/(1-reserved)*common.length))];
- }
+
  progress(){
   if(this.phase==='spin'||this.phase==='winflash')return;
   if(this.phase==='settled'){this.restAngle=this.rotationAngle();this.phase='idle';}
@@ -194,7 +226,10 @@ class RunicController extends Controller{
   ctx.save();ctx.rotate(angle);bitmap(this.config.rotorArt,136);
   ctx.scale(.68,.68);ctx.lineCap='round';ctx.lineJoin='round';
   const paths=this.runeShapes||(this.runeShapes=runePaths.map(d=>new Path2D(d)));
-  for(let i=0;i<8;i++){
+  if(renderer.rasterCacheEnabled&&typeof DOMMatrix!=='undefined'){
+   this.prepareRuneGroups();const count=spin?8:Math.max(0,Math.min(8,this.count)),groups=this.runeGroups[count];ctx.lineWidth=4.5;
+   if(count<8){ctx.strokeStyle='#302c24';ctx.stroke(groups.dark);}if(count>0){ctx.strokeStyle='#9df7e6';ctx.stroke(groups.lit);}
+  }else for(let i=0;i<8;i++){
    const a=i*Math.PI/4-Math.PI/2;ctx.save();ctx.translate(65*Math.cos(a),65*Math.sin(a));ctx.rotate(i*Math.PI/4);
    const lit=spin||i<this.count;ctx.lineWidth=4.5;ctx.strokeStyle=lit?'#9df7e6':'#302c24';ctx.stroke(paths[i]);ctx.restore();
   }

@@ -3,7 +3,7 @@
   "artLayers": [
     {
       "id": "art-001",
-      "src": "res/img/plunger-rod.png",
+      "src": "res/hd_img/plunger-rod.png",
       "x": 322,
       "y": 465,
       "width": 30,
@@ -11,10 +11,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        31.0,
-        91.0
+        0,
+        0,
+        40,
+        121
       ],
       "plane": "lower",
       "frames": 1,
@@ -30,7 +30,7 @@
     },
     {
       "id": "art-002",
-      "src": "res/img/plunger-collar.png",
+      "src": "res/hd_img/plunger-collar.png",
       "x": 323,
       "y": 457,
       "width": 50,
@@ -38,10 +38,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        51.0,
-        38.0
+        0,
+        0,
+        56,
+        42
       ],
       "plane": "lower",
       "frames": 1,
@@ -57,7 +57,7 @@
     },
     {
       "id": "art-085",
-      "src": "res/img/touhou/touhou-yukari-gap-eyes-open.png",
+      "src": "res/hd_img/touhou/touhou-yukari-gap-eyes-open.png",
       "x": 329,
       "y": 404,
       "width": 80,
@@ -65,10 +65,10 @@
       "angle": -32.37062964428847,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        87.0,
-        29.0
+        0,
+        0,
+        2172,
+        724
       ],
       "plane": "lower",
       "frames": 1,
@@ -76,7 +76,7 @@
       "state": "static",
       "indicator": {
         "off": "",
-        "on": "res/img/touhou/touhou-yukari-gap-eyes-open.png",
+        "on": "res/hd_img/touhou/touhou-yukari-gap-eyes-open.png",
         "defaultState": "off",
         "trigger": {
           "kind": "hole-active",
@@ -108,7 +108,7 @@
     },
     {
       "id": "art-046",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 126,
       "y": 158,
       "width": 25,
@@ -116,10 +116,10 @@
       "angle": -7.654259059714306,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
@@ -127,8 +127,8 @@
       "state": "static",
       "indicator": {
         "group": "touhou1-attack-arrows",
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-active"
@@ -143,7 +143,7 @@
     },
     {
       "id": "art-047",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 164,
       "y": 155,
       "width": 25,
@@ -151,10 +151,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
@@ -162,8 +162,8 @@
       "state": "static",
       "indicator": {
         "group": "touhou1-attack-arrows",
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-active"
@@ -178,7 +178,7 @@
     },
     {
       "id": "art-048",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 252,
       "y": 236,
       "width": 25,
@@ -186,10 +186,10 @@
       "angle": 28.148976327963737,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
@@ -197,8 +197,8 @@
       "state": "static",
       "indicator": {
         "group": "touhou1-attack-arrows",
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-active"
@@ -213,7 +213,7 @@
     },
     {
       "id": "art-049",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 215,
       "y": 219,
       "width": 25,
@@ -221,10 +221,10 @@
       "angle": 16.622027523020932,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
@@ -232,8 +232,8 @@
       "state": "static",
       "indicator": {
         "group": "touhou1-attack-arrows",
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-active"
@@ -248,7 +248,7 @@
     },
     {
       "id": "art-050",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 105,
       "y": 218,
       "width": 25,
@@ -256,10 +256,10 @@
       "angle": -9.991879396893992,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
@@ -267,8 +267,8 @@
       "state": "static",
       "indicator": {
         "group": "touhou1-attack-arrows",
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-active"
@@ -283,7 +283,7 @@
     },
     {
       "id": "art-086",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 275,
       "y": 22,
       "width": 25,
@@ -291,10 +291,10 @@
       "angle": 233.99105178548788,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
@@ -302,8 +302,8 @@
       "state": "static",
       "indicator": {
         "group": "touhou1-attack-arrows",
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-active"
@@ -318,7 +318,7 @@
     },
     {
       "id": "art-051",
-      "src": "res/img/touhou/touhou-sakura-star-off.png",
+      "src": "res/hd_img/touhou/touhou-sakura-star-off.png",
       "x": 144,
       "y": 151,
       "width": 22,
@@ -326,18 +326,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        22.0,
-        22.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-sakura-star-off.png",
-        "on": "res/img/touhou/touhou-sakura-star-on.png",
+        "off": "res/hd_img/touhou/touhou-sakura-star-off.png",
+        "on": "res/hd_img/touhou/touhou-sakura-star-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-target",
@@ -361,7 +361,7 @@
     },
     {
       "id": "art-052",
-      "src": "res/img/touhou/touhou-sakura-star-off.png",
+      "src": "res/hd_img/touhou/touhou-sakura-star-off.png",
       "x": 270,
       "y": 248,
       "width": 22,
@@ -369,18 +369,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        22.0,
-        22.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-sakura-star-off.png",
-        "on": "res/img/touhou/touhou-sakura-star-on.png",
+        "off": "res/hd_img/touhou/touhou-sakura-star-off.png",
+        "on": "res/hd_img/touhou/touhou-sakura-star-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-target",
@@ -404,7 +404,7 @@
     },
     {
       "id": "art-053",
-      "src": "res/img/touhou/touhou-sakura-star-off.png",
+      "src": "res/hd_img/touhou/touhou-sakura-star-off.png",
       "x": 184,
       "y": 150,
       "width": 22,
@@ -412,18 +412,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        22.0,
-        22.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-sakura-star-off.png",
-        "on": "res/img/touhou/touhou-sakura-star-on.png",
+        "off": "res/hd_img/touhou/touhou-sakura-star-off.png",
+        "on": "res/hd_img/touhou/touhou-sakura-star-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-target",
@@ -447,7 +447,7 @@
     },
     {
       "id": "art-054",
-      "src": "res/img/touhou/touhou-sakura-star-off.png",
+      "src": "res/hd_img/touhou/touhou-sakura-star-off.png",
       "x": 229,
       "y": 238,
       "width": 22,
@@ -455,18 +455,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        22.0,
-        22.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-sakura-star-off.png",
-        "on": "res/img/touhou/touhou-sakura-star-on.png",
+        "off": "res/hd_img/touhou/touhou-sakura-star-off.png",
+        "on": "res/hd_img/touhou/touhou-sakura-star-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "enemy-target",
@@ -490,7 +490,7 @@
     },
     {
       "id": "art-055",
-      "src": "res/img/touhou/touhou-magatama-off.png",
+      "src": "res/hd_img/touhou/touhou-magatama-off.png",
       "x": 264,
       "y": 41,
       "width": 24,
@@ -498,18 +498,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        24.0,
-        24.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-magatama-off.png",
-        "on": "res/img/touhou/touhou-magatama-on.png",
+        "off": "res/hd_img/touhou/touhou-magatama-off.png",
+        "on": "res/hd_img/touhou/touhou-magatama-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rollover",
@@ -524,7 +524,7 @@
     },
     {
       "id": "art-056",
-      "src": "res/img/touhou/touhou-magatama-off.png",
+      "src": "res/hd_img/touhou/touhou-magatama-off.png",
       "x": 239,
       "y": 41,
       "width": 24,
@@ -532,18 +532,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        24.0,
-        24.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-magatama-off.png",
-        "on": "res/img/touhou/touhou-magatama-on.png",
+        "off": "res/hd_img/touhou/touhou-magatama-off.png",
+        "on": "res/hd_img/touhou/touhou-magatama-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rollover",
@@ -558,7 +558,7 @@
     },
     {
       "id": "art-006",
-      "src": "res/img/touhou/touhou-ice-bumper-level-1.png",
+      "src": "res/hd_img/touhou/touhou-ice-bumper-level-1.png",
       "x": 282,
       "y": 76,
       "width": 31,
@@ -566,10 +566,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        30.999999999999996,
-        30.999999999999996
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
@@ -579,9 +579,9 @@
         "type": "bumper",
         "group": "touhou1-bumpers",
         "defaultState": "lv1",
-        "lv1": "res/img/touhou/touhou-ice-bumper-level-1.png",
-        "lv2": "res/img/touhou/touhou-ice-bumper-level-2.png",
-        "lv3": "res/img/touhou/touhou-ice-bumper-level-3.png",
+        "lv1": "res/hd_img/touhou/touhou-ice-bumper-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou-ice-bumper-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou-ice-bumper-level-3.png",
         "trigger": {
           "kind": "level",
           "source": "circle-002"
@@ -592,7 +592,7 @@
     },
     {
       "id": "art-007",
-      "src": "res/img/touhou/touhou-ice-bumper-level-1.png",
+      "src": "res/hd_img/touhou/touhou-ice-bumper-level-1.png",
       "x": 255,
       "y": 126,
       "width": 31,
@@ -600,10 +600,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        30.999999999999996,
-        30.999999999999996
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
@@ -613,9 +613,9 @@
         "type": "bumper",
         "group": "touhou1-bumpers",
         "defaultState": "lv1",
-        "lv1": "res/img/touhou/touhou-ice-bumper-level-1.png",
-        "lv2": "res/img/touhou/touhou-ice-bumper-level-2.png",
-        "lv3": "res/img/touhou/touhou-ice-bumper-level-3.png",
+        "lv1": "res/hd_img/touhou/touhou-ice-bumper-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou-ice-bumper-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou-ice-bumper-level-3.png",
         "trigger": {
           "kind": "level",
           "source": "circle-003"
@@ -626,7 +626,7 @@
     },
     {
       "id": "art-008",
-      "src": "res/img/touhou/touhou-ice-bumper-level-1.png",
+      "src": "res/hd_img/touhou/touhou-ice-bumper-level-1.png",
       "x": 223,
       "y": 76,
       "width": 31,
@@ -634,10 +634,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        30.999999999999996,
-        30.999999999999996
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
@@ -647,9 +647,9 @@
         "type": "bumper",
         "group": "touhou1-bumpers",
         "defaultState": "lv1",
-        "lv1": "res/img/touhou/touhou-ice-bumper-level-1.png",
-        "lv2": "res/img/touhou/touhou-ice-bumper-level-2.png",
-        "lv3": "res/img/touhou/touhou-ice-bumper-level-3.png",
+        "lv1": "res/hd_img/touhou/touhou-ice-bumper-level-1.png",
+        "lv2": "res/hd_img/touhou/touhou-ice-bumper-level-2.png",
+        "lv3": "res/hd_img/touhou/touhou-ice-bumper-level-3.png",
         "trigger": {
           "kind": "level",
           "source": "circle-001"
@@ -660,7 +660,7 @@
     },
     {
       "id": "art-014",
-      "src": "res/img/touhou/touhou-moriya-main-hall.png",
+      "src": "res/hd_img/touhou/touhou-moriya-main-hall.png",
       "x": 276,
       "y": 158,
       "width": 50,
@@ -668,10 +668,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        50.0,
-        34.0
+        0,
+        0,
+        1536,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
@@ -692,7 +692,7 @@
     },
     {
       "id": "art-020",
-      "src": "res/img/touhou/touhou-hakurei-main-hall.png",
+      "src": "res/hd_img/touhou/touhou-hakurei-main-hall.png",
       "x": 160,
       "y": 32,
       "width": 67,
@@ -700,10 +700,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        67.0,
-        45.0
+        0,
+        0,
+        1536,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
@@ -724,7 +724,7 @@
     },
     {
       "id": "art-021",
-      "src": "res/img/touhou/touhou-lower-playfield-grass.png",
+      "src": "res/hd_img/touhou/touhou-lower-playfield-grass.png",
       "x": 180,
       "y": 244,
       "width": 360,
@@ -732,10 +732,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        360.0,
-        503.99999999999994
+        0,
+        0,
+        1060,
+        1484
       ],
       "plane": "background",
       "frames": 1,
@@ -746,7 +746,7 @@
     },
     {
       "id": "art-064",
-      "src": "res/img/touhou/touhou-lower-perimeter-forest.png",
+      "src": "res/hd_img/touhou/touhou-lower-perimeter-forest.png",
       "x": 180,
       "y": 229,
       "width": 360,
@@ -754,10 +754,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        360.0,
-        478.0
+        0,
+        0,
+        1440,
+        1912
       ],
       "plane": "background",
       "frames": 1,
@@ -768,7 +768,7 @@
     },
     {
       "id": "art-022",
-      "src": "res/img/touhou/touhou-lower-right-misty-lake.png",
+      "src": "res/hd_img/touhou/touhou-lower-right-misty-lake.png",
       "x": 250,
       "y": 89,
       "width": 102,
@@ -776,10 +776,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        102.0,
-        108.00000000000001
+        0,
+        0,
+        1224,
+        1285
       ],
       "plane": "background",
       "frames": 1,
@@ -790,7 +790,7 @@
     },
     {
       "id": "art-030",
-      "src": "res/img/touhou/touhou-yin-yang-off.png",
+      "src": "res/hd_img/touhou/touhou-yin-yang-off.png",
       "x": 61,
       "y": 359,
       "width": 24,
@@ -798,18 +798,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        24.0,
-        24.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-yin-yang-off.png",
-        "on": "res/img/touhou/touhou-yin-yang-on.png",
+        "off": "res/hd_img/touhou/touhou-yin-yang-off.png",
+        "on": "res/hd_img/touhou/touhou-yin-yang-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "kickback",
@@ -824,7 +824,7 @@
     },
     {
       "id": "art-031",
-      "src": "res/img/touhou/touhou-yin-yang-off.png",
+      "src": "res/hd_img/touhou/touhou-yin-yang-off.png",
       "x": 300,
       "y": 362,
       "width": 24,
@@ -832,18 +832,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        24.0,
-        24.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-yin-yang-off.png",
-        "on": "res/img/touhou/touhou-yin-yang-on.png",
+        "off": "res/hd_img/touhou/touhou-yin-yang-off.png",
+        "on": "res/hd_img/touhou/touhou-yin-yang-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "kickback",
@@ -858,7 +858,7 @@
     },
     {
       "id": "art-037",
-      "src": "res/img/touhou/touhou-middle-right-cloud-road.png",
+      "src": "res/hd_img/touhou/touhou-middle-right-cloud-road.png",
       "x": 268,
       "y": 144,
       "width": 150,
@@ -866,10 +866,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        150.0,
-        164.0
+        0,
+        0,
+        1201,
+        1309
       ],
       "plane": "upper",
       "frames": 1,
@@ -880,7 +880,7 @@
     },
     {
       "id": "art-038",
-      "src": "res/img/touhou/touhou-hakugyokurou-building.png",
+      "src": "res/hd_img/touhou/touhou-hakugyokurou-building.png",
       "x": 112,
       "y": 65,
       "width": 72,
@@ -888,10 +888,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        72.0,
-        24.0
+        0,
+        0,
+        2172,
+        724
       ],
       "plane": "lower",
       "frames": 1,
@@ -912,7 +912,7 @@
     },
     {
       "id": "art-041",
-      "src": "res/img/touhou/touhou-slingshot-off.png",
+      "src": "res/hd_img/touhou/touhou-slingshot-off.png",
       "x": 112,
       "y": 363,
       "width": 53,
@@ -920,18 +920,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        54.0,
-        81.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-slingshot-off.png",
-        "on": "res/img/touhou/touhou-slingshot-on.png",
+        "off": "res/hd_img/touhou/touhou-slingshot-off.png",
+        "on": "res/hd_img/touhou/touhou-slingshot-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rebound",
@@ -947,7 +947,7 @@
     },
     {
       "id": "art-042",
-      "src": "res/img/touhou/touhou-slingshot-off.png",
+      "src": "res/hd_img/touhou/touhou-slingshot-off.png",
       "x": 249,
       "y": 362,
       "width": 54,
@@ -955,10 +955,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        54.0,
-        81.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -966,8 +966,8 @@
       "state": "static",
       "flipX": true,
       "indicator": {
-        "off": "res/img/touhou/touhou-slingshot-off.png",
-        "on": "res/img/touhou/touhou-slingshot-on.png",
+        "off": "res/hd_img/touhou/touhou-slingshot-off.png",
+        "on": "res/hd_img/touhou/touhou-slingshot-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rebound",
@@ -983,7 +983,7 @@
     },
     {
       "id": "art-043",
-      "src": "res/img/touhou/touhou-ofuda-off.png",
+      "src": "res/hd_img/touhou/touhou-ofuda-off.png",
       "x": 86,
       "y": 360,
       "width": 25,
@@ -991,18 +991,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.0,
-        25.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-ofuda-off.png",
-        "on": "res/img/touhou/touhou-ofuda-on.png",
+        "off": "res/hd_img/touhou/touhou-ofuda-off.png",
+        "on": "res/hd_img/touhou/touhou-ofuda-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rollover",
@@ -1017,7 +1017,7 @@
     },
     {
       "id": "art-044",
-      "src": "res/img/touhou/touhou-ofuda-off.png",
+      "src": "res/hd_img/touhou/touhou-ofuda-off.png",
       "x": 277,
       "y": 360,
       "width": 25,
@@ -1025,18 +1025,18 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.0,
-        25.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "indicator": {
-        "off": "res/img/touhou/touhou-ofuda-off.png",
-        "on": "res/img/touhou/touhou-ofuda-on.png",
+        "off": "res/hd_img/touhou/touhou-ofuda-off.png",
+        "on": "res/hd_img/touhou/touhou-ofuda-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rollover",
@@ -1051,7 +1051,7 @@
     },
     {
       "id": "art-045",
-      "src": "res/img/touhou/touhou-shrine-coin-off.png",
+      "src": "res/hd_img/touhou/touhou-shrine-coin-off.png",
       "x": 182,
       "y": 463,
       "width": 19,
@@ -1059,10 +1059,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        19.0,
-        19.0
+        0,
+        0,
+        1024,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
@@ -1070,7 +1070,7 @@
       "state": "center-post",
       "indicator": {
         "off": "",
-        "on": "res/img/touhou/touhou-shrine-coin-off.png",
+        "on": "res/hd_img/touhou/touhou-shrine-coin-off.png",
         "defaultState": "off",
         "trigger": {
           "kind": "post",
@@ -1086,7 +1086,7 @@
     },
     {
       "id": "art-062",
-      "src": "res/img/touhou/touhou-lower-left-cherry-grove.png",
+      "src": "res/hd_img/touhou/touhou-lower-left-cherry-grove.png",
       "x": 146,
       "y": 112,
       "width": 172,
@@ -1094,10 +1094,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        173.0,
-        202.0
+        0,
+        0,
+        1159,
+        1357
       ],
       "plane": "background",
       "frames": 1,
@@ -1108,7 +1108,7 @@
     },
     {
       "id": "art-063",
-      "src": "res/img/touhou/touhou-lower-right-youkai-mountain.png",
+      "src": "res/hd_img/touhou/touhou-lower-right-youkai-mountain.png",
       "x": 250,
       "y": 176,
       "width": 111,
@@ -1116,10 +1116,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        111.0,
-        118.0
+        0,
+        0,
+        1219,
+        1290
       ],
       "plane": "background",
       "frames": 1,
@@ -1130,7 +1130,7 @@
     },
     {
       "id": "art-076",
-      "src": "res/img/touhou/touhou-lower-bottom-forest.png",
+      "src": "res/hd_img/touhou/touhou-lower-bottom-forest.png",
       "x": 179,
       "y": 445,
       "width": 360,
@@ -1138,10 +1138,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        373.0,
-        59.0
+        0,
+        0,
+        2160,
+        342
       ],
       "plane": "background",
       "frames": 1,
@@ -1152,7 +1152,7 @@
     },
     {
       "id": "art-068",
-      "src": "res/img/touhou/touhou-lower-right-bamboo-trail-night.png",
+      "src": "res/hd_img/touhou/touhou-lower-right-bamboo-trail-night.png",
       "x": 338,
       "y": 292,
       "width": 122,
@@ -1160,10 +1160,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        122.00000000000001,
-        366.00000000000006
+        0,
+        0,
+        724,
+        2172
       ],
       "plane": "background",
       "frames": 1,
@@ -1174,7 +1174,7 @@
     },
     {
       "id": "art-009",
-      "src": "res/img/touhou/touhou-flipper.png",
+      "src": "res/hd_img/touhou/touhou-flipper.png",
       "x": 149,
       "y": 445,
       "width": 49,
@@ -1182,10 +1182,10 @@
       "angle": 30,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        49.0,
-        17.0
+        0,
+        0,
+        2170,
+        725
       ],
       "plane": "background",
       "frames": 1,
@@ -1196,7 +1196,7 @@
     },
     {
       "id": "art-010",
-      "src": "res/img/touhou/touhou-flipper.png",
+      "src": "res/hd_img/touhou/touhou-flipper.png",
       "x": 216,
       "y": 445,
       "width": 49,
@@ -1204,10 +1204,10 @@
       "angle": -30,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        49.0,
-        17.0
+        0,
+        0,
+        2170,
+        725
       ],
       "plane": "background",
       "frames": 1,
@@ -1219,7 +1219,7 @@
     },
     {
       "id": "art-011",
-      "src": "res/img/touhou/touhou-hakugyokurou-cherry.png",
+      "src": "res/hd_img/touhou/touhou-hakugyokurou-cherry.png",
       "x": 33,
       "y": 32,
       "width": 125,
@@ -1227,10 +1227,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        125.0,
-        84.0
+        0,
+        0,
+        1536,
+        1024
       ],
       "plane": "background",
       "frames": 1,
@@ -1241,7 +1241,7 @@
     },
     {
       "id": "art-023",
-      "src": "res/img/touhou/touhou-lower-right-lake-mountain.png",
+      "src": "res/hd_img/touhou/touhou-lower-right-lake-mountain.png",
       "x": 285,
       "y": 41,
       "width": 35,
@@ -1249,10 +1249,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        36.0,
-        39.0
+        0,
+        0,
+        1192,
+        1320
       ],
       "plane": "background",
       "frames": 1,
@@ -1263,7 +1263,7 @@
     },
     {
       "id": "art-069",
-      "src": "res/img/touhou/touhou-wood-divider-short.png",
+      "src": "res/hd_img/touhou/touhou-wood-divider-short.png",
       "x": 252,
       "y": 38,
       "width": 5,
@@ -1271,10 +1271,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        6.0,
-        30.0
+        0,
+        0,
+        80,
+        448
       ],
       "plane": "background",
       "frames": 1,
@@ -1285,7 +1285,7 @@
     },
     {
       "id": "art-070",
-      "src": "res/img/touhou/touhou-wood-divider-long.png",
+      "src": "res/hd_img/touhou/touhou-wood-divider-long.png",
       "x": 74,
       "y": 367,
       "width": 5,
@@ -1293,10 +1293,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        5.0,
-        77.0
+        0,
+        0,
+        80,
+        1232
       ],
       "plane": "background",
       "frames": 1,
@@ -1307,7 +1307,7 @@
     },
     {
       "id": "art-071",
-      "src": "res/img/touhou/touhou-wood-divider-long.png",
+      "src": "res/hd_img/touhou/touhou-wood-divider-long.png",
       "x": 288,
       "y": 363,
       "width": 5,
@@ -1315,10 +1315,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        5.0,
-        77.0
+        0,
+        0,
+        80,
+        1232
       ],
       "plane": "background",
       "frames": 1,
@@ -1329,7 +1329,7 @@
     },
     {
       "id": "art-072",
-      "src": "res/img/touhou/touhou-flipper-guide.png",
+      "src": "res/hd_img/touhou/touhou-flipper-guide.png",
       "x": 262,
       "y": 409,
       "width": 63,
@@ -1337,10 +1337,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        64.0,
-        69.0
+        0,
+        0,
+        1199,
+        1312
       ],
       "plane": "background",
       "frames": 1,
@@ -1351,7 +1351,7 @@
     },
     {
       "id": "art-073",
-      "src": "res/img/touhou/touhou-flipper-guide.png",
+      "src": "res/hd_img/touhou/touhou-flipper-guide.png",
       "x": 102,
       "y": 408,
       "width": 63,
@@ -1359,10 +1359,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        64.0,
-        69.0
+        0,
+        0,
+        1199,
+        1312
       ],
       "plane": "background",
       "frames": 1,
@@ -1374,7 +1374,7 @@
     },
     {
       "id": "art-059",
-      "src": "res/img/touhou/touhou-yukari-gap-eyes-open.png",
+      "src": "res/hd_img/touhou/touhou-yukari-gap-eyes-open.png",
       "x": 33,
       "y": 195,
       "width": 86,
@@ -1382,10 +1382,10 @@
       "angle": 47.9542077668131,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        87.0,
-        29.0
+        0,
+        0,
+        2172,
+        724
       ],
       "plane": "upper",
       "frames": 1,
@@ -1393,7 +1393,7 @@
       "state": "static",
       "indicator": {
         "off": "",
-        "on": "res/img/touhou/touhou-yukari-gap-eyes-open.png",
+        "on": "res/hd_img/touhou/touhou-yukari-gap-eyes-open.png",
         "defaultState": "off",
         "trigger": {
           "kind": "hole-active",
@@ -1425,18 +1425,18 @@
     },
     {
       "id": "art-075",
-      "src": "res/img/touhou/touhou-middle-left-cloud-road.png",
-      "x": 73,
-      "y": 115,
+      "src": "res/hd_img/touhou/touhou-middle-left-cloud-road.png",
+      "x": 70,
+      "y": 102,
       "width": 112,
       "height": 200,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        113.0,
-        200.0
+        0,
+        0,
+        941,
+        1672
       ],
       "plane": "lower",
       "frames": 1,
@@ -1447,7 +1447,7 @@
     },
     {
       "id": "art-077",
-      "src": "res/img/touhou/touhou-wood-divider-short.png",
+      "src": "res/hd_img/touhou/touhou-wood-divider-short.png",
       "x": 61,
       "y": 423,
       "width": 5,
@@ -1455,10 +1455,10 @@
       "angle": -56.927435710114224,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        6.0,
-        30.0
+        0,
+        0,
+        80,
+        448
       ],
       "plane": "lower",
       "frames": 1,
@@ -1469,7 +1469,7 @@
     },
     {
       "id": "art-078",
-      "src": "res/img/touhou/touhou-wood-divider-short.png",
+      "src": "res/hd_img/touhou/touhou-wood-divider-short.png",
       "x": 297,
       "y": 421,
       "width": 5,
@@ -1477,10 +1477,10 @@
       "angle": 48.83386351380909,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        6.0,
-        30.0
+        0,
+        0,
+        80,
+        448
       ],
       "plane": "lower",
       "frames": 1,
@@ -1490,80 +1490,8 @@
       "runtimeSource": "res/img/touhou/touhou-wood-divider-short.png"
     },
     {
-      "id": "art-079",
-      "src": "res/img/touhou/touhou-yin-yang-off.png",
-      "x": 15,
-      "y": 276,
-      "width": 24,
-      "height": 24,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0.0,
-        0.0,
-        24.0,
-        24.0
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/img/touhou/touhou-yin-yang-off.png",
-        "on": "res/img/touhou/touhou-yin-yang-on.png",
-        "defaultState": "off",
-        "trigger": {
-          "kind": "gap-count",
-          "source": "hole-008",
-          "threshold": 2
-        },
-        "behavior": {
-          "mode": "keep"
-        },
-        "group": "touhou1-gap-counter",
-        "impactFlash": false
-      },
-      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
-    },
-    {
-      "id": "art-080",
-      "src": "res/img/touhou/touhou-yin-yang-off.png",
-      "x": 15,
-      "y": 260,
-      "width": 24,
-      "height": 24,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0.0,
-        0.0,
-        24.0,
-        24.0
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/img/touhou/touhou-yin-yang-off.png",
-        "on": "res/img/touhou/touhou-yin-yang-on.png",
-        "defaultState": "off",
-        "trigger": {
-          "kind": "gap-count",
-          "source": "hole-008",
-          "threshold": 1
-        },
-        "behavior": {
-          "mode": "keep"
-        },
-        "group": "touhou1-gap-counter",
-        "impactFlash": false
-      },
-      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
-    },
-    {
       "id": "art-039",
-      "src": "res/img/touhou/touhou-red-torii.png",
+      "src": "res/hd_img/touhou/touhou-red-torii.png",
       "x": 163,
       "y": 102,
       "width": 49,
@@ -1571,10 +1499,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        50.0,
-        50.0
+        0,
+        0,
+        1247,
+        1261
       ],
       "plane": "lower",
       "frames": 1,
@@ -1585,7 +1513,7 @@
     },
     {
       "id": "art-040",
-      "src": "res/img/touhou/touhou-red-torii.png",
+      "src": "res/hd_img/touhou/touhou-red-torii.png",
       "x": 260,
       "y": 199,
       "width": 44,
@@ -1593,10 +1521,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        50.0,
-        50.0
+        0,
+        0,
+        1247,
+        1261
       ],
       "plane": "lower",
       "frames": 1,
@@ -1607,7 +1535,7 @@
     },
     {
       "id": "art-016",
-      "src": "res/img/touhou/touhou-moriya-stone.png",
+      "src": "res/hd_img/touhou/touhou-moriya-stone.png",
       "x": 276,
       "y": 225,
       "width": 50,
@@ -1615,10 +1543,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        50.0,
-        50.0
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
@@ -1638,7 +1566,7 @@
     },
     {
       "id": "art-015",
-      "src": "res/img/touhou/touhou-moriya-stone.png",
+      "src": "res/hd_img/touhou/touhou-moriya-stone.png",
       "x": 240,
       "y": 216,
       "width": 50,
@@ -1646,10 +1574,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        50.0,
-        50.0
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
@@ -1669,7 +1597,7 @@
     },
     {
       "id": "art-018",
-      "src": "res/img/touhou/touhou-hakurei-stone.png",
+      "src": "res/hd_img/touhou/touhou-hakurei-stone.png",
       "x": 144,
       "y": 124,
       "width": 26,
@@ -1677,10 +1605,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        27.0,
-        40.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1700,7 +1628,7 @@
     },
     {
       "id": "art-019",
-      "src": "res/img/touhou/touhou-hakurei-stone.png",
+      "src": "res/hd_img/touhou/touhou-hakurei-stone.png",
       "x": 183,
       "y": 124,
       "width": 26,
@@ -1708,10 +1636,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        27.0,
-        40.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1732,7 +1660,7 @@
     },
     {
       "id": "art-057",
-      "src": "res/img/touhou/touhou-a1-cirno-angry.png",
+      "src": "res/hd_img/touhou/touhou-a1-cirno-angry.png",
       "x": 197,
       "y": 105,
       "width": 40,
@@ -1740,10 +1668,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        362.0,
-        642.0
+        0,
+        0,
+        941,
+        1672
       ],
       "plane": "lower",
       "frames": 1,
@@ -1764,7 +1692,7 @@
     },
     {
       "id": "art-025",
-      "src": "res/img/touhou/touhou-yuyuko-soul-flame.png",
+      "src": "res/hd_img/touhou/touhou-yuyuko-soul-flame.png",
       "x": 14,
       "y": 3,
       "width": 19,
@@ -1772,10 +1700,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        19.0,
-        29.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1784,7 +1712,7 @@
       "indicator": {
         "group": "touhou1-sensor-001-counter",
         "off": "",
-        "on": "res/img/touhou/touhou-yuyuko-soul-flame.png",
+        "on": "res/hd_img/touhou/touhou-yuyuko-soul-flame.png",
         "complete": "",
         "defaultState": "off",
         "trigger": {
@@ -1807,7 +1735,7 @@
     },
     {
       "id": "art-081",
-      "src": "res/img/touhou/touhou-yuyuko-soul-flame.png",
+      "src": "res/hd_img/touhou/touhou-yuyuko-soul-flame.png",
       "x": 29,
       "y": 14,
       "width": 19,
@@ -1815,10 +1743,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        19.0,
-        29.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1827,7 +1755,7 @@
       "indicator": {
         "group": "touhou1-sensor-001-counter",
         "off": "",
-        "on": "res/img/touhou/touhou-yuyuko-soul-flame.png",
+        "on": "res/hd_img/touhou/touhou-yuyuko-soul-flame.png",
         "complete": "",
         "defaultState": "off",
         "trigger": {
@@ -1850,7 +1778,7 @@
     },
     {
       "id": "art-082",
-      "src": "res/img/touhou/touhou-yuyuko-soul-flame.png",
+      "src": "res/hd_img/touhou/touhou-yuyuko-soul-flame.png",
       "x": 46,
       "y": 3,
       "width": 19,
@@ -1858,10 +1786,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        19.0,
-        29.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1870,7 +1798,7 @@
       "indicator": {
         "group": "touhou1-sensor-001-counter",
         "off": "",
-        "on": "res/img/touhou/touhou-yuyuko-soul-flame.png",
+        "on": "res/hd_img/touhou/touhou-yuyuko-soul-flame.png",
         "complete": "",
         "defaultState": "off",
         "trigger": {
@@ -1893,7 +1821,7 @@
     },
     {
       "id": "art-033",
-      "src": "res/img/touhou/touhou-fire-flame.png",
+      "src": "res/hd_img/touhou/touhou-fire-flame.png",
       "x": 336,
       "y": 141,
       "width": 15,
@@ -1901,10 +1829,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        16.0,
-        23.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1913,7 +1841,7 @@
       "indicator": {
         "group": "touhou1-sensor-002-counter",
         "off": "",
-        "on": "res/img/touhou/touhou-fire-flame.png",
+        "on": "res/hd_img/touhou/touhou-fire-flame.png",
         "complete": "",
         "defaultState": "off",
         "trigger": {
@@ -1936,7 +1864,7 @@
     },
     {
       "id": "art-083",
-      "src": "res/img/touhou/touhou-fire-flame.png",
+      "src": "res/hd_img/touhou/touhou-fire-flame.png",
       "x": 337,
       "y": 169,
       "width": 15,
@@ -1944,10 +1872,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        16.0,
-        23.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1956,7 +1884,7 @@
       "indicator": {
         "group": "touhou1-sensor-002-counter",
         "off": "",
-        "on": "res/img/touhou/touhou-fire-flame.png",
+        "on": "res/hd_img/touhou/touhou-fire-flame.png",
         "complete": "",
         "defaultState": "off",
         "trigger": {
@@ -1979,7 +1907,7 @@
     },
     {
       "id": "art-084",
-      "src": "res/img/touhou/touhou-fire-flame.png",
+      "src": "res/hd_img/touhou/touhou-fire-flame.png",
       "x": 352,
       "y": 154,
       "width": 15,
@@ -1987,10 +1915,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        16.0,
-        23.0
+        0,
+        0,
+        1024,
+        1536
       ],
       "plane": "lower",
       "frames": 1,
@@ -1999,7 +1927,7 @@
       "indicator": {
         "group": "touhou1-sensor-002-counter",
         "off": "",
-        "on": "res/img/touhou/touhou-fire-flame.png",
+        "on": "res/hd_img/touhou/touhou-fire-flame.png",
         "complete": "",
         "defaultState": "off",
         "trigger": {
@@ -2022,18 +1950,18 @@
     },
     {
       "id": "art-087",
-      "src": "res/img/touhou/touhou-shimenawa-flag-square.png",
-      "x": 99,
-      "y": 190,
+      "src": "res/hd_img/touhou/touhou-shimenawa-flag-square.png",
+      "x": 97,
+      "y": 189,
       "width": 35,
       "height": 35,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        35.0,
-        35.0
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "upper",
       "frames": 1,
@@ -2044,18 +1972,18 @@
     },
     {
       "id": "art-088",
-      "src": "res/img/touhou/touhou-shimenawa-flag-square.png",
-      "x": 223,
-      "y": 194,
+      "src": "res/hd_img/touhou/touhou-shimenawa-flag-square.png",
+      "x": 222,
+      "y": 196,
       "width": 35,
       "height": 35,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        35.0,
-        35.0
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "upper",
       "frames": 1,
@@ -2066,18 +1994,18 @@
     },
     {
       "id": "art-089",
-      "src": "res/img/touhou/touhou-shimenawa-flag-square.png",
-      "x": 296,
+      "src": "res/hd_img/touhou/touhou-shimenawa-flag-square.png",
+      "x": 295,
       "y": 229,
       "width": 35,
       "height": 35,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        35.0,
-        35.0
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "upper",
       "frames": 1,
@@ -2110,7 +2038,7 @@
     },
     {
       "id": "art-032",
-      "src": "res/img/touhou/touhou-eientei.png",
+      "src": "res/hd_img/touhou/touhou-eientei.png",
       "x": 325,
       "y": 272,
       "width": 74,
@@ -2118,10 +2046,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        74.0,
-        50.0
+        0,
+        0,
+        1536,
+        1024
       ],
       "plane": "lower",
       "frames": 1,
@@ -2132,7 +2060,7 @@
     },
     {
       "id": "art-012",
-      "src": "res/img/touhou/touhou-yakumo-residence.png",
+      "src": "res/hd_img/touhou/touhou-yakumo-residence.png",
       "x": 27,
       "y": 267,
       "width": 67,
@@ -2140,10 +2068,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        68.0,
-        48.0
+        0,
+        0,
+        1491,
+        1055
       ],
       "plane": "lower",
       "frames": 1,
@@ -2161,6 +2089,78 @@
         }
       },
       "runtimeSource": "res/img/touhou/touhou-yakumo-residence.png"
+    },
+    {
+      "id": "art-079",
+      "src": "res/hd_img/touhou/touhou-yin-yang-off.png",
+      "x": 15,
+      "y": 276,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-yin-yang-off.png",
+        "on": "res/hd_img/touhou/touhou-yin-yang-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "gap-count",
+          "source": "hole-008",
+          "threshold": 2
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "group": "touhou1-gap-counter",
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
+    },
+    {
+      "id": "art-080",
+      "src": "res/hd_img/touhou/touhou-yin-yang-off.png",
+      "x": 15,
+      "y": 260,
+      "width": 24,
+      "height": 24,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-yin-yang-off.png",
+        "on": "res/hd_img/touhou/touhou-yin-yang-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "gap-count",
+          "source": "hole-008",
+          "threshold": 1
+        },
+        "behavior": {
+          "mode": "keep"
+        },
+        "group": "touhou1-gap-counter",
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
     },
     {
       "id": "art-091",
@@ -2208,7 +2208,7 @@
     },
     {
       "id": "art-093",
-      "src": "res/img/touhou/touhou-youmu-half-phantom.png",
+      "src": "res/hd_img/touhou/touhou-youmu-half-phantom.png",
       "x": 45,
       "y": 30,
       "width": 29,
@@ -2216,10 +2216,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        33.0,
-        27.0
+        0,
+        0,
+        1375,
+        1144
       ],
       "plane": "foreground",
       "frames": 1,
@@ -2240,7 +2240,7 @@
     },
     {
       "id": "art-094",
-      "src": "res/img/touhou/touhou-aya-maple-leaf.png",
+      "src": "res/hd_img/touhou/touhou-aya-maple-leaf.png",
       "x": 323,
       "y": 105,
       "width": 27,
@@ -2248,10 +2248,10 @@
       "angle": 0,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        27.0,
-        27.0
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "foreground",
       "frames": 1,
@@ -2272,7 +2272,7 @@
     },
     {
       "id": "art-095",
-      "src": "res/img/touhou/touhou-torii-arrow-off.png",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
       "x": 68,
       "y": 262,
       "width": 25,
@@ -2280,19 +2280,18 @@
       "angle": 95.90425180592496,
       "opacity": 1,
       "crop": [
-        0.0,
-        0.0,
-        25.8232421875,
-        25.8232421875
+        0,
+        0,
+        853,
+        853
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hole-006",
       "indicator": {
-        "off": "res/img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/img/touhou/touhou-torii-arrow-on.png",
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
         "defaultState": "off",
         "trigger": {
           "kind": "gap-output",
@@ -2338,7 +2337,7 @@
           "kind": "score",
           "value": 1000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-1000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-1000.png",
             "crop": [
               0,
               0,
@@ -2351,7 +2350,7 @@
           "kind": "score",
           "value": 2500,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-2500.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-2500.png",
             "crop": [
               0,
               0,
@@ -2364,7 +2363,7 @@
           "kind": "score",
           "value": 5000,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-score-5000.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-score-5000.png",
             "crop": [
               0,
               0,
@@ -2377,7 +2376,7 @@
           "kind": "multiplier",
           "value": 2,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-2.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-2.png",
             "crop": [
               0,
               0,
@@ -2390,7 +2389,7 @@
           "kind": "multiplier",
           "value": 3,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-multiplier-3.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-multiplier-3.png",
             "crop": [
               0,
               0,
@@ -2429,7 +2428,7 @@
           "kind": "enemy",
           "value": 0,
           "art": {
-            "src": "res/img/steampunk/steampunk-bonus-enemy.png",
+            "src": "res/hd_img/steampunk/steampunk-bonus-enemy.png",
             "crop": [
               0,
               0,
@@ -2443,12 +2442,12 @@
         "fadeSeconds": 0.8
       },
       "attackArt": {
-        "src": "res/img/touhou/touhou-attack-lv4-fantasy-seal.png",
+        "src": "res/hd_img/touhou/touhou-attack-lv4-fantasy-seal.png",
         "duration": 1.55,
         "fullscreen": true
       }
     },
-    "ballImage": "res/img/touhou/touhou-ball-yin-yang.png"
+    "ballImage": "res/hd_img/touhou/touhou-ball-yin-yang.png"
   },
   "screenLayout": {
     "width": 360,
@@ -2946,10 +2945,10 @@
       "id": "flag-001",
       "type": "flag",
       "layer": "lower",
-      "x1": 282.91,
-      "y1": 230.793,
-      "x2": 304.794,
-      "y2": 238.757
+      "x1": 283.91,
+      "y1": 222.793,
+      "x2": 305.794,
+      "y2": 230.757
     },
     {
       "id": "plunger-001",
@@ -3064,11 +3063,11 @@
     {
       "id": "flag-002",
       "type": "flag",
-      "layer": "lower",
-      "x1": 90,
-      "y1": 190,
-      "x2": 113,
-      "y2": 187
+      "layer": "upper",
+      "x1": 85,
+      "y1": 178,
+      "x2": 111,
+      "y2": 175
     },
     {
       "id": "arc-005",
@@ -3085,10 +3084,10 @@
       "id": "oneway-002",
       "type": "oneway",
       "layer": "lower",
-      "x1": 85,
-      "y1": 185,
-      "x2": 112,
-      "y2": 181,
+      "x1": 88,
+      "y1": 191,
+      "x2": 115,
+      "y2": 187,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -3099,10 +3098,10 @@
       "id": "oneway-003",
       "type": "oneway",
       "layer": "lower",
-      "x1": 211,
-      "y1": 196,
-      "x2": 236,
-      "y2": 197,
+      "x1": 209,
+      "y1": 205,
+      "x2": 234,
+      "y2": 210,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -3112,11 +3111,11 @@
     {
       "id": "flag-003",
       "type": "flag",
-      "layer": "lower",
-      "x1": 210,
-      "y1": 204,
-      "x2": 233,
-      "y2": 208
+      "layer": "upper",
+      "x1": 211,
+      "y1": 194,
+      "x2": 234,
+      "y2": 198
     },
     {
       "id": "line-539",

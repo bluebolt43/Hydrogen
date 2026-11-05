@@ -176,60 +176,6 @@
       "runtimeSource": "res/img/touhou/touhou2-basement.png"
     },
     {
-      "id": "art-001",
-      "src": "res/hd_img/plunger-rod.png",
-      "x": 322,
-      "y": 424,
-      "width": 30,
-      "height": 91,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        40,
-        121
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "plunger",
-      "bind": "plunger",
-      "layoutBind": "plunger-001",
-      "layoutAnchor": [
-        321.72,
-        381.762
-      ],
-      "runtimeSource": "res/img/plunger-rod.png"
-    },
-    {
-      "id": "art-002",
-      "src": "res/hd_img/plunger-collar.png",
-      "x": 323,
-      "y": 416,
-      "width": 50,
-      "height": 38,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        56,
-        42
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "layoutBind": "plunger-001",
-      "layoutAnchor": [
-        321.72,
-        381.762
-      ],
-      "runtimeSource": "res/img/plunger-collar.png"
-    },
-    {
       "id": "art-touhou2-static-line-001",
       "src": "res/hd_img/touhou/touhou2-iron-dividers.png",
       "x": 311,
@@ -357,6 +303,7 @@
     },
     {
       "id": "art-touhou2-static-gallery-shadows",
+      "ignoreBallMask": true,
       "src": "res/hd_img/touhou/touhou2-upper-shadows.png",
       "x": 180,
       "y": 238,
@@ -971,7 +918,245 @@
         "keepLevelOnHit": true,
         "group": "touhou2-bumpers"
       },
-      "runtimeSource": "res/img/touhou/touhou2-upgrade-bookcase-level-1.png"
+      "runtimeSource": "res/img/touhou/touhou2-upgrade-bookcase-level-1.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-touhou2-boss-target-003",
+      "src": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+      "x": 124,
+      "y": 88,
+      "width": 23,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+        "on": "res/hd_img/touhou/touhou2-boss-candle-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "source": "target-003-1",
+          "kind": "enemy-target"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1.5,
+          "offSeconds": 0.5
+        },
+        "group": "touhou2-targets",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "complete": ""
+      },
+      "runtimeSource": "res/img/touhou/touhou2-boss-candle-off.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-touhou2-flag-flag-001",
+      "src": "res/hd_img/touhou/touhou2-bat.png",
+      "x": 264,
+      "y": 167,
+      "width": 46,
+      "height": 23,
+      "angle": 7.1740855552846625,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 1.1,
+        "amplitude": 12,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-001"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-bat.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-touhou2-flag-flag-002",
+      "src": "res/hd_img/touhou/touhou2-bat.png",
+      "x": 89,
+      "y": 153,
+      "width": 44,
+      "height": 22,
+      "angle": 15.16371481236932,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 1.1,
+        "amplitude": 12,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-002"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-bat.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-touhou2-flag-flag-003",
+      "src": "res/hd_img/touhou/touhou2-bat.png",
+      "x": 148,
+      "y": 80,
+      "width": 48,
+      "height": 24,
+      "angle": -26.684749706655282,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1774,
+        887
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 1.1,
+        "amplitude": 12,
+        "trigger": {
+          "kind": "flag",
+          "source": "flag-003"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou2-bat.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-touhou2-counter-satori",
+      "src": "res/hd_img/touhou/touhou2-eye-satori-closed.png",
+      "x": 43,
+      "y": 202,
+      "width": 38,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        152,
+        152
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-eye-satori-closed.png",
+        "on": "res/hd_img/touhou/touhou2-eye-satori-open.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "complete": "res/hd_img/touhou/touhou2-eye-satori-open.png",
+        "trigger": {
+          "kind": "hole-count",
+          "source": "hole-002",
+          "threshold": 2
+        },
+        "group": "touhou2-counters",
+        "attractState": "complete"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-eye-satori-closed.png"
+    },
+    {
+      "id": "art-touhou2-counter-koishi",
+      "src": "res/hd_img/touhou/touhou2-eye-koishi-closed.png",
+      "x": 43,
+      "y": 222,
+      "width": 35,
+      "height": 35,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        142,
+        142
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-eye-koishi-closed.png"
+    },
+    {
+      "id": "art-touhou2-counter-koishi-heart",
+      "src": "res/hd_img/touhou/touhou2-koishi-heart-side.png",
+      "x": 36,
+      "y": 215,
+      "width": 20,
+      "height": 18,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        990,
+        255,
+        485,
+        440
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "",
+        "on": "",
+        "complete": "res/hd_img/touhou/touhou2-koishi-heart-side.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "keep"
+        },
+        "impactFlash": false,
+        "trigger": {
+          "kind": "hole-count",
+          "source": "hole-002",
+          "threshold": 2
+        },
+        "group": "touhou2-counters",
+        "attractState": "complete"
+      },
+      "runtimeSource": "res/img/touhou/touhou2-koishi-heart-side.png"
     },
     {
       "id": "art-touhou2-chair-01",
@@ -1392,403 +1577,6 @@
         "group": "touhou2-rollovers"
       },
       "runtimeSource": "res/img/touhou/touhou-magatama-off.png"
-    },
-    {
-      "id": "art-touhou2-boss-target-003",
-      "src": "res/hd_img/touhou/touhou2-boss-candle-off.png",
-      "x": 124,
-      "y": 88,
-      "width": 23,
-      "height": 30,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1024,
-        1536
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/hd_img/touhou/touhou2-boss-candle-off.png",
-        "on": "res/hd_img/touhou/touhou2-boss-candle-on.png",
-        "defaultState": "off",
-        "trigger": {
-          "source": "target-003-1",
-          "kind": "enemy-target"
-        },
-        "behavior": {
-          "mode": "repeat",
-          "onSeconds": 1.5,
-          "offSeconds": 0.5
-        },
-        "group": "touhou2-targets",
-        "completion": {
-          "mode": "burst",
-          "onSeconds": 0.15,
-          "offSeconds": 0.15,
-          "cycles": 3
-        },
-        "complete": ""
-      },
-      "runtimeSource": "res/img/touhou/touhou2-boss-candle-off.png"
-    },
-    {
-      "id": "art-touhou2-boss-target-004",
-      "src": "res/hd_img/touhou/touhou2-boss-candle-off.png",
-      "x": 57,
-      "y": 224,
-      "width": 23,
-      "height": 30,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1024,
-        1536
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/hd_img/touhou/touhou2-boss-candle-off.png",
-        "on": "res/hd_img/touhou/touhou2-boss-candle-on.png",
-        "defaultState": "off",
-        "trigger": {
-          "source": "target-004-1",
-          "kind": "enemy-target"
-        },
-        "behavior": {
-          "mode": "repeat",
-          "onSeconds": 1.5,
-          "offSeconds": 0.5
-        },
-        "group": "touhou2-targets",
-        "completion": {
-          "mode": "burst",
-          "onSeconds": 0.15,
-          "offSeconds": 0.15,
-          "cycles": 3
-        },
-        "complete": ""
-      },
-      "runtimeSource": "res/img/touhou/touhou2-boss-candle-off.png"
-    },
-    {
-      "id": "art-touhou2-flag-flag-001",
-      "src": "res/hd_img/touhou/touhou2-bat.png",
-      "x": 264,
-      "y": 167,
-      "width": 46,
-      "height": 23,
-      "angle": 7.1740855552846625,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1774,
-        887
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 1.1,
-        "amplitude": 12,
-        "trigger": {
-          "kind": "flag",
-          "source": "flag-001"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou2-bat.png"
-    },
-    {
-      "id": "art-touhou2-flag-flag-002",
-      "src": "res/hd_img/touhou/touhou2-bat.png",
-      "x": 89,
-      "y": 153,
-      "width": 44,
-      "height": 22,
-      "angle": 15.16371481236932,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1774,
-        887
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 1.1,
-        "amplitude": 12,
-        "trigger": {
-          "kind": "flag",
-          "source": "flag-002"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou2-bat.png"
-    },
-    {
-      "id": "art-touhou2-flag-flag-003",
-      "src": "res/hd_img/touhou/touhou2-bat.png",
-      "x": 148,
-      "y": 80,
-      "width": 48,
-      "height": 24,
-      "angle": -26.684749706655282,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1774,
-        887
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 1.1,
-        "amplitude": 12,
-        "trigger": {
-          "kind": "flag",
-          "source": "flag-003"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou2-bat.png"
-    },
-    {
-      "id": "art-touhou2-spike-oneway-001",
-      "src": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
-      "x": 310,
-      "y": 223,
-      "width": 48,
-      "height": 108,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        192,
-        432
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
-        "on": "res/hd_img/saga/saga-ground-spikes-right-retracted.png",
-        "defaultState": "off",
-        "behavior": {
-          "mode": "once",
-          "onSeconds": 0.6
-        },
-        "impactFlash": false,
-        "trigger": {
-          "source": "sensor-001",
-          "kind": "sensor"
-        }
-      },
-      "runtimeSource": "res/img/saga/saga-ground-spikes-right-raised.png"
-    },
-    {
-      "id": "art-touhou2-static-circle-005",
-      "src": "res/hd_img/touhou/touhou2-vase-table.png",
-      "x": 287,
-      "y": 276,
-      "width": 24,
-      "height": 26,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1195,
-        1316
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
-    },
-    {
-      "id": "art-touhou2-static-circle-009",
-      "src": "res/hd_img/touhou/touhou2-vase-table.png",
-      "x": 192,
-      "y": 119,
-      "width": 30,
-      "height": 33,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1195,
-        1316
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
-    },
-    {
-      "id": "art-touhou2-counter-satori",
-      "src": "res/hd_img/touhou/touhou2-eye-satori-closed.png",
-      "x": 43,
-      "y": 202,
-      "width": 38,
-      "height": 38,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        152,
-        152
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/hd_img/touhou/touhou2-eye-satori-closed.png",
-        "on": "res/hd_img/touhou/touhou2-eye-satori-open.png",
-        "defaultState": "off",
-        "behavior": {
-          "mode": "keep"
-        },
-        "impactFlash": false,
-        "complete": "res/hd_img/touhou/touhou2-eye-satori-open.png",
-        "trigger": {
-          "kind": "hole-count",
-          "source": "hole-002",
-          "threshold": 2
-        },
-        "group": "touhou2-counters",
-        "attractState": "complete"
-      },
-      "runtimeSource": "res/img/touhou/touhou2-eye-satori-closed.png"
-    },
-    {
-      "id": "art-touhou2-counter-koishi",
-      "src": "res/hd_img/touhou/touhou2-eye-koishi-closed.png",
-      "x": 43,
-      "y": 222,
-      "width": 35,
-      "height": 35,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        142,
-        142
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "runtimeSource": "res/img/touhou/touhou2-eye-koishi-closed.png"
-    },
-    {
-      "id": "art-touhou2-counter-koishi-heart",
-      "src": "res/hd_img/touhou/touhou2-koishi-heart-side.png",
-      "x": 36,
-      "y": 215,
-      "width": 20,
-      "height": 18,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        990,
-        255,
-        485,
-        440
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "",
-        "on": "",
-        "complete": "res/hd_img/touhou/touhou2-koishi-heart-side.png",
-        "defaultState": "off",
-        "behavior": {
-          "mode": "keep"
-        },
-        "impactFlash": false,
-        "trigger": {
-          "kind": "hole-count",
-          "source": "hole-002",
-          "threshold": 2
-        },
-        "group": "touhou2-counters",
-        "attractState": "complete"
-      },
-      "runtimeSource": "res/img/touhou/touhou2-koishi-heart-side.png"
-    },
-    {
-      "id": "art-touhou2-gate-oneway-002",
-      "src": "res/hd_img/touhou/touhou2-rescue-knife.png",
-      "x": 35,
-      "y": 418,
-      "width": 54,
-      "height": 47,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        133,
-        115
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "return-gate",
-      "bind": "oneway-002",
-      "runtimeSource": "res/img/touhou/touhou2-rescue-knife.png"
-    },
-    {
-      "id": "art-touhou2-gate-oneway-003",
-      "src": "res/hd_img/touhou/touhou2-rescue-broom.png",
-      "x": 295,
-      "y": 421,
-      "width": 59,
-      "height": 48,
-      "angle": -14.408914300373482,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        110,
-        90
-      ],
-      "plane": "foreground",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "return-gate",
-      "bind": "oneway-003",
-      "runtimeSource": "res/img/touhou/touhou2-rescue-broom.png"
     },
     {
       "id": "art-touhou2-bumper-circle-006",
@@ -2455,7 +2243,6 @@
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
-      "bind": "hole-002",
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png",
       "indicator": {
         "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
@@ -2478,6 +2265,224 @@
         "impactFlash": false,
         "group": "touhou2-multiball"
       }
+    },
+    {
+      "id": "art-touhou2-boss-target-004",
+      "src": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+      "x": 57,
+      "y": 224,
+      "width": 23,
+      "height": 30,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou2-boss-candle-off.png",
+        "on": "res/hd_img/touhou/touhou2-boss-candle-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "source": "target-004-1",
+          "kind": "enemy-target"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 1.5,
+          "offSeconds": 0.5
+        },
+        "group": "touhou2-targets",
+        "completion": {
+          "mode": "burst",
+          "onSeconds": 0.15,
+          "offSeconds": 0.15,
+          "cycles": 3
+        },
+        "complete": ""
+      },
+      "runtimeSource": "res/img/touhou/touhou2-boss-candle-off.png"
+    },
+    {
+      "id": "art-001",
+      "src": "res/hd_img/plunger-rod.png",
+      "x": 322,
+      "y": 424,
+      "width": 30,
+      "height": 91,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        40,
+        121
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "plunger",
+      "bind": "plunger",
+      "layoutBind": "plunger-001",
+      "layoutAnchor": [
+        321.72,
+        381.762
+      ],
+      "runtimeSource": "res/img/plunger-rod.png"
+    },
+    {
+      "id": "art-002",
+      "src": "res/hd_img/plunger-collar-plain.png",
+      "x": 323,
+      "y": 416,
+      "width": 50,
+      "height": 38,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        56,
+        42
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "layoutBind": "plunger-001",
+      "layoutAnchor": [
+        321.72,
+        381.762
+      ],
+      "runtimeSource": "res/img/plunger-collar-plain.png"
+    },
+    {
+      "id": "art-touhou2-gate-oneway-002",
+      "src": "res/hd_img/touhou/touhou2-rescue-knife.png",
+      "x": 35,
+      "y": 418,
+      "width": 54,
+      "height": 47,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        133,
+        115
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "oneway-002",
+      "runtimeSource": "res/img/touhou/touhou2-rescue-knife.png"
+    },
+    {
+      "id": "art-touhou2-gate-oneway-003",
+      "src": "res/hd_img/touhou/touhou2-rescue-broom.png",
+      "x": 295,
+      "y": 421,
+      "width": 59,
+      "height": 48,
+      "angle": -14.408914300373482,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        110,
+        90
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "return-gate",
+      "bind": "oneway-003",
+      "runtimeSource": "res/img/touhou/touhou2-rescue-broom.png"
+    },
+    {
+      "id": "art-touhou2-spike-oneway-001",
+      "src": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
+      "x": 310,
+      "y": 223,
+      "width": 48,
+      "height": 108,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        192,
+        432
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/saga/saga-ground-spikes-right-raised.png",
+        "on": "res/hd_img/saga/saga-ground-spikes-right-retracted.png",
+        "defaultState": "off",
+        "behavior": {
+          "mode": "once",
+          "onSeconds": 0.6
+        },
+        "impactFlash": false,
+        "trigger": {
+          "source": "sensor-001",
+          "kind": "sensor"
+        }
+      },
+      "runtimeSource": "res/img/saga/saga-ground-spikes-right-raised.png"
+    },
+    {
+      "id": "art-touhou2-static-circle-005",
+      "src": "res/hd_img/touhou/touhou2-vase-table.png",
+      "x": 287,
+      "y": 276,
+      "width": 24,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1195,
+        1316
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
+    },
+    {
+      "id": "art-touhou2-static-circle-009",
+      "src": "res/hd_img/touhou/touhou2-vase-table.png",
+      "x": 192,
+      "y": 119,
+      "width": 30,
+      "height": 33,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1195,
+        1316
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
     }
   ],
   "gameplay": {
@@ -2600,10 +2605,7 @@
         "src": "res/hd_img/touhou/touhou-attack-lv4-fantasy-seal.png",
         "duration": 1.55,
         "fullscreen": true
-      },
-      "trigger": "circle-entry",
-      "entryCooldown": 1,
-      "countLayer": "lower"
+      }
     },
     "holeMultiball": {
       "hole": "hole-002",
@@ -2614,12 +2616,12 @@
     "tutorial": {
       "attackIndicators": {
         "lv1": [
-          "art-020"
-        ],
-        "lv2": [
           "art-018",
           "art-019",
           "art-017"
+        ],
+        "lv2": [
+          "art-020"
         ],
         "lv3": [
           "art-021"
@@ -2927,6 +2929,7 @@
       "cx": 263.0528,
       "cy": 342.456,
       "r": 5.1224,
+      "bumperStrength": "strong",
       "mechanic": "solid-circle"
     },
     {
@@ -3109,11 +3112,11 @@
     {
       "id": "flag-001",
       "type": "flag",
-      "layer": "lower",
-      "x1": 246,
-      "y1": 177,
-      "x2": 272,
-      "y2": 186
+      "layer": "upper",
+      "x1": 252,
+      "y1": 163,
+      "x2": 278,
+      "y2": 172
     },
     {
       "id": "arc-007",
@@ -3176,11 +3179,11 @@
     {
       "id": "flag-002",
       "type": "flag",
-      "layer": "lower",
-      "x1": 74,
-      "y1": 167,
-      "x2": 104,
-      "y2": 162
+      "layer": "upper",
+      "x1": 72,
+      "y1": 154,
+      "x2": 102,
+      "y2": 149
     },
     {
       "id": "arc-009",
@@ -3198,9 +3201,9 @@
       "type": "oneway",
       "layer": "lower",
       "x1": 75,
-      "y1": 162,
-      "x2": 102,
-      "y2": 157,
+      "y1": 169,
+      "x2": 104,
+      "y2": 165,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -3231,10 +3234,10 @@
       "id": "oneway-006",
       "type": "oneway",
       "layer": "lower",
-      "x1": 249,
-      "y1": 175,
-      "x2": 271,
-      "y2": 182,
+      "x1": 247,
+      "y1": 176,
+      "x2": 272,
+      "y2": 184,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -3393,18 +3396,18 @@
             "circle-007",
             "circle-008"
           ],
-          "repeatExtraBall": false
+          "repeatExtraBall": true
         }
       }
     },
     {
       "id": "flag-003",
       "type": "flag",
-      "layer": "lower",
-      "x1": 134,
-      "y1": 89,
-      "x2": 160.969,
-      "y2": 88.892
+      "layer": "upper",
+      "x1": 133,
+      "y1": 82,
+      "x2": 159.969,
+      "y2": 81.892
     },
     {
       "id": "arc-011",
@@ -3608,7 +3611,7 @@
       "y1": 75,
       "x2": 9,
       "y2": 75,
-      "attack": "lv2",
+      "attack": "lv1",
       "attackCount": 1
     },
     {
@@ -3709,7 +3712,7 @@
       "y1": 55,
       "qx": 148,
       "qy": 23,
-      "x2": 192,
+      "x2": 195,
       "y2": 24
     },
     {
@@ -3754,20 +3757,20 @@
       "id": "oneway-009",
       "type": "oneway",
       "layer": "lower",
-      "x1": 187,
-      "y1": 26,
-      "x2": 187,
-      "y2": 4,
+      "x1": 195,
+      "y1": 24,
+      "x2": 195,
+      "y2": 2,
       "direction": 1
     },
     {
       "id": "oneway-010",
       "type": "oneway",
       "layer": "lower",
-      "x1": 283,
-      "y1": 4,
-      "x2": 277,
-      "y2": 42,
+      "x1": 286,
+      "y1": 3,
+      "x2": 280,
+      "y2": 41,
       "direction": 1
     },
     {
@@ -3838,7 +3841,7 @@
       "angle": 0,
       "releaseMode": "fixed",
       "releaseAngle": 83.666,
-      "attack": "lv1"
+      "attack": "lv2"
     },
     {
       "id": "blockhole-001",
@@ -3945,10 +3948,10 @@
       "id": "oneway-012",
       "type": "oneway",
       "layer": "lower",
-      "x1": 133,
-      "y1": 83,
-      "x2": 159,
-      "y2": 82,
+      "x1": 134,
+      "y1": 90,
+      "x2": 160,
+      "y2": 89,
       "direction": -1,
       "mechanic": "layer-transition",
       "fromLayer": "lower",
@@ -3963,7 +3966,7 @@
       "y1": 19,
       "x2": 177,
       "y2": 19,
-      "attack": "lv2"
+      "attack": "lv1"
     },
     {
       "id": "sensor-005",
@@ -3973,7 +3976,7 @@
       "y1": 138,
       "x2": 350,
       "y2": 138,
-      "attack": "lv2"
+      "attack": "lv1"
     },
     {
       "id": "line-086",
@@ -4107,748 +4110,9 @@
       "qy": 302.47,
       "x2": 50,
       "y2": 285
-    },
-    {
-      "id": "line-099",
-      "type": "line",
-      "layer": "top",
-      "x1": 245,
-      "y1": 469,
-      "x2": 360,
-      "y2": 377
-    },
-    {
-      "id": "line-127",
-      "type": "line",
-      "layer": "top",
-      "x1": 262,
-      "y1": 1,
-      "x2": 339,
-      "y2": 1
-    },
-    {
-      "id": "line-128",
-      "type": "line",
-      "x1": 313,
-      "y1": 416,
-      "x2": 360,
-      "y2": 416,
-      "layer": "top"
     }
   ],
   "gravityRegions": [
-    {
-      "id": "gravityZone-001",
-      "type": "gravityZone",
-      "layer": "lower",
-      "x": 130,
-      "y": 28,
-      "angle": 0,
-      "width": 128,
-      "height": 54,
-      "outline": [
-        [
-          0.5,
-          -0.5
-        ],
-        [
-          0.4869305428017552,
-          -0.4984241970773957
-        ],
-        [
-          0.47392166615651465,
-          -0.4966896801913637
-        ],
-        [
-          0.4609733700642793,
-          -0.4947964493419039
-        ],
-        [
-          0.44808565452504845,
-          -0.4927445045290163
-        ],
-        [
-          0.43525851953882255,
-          -0.490533845752701
-        ],
-        [
-          0.4224919651056016,
-          -0.48816447301295784
-        ],
-        [
-          0.40978599122538517,
-          -0.48563638630978695
-        ],
-        [
-          0.3971405978981739,
-          -0.48294958564318835
-        ],
-        [
-          0.3845557851239667,
-          -0.48010407101316194
-        ],
-        [
-          0.3720315529027649,
-          -0.47709984241970776
-        ],
-        [
-          0.35956790123456783,
-          -0.4739368998628258
-        ],
-        [
-          0.3471648301193755,
-          -0.47061524334251603
-        ],
-        [
-          0.3348223395571883,
-          -0.4671348728587785
-        ],
-        [
-          0.32254042954800544,
-          -0.4634957884116133
-        ],
-        [
-          0.3103191000918275,
-          -0.4596979900010203
-        ],
-        [
-          0.2981583511886541,
-          -0.45574147762699946
-        ],
-        [
-          0.28605818283848583,
-          -0.4516262512895509
-        ],
-        [
-          0.2740185950413221,
-          -0.4473523109886746
-        ],
-        [
-          0.2620395877971635,
-          -0.4429196567243705
-        ],
-        [
-          0.25012116110600946,
-          -0.4383282884966387
-        ],
-        [
-          0.23826331496786035,
-          -0.433578206305479
-        ],
-        [
-          0.2264660493827162,
-          -0.42866941015089166
-        ],
-        [
-          0.21472936435057655,
-          -0.4236019000328764
-        ],
-        [
-          0.20305325987144163,
-          -0.4183756759514335
-        ],
-        [
-          0.19143773594531144,
-          -0.4129907379065628
-        ],
-        [
-          0.17988279257218664,
-          -0.40744708589826434
-        ],
-        [
-          0.16838842975206592,
-          -0.4017447199265381
-        ],
-        [
-          0.15695464748495058,
-          -0.39588363999138415
-        ],
-        [
-          0.14558144577083953,
-          -0.38986384609280234
-        ],
-        [
-          0.13426882460973388,
-          -0.38368533823079276
-        ],
-        [
-          0.12301678400163274,
-          -0.3773481164053554
-        ],
-        [
-          0.11182532394653588,
-          -0.3708521806164904
-        ],
-        [
-          0.10069444444444464,
-          -0.36419753086419754
-        ],
-        [
-          0.08962414549535769,
-          -0.35738416714847693
-        ],
-        [
-          0.07861442709927546,
-          -0.35041208946932856
-        ],
-        [
-          0.06766528925619819,
-          -0.3432812978267524
-        ],
-        [
-          0.05677673196612609,
-          -0.33599179222074843
-        ],
-        [
-          0.04594875522905806,
-          -0.3285435726513168
-        ],
-        [
-          0.03518135904499542,
-          -0.3209366391184573
-        ],
-        [
-          0.02447454341393751,
-          -0.3131709916221701
-        ],
-        [
-          0.01382830833588411,
-          -0.3052466301624551
-        ],
-        [
-          0.0032426538108354386,
-          -0.2971635547393123
-        ],
-        [
-          -0.007282420161208059,
-          -0.2889217653527418
-        ],
-        [
-          -0.017746913580246826,
-          -0.2805212620027435
-        ],
-        [
-          -0.028150826446281085,
-          -0.27196204468931745
-        ],
-        [
-          -0.03849415875931039,
-          -0.26324411341246357
-        ],
-        [
-          -0.048776910519334526,
-          -0.2543674681721819
-        ],
-        [
-          -0.058999081726354485,
-          -0.24533210896847257
-        ],
-        [
-          -0.06916067238036949,
-          -0.23613803580133544
-        ],
-        [
-          -0.07926168248137944,
-          -0.22678524867077052
-        ],
-        [
-          -0.08930211202938476,
-          -0.21727374757677786
-        ],
-        [
-          -0.09928196102438536,
-          -0.2076035325193574
-        ],
-        [
-          -0.10920122946638111,
-          -0.19777460349850923
-        ],
-        [
-          -0.11905991735537191,
-          -0.18778696051423327
-        ],
-        [
-          -0.128858024691358,
-          -0.17764060356652947
-        ],
-        [
-          -0.13859555147433933,
-          -0.167335532655398
-        ],
-        [
-          -0.14827249770431594,
-          -0.15687174778083865
-        ],
-        [
-          -0.1578888633812875,
-          -0.14624924894285163
-        ],
-        [
-          -0.16744464850525442,
-          -0.13546803614143685
-        ],
-        [
-          -0.17693985307621674,
-          -0.12452810937659418
-        ],
-        [
-          -0.18637447709417398,
-          -0.1134294686483239
-        ],
-        [
-          -0.19574852055912673,
-          -0.10217211395662575
-        ],
-        [
-          -0.2050619834710743,
-          -0.09075604530149983
-        ],
-        [
-          -0.21431486583001746,
-          -0.07918126268294612
-        ],
-        [
-          -0.22350716763595557,
-          -0.06744776610096472
-        ],
-        [
-          -0.23263888888888884,
-          -0.05555555555555562
-        ],
-        [
-          -0.2417100295888175,
-          -0.04350463104671852
-        ],
-        [
-          -0.2507205897357412,
-          -0.03129499257445387
-        ],
-        [
-          -0.25967056932966026,
-          -0.01892664013876127
-        ],
-        [
-          -0.2685599683705745,
-          -0.006399573739641058
-        ],
-        [
-          -0.27738878685848367,
-          0.006286206622906971
-        ],
-        [
-          -0.28615702479338856,
-          0.019130700948882813
-        ],
-        [
-          -0.29486468217528816,
-          0.032133909238286344
-        ],
-        [
-          -0.30351175900418326,
-          0.045295831491117745
-        ],
-        [
-          -0.3120982552800735,
-          0.058616467707376774
-        ],
-        [
-          -0.3206241710029588,
-          0.07209581788706354
-        ],
-        [
-          -0.3290895061728396,
-          0.0857338820301784
-        ],
-        [
-          -0.33749426078971534,
-          0.0995306601367208
-        ],
-        [
-          -0.34583843485358634,
-          0.11348615220669095
-        ],
-        [
-          -0.3541220283644526,
-          0.12760035824008883
-        ],
-        [
-          -0.36234504132231404,
-          0.14187327823691462
-        ],
-        [
-          -0.37050747372717074,
-          0.15630491219716802
-        ],
-        [
-          -0.3786093255790226,
-          0.17089526012084916
-        ],
-        [
-          -0.3866505968778695,
-          0.18564432200795847
-        ],
-        [
-          -0.3946312876237119,
-          0.2005520978584951
-        ],
-        [
-          -0.40255139781654936,
-          0.2156185876724599
-        ],
-        [
-          -0.41041092745638197,
-          0.23084379144985204
-        ],
-        [
-          -0.41820987654320985,
-          0.24622770919067205
-        ],
-        [
-          -0.425948245077033,
-          0.26177034089491996
-        ],
-        [
-          -0.4336260330578512,
-          0.2774716865625956
-        ],
-        [
-          -0.44124324048566477,
-          0.2933317461936991
-        ],
-        [
-          -0.4487998673604734,
-          0.30935051978823025
-        ],
-        [
-          -0.4562959136822774,
-          0.3255280073461892
-        ],
-        [
-          -0.46373137945107645,
-          0.34186420886757596
-        ],
-        [
-          -0.47110626466687067,
-          0.3583591243523903
-        ],
-        [
-          -0.47842056932966026,
-          0.37501275380063276
-        ],
-        [
-          -0.4856742934394449,
-          0.39182509721230263
-        ],
-        [
-          -0.49286743699622493,
-          0.40879615458740043
-        ],
-        [
-          -0.5,
-          0.42592592592592593
-        ],
-        [
-          -0.234375,
-          0.5
-        ],
-        [
-          -0.22335234645328705,
-          0.48270296680763836
-        ],
-        [
-          -0.21234320934256046,
-          0.46567025503011655
-        ],
-        [
-          -0.2013475886678201,
-          0.44890186466743587
-        ],
-        [
-          -0.19036548442906576,
-          0.432397795719595
-        ],
-        [
-          -0.17939689662629754,
-          0.416158048186595
-        ],
-        [
-          -0.16844182525951568,
-          0.40018262206843513
-        ],
-        [
-          -0.1575002703287196,
-          0.384471517365116
-        ],
-        [
-          -0.1465722318339101,
-          0.36902473407663705
-        ],
-        [
-          -0.1356577097750865,
-          0.35384227220299885
-        ],
-        [
-          -0.12475670415224915,
-          0.33892413174420094
-        ],
-        [
-          -0.11386921496539781,
-          0.32427031270024353
-        ],
-        [
-          -0.10299524221453282,
-          0.3098808150711265
-        ],
-        [
-          -0.09213478589965385,
-          0.29575563885684997
-        ],
-        [
-          -0.08128784602076122,
-          0.28189478405741397
-        ],
-        [
-          -0.07045442257785461,
-          0.26829825067281826
-        ],
-        [
-          -0.059634515570934354,
-          0.25496603870306295
-        ],
-        [
-          -0.048828125,
-          0.24189814814814814
-        ],
-        [
-          -0.03803525086505177,
-          0.22909457900807392
-        ],
-        [
-          -0.027255893166090006,
-          0.21655533128283985
-        ],
-        [
-          -0.016490051903114256,
-          0.20428040497244632
-        ],
-        [
-          -0.005737727076124521,
-          0.19226980007689345
-        ],
-        [
-          0.005001081314879086,
-          0.18052351659618104
-        ],
-        [
-          0.015726373269896232,
-          0.1690415545303089
-        ],
-        [
-          0.02643814878892714,
-          0.15782391387927713
-        ],
-        [
-          0.037136407871972255,
-          0.14687059464308594
-        ],
-        [
-          0.04782115051903113,
-          0.13618159682173517
-        ],
-        [
-          0.05849237673010399,
-          0.12575692041522507
-        ],
-        [
-          0.06915008650519017,
-          0.115596565423555
-        ],
-        [
-          0.07979427984429055,
-          0.10570053184672558
-        ],
-        [
-          0.09042495674740492,
-          0.09606881968473673
-        ],
-        [
-          0.10104211721453304,
-          0.08670142893758816
-        ],
-        [
-          0.11164576124567471,
-          0.07759835960528012
-        ],
-        [
-          0.12223588884083036,
-          0.06875961168781232
-        ],
-        [
-          0.1328125,
-          0.06018518518518518
-        ],
-        [
-          0.1433755947231834,
-          0.05187508009739853
-        ],
-        [
-          0.15392517301038056,
-          0.043829296424452165
-        ],
-        [
-          0.1644612348615917,
-          0.03604783416634634
-        ],
-        [
-          0.1749837802768166,
-          0.0285306933230808
-        ],
-        [
-          0.1854928092560555,
-          0.02127787389465594
-        ],
-        [
-          0.19598832179930792,
-          0.01428937588107136
-        ],
-        [
-          0.20647031790657433,
-          0.007565199282327326
-        ],
-        [
-          0.21693879757785473,
-          0.0011053440984237074
-        ],
-        [
-          0.22739376081314866,
-          -0.005090189670639496
-        ],
-        [
-          0.2378352076124568,
-          -0.011021402024862285
-        ],
-        [
-          0.24826313797577848,
-          -0.016688292964244462
-        ],
-        [
-          0.25867755190311437,
-          -0.022090862488786358
-        ],
-        [
-          0.2690784493944638,
-          -0.027229110598487774
-        ],
-        [
-          0.2794658304498272,
-          -0.03210303729334871
-        ],
-        [
-          0.28983969506920415,
-          -0.036712642573369224
-        ],
-        [
-          0.3002000432525953,
-          -0.04105792643854927
-        ],
-        [
-          0.310546875,
-          -0.04513888888888889
-        ],
-        [
-          0.3208801903114189,
-          -0.04895552992438797
-        ],
-        [
-          0.3311999891868511,
-          -0.05250784954504676
-        ],
-        [
-          0.34150627162629754,
-          -0.05579584775086501
-        ],
-        [
-          0.35179903762975795,
-          -0.058819524541842846
-        ],
-        [
-          0.3620782871972319,
-          -0.0615788799179802
-        ],
-        [
-          0.3723440203287198,
-          -0.06407391387927713
-        ],
-        [
-          0.3825962370242215,
-          -0.06630462642573359
-        ],
-        [
-          0.392834937283737,
-          -0.06827101755734978
-        ],
-        [
-          0.4030601211072664,
-          -0.0699730872741254
-        ],
-        [
-          0.4132717884948096,
-          -0.07141083557606048
-        ],
-        [
-          0.4234699394463666,
-          -0.07258426246315522
-        ],
-        [
-          0.43365457396193774,
-          -0.07349336793540948
-        ],
-        [
-          0.44382569204152245,
-          -0.07413815199282325
-        ],
-        [
-          0.45398329368512114,
-          -0.07451861463539668
-        ],
-        [
-          0.4641273788927336,
-          -0.07463475586312956
-        ],
-        [
-          0.47425794766436,
-          -0.07448657567602203
-        ],
-        [
-          0.484375,
-          -0.07407407407407407
-        ]
-      ],
-      "bridges": [
-        [
-          [
-            -0.5,
-            0.42592592592592593
-          ],
-          [
-            -0.234375,
-            0.5
-          ]
-        ],
-        [
-          [
-            0.484375,
-            -0.07407407407407407
-          ],
-          [
-            0.5,
-            -0.5
-          ]
-        ]
-      ],
-      "gravityDirection": "right",
-      "gravityStrength": 50
-    },
     {
       "id": "gravityZone-002",
       "type": "gravityZone",
@@ -5252,6 +4516,726 @@
       ],
       "gravityDirection": "left",
       "gravityStrength": 50
+    },
+    {
+      "id": "gravityZone-003",
+      "type": "gravityZone",
+      "layer": "lower",
+      "x": 130.5,
+      "y": 28,
+      "angle": 0,
+      "width": 129,
+      "height": 54,
+      "outline": [
+        [
+          0.49224806201550386,
+          -0.5
+        ],
+        [
+          0.4792799184389509,
+          -0.4984241970773957
+        ],
+        [
+          0.4663718857987122,
+          -0.4966896801913637
+        ],
+        [
+          0.45352396409478873,
+          -0.4947964493419039
+        ],
+        [
+          0.44073615332717986,
+          -0.4927445045290163
+        ],
+        [
+          0.42800845349588595,
+          -0.490533845752701
+        ],
+        [
+          0.415340864600907,
+          -0.48816447301295784
+        ],
+        [
+          0.4027333866422427,
+          -0.48563638630978695
+        ],
+        [
+          0.39018601961989346,
+          -0.48294958564318835
+        ],
+        [
+          0.37769876353385845,
+          -0.48010407101316194
+        ],
+        [
+          0.3652716183841388,
+          -0.47709984241970776
+        ],
+        [
+          0.35290458417073395,
+          -0.4739368998628258
+        ],
+        [
+          0.3405976608936439,
+          -0.47061524334251603
+        ],
+        [
+          0.32835084855286906,
+          -0.4671348728587785
+        ],
+        [
+          0.3161641471484085,
+          -0.4634957884116133
+        ],
+        [
+          0.30403755668026294,
+          -0.4596979900010203
+        ],
+        [
+          0.29197107714843196,
+          -0.45574147762699946
+        ],
+        [
+          0.27996470855291616,
+          -0.4516262512895509
+        ],
+        [
+          0.26801845089371495,
+          -0.4473523109886746
+        ],
+        [
+          0.25613230417082894,
+          -0.4429196567243705
+        ],
+        [
+          0.24430626838425745,
+          -0.4383282884966387
+        ],
+        [
+          0.23254034353400097,
+          -0.433578206305479
+        ],
+        [
+          0.22083452962005948,
+          -0.42866941015089166
+        ],
+        [
+          0.20918882664243255,
+          -0.4236019000328764
+        ],
+        [
+          0.19760323460112036,
+          -0.4183756759514335
+        ],
+        [
+          0.186077753496123,
+          -0.4129907379065628
+        ],
+        [
+          0.174612383327441,
+          -0.40744708589826434
+        ],
+        [
+          0.16320712409507315,
+          -0.4017447199265381
+        ],
+        [
+          0.15186197579902072,
+          -0.39588363999138415
+        ],
+        [
+          0.14057693843928265,
+          -0.38986384609280234
+        ],
+        [
+          0.12935201201585997,
+          -0.38368533823079276
+        ],
+        [
+          0.11818719652875187,
+          -0.3773481164053554
+        ],
+        [
+          0.10708249197795808,
+          -0.3708521806164904
+        ],
+        [
+          0.09603789836347995,
+          -0.36419753086419754
+        ],
+        [
+          0.08505341568531616,
+          -0.35738416714847693
+        ],
+        [
+          0.07412904394346713,
+          -0.35041208946932856
+        ],
+        [
+          0.06326478313793309,
+          -0.3432812978267524
+        ],
+        [
+          0.052460633268714266,
+          -0.33599179222074843
+        ],
+        [
+          0.04171659433580954,
+          -0.3285435726513168
+        ],
+        [
+          0.03103266633922026,
+          -0.3209366391184573
+        ],
+        [
+          0.020408849278945748,
+          -0.3131709916221701
+        ],
+        [
+          0.009845143154985784,
+          -0.3052466301624551
+        ],
+        [
+          -0.0006584520326594098,
+          -0.2971635547393123
+        ],
+        [
+          -0.01110193628398939,
+          -0.2889217653527418
+        ],
+        [
+          -0.021485309599004604,
+          -0.2805212620027435
+        ],
+        [
+          -0.031808571977705265,
+          -0.27196204468931745
+        ],
+        [
+          -0.04207172342009093,
+          -0.26324411341246357
+        ],
+        [
+          -0.05227476392616139,
+          -0.2543674681721819
+        ],
+        [
+          -0.06241769349591763,
+          -0.24533210896847257
+        ],
+        [
+          -0.07250051212935887,
+          -0.23613803580133544
+        ],
+        [
+          -0.08252321982648503,
+          -0.22678524867077052
+        ],
+        [
+          -0.0924858165872965,
+          -0.21727374757677786
+        ],
+        [
+          -0.10238830241179322,
+          -0.2076035325193574
+        ],
+        [
+          -0.11223067729997506,
+          -0.19777460349850923
+        ],
+        [
+          -0.1220129412518419,
+          -0.18778696051423327
+        ],
+        [
+          -0.13173509426739397,
+          -0.17764060356652947
+        ],
+        [
+          -0.14139713634663129,
+          -0.167335532655398
+        ],
+        [
+          -0.1509990674895538,
+          -0.15687174778083865
+        ],
+        [
+          -0.16054088769616123,
+          -0.14624924894285163
+        ],
+        [
+          -0.170022596966454,
+          -0.13546803614143685
+        ],
+        [
+          -0.1794441953004321,
+          -0.12452810937659418
+        ],
+        [
+          -0.1888056826980951,
+          -0.1134294686483239
+        ],
+        [
+          -0.19810705915944357,
+          -0.10217211395662575
+        ],
+        [
+          -0.2073483246844768,
+          -0.09075604530149983
+        ],
+        [
+          -0.21652947927319563,
+          -0.07918126268294612
+        ],
+        [
+          -0.22565052292559934,
+          -0.06744776610096472
+        ],
+        [
+          -0.23471145564168816,
+          -0.05555555555555562
+        ],
+        [
+          -0.24371227742146231,
+          -0.04350463104671852
+        ],
+        [
+          -0.2526529882649215,
+          -0.03129499257445387
+        ],
+        [
+          -0.261533588172066,
+          -0.01892664013876127
+        ],
+        [
+          -0.2703540771428956,
+          -0.006399573739641058
+        ],
+        [
+          -0.2791144551774102,
+          0.006286206622906971
+        ],
+        [
+          -0.28781472227561034,
+          0.019130700948882813
+        ],
+        [
+          -0.29645487843749524,
+          0.032133909238286344
+        ],
+        [
+          -0.30503492366306556,
+          0.045295831491117745
+        ],
+        [
+          -0.313554857952321,
+          0.058616467707376774
+        ],
+        [
+          -0.32201468130526145,
+          0.07209581788706354
+        ],
+        [
+          -0.33041439372188736,
+          0.0857338820301784
+        ],
+        [
+          -0.3387539952021982,
+          0.0995306601367208
+        ],
+        [
+          -0.3470334857461942,
+          0.11348615220669095
+        ],
+        [
+          -0.35525286535387546,
+          0.12760035824008883
+        ],
+        [
+          -0.36341213402524186,
+          0.14187327823691462
+        ],
+        [
+          -0.37151129176029346,
+          0.15630491219716802
+        ],
+        [
+          -0.3795503385590302,
+          0.17089526012084916
+        ],
+        [
+          -0.3875292744214519,
+          0.18564432200795847
+        ],
+        [
+          -0.3954480993475591,
+          0.2005520978584951
+        ],
+        [
+          -0.4033068133373513,
+          0.2156185876724599
+        ],
+        [
+          -0.4111054163908286,
+          0.23084379144985204
+        ],
+        [
+          -0.4188439085079912,
+          0.24622770919067205
+        ],
+        [
+          -0.42652228968883893,
+          0.26177034089491996
+        ],
+        [
+          -0.43414055993337175,
+          0.2774716865625956
+        ],
+        [
+          -0.4416987192415898,
+          0.2933317461936991
+        ],
+        [
+          -0.449196767613493,
+          0.30935051978823025
+        ],
+        [
+          -0.45663470504908144,
+          0.3255280073461892
+        ],
+        [
+          -0.4640125315483549,
+          0.34186420886757596
+        ],
+        [
+          -0.47133024711131355,
+          0.3583591243523903
+        ],
+        [
+          -0.4785878517379575,
+          0.37501275380063276
+        ],
+        [
+          -0.48578534542828644,
+          0.39182509721230263
+        ],
+        [
+          -0.4929227281823007,
+          0.40879615458740043
+        ],
+        [
+          -0.5,
+          0.42592592592592593
+        ],
+        [
+          -0.2364341085271318,
+          0.5
+        ],
+        [
+          -0.22580446131941145,
+          0.4831934996220712
+        ],
+        [
+          -0.21517797816801146,
+          0.46663643235071806
+        ],
+        [
+          -0.2045546590729314,
+          0.4503287981859411
+        ],
+        [
+          -0.1939345040341718,
+          0.43427059712774
+        ],
+        [
+          -0.18331751305173227,
+          0.418461829176115
+        ],
+        [
+          -0.17270368612561318,
+          0.4029024943310657
+        ],
+        [
+          -0.16209302325581393,
+          0.3875925925925927
+        ],
+        [
+          -0.1514855244423352,
+          0.3725321239606953
+        ],
+        [
+          -0.14088118968517635,
+          0.3577210884353741
+        ],
+        [
+          -0.13028001898433772,
+          0.343159486016629
+        ],
+        [
+          -0.1196820123398197,
+          0.32884731670445944
+        ],
+        [
+          -0.10908716975162178,
+          0.31478458049886615
+        ],
+        [
+          -0.09849549121974371,
+          0.30097127739984875
+        ],
+        [
+          -0.08790697674418596,
+          0.2874074074074076
+        ],
+        [
+          -0.07732162632494874,
+          0.27409297052154186
+        ],
+        [
+          -0.06673943996203138,
+          0.2610279667422525
+        ],
+        [
+          -0.056160417655434225,
+          0.24821239606953893
+        ],
+        [
+          -0.04558455940515737,
+          0.23564625850340146
+        ],
+        [
+          -0.03501186521120061,
+          0.22332955404383995
+        ],
+        [
+          -0.02444233507356426,
+          0.21126228269085412
+        ],
+        [
+          -0.013875968992248,
+          0.19944444444444437
+        ],
+        [
+          -0.0033127669672520484,
+          0.18787603930461086
+        ],
+        [
+          0.007247271001424037,
+          0.17655706727135315
+        ],
+        [
+          0.017804144913779595,
+          0.16548752834467115
+        ],
+        [
+          0.028357854769814846,
+          0.15466742252456522
+        ],
+        [
+          0.038908400569530224,
+          0.1440967498110355
+        ],
+        [
+          0.0494557823129253,
+          0.13377551020408163
+        ],
+        [
+          0.06000000000000007,
+          0.1237037037037037
+        ],
+        [
+          0.07054105363075452,
+          0.1138813303099016
+        ],
+        [
+          0.08107894320518913,
+          0.10430839002267571
+        ],
+        [
+          0.09161366872330319,
+          0.09498488284202564
+        ],
+        [
+          0.10214523018509739,
+          0.08591080876795167
+        ],
+        [
+          0.11267362759057106,
+          0.0770861678004535
+        ],
+        [
+          0.12319886093972464,
+          0.0685109599395313
+        ],
+        [
+          0.13372093023255813,
+          0.06018518518518518
+        ],
+        [
+          0.14423983546907132,
+          0.052108843537414955
+        ],
+        [
+          0.15475557664926443,
+          0.04428193499622075
+        ],
+        [
+          0.165268153773137,
+          0.036704459561602495
+        ],
+        [
+          0.17577756684068993,
+          0.029376417233560066
+        ],
+        [
+          0.1862838158519221,
+          0.022297808012093787
+        ],
+        [
+          0.19678690080683442,
+          0.015468631897203333
+        ],
+        [
+          0.20728682170542642,
+          0.008888888888888962
+        ],
+        [
+          0.21778357854769811,
+          0.0025585789871504154
+        ],
+        [
+          0.22827717133364975,
+          -0.0035222978080121114
+        ],
+        [
+          0.23876760006328104,
+          -0.009353741496598685
+        ],
+        [
+          0.24925486473659225,
+          -0.014935752078609235
+        ],
+        [
+          0.25973896535358315,
+          -0.020268329554043833
+        ],
+        [
+          0.2702199019142542,
+          -0.025351473922902476
+        ],
+        [
+          0.2806976744186045,
+          -0.03018518518518523
+        ],
+        [
+          0.29117228286663493,
+          -0.0347694633408919
+        ],
+        [
+          0.30164372725834526,
+          -0.039104308390022616
+        ],
+        [
+          0.3121120075937353,
+          -0.04318972033257751
+        ],
+        [
+          0.322577123872805,
+          -0.04702569916855631
+        ],
+        [
+          0.33303907609555444,
+          -0.050612244897959166
+        ],
+        [
+          0.343497864261984,
+          -0.05394935752078606
+        ],
+        [
+          0.35395348837209323,
+          -0.057037037037037004
+        ],
+        [
+          0.3644059484258819,
+          -0.059875283446711995
+        ],
+        [
+          0.3748552444233508,
+          -0.06246409674981103
+        ],
+        [
+          0.3853013763644993,
+          -0.06480347694633411
+        ],
+        [
+          0.39574434424932753,
+          -0.06689342403628117
+        ],
+        [
+          0.4061841480778359,
+          -0.06873393801965227
+        ],
+        [
+          0.41662078785002377,
+          -0.07032501889644749
+        ],
+        [
+          0.4270542635658915,
+          -0.07166666666666668
+        ],
+        [
+          0.43748457522543893,
+          -0.07275888133030993
+        ],
+        [
+          0.4479117228286663,
+          -0.07360166288737721
+        ],
+        [
+          0.4583357063755736,
+          -0.07419501133786849
+        ],
+        [
+          0.4687565258661605,
+          -0.0745389266817838
+        ],
+        [
+          0.47917418130042716,
+          -0.07463340891912315
+        ],
+        [
+          0.48958867267837375,
+          -0.07447845804988662
+        ],
+        [
+          0.5,
+          -0.07407407407407407
+        ]
+      ],
+      "bridges": [
+        [
+          [
+            -0.5,
+            0.42592592592592593
+          ],
+          [
+            -0.2364341085271318,
+            0.5
+          ]
+        ],
+        [
+          [
+            0.5,
+            -0.07407407407407407
+          ],
+          [
+            0.49224806201550386,
+            -0.5
+          ]
+        ]
+      ],
+      "gravityDirection": "right",
+      "gravityStrength": 150
     }
   ],
   "lockedLayout": [],

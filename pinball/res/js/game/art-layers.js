@@ -87,6 +87,7 @@ function validate(items){
   if(!Array.isArray(o.crop)||o.crop.length!==4||!o.crop.every(Number.isFinite)||o.crop[0]<0||o.crop[1]<0||o.crop[2]<=0||o.crop[3]<=0)throw Error('裁切範圍不合法');
   if(o.frameStride!==undefined&&(!Number.isFinite(o.frameStride)||o.frameStride<=0))throw Error('換圖間距必須大於 0');
   if(o.blendMode!==undefined&&!['source-over','multiply'].includes(o.blendMode))throw Error('圖片混合模式不合法');
+  if(o.ignoreBallMask!==undefined&&typeof o.ignoreBallMask!=='boolean')throw Error('略過球虛線遮罩必須是勾選值');
   if(o.indicator!==undefined)validateIndicator(o.indicator);
   if(o.animation!==undefined){
    const a=o.animation;

@@ -55,8 +55,6 @@ function prepare(layout,g){
  const bagua=layout.gameplay?.touhouBagua||runic;
  if(runic){
   const art=a=>a?.src&&Array.isArray(a.uv)&&a.uv.length===4&&a.uv.every(Number.isFinite)&&a.uv[0]>=0&&a.uv[1]>=0&&a.uv[2]>0&&a.uv[3]>0&&a.uv[0]+a.uv[2]<=1.000001&&a.uv[1]+a.uv[3]<=1.000001;
-  const fixed=(runic.rewards||[]).filter(r=>r.probability!==undefined);
-  if(fixed.some(r=>!Number.isFinite(r.probability)||r.probability<0||r.probability>1)||fixed.reduce((sum,r)=>sum+r.probability,0)>=1||!runic.rewards?.some(r=>r.probability===undefined&&!['enemy','multi'].includes(r.kind)))throw Error('盧恩石盤固定機率設定不合法');
   if(!['background','lower','upper','top'].includes(runic.displayPlane)||!['lower','upper','top'].includes(runic.countLayer)||runic.trigger!=='circle-entry'||!art(runic.ringArt)||!art(runic.rotorArt)||!runic.rewards?.every(r=>art(r.art)))throw Error('盧恩石盤需要通過計數與有效石刻圖片');
  }
  if(bagua){
@@ -64,6 +62,8 @@ function prepare(layout,g){
   const marker=objects.find(o=>o.id===bagua.object&&o.type===(runic?'circle':'blockhole'));
   if(!marker||!Number.isInteger(bagua.threshold)||bagua.threshold<1||bagua.threshold>99||!Number.isFinite(bagua.radius)||bagua.radius<=0||!(bagua.spinSeconds>0)||!(bagua.winFlashSeconds>0)||!Array.isArray(bagua.rewards)||bagua.rewards.length!==8||bagua.rewards.every(r=>r.kind==='enemy'))throw Error('八卦需要位置物件、累積門檻與八個獎項');
   for(const r of bagua.rewards)if(!['score','multiplier','ball','multi','enemy'].includes(r.kind)||!Number.isInteger(r.value)||(r.kind==='enemy'?r.value!==0:r.value<=0)||!r.art?.src)throw Error('八卦獎項設定不合法');
+  const fixed=bagua.rewards.filter(r=>r.probability!==undefined);
+  if(fixed.length&&(fixed.some(r=>!Number.isFinite(r.probability)||r.probability<0||r.probability>1)||fixed.reduce((sum,r)=>sum+r.probability,0)>=1||!bagua.rewards.some(r=>r.probability===undefined&&!['enemy','multi'].includes(r.kind))))throw Error('八卦／盧恩石盤固定機率設定不合法');
   for(const key of ['lower','upper_parts','top_parts'])g[key]=g[key].filter(p=>p.id!==bagua.object);
  }
  // Compile object-owned rules.

@@ -422,7 +422,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    // Count arrival at the line, excluding departure from a shared step endpoint.
    if(alongMovement<=0||alongMovement>1||alongSensor<0||alongSensor>1)continue;
 
-   if(sensor.kind==='sensor'){this.sensorHitAt.set(sensor.id,this.time);this.emit('sensor',{id:sensor.id,layer,position:[...this.ball.p]});}
+   if(sensor.kind==='sensor'){this.sensorHitAt.set(sensor.id,this.time);this.emit('sensor',{id:sensor.id,layer,position:[...this.ball.p],...(sensor.combo===false?{combo:false}:{})});}
    else{
     crossedRollovers.add(sensor.id);
     this.recordRolloverLight(sensor.id);

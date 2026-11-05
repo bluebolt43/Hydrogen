@@ -127,7 +127,7 @@ class LayoutTheater{
   const previous=this.framePosition||(this.framePosition={});
   for(const [key,value] of Object.entries(position))if(previous[key]!==value){this.frame.style[key]=value;previous[key]=value;}
  }
- draw(ctx,game,top=-170.5,clearWindow=true){
+ draw(ctx,game,top=-170.5,clearWindow=true,hideScore=false){
   this.game=game;const bounds=PlayFrame.theaterBounds(top),scoreH=bounds.scoreHeight,sceneY=bounds.y,sceneH=bounds.height;
   if(this.panelElement){const box=this.viewport(this.panelElement),width=Math.min(box.width,box.height*3),height=width/3,r={left:box.left+(box.width-width)/2,top:box.top+(box.height-height)/2,width,height};this.positionFrame({left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',visibility:r.width&&r.height?'visible':'hidden',zIndex:'4'});return;}
   const canvas=ctx.canvas,r=this.viewport(canvas,true),m=ctx.getTransform(),sx=r.width/canvas.width,sy=r.height/canvas.height;
@@ -139,10 +139,14 @@ class LayoutTheater{
   // Reveal the theater iframe beneath the table artwork.
   if(clearWindow&&!this.canvasBackend)ctx.clearRect(0,sceneY,360,Math.max(0,sceneH));
   const viewport={rect:r,transform:m};
-  if(this.customScore)return viewport;
-  ctx.save();ctx.fillStyle='#36251e';ctx.fillRect(0,top,360,scoreH);ctx.strokeStyle='#ba9456';ctx.lineWidth=1;ctx.strokeRect(1,top+1,358,scoreH-2);ctx.fillStyle='#ffe5a6';ctx.textAlign='left';ctx.font='bold 12px monospace';if(this.bossStage)this.drawAttackMessage(ctx,12,top+6,220,20,game.time);else ctx.fillText('SCORE '+String(game.score).padStart(12,'0'),12,top+20);ctx.textAlign='right';ctx.font='bold 10px monospace';ctx.fillText('BALL '+game.ballNumber+' / 3',348,top+20);ctx.restore();
+  if(this.customScore||hideScore)return viewport;
+  this.paintScorePanel(ctx,game,top);
   return viewport;
  }
+ paintScorePanel(ctx,game,top){const scoreH=PlayFrame.theaterBounds(top).scoreHeight;
+  ctx.save();ctx.fillStyle='#36251e';ctx.fillRect(0,top,360,scoreH);ctx.strokeStyle='#ba9456';ctx.lineWidth=1;ctx.strokeRect(1,top+1,358,scoreH-2);ctx.fillStyle='#ffe5a6';ctx.textAlign='left';ctx.font='bold 12px monospace';if(this.bossStage)this.drawAttackMessage(ctx,12,top+6,220,20,game.time);else ctx.fillText('SCORE '+String(game.score).padStart(12,'0'),12,top+20);ctx.textAlign='right';ctx.font='bold 10px monospace';ctx.fillText('BALL '+game.ballNumber+' / 3',348,top+20);ctx.restore();
+ }
+
 }
 if(typeof module!=='undefined'&&module.exports)module.exports=LayoutTheater;else root.LayoutTheater=LayoutTheater;
 })(typeof window!=='undefined'?window:globalThis);

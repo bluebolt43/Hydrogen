@@ -140,7 +140,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
    else if(this.theme==='space'&&!this.enemy.ships){const phases=this.enemy.phases||this.enemy.damageStates||[],floor=()=>phases.slice(this.phaseIndex+1).reduce((n,p)=>n+p.health,0);while(this.phaseIndex<phases.length-1&&this.hp<=floor()){await this.animate(a,[{flipAngle:0},{flipAngle:90}],160);this.phaseIndex++;this.phase();await this.animate(a,[{flipAngle:-90},{flipAngle:0}],160);}}
   }
   if(this.theme==='steampunk'&&this.level===8&&this.hp&&!this.health[1]&&!this.health[2]){const a=this.actorStates[0],next=(44+(6-this.health[0])*18)/(100/3);await this.animate(a,[{sx:a.sx,sy:a.sy},{sx:next,sy:next}],this.bodyExposed?650:1400);this.bodyExposed=true;}
-  this.phase();
+  this.invalidate?.();
  }
  primitive(kind){
   const key='canvas:'+kind;if(this.images.has(key))return key;
