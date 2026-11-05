@@ -2,19 +2,30 @@
 (function(root){'use strict';
 const FIRST_CAST_DELAY=8;
 class TouhouBossPresentation{
- constructor(game,theme='touhou1',{external=false}={}){
-  this.external=external;
+ constructor(game,theme='touhou1',{external=false,overlay=false,renderer=null}={}){
+  this.external=external||overlay;this.overlay=overlay;
   this.game=game;this.theme=theme;this.data=root.TouhouSpellcardSets?.[theme]??root.TouhouSpellcards;this.stage=0;this.elapsed=0;this.hasCast=false;this.originPending=false;this.musicWanted=false;
   this.audio=new Audio();this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.6;this.audio.dataset.role='touhou-boss-bgm';document.body.append(this.audio);
   if(this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
+  if(overlay){let selected=renderer;try{selected??=new URLSearchParams(root.location.search).get('spellRenderer')||localStorage.getItem('pinball-spell-renderer');}catch{}this.requestedRenderer=selected||'2d';this.createOverlay(this.requestedRenderer);}
   this.previousMasks=[];this.mask=this.createMask();
+ }
+ createOverlay(renderer){
+  const old=this.overlayCanvas,c=this.overlayCanvas=document.createElement('canvas');c.dataset.role='touhou-boss-spell';c.dataset.playLayer='boss-spells';c.style.cssText=old?.style.cssText||'position:fixed;pointer-events:none;z-index:5';c.hidden=true;
+  if(renderer==='webgl'&&root.TouhouSpellWebGL)try{this.webgl=new root.TouhouSpellWebGL(c);this.webgl.onContextLost=()=>{this.webgl.destroy();this.webgl=null;this.createOverlay('2d');};}catch{this.webgl?.destroy();this.webgl=null;return this.createOverlay('2d');}
+  this.renderer=this.webgl?'webgl':'2d';c.dataset.spellRenderer=this.renderer;if(!this.webgl)this.overlayContext=c.getContext('2d');
+  if(old?.isConnected){old.replaceWith(c);old.width=old.height=0;}else document.body.append(c);
+ }
+ setRenderer(renderer){
+  renderer=renderer==='webgl'?'webgl':'2d';if(!this.overlay||renderer===this.requestedRenderer)return this.renderer;
+  this.requestedRenderer=renderer;this.webgl?.destroy();this.webgl=null;this.overlayContext=null;this.createOverlay(renderer);this.overlayPainted=false;return this.renderer;
  }
  createMask(){
   const canvas=document.createElement('canvas');canvas.width=360;canvas.height=610;canvas.dataset.role='touhou-boss-spell';canvas.style.cssText='position:fixed;pointer-events:none;z-index:5;will-change:transform';canvas.hidden=true;if(!this.external)document.body.append(canvas);
   const mask=new root.TouhouSpellMask(canvas,{data:this.data,external:this.external});mask.naturalDrain=true;mask.extendBeamsToViewport=true;
   mask.targetProvider=()=>this.target??{x:.5,y:.9};return mask;
  }
- clearSpells(){this.originPending=false;this.mask.clear();for(const mask of this.previousMasks){mask.destroy();mask.canvas.remove();}this.previousMasks=[];}
+ clearSpells(){this.originPending=false;this.mask.clear();for(const mask of this.previousMasks){mask.destroy();mask.canvas.remove();}this.previousMasks=[];if(this.overlayCanvas){if(this.overlayPainted){if(this.webgl){this.webgl.begin();this.webgl.end();}else this.overlayContext.clearRect(0,0,this.overlayCanvas.width,this.overlayCanvas.height);}this.overlayPainted=false;this.overlayCanvas.hidden=true;}}
  choose(stage){
   if(stage===this.stage)return;
   this.stage=stage;this.origin=undefined;this.defeated=false;this.elapsed=0;this.hasCast=false;this.originPending=false;this.clearSpells();this.audio.pause();this.audio.currentTime=0;this.musicWanted=false;
@@ -79,6 +90,7 @@ class TouhouBossPresentation{
   if(this.external){
    const sx=ctx.canvas.width/r.width,sy=ctx.canvas.height/r.height;this.canvasBounds={x:Math.round((left-r.left)*sx),y:Math.round((top-r.top)*sy),width:Math.max(1,Math.round(width*sx)),height:Math.max(1,Math.round(height*sy))};
    for(const mask of masks){if(mask.canvas.width!==this.canvasBounds.width)mask.canvas.width=this.canvasBounds.width;if(mask.canvas.height!==this.canvasBounds.height)mask.canvas.height=this.canvasBounds.height;}
+   if(this.overlayCanvas){const c=this.overlayCanvas,b=this.canvasBounds;if(c.width!==b.width)c.width=b.width;if(c.height!==b.height)c.height=b.height;for(const [key,value]of Object.entries({left:left+'px',top:top+'px',width:width+'px',height:height+'px'}))if(c.style[key]!==value)c.style[key]=value;}
    if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();return;
   }
   const style={left:left+'px',top:top+'px',width:width+'px',height:height+'px'};
@@ -86,9 +98,13 @@ class TouhouBossPresentation{
   if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();
  }
  get active(){return this.mask.active||this.previousMasks.some(m=>m.active);}
- paint(ctx){if(!this.external||!this.canvasBounds)return;ctx.save();ctx.setTransform(1,0,0,1,0,0);for(const mask of [...this.previousMasks,this.mask])mask.renderTo(ctx,this.canvasBounds.x,this.canvasBounds.y);ctx.restore();}
+ paint(ctx){
+  if(!this.external||!this.canvasBounds)return;
+  if(this.overlayCanvas){const c=this.overlayCanvas;if(!this.active){if(this.overlayPainted){if(this.webgl){this.webgl.begin();this.webgl.end();}else this.overlayContext.clearRect(0,0,c.width,c.height);}this.overlayPainted=false;c.hidden=true;return;}c.hidden=false;if(this.webgl&&!this.webgl.lost){const renderer=this.webgl;renderer.begin();try{for(const mask of [...this.previousMasks,this.mask])if(mask.active){mask.webglRenderer=renderer;try{mask.render(mask.elapsed);}finally{mask.webglRenderer=null;}}}finally{renderer.end();}}else{const out=this.overlayContext;out.clearRect(0,0,c.width,c.height);for(const mask of [...this.previousMasks,this.mask])mask.renderTo(out,0,0);}this.overlayPainted=true;return;}
+  ctx.save();ctx.setTransform(1,0,0,1,0,0);for(const mask of [...this.previousMasks,this.mask])mask.renderTo(ctx,this.canvasBounds.x,this.canvasBounds.y);ctx.restore();
+ }
 
- destroy(){this.choose(0);this.clearSpells();this.mask.destroy();this.mask.canvas.remove();this.audio.removeAttribute('src');this.audio.load();this.audio.remove();}
+ destroy(){this.choose(0);this.clearSpells();this.mask.destroy();this.mask.canvas.remove();this.webgl?.destroy();if(this.overlayCanvas){this.overlayCanvas.remove();this.overlayCanvas.width=this.overlayCanvas.height=0;}this.audio.removeAttribute('src');this.audio.load();this.audio.remove();}
 }
 root.TouhouBossPresentation=TouhouBossPresentation;
 })(window);

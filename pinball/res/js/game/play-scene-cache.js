@@ -17,7 +17,7 @@ class PlayBallMasks{
    const m={width,height,bits:new Uint8Array(Math.ceil(width*height/8)),revision:0};this.layers.set(plane,m);this.read(plane,[0,0,width,height]);m.base=m.bits.slice();m.work=m.bits.slice();
   }
   for(const source of this.sources){source.signature=source.key();source.previousBounds=[...source.bounds()];source.masks=new Map();source.current=this.raster(source,source.signature,source.previousBounds);}
-  for(const [plane,m] of this.layers){m.sources=this.sources.filter(source=>source.planes.includes(plane));for(const source of m.sources)this.merge(source.current,m.bits,m.width,[0,0,width,height]);}
+  for(const [plane,m] of this.layers){m.sources=this.sources.filter(source=>source.planes.includes(plane));for(const source of m.sources)this.merge(source.current,m.bits,m.width,[0,0,width,height]);m.empty=!m.sources.length&&!m.bits.some(Boolean);}
   this.revision=key;
  }
  read(plane,box){
@@ -115,6 +115,7 @@ class PlaySceneCache{
   this.revision=key;this.needsMoving=true;this.needsRetained=true;this.previousExtra=[];this.previousIsolated=[];this.stats.builds++;
  }
  prepareBallMask(u){
+  if(u.authoredMask.empty){u.maskVisibility='visible';for(const row of u.preparedBalls||[])row.visibility='visible';return;}
   const m=u.authoredMask,bodies=(u.preparedBalls||[]).map(row=>{const b=row.maskBounds||row.bounds,box=[Math.floor((b[0]-this.view[0])*this.scale),Math.floor((b[1]-this.view[1])*this.scale),Math.ceil((b[2]-this.view[0])*this.scale),Math.ceil((b[3]-this.view[1])*this.scale)];return {row,box,covered:false,open:false,outside:box[0]<0||box[1]<0||box[2]>m.width||box[3]>m.height};});
   const key=[u.x,u.y,u.w,u.h,m.revision,...bodies.flatMap(b=>b.box)].join('|');
   if(key===u.maskPathKey){for(let i=0;i<bodies.length;i++)bodies[i].row.visibility=u.bodyVisibility[i];return;}

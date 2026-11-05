@@ -79,7 +79,7 @@ function topOffset(){
 }
 const spaceTheme=['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME);
 const soundBank=new PinballSound({...PirateMap.sounds,...(G.gameplay?.runicTurntable?.spinSound?{'runic-spin':{src:G.gameplay.runicTurntable.spinSound,volume:.4,voices:1}}:{}),...(spaceTheme?{'space-magic':{src:'res/audio/space/space-magic.ogg',volume:1,voices:3}}:{}),...(PLAYTEST_THEME==='steampunk'?SteampunkSounds:{})},{synth:theater.theme==='space'});theater.soundBank=soundBank;
-const bossPresentation=['touhou1','touhou2'].includes(theater.theme)?new TouhouBossPresentation(game,theater.theme,{external:true}):null;
+const bossPresentation=['touhou1','touhou2'].includes(theater.theme)?new TouhouBossPresentation(game,theater.theme,{external:true,overlay:true}):null;
 if(bossPresentation){bossPresentation.choose(bossStage);theater.bossPresentation=bossPresentation;theater.onBossChanged=stage=>bossPresentation.choose(stage||bossStage);theater.onBossDefeated=()=>bossPresentation.defeat();bossPresentation.requestOrigin=()=>theater.send({command:'boss-origin'});theater.onBossOrigin=(stage,origin)=>bossPresentation.onOrigin(stage,origin);bossPresentation.canCast=()=>{for(const id of theater.activeCommands.keys())if(id.includes(':lv4:'))return false;return true;};addEventListener('pagehide',()=>bossPresentation.destroy(),{once:true});}
 for(const event of ['pointerdown','keydown'])addEventListener(event,()=>{soundBank.unlock();bossPresentation?.syncMusic(soundBank,true);},{capture:true});
 let soundEnabled=localStorage.getItem('pinball-sound')!=='off';
@@ -91,7 +91,7 @@ function setPlaySound(enabled){
 }
 addEventListener('storage',event=>{if(event.key==='pinball-sound'){soundEnabled=localStorage.getItem('pinball-sound')!=='off';syncSound();draw();}});
 syncSound();
-const controls=createPlayControls({game,G,P,ctx,theater,bossStage,draw,reset,bind,clearTouchControls,applyPhysicsModel,applyPlayAspect,setPlaySound,soundBank,syncAudioPause,path,circle,withLayoutLayer,
+const controls=createPlayControls({game,G,P,ctx,theater,bossStage,bossPresentation,draw,reset,bind,clearTouchControls,applyPhysicsModel,applyPlayAspect,setPlaySound,soundBank,syncAudioPause,path,circle,withLayoutLayer,
  get launchMode(){return launchMode;},setLaunchMode(value){clearTouchControls();launchMode=value;localStorage.setItem('pinball-launch-mode',value);},
  get trackLayout(){return trackLayout;},get playAspect(){return playAspect;},get ballStartedAt(){return ballStartedAt;},get ballElapsed(){return ballElapsed;},get noticeUntil(){return noticeUntil;},get artWarning(){return artWarning;},notice(text){notice(text);}});
 const openSettings=()=>controls.openSettings();
@@ -110,6 +110,7 @@ function topHit(a,x,y){if(!a||a.hidden||!controls.art)return false;const angle=-
 
 function art(plane,layers=artByPlane.get(plane)){if(controls.art&&layers.length){artRenderer.brightness=.82;try{artRenderer.draw(ctx,layers,plane,game);}finally{artRenderer.brightness=1;}}}
 const spaceNeon=SpaceNeonBorders.createRenderer(SpaceNeonBorders.entries(G.art_layout_objects||[],G.art_layout_templates));
+addEventListener('pagehide',()=>spaceNeon.destroy(),{once:true});
 function bonusArt(plane){const producer=artRenderer.drawTable?.producer;if(controls.art&&producer?.enabled&&plane===producer.plane)producer.draw(ctx,artRenderer);}
 const activeBallLayers=new Set();
 const ballsByPlane=new Map(['lower','upper','top'].map(plane=>[plane,[]]));
@@ -172,6 +173,7 @@ function resize(){
  const artworkSizeChanged=canvas.width!==pixelWidth||canvas.height!==pixelHeight;
  if(canvas.width!==pixelWidth)canvas.width=pixelWidth;if(canvas.height!==pixelHeight)canvas.height=pixelHeight;
  theater.invalidateViewport();prepareBallImages();
+ if(artworkSizeChanged&&SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay))spaceNeon.prepare(game,G.gameplay,canvas.width/view[2]);
  canvas.style.width=w+'px';canvas.style.height=h+'px';canvasLayers?.resize();requestAnimationFrame(()=>draw());
  if(artworkSizeChanged&&window.viewAPI){const scale=pixelWidth/view[2];Promise.all([impactPresentation.prepareComboFlash(scale),artRenderer.prepareMissionLights(artLayers,scale,.82,-view[0]*scale,-view[1]*scale)]).then(()=>draw()).catch(console.error);}
 }
@@ -328,6 +330,15 @@ function sceneArtBounds(command){
  if(o.state==='plunger'&&o.bind==='plunger'){const p=game.g.plunger,a=o.angle*Math.PI/180,c=Math.cos(a),t=Math.sin(a),x=p.x-t*o.height/2,y=p.rest_y+c*o.height/2,w=(Math.abs(c)*o.width+Math.abs(t)*o.height)/2+4,h=(Math.abs(t)*o.width+Math.abs(c)*o.height)/2+4;return [x-w,y-h,x+w,y+h+p.stroke];}
  const radius=Math.hypot(o.width,o.height)/2+12+(o.indicator?.halo?Math.max(o.width,o.height)/2:0),center=o.state==='vortex'&&command.vortexCenter?command.vortexCenter:[o.x,o.y],offset=Math.hypot(o.x-center[0],o.y-center[1]);return [center[0]-radius-offset,center[1]-radius-offset,center[0]+radius+offset,center[1]+radius+offset];
 }
+function authoredBallMaskPlanes(art,plane,index,marker){
+ if(theater.theme==='touhou1')return [];
+ if(theater.theme==='touhou2')return /\/touhou2-upper-floor(?:\.runtime)?\.(?:png|webp)$/.test(art.src)?['lower']:[];
+ const planes=['lower','upper','top'],affected=planes.filter(ballPlane=>plane==='foreground'||planes.indexOf(plane)>planes.indexOf(ballPlane)||plane===ballPlane&&(marker<0||index>marker));
+ // The right ramp's terrain is authored before the lower ball marker, but
+ // its opaque rocks still cover balls underneath; its open pixels stay open.
+ if(theater.theme==='pirate'&&/\/pirate-lower-right-terrain(?:\.runtime)?\.(?:png|webp)$/.test(art.src)&&!affected.includes('lower'))affected.push('lower');
+ return affected;
+}
 function prepareAuthoredBallMasks(key){
  if(ballMasks.revision===key){ballMasks.update();return;}
  const planes=['lower','upper','top'],plans=new Map(planes.map(plane=>[plane,[]])),sources=[];
@@ -336,7 +347,7 @@ function prepareAuthoredBallMasks(key){
   for(let i=0;i<items.length;i++){
    const o=items[i];if(o.hidden||o.state==='ball-layer')continue;
    const command=artRenderer.drawTable.bySource.get(o);if(!command)continue;
-   const affected=planes.filter(ballPlane=>plane==='foreground'||planes.indexOf(plane)>planes.indexOf(ballPlane)||plane===ballPlane&&(marker<0||i>marker));
+   const affected=authoredBallMaskPlanes(o,plane,i,marker);
    if(!affected.length)continue;
    const source={art:o,fixed:command.kind==='static',planes:affected,key:()=>sceneArtKey(command),bounds:()=>sceneArtBounds(command)||[view[0],view[1],view[0]+view[2],view[1]+view[3]]};
    const drawItems=[o];artRenderer.observedArt.add(drawItems);
@@ -444,7 +455,7 @@ function draw(){
  if(scoreChanged)extra.push(...scoreDamage(frameOffset,scoreHeight));
  const theaterBounds=canvasTheaterBounds(),theaterDamage=theaterCanvas?theaterCanvas.prepare(theaterBounds):[],isolated=[...fx.isolated,...theaterDamage];
  if(theaterCanvas?.warning||theaterCanvas?.wasWarning){extra.push([view[0],view[1],view[0]+view[2],view[1]+view[3]]);theaterCanvas.wasWarning=theaterCanvas.warning;}
- const bossActive=!!bossPresentation?.active;
+ const bossActive=!!bossPresentation?.active&&!bossPresentation.overlay;
  const regions=canvasLayers.regions(sceneCache.regions('moving',extra,fx.full||bossActive||bossWasActive||!!$('geometryToggle')?.checked||bonusVisualTime()!==null,isolated));
  bossWasActive=bossActive;
  const worldRegions=regions.map(b=>[view[0]+b[0]/scale,view[1]+b[1]/scale,view[0]+b[2]/scale,view[1]+b[3]/scale]);
@@ -573,7 +584,7 @@ function suspendGame(){
 }
 function resumeGame(){if(suspendedGameState===null)return;const paused=suspendedGameState;suspendedGameState=null;if(game.paused===paused)syncAudioPause();else game.paused=paused;}
 function applyPhysicsModel(value){value='legacy';game.config.physicsModel=value;for(const f of game.flippers){f.angle=f.rest;f.omega=0;delete f.cadet;}for(const ball of game.balls){ball.spin=0;delete ball.rollingSpin;delete ball.slingshotContacts;}$('physicsModel').value=value;localStorage.setItem('pinball-physics-model',value);}
-function applyAppSettings(values){if(values.physicsModel&&values.physicsModel!==game.config.physicsModel)applyPhysicsModel(values.physicsModel);if(values.playAspect)applyPlayAspect('portrait');soundEnabled=values.sound;launchMode=values.launchMode; controls.setLaunchMode?.(launchMode);syncSound();}
+function applyAppSettings(values){if(values.physicsModel&&values.physicsModel!==game.config.physicsModel)applyPhysicsModel(values.physicsModel);if(values.playAspect)applyPlayAspect('portrait');if(values.spellRenderer&&bossPresentation){bossPresentation.setRenderer(values.spellRenderer);drawRequested=true;}soundEnabled=values.sound;launchMode=values.launchMode; controls.setLaunchMode?.(launchMode);syncSound();}
 function reset(){gameOverOverlay?.cancel();gameOverOverlay=null;clearTouchControls();launchStartedAt=null;game.reset();accumulator=0;if(bossStage&&(!tutorialMode||['steampunk','space','norse','touhou1','touhou2'].includes(PLAYTEST_THEME)))startBoss();else notice(PinballI18n.t('table.launchShort'))}
 function bind(id,set){const b=$(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);set(true);if(!game.paused&&!game.gameOver)window.PinballHaptics?.play('tap');e.preventDefault()};b.onpointerup=()=>set(false);b.onpointercancel=()=>set(false)}
 controls.bindInputs?.(launch);
@@ -610,10 +621,11 @@ const drawPasses=[{plane:'background',items:backgroundBelowBall},{plane:'backgro
 for(const plane of ['lower','upper','top'])for(const batch of artDrawPlans.get(plane).batches)if(batch)drawPasses.push({plane,items:batch});
 drawPasses.push({plane:'foreground',items:artByPlane.get('foreground')},...frameArtPlanes);
 artRenderer.setDrawPasses(drawPasses,game);
+if(SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay))spaceNeon.prepare(game,G.gameplay,canvas.width/view[2]);
 artworkReady=true;
 draw();
 previous=performance.now();accumulator=0;
 requestAnimationFrame(frame);
-window.viewAPI={hasSettingsControl:true,game,applyLocale,applySettings:applyAppSettings,suspend:suspendGame,resume:resumeGame};
+window.viewAPI={hasSettingsControl:true,game,get spellRenderer(){return bossPresentation?.renderer||null;},applyLocale,applySettings:applyAppSettings,suspend:suspendGame,resume:resumeGame};
 
 }

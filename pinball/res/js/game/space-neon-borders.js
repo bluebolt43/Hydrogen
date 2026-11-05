@@ -47,15 +47,25 @@ function createRenderer(list){
   for(const gate of game?.gates||[])if(gate.mechanic==='rescue-return'&&(!gate.closed||gate.unlocked))hidden.add(gate.id);
   const ids=planeIds.get(plane)||new Set();return {hidden,rotated,key:(settings?.neonBorderColor||'pink')+':'+[...hidden].filter(id=>ids.has(id)).sort().join(',')+':'+[...rotated].filter(id=>ids.has(id)).sort().join(',')};
  }
- return {key(game,settings,plane){return state(game,settings,plane).key;},draw(ctx,game,settings=game?.g?.gameplay,plane='upper'){
+ return {key(game,settings,plane){return state(game,settings,plane).key;},
+ prepare(game,settings,scale){
+  // Finite hide/restore states are compiled before play, not on the hit frame.
+  const target={getTransform:()=>({a:Math.fround(scale),b:0}),drawImage(){}};
+  for(const [plane,ids]of planeIds){const variable=[...new Set((game.g?.objectEffects||[]).map(r=>r.object))].filter(id=>ids.has(id));if(variable.length>3)continue;
+   for(let bits=0;bits<(1<<variable.length);bits++){const hiddenObjects=new Set(game.hiddenObjects||[]);variable.forEach((id,i)=>{if(bits&(1<<i))hiddenObjects.add(id);else hiddenObjects.delete(id);});this.draw(target,{g:game.g,gates:game.gates,hiddenObjects,rotatedObjects:game.rotatedObjects},settings,plane);}
+  }
+ },
+ destroy(){for(const variants of caches.values())for(const item of variants.values()){if(item.cache.close)item.cache.close();else item.cache.width=item.cache.height=0;}caches.clear();},
+ draw(ctx,game,settings=game?.g?.gameplay,plane='upper'){
   const items=planes.get(plane);if(!items?.length)return;
   const {hidden,rotated,key:stateKey}=state(game,settings,plane);
   if(items.every(e=>hidden.has(e.id)))return;
   const transform=ctx.getTransform(),scale=Math.max(.25,Math.min(4,Math.hypot(transform.a,transform.b)));
-  let {cache,key,x=0,y=-170.5,width=360,height=640}=caches.get(plane)||{};
   const next=scale+':'+stateKey;
+  let variants=caches.get(plane);if(!variants)caches.set(plane,variants=new Map());
+  let {cache,key,x=0,y=-170.5,width=360,height=640}=variants.get(next)||{};
   if(!cache||next!==key){
-   cache?.close?.();key=next;cache=Art.rasterCanvas(Math.ceil(360*scale),Math.ceil(640*scale),true);
+   key=next;cache=Art.rasterCanvas(Math.ceil(360*scale),Math.ceil(640*scale),true);
    const c=cache.getContext('2d');c.scale(scale,scale);c.translate(0,170.5);c.lineCap=c.lineJoin='round';
    for(const color of ['pink','blue','yellow'])for(const [width,stroke,opacity] of strokes({neonBorderColor:color})){
     c.lineWidth=width;c.strokeStyle=stroke;c.globalAlpha=opacity;
@@ -73,7 +83,7 @@ function createRenderer(list){
      x=left*360/w;y=-170.5+top*640/h;width=trimmed.width*360/w;height=trimmed.height*640/h;Art.recycleRasterCanvas(cache);cache=trimmed;
     }
    }
-   cache=Art.rasterImage(cache);caches.set(plane,{cache,key,x,y,width,height});
+   cache=Art.rasterImage(cache);if(variants.size>=8){const first=variants.keys().next().value,old=variants.get(first).cache;if(old.close)old.close();else old.width=old.height=0;variants.delete(first);}variants.set(next,{cache,key,x,y,width,height});
   }
   ctx.drawImage(cache,x,y,width,height);
  }};

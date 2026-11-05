@@ -45,7 +45,7 @@ class TouhouSpellMask{
  render(t){
   const {canvas,ctx:c,card}=this;if(!card)return;
   const castTime=t,lead=this.entry.castLeadIn??0;t-=lead;
-  if(t<0){this.remainingParticles=0;if(!this.external)c.clearRect(0,0,canvas.width,canvas.height);this.drawCurrentAura(castTime,lead);return;}
+  if(t<0){this.remainingParticles=0;if(this.webglRenderer){this.webglRenderer.aura(this,castTime,lead);return;}if(!this.external)c.clearRect(0,0,canvas.width,canvas.height);this.drawCurrentAura(castTime,lead);return;}
   // Duo bosses take turns firing; earlier bullets keep their original paths.
   const span=this.duration/this.cards.length;
   const sampleKey=[this.origin?.x,this.origin?.y,canvas.width,canvas.height,this.densityStride,this.data.densityStride,this.liveSimulation].join(':');
@@ -73,6 +73,7 @@ class TouhouSpellMask{
   }
 
   this.remainingParticles=sample.bullets.length+sample.beams.length;
+  if(this.webglRenderer){this.webglRenderer.renderMask(this,sample,fade,castTime,lead);return;}
   if(!this.external)c.clearRect(0,0,canvas.width,canvas.height);c.save();
   if(lead)this.drawCurrentAura(castTime,lead);
   // Pixel coordinates keep round bullets round and laser widths constant even
@@ -184,13 +185,14 @@ class TouhouSpellMask{
     for(const scale of beam.core?[1,.55]:[1]){c.fillStyle=scale===1?beam.color:'#fffaff';c.beginPath();c.moveTo(x,y);c.lineTo(x+dx+nx*scale,y+dy+ny*scale);c.lineTo(x+dx-nx*scale,y+dy-ny*scale);c.closePath();c.fill();}
     c.restore();continue;
    }
-   const extent=this.extendBeamsToViewport?beamExitScale(beam,canvas.width/canvas.height):1;
+   const extent=this.beamExtent(beam);
    c.save();c.globalAlpha=fade*beam.alpha;c.lineWidth=beam.width*canvas.width;c.strokeStyle=beam.color;c.beginPath();c.moveTo(beam.x*canvas.width,beam.y*canvas.height);c.lineTo((beam.x+beam.dx*extent)*canvas.width,(beam.y+beam.dy*extent)*canvas.height);c.stroke();
    if(beam.core){c.lineWidth=beam.width*canvas.width*.55;c.strokeStyle='#fffaff';c.stroke();}c.restore();
   }
   c.restore();
  }
 
+ beamExtent(beam){return this.extendBeamsToViewport?beamExitScale(beam,this.canvas.width/this.canvas.height):1;}
  activeCast(t){
   const lead=this.entry.castLeadIn??0;let active;
   for(const attack of this.attacks??[])if(t>=attack.start&&t<attack.end+lead)active=attack;

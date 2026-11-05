@@ -404,7 +404,7 @@
       "indicator": {
         "group": "pirate-lights-slingshot-fish",
         "off": "res/hd_img/pirate/pirate-fish-tuna-navy.png",
-        "on": "",
+        "on": "res/hd_img/pirate/pirate-fish-tuna-cyan.png",
         "defaultState": "off",
         "trigger": {
           "kind": "rebound",

@@ -36,6 +36,8 @@
 <div class="setting-row"><label for="volume-setting" data-i18n="settings.volume">音量</label><input id="volume-setting" type="range" min="0" max="100" step="1" value="100"><output id="volume-value" for="volume-setting">100%</output></div>
 <label class="setting-row" for="aspect-setting">試玩畫面比例<select id="aspect-setting"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label>
 <label class="setting-row" for="launch-setting"><span data-i18n="settings.launch">發射模式</span><select id="launch-setting"><option value="hold" data-i18n="settings.hold">按住</option><option value="drag" data-i18n="settings.drag">拖曳</option></select></label>
+<label class="setting-row" for="spell-renderer-setting"><span data-i18n="settings.spellRenderer">東方彈幕繪製</span><select id="spell-renderer-setting"><option value="2d">Canvas 2D</option><option value="webgl">WebGL</option></select></label>
+<p id="spell-renderer-status" role="status" hidden></p>
 <div id="billing-settings" hidden><button id="restore-purchases" type="button" data-i18n="purchase.restore">恢復購買</button><p id="restore-purchases-status" role="status"></p></div>
 <div id="clear-records-section" hidden>
 <button id="clear-game-records" type="button" data-i18n="settings.clearRecords">清除遊戲紀錄</button>
