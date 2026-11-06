@@ -2,10 +2,11 @@
 (function(root){
 'use strict';
 class LayoutTheater{
+ static canvasEnabled(){if(root.PinballPlatform==='android')return true;try{return localStorage.getItem('pinball-theater-renderer')==='canvas';}catch{return false;}}
  constructor(theme='pirate'){
   this.theme=['saga','norse','ragnarok'].includes(theme)?'saga':['space','sci-fi','cosmic-dessert'].includes(theme)?'space':['touhou1','touhou-horrors'].includes(theme)?'touhou1':['touhou2','touhou-black-knight-2000'].includes(theme)?'touhou2':theme==='steampunk'?'steampunk':'pirate';
   this.pending=[];this.activeCommands=new Map();this.ready=false;this.curtainClosing=true;this.paused=null;this.generation=0;
-  this.canvasBackend=this.theme==='pirate'?(root.PirateTheaterCanvas?.requested()?new root.PirateTheaterCanvas(this):null):new root.PlayTheaterCanvas(this);
+  this.canvasBackend=LayoutTheater.canvasEnabled()?(this.theme==='pirate'?new root.PirateTheaterCanvas(this):new root.PlayTheaterCanvas(this)):null;
   this.frame=this.canvasBackend?{style:{},getBoundingClientRect:()=>{const s=this.frame.style,left=parseFloat(s.left)||0,top=parseFloat(s.top)||0,width=parseFloat(s.width)||0,height=parseFloat(s.height)||0;return {left,top,width,height,right:left+width,bottom:top+height};},contentWindow:{postMessage:message=>this.canvasBackend.receive(message)}}:document.createElement('iframe');this.frame.title=this.theme==='saga'?'黑曜石傳奇劇場':this.theme==='space'?'宇宙點心劇場':['touhou1','touhou2'].includes(this.theme)?'東方賽銭録劇場':this.theme==='steampunk'?'蒸氣龐克劇場':'海盜劇場';
   this.frame.style.cssText='position:fixed;border:0;pointer-events:none;z-index:2;visibility:hidden';
   if(!this.canvasBackend)document.body.append(this.frame);

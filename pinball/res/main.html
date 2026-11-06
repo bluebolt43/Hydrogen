@@ -6,10 +6,12 @@
 <title data-i18n="app.title">Pinball Tales</title>
 <link rel="stylesheet" href="css/main.css">
 <link rel="preload" as="image" href="img/touhou/touhou-loading-suika.webp">
+<link rel="preload" as="image" href="img/chickeneren-logo.webp">
 </head>
 <body>
 <section id="fanwork-notice" tabindex="-1">
-<div><h1 data-i18n="notice.title">二次創作聲明</h1><p data-i18n="notice.touhouFanwork">本遊戲中的東方主題內容為《東方 Project》的非官方二次創作。</p>
+<div><div class="studio-mark"><img src="img/chickeneren-logo.webp" width="96" height="96" alt=""><span>chickeneren</span></div>
+<h1 data-i18n="notice.title">二次創作聲明</h1><p data-i18n="notice.touhouFanwork">本遊戲中的東方主題內容為《東方 Project》的非官方二次創作。</p>
 <p data-i18n="notice.touhouCredits">《東方 Project》原作及相關角色、世界觀之著作權歸 ZUN／上海アリス幻樂団所有。</p>
 <p data-i18n="notice.touhouInterpretation">本作包含獨自的詮釋與設定，可能與原作不同。</p>
 </div>
@@ -35,6 +37,9 @@
 <div class="setting-row"><label for="volume-setting" data-i18n="settings.volume">音量</label><input id="volume-setting" type="range" min="0" max="100" step="1" value="100"><output id="volume-value" for="volume-setting">100%</output></div>
 <label class="setting-row" for="aspect-setting">試玩畫面比例<select id="aspect-setting"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label>
 <label class="setting-row" for="launch-setting"><span data-i18n="settings.launch">發射模式</span><select id="launch-setting"><option value="hold" data-i18n="settings.hold">按住</option><option value="drag" data-i18n="settings.drag">拖曳</option></select></label>
+<label class="setting-row" for="fps-setting"><span data-i18n="settings.showFPS">顯示 FPS</span><input id="fps-setting" type="checkbox"></label>
+<label class="setting-row" for="theater-setting" hidden><span data-i18n="settings.theaterRenderer">劇場顯示方式</span><select id="theater-setting"><option value="dom">DOM / CSS</option><option value="canvas">Canvas</option></select></label>
+<p data-i18n="settings.theaterRendererHint" hidden>下次進入球桌時套用。</p>
 
 <div id="billing-settings" hidden><button id="restore-purchases" type="button" data-i18n="purchase.restore">恢復購買</button><p id="restore-purchases-status" role="status"></p></div>
 <div id="clear-records-section" hidden>
@@ -48,7 +53,7 @@
 </main>
 <script src="js/runtime-image-variants.js"></script>
 <script src="js/system/layout-renderer.js"></script><script src="js/system/unlock-renderer.js"></script>
-<script src="js/system/menu-music.js"></script>
+<script src="js/system/menu-music.js"></script><script src="js/system/touhou-stage-music.js"></script>
 <script src="js/system/menu-transition.js"></script>
 <script src="js/main.bundle.js"></script>
 </body>

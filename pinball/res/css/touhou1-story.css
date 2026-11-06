@@ -90,6 +90,7 @@
   #stage #a7-witness, #stage #a7-box { inset: auto; top: 5%; left: 10%; width: 80%; height: 33%; object-fit: contain; }
   .a8-end-scene { display: none; opacity: 0; }
   #stage.a8-end-preview .a8-end-scene { display: block; }
+  #a8-end-black { position: absolute; inset: 0; background: #000; }
   #stage.a8-end-preview #end-search, #stage.a8-end-preview #end-money { display: none; }
   .a8-start-scene { display: none; opacity: 0; }
   #stage.a8-preview .a8-start-scene { display: block; }

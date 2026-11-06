@@ -32,14 +32,15 @@ class PlayCanvasLayers{
  restore(ctx,name,regions){
   if(!regions.length)return;
   let x=this.canvas.width,y=this.canvas.height,right=0,bottom=0;for(const b of regions){x=Math.min(x,b[0]);y=Math.min(y,b[1]);right=Math.max(right,b[2]);bottom=Math.max(bottom,b[3]);}const w=right-x,h=bottom-y;
-  // Caller clips to the original sparse union; cropping does not fill its gaps.
-  ctx.globalCompositeOperation='copy';ctx.drawImage(this.layers.get(name),x,y,w,h,x,y,w,h);ctx.globalCompositeOperation='source-over';
+  // The caller clips to the sparse diff union. Replace those pixels before
+  // blending lamps, including transparent pixels in the theater opening.
+  ctx.clearRect(x,y,w,h);ctx.globalCompositeOperation='source-over';ctx.drawImage(this.layers.get(name),x,y,w,h,x,y,w,h);
  }
  restoreRectangles(ctx,name,regions){
   const image=this.layers.get(name),hole=this.transparentBounds;ctx.globalAlpha=1;
   for(const r of regions){const x=r[0],y=r[1],w=r[2]-x,h=r[3]-y;
    if(!hole||x<hole[2]&&r[2]>hole[0]&&y<hole[3]&&r[3]>hole[1]){
-    ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();ctx.globalCompositeOperation='copy';ctx.drawImage(image,x,y,w,h,x,y,w,h);ctx.restore();
+    ctx.clearRect(x,y,w,h);ctx.globalCompositeOperation='source-over';ctx.drawImage(image,x,y,w,h,x,y,w,h);
    }else{ctx.globalCompositeOperation='source-over';ctx.drawImage(image,x,y,w,h,x,y,w,h);}
   }ctx.globalCompositeOperation='source-over';
  }

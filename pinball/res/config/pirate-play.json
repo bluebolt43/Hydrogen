@@ -1951,7 +1951,8 @@
           "source": "circle-022"
         }
       },
-      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png"
+      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-016",
@@ -1985,7 +1986,8 @@
           "source": "circle-020"
         }
       },
-      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png"
+      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-018",
@@ -2019,7 +2021,8 @@
           "source": "circle-021"
         }
       },
-      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png"
+      "runtimeSource": "res/img/pirate/pirate-bumper-barrel-level-1.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-024",
@@ -2063,7 +2066,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "target-023-1",
-      "runtimeSource": "res/img/pirate/pirate-target-wanted-poster.png"
+      "runtimeSource": "res/img/pirate/pirate-target-wanted-poster.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-029",
@@ -2085,7 +2089,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "targets-003-1",
-      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-030",
@@ -2107,7 +2112,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "targets-003-2",
-      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-031",
@@ -2129,7 +2135,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "targets-003-3",
-      "runtimeSource": "res/img/pirate/pirate-target-crate.png"
+      "runtimeSource": "res/img/pirate/pirate-target-crate.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-035",
@@ -2151,7 +2158,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "targets-002-3",
-      "runtimeSource": "res/img/pirate/pirate-pearl-off.png"
+      "runtimeSource": "res/img/pirate/pirate-pearl-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-036",
@@ -2173,7 +2181,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "targets-002-2",
-      "runtimeSource": "res/img/pirate/pirate-pearl-off.png"
+      "runtimeSource": "res/img/pirate/pirate-pearl-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-037",
@@ -2195,7 +2204,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "targets-002-1",
-      "runtimeSource": "res/img/pirate/pirate-pearl-off.png"
+      "runtimeSource": "res/img/pirate/pirate-pearl-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-038",
@@ -2231,7 +2241,8 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-039",
@@ -2267,7 +2278,8 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-040",
@@ -2303,7 +2315,8 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-lantern-off.png"
+      "runtimeSource": "res/img/pirate/pirate-lantern-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-044",
@@ -2386,6 +2399,134 @@
       "state": "static",
       "bind": "",
       "runtimeSource": "res/img/pirate/pirate-middle-left-border.png"
+    },
+    {
+      "id": "art-007",
+      "src": "res/hd_img/pirate/pirate-shipwreck.png",
+      "x": 112,
+      "y": 230,
+      "width": 50,
+      "height": 50,
+      "angle": -6.922098652717992,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-shipwreck.png"
+    },
+    {
+      "id": "art-053",
+      "src": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
+      "x": 71,
+      "y": 287,
+      "width": 24,
+      "height": 25,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        143,
+        144
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "pirate-lights-skull-bumpers",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
+        "lv2": "res/hd_img/pirate/pirate-bumper-skull-level-2.png",
+        "lv3": "res/hd_img/pirate/pirate-bumper-skull-level-3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-024"
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png",
+      "ignoreBallMask": false
+    },
+    {
+      "id": "art-054",
+      "src": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
+      "x": 33,
+      "y": 278,
+      "width": 24,
+      "height": 25,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        143,
+        144
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "pirate-lights-skull-bumpers",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
+        "lv2": "res/hd_img/pirate/pirate-bumper-skull-level-2.png",
+        "lv3": "res/hd_img/pirate/pirate-bumper-skull-level-3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-025"
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png",
+      "ignoreBallMask": false
+    },
+    {
+      "id": "art-055",
+      "src": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
+      "x": 46,
+      "y": 306,
+      "width": 24,
+      "height": 25,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        143,
+        144
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "indicator": {
+        "group": "pirate-lights-skull-bumpers",
+        "defaultState": "lv1",
+        "type": "bumper",
+        "lv1": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
+        "lv2": "res/hd_img/pirate/pirate-bumper-skull-level-2.png",
+        "lv3": "res/hd_img/pirate/pirate-bumper-skull-level-3.png",
+        "trigger": {
+          "kind": "level",
+          "source": "circle-026"
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png",
+      "hidden": false,
+      "ignoreBallMask": false
     },
     {
       "id": "art-112",
@@ -2476,130 +2617,6 @@
       "runtimeSource": "res/img/pirate/pirate-octopus-off.png"
     },
     {
-      "id": "art-007",
-      "src": "res/hd_img/pirate/pirate-shipwreck.png",
-      "x": 112,
-      "y": 230,
-      "width": 50,
-      "height": 50,
-      "angle": -6.922098652717992,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        314,
-        314
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "runtimeSource": "res/img/pirate/pirate-shipwreck.png"
-    },
-    {
-      "id": "art-053",
-      "src": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
-      "x": 71,
-      "y": 287,
-      "width": 24,
-      "height": 25,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        143,
-        144
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "indicator": {
-        "group": "pirate-lights-skull-bumpers",
-        "defaultState": "lv1",
-        "type": "bumper",
-        "lv1": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
-        "lv2": "res/hd_img/pirate/pirate-bumper-skull-level-2.png",
-        "lv3": "res/hd_img/pirate/pirate-bumper-skull-level-3.png",
-        "trigger": {
-          "kind": "level",
-          "source": "circle-024"
-        }
-      },
-      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png"
-    },
-    {
-      "id": "art-054",
-      "src": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
-      "x": 33,
-      "y": 278,
-      "width": 24,
-      "height": 25,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        143,
-        144
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "indicator": {
-        "group": "pirate-lights-skull-bumpers",
-        "defaultState": "lv1",
-        "type": "bumper",
-        "lv1": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
-        "lv2": "res/hd_img/pirate/pirate-bumper-skull-level-2.png",
-        "lv3": "res/hd_img/pirate/pirate-bumper-skull-level-3.png",
-        "trigger": {
-          "kind": "level",
-          "source": "circle-025"
-        }
-      },
-      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png"
-    },
-    {
-      "id": "art-055",
-      "src": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
-      "x": 46,
-      "y": 306,
-      "width": 24,
-      "height": 25,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        143,
-        144
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "indicator": {
-        "group": "pirate-lights-skull-bumpers",
-        "defaultState": "lv1",
-        "type": "bumper",
-        "lv1": "res/hd_img/pirate/pirate-bumper-skull-level-1.png",
-        "lv2": "res/hd_img/pirate/pirate-bumper-skull-level-2.png",
-        "lv3": "res/hd_img/pirate/pirate-bumper-skull-level-3.png",
-        "trigger": {
-          "kind": "level",
-          "source": "circle-026"
-        }
-      },
-      "runtimeSource": "res/img/pirate/pirate-bumper-skull-level-1.png"
-    },
-    {
       "id": "art-051",
       "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
       "x": 108,
@@ -2629,7 +2646,8 @@
           "source": ""
         }
       },
-      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-041",
@@ -2651,7 +2669,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "flag-002",
-      "runtimeSource": "res/img/pirate/pirate-flag-buoy.png"
+      "runtimeSource": "res/img/pirate/pirate-flag-buoy.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-042",
@@ -2673,7 +2692,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "flag-001",
-      "runtimeSource": "res/img/pirate/pirate-flag-buoy.png"
+      "runtimeSource": "res/img/pirate/pirate-flag-buoy.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-043",
@@ -2705,7 +2725,8 @@
           "source": "flag-003"
         }
       },
-      "runtimeSource": "res/img/pirate/pirate-bottle-off.png"
+      "runtimeSource": "res/img/pirate/pirate-bottle-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-062",
@@ -2749,7 +2770,8 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-063",
@@ -2793,7 +2815,8 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-064",
@@ -2837,7 +2860,8 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-065",
@@ -2881,7 +2905,8 @@
         "complete": "res/hd_img/pirate/pirate-eye-glowing.png",
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-066",
@@ -2925,7 +2950,152 @@
         },
         "impactFlash": false
       },
-      "runtimeSource": "res/img/pirate/pirate-eye-closed.png"
+      "runtimeSource": "res/img/pirate/pirate-eye-closed.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-110",
+      "src": "res/hd_img/pirate/pirate-tavern-lanes-mask.png",
+      "x": 180,
+      "y": 22,
+      "width": 155,
+      "height": 111,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1484,
+        1060
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "runtimeSource": "res/img/pirate/pirate-tavern-lanes-mask.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-113",
+      "src": "",
+      "needsAsset": true,
+      "state": "ball-layer",
+      "plane": "top",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "frames": 1,
+      "frameAxis": "x",
+      "bind": ""
+    },
+    {
+      "id": "art-114",
+      "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
+      "x": 137,
+      "y": 70,
+      "width": 20,
+      "height": 20,
+      "angle": -41.806398289373305,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "targets-004-3",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": ""
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-115",
+      "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
+      "x": 126,
+      "y": 78,
+      "width": 20,
+      "height": 20,
+      "angle": -41.806398289373305,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "targets-004-2",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": ""
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-116",
+      "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
+      "x": 115,
+      "y": 87,
+      "width": 20,
+      "height": 20,
+      "angle": -41.806398289373305,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "target",
+      "bind": "targets-004-1",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "hole-capture",
+          "source": ""
+        }
+      },
+      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-100",
@@ -3106,146 +3276,6 @@
       "runtimeSource": "res/img/pirate/pirate-explosion-smoke.png"
     },
     {
-      "id": "art-110",
-      "src": "res/hd_img/pirate/pirate-tavern-lanes-mask.png",
-      "x": 180,
-      "y": 22,
-      "width": 155,
-      "height": 111,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1484,
-        1060
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "bind": "",
-      "runtimeSource": "res/img/pirate/pirate-tavern-lanes-mask.png"
-    },
-    {
-      "id": "art-113",
-      "src": "",
-      "needsAsset": true,
-      "state": "ball-layer",
-      "plane": "top",
-      "x": 0,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1,
-        1
-      ],
-      "frames": 1,
-      "frameAxis": "x",
-      "bind": ""
-    },
-    {
-      "id": "art-114",
-      "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
-      "x": 137,
-      "y": 70,
-      "width": 20,
-      "height": 20,
-      "angle": -41.806398289373305,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1254,
-        1254
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "target",
-      "bind": "targets-004-3",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "hole-capture",
-          "source": ""
-        }
-      },
-      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
-    },
-    {
-      "id": "art-115",
-      "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
-      "x": 126,
-      "y": 78,
-      "width": 20,
-      "height": 20,
-      "angle": -41.806398289373305,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1254,
-        1254
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "target",
-      "bind": "targets-004-2",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "hole-capture",
-          "source": ""
-        }
-      },
-      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
-    },
-    {
-      "id": "art-116",
-      "src": "res/hd_img/pirate/pirate-explosive-barrel.png",
-      "x": 115,
-      "y": 87,
-      "width": 20,
-      "height": 20,
-      "angle": -41.806398289373305,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1254,
-        1254
-      ],
-      "plane": "upper",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "target",
-      "bind": "targets-004-1",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "hole-capture",
-          "source": ""
-        }
-      },
-      "runtimeSource": "res/img/pirate/pirate-explosive-barrel.png"
-    },
-    {
       "id": "art-117",
       "src": "res/hd_img/pirate/pirate-wood-bar-28px.png",
       "x": 38,
@@ -3265,7 +3295,8 @@
       "frameAxis": "x",
       "state": "return-gate",
       "bind": "oneway-015",
-      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png"
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-118",
@@ -3287,11 +3318,11 @@
       "frameAxis": "x",
       "state": "return-gate",
       "bind": "oneway-016",
-      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png"
+      "runtimeSource": "res/img/pirate/pirate-wood-bar-28px.png",
+      "ignoreBallMask": true
     }
   ],
-  "gameplay": {
-  },
+  "gameplay": {},
   "screenLayout": {
     "width": 360,
     "height": 640,
@@ -4456,11 +4487,13 @@
       "id": "oneway-003",
       "type": "oneway",
       "layer": "lower",
+      "side": "right",
       "x1": 298,
       "y1": 254,
       "x2": 297.937,
       "y2": 300.153,
-      "direction": 1
+      "direction": 1,
+      "neonBorder": "pink"
     },
     {
       "id": "oneway-004",
@@ -4610,9 +4643,9 @@
       "x": 109.423,
       "y": 239.819,
       "angle": 0,
+      "ballSpeed": 450,
       "releaseMode": "fixed",
-      "releaseAngle": 300.043,
-      "ballSpeed": 450
+      "releaseAngle": 300.043
     },
     {
       "id": "flag-001",
@@ -5258,7 +5291,6 @@
     {
       "id": "sensor-002",
       "type": "sensor",
-      "combo": false,
       "layer": "lower",
       "x1": 313,
       "y1": 126,
@@ -5268,7 +5300,6 @@
     {
       "id": "sensor-003",
       "type": "sensor",
-      "combo": false,
       "layer": "lower",
       "x1": 310,
       "y1": 107,
@@ -5278,7 +5309,6 @@
     {
       "id": "sensor-004",
       "type": "sensor",
-      "combo": false,
       "layer": "lower",
       "x1": 304,
       "y1": 90,
@@ -5288,7 +5318,6 @@
     {
       "id": "sensor-005",
       "type": "sensor",
-      "combo": false,
       "layer": "lower",
       "x1": 294,
       "y1": 72,
@@ -5298,7 +5327,6 @@
     {
       "id": "sensor-006",
       "type": "sensor",
-      "combo": false,
       "layer": "lower",
       "x1": 281,
       "y1": 56,

@@ -317,6 +317,47 @@
       "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
     },
     {
+      "id": "art-095",
+      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+      "x": 68,
+      "y": 262,
+      "width": 25,
+      "height": 25,
+      "angle": 95.90425180592496,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        853,
+        853
+      ],
+      "plane": "lower",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "indicator": {
+        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
+        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
+        "defaultState": "off",
+        "trigger": {
+          "kind": "gap-output",
+          "source": "hole-006"
+        },
+        "behavior": {
+          "mode": "repeat",
+          "onSeconds": 0.4,
+          "offSeconds": 0.4
+        },
+        "releaseBehavior": {
+          "mode": "repeat",
+          "onSeconds": 0.1,
+          "offSeconds": 0.1
+        },
+        "impactFlash": false
+      },
+      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
+    },
+    {
       "id": "art-051",
       "src": "res/hd_img/touhou/touhou-sakura-star-off.png",
       "x": 144,
@@ -1421,7 +1462,137 @@
           "cycles": 10
         }
       },
-      "runtimeSource": "res/img/touhou/touhou-yukari-gap-eyes-open.png"
+      "runtimeSource": "res/img/touhou/touhou-yukari-gap-eyes-open.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-016",
+      "src": "res/hd_img/touhou/touhou-moriya-stone.png",
+      "x": 276,
+      "y": 225,
+      "width": 50,
+      "height": 50,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "target",
+          "source": "target-007-1"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou-moriya-stone.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-015",
+      "src": "res/hd_img/touhou/touhou-moriya-stone.png",
+      "x": 240,
+      "y": 216,
+      "width": 50,
+      "height": 50,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "target",
+          "source": "target-008-1"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou-moriya-stone.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-018",
+      "src": "res/hd_img/touhou/touhou-hakurei-stone.png",
+      "x": 144,
+      "y": 124,
+      "width": 26,
+      "height": 40,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "target",
+          "source": "target-004-1"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou-hakurei-stone.png",
+      "ignoreBallMask": true
+    },
+    {
+      "id": "art-019",
+      "src": "res/hd_img/touhou/touhou-hakurei-stone.png",
+      "x": 183,
+      "y": 124,
+      "width": 26,
+      "height": 40,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1024,
+        1536
+      ],
+      "plane": "upper",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "flipX": true,
+      "animation": {
+        "enabled": true,
+        "effect": "shake",
+        "duration": 0.75,
+        "amplitude": 2.5,
+        "trigger": {
+          "kind": "target",
+          "source": "target-005-1"
+        }
+      },
+      "runtimeSource": "res/img/touhou/touhou-hakurei-stone.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-075",
@@ -1465,7 +1636,8 @@
       "frameAxis": "x",
       "state": "return-gate",
       "bind": "oneway-008",
-      "runtimeSource": "res/img/touhou/touhou-wood-divider-short.png"
+      "runtimeSource": "res/img/touhou/touhou-wood-divider-short.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-078",
@@ -1487,7 +1659,8 @@
       "frameAxis": "x",
       "state": "return-gate",
       "bind": "oneway-009",
-      "runtimeSource": "res/img/touhou/touhou-wood-divider-short.png"
+      "runtimeSource": "res/img/touhou/touhou-wood-divider-short.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-039",
@@ -1532,131 +1705,6 @@
       "state": "static",
       "bind": "",
       "runtimeSource": "res/img/touhou/touhou-red-torii.png"
-    },
-    {
-      "id": "art-016",
-      "src": "res/hd_img/touhou/touhou-moriya-stone.png",
-      "x": 276,
-      "y": 225,
-      "width": 50,
-      "height": 50,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1254,
-        1254
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "target",
-          "source": "target-007-1"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou-moriya-stone.png"
-    },
-    {
-      "id": "art-015",
-      "src": "res/hd_img/touhou/touhou-moriya-stone.png",
-      "x": 240,
-      "y": 216,
-      "width": 50,
-      "height": 50,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1254,
-        1254
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "target",
-          "source": "target-008-1"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou-moriya-stone.png"
-    },
-    {
-      "id": "art-018",
-      "src": "res/hd_img/touhou/touhou-hakurei-stone.png",
-      "x": 144,
-      "y": 124,
-      "width": 26,
-      "height": 40,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1024,
-        1536
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "target",
-          "source": "target-004-1"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou-hakurei-stone.png"
-    },
-    {
-      "id": "art-019",
-      "src": "res/hd_img/touhou/touhou-hakurei-stone.png",
-      "x": 183,
-      "y": 124,
-      "width": 26,
-      "height": 40,
-      "angle": 0,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        1024,
-        1536
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "flipX": true,
-      "animation": {
-        "enabled": true,
-        "effect": "shake",
-        "duration": 0.75,
-        "amplitude": 2.5,
-        "trigger": {
-          "kind": "target",
-          "source": "target-005-1"
-        }
-      },
-      "runtimeSource": "res/img/touhou/touhou-hakurei-stone.png"
     },
     {
       "id": "art-057",
@@ -1968,7 +2016,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "flag-002",
-      "runtimeSource": "res/img/touhou/touhou-shimenawa-flag-square.png"
+      "runtimeSource": "res/img/touhou/touhou-shimenawa-flag-square.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-088",
@@ -1990,13 +2039,14 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "flag-003",
-      "runtimeSource": "res/img/touhou/touhou-shimenawa-flag-square.png"
+      "runtimeSource": "res/img/touhou/touhou-shimenawa-flag-square.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-089",
       "src": "res/hd_img/touhou/touhou-shimenawa-flag-square.png",
-      "x": 295,
-      "y": 229,
+      "x": 296,
+      "y": 225,
       "width": 35,
       "height": 35,
       "angle": 0,
@@ -2012,7 +2062,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "flag-001",
-      "runtimeSource": "res/img/touhou/touhou-shimenawa-flag-square.png"
+      "runtimeSource": "res/img/touhou/touhou-shimenawa-flag-square.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-090",
@@ -2056,7 +2107,8 @@
       "frameAxis": "x",
       "state": "static",
       "bind": "",
-      "runtimeSource": "res/img/touhou/touhou-eientei.png"
+      "runtimeSource": "res/img/touhou/touhou-eientei.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-012",
@@ -2124,7 +2176,8 @@
         "group": "touhou1-gap-counter",
         "impactFlash": false
       },
-      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
+      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-080",
@@ -2160,7 +2213,8 @@
         "group": "touhou1-gap-counter",
         "impactFlash": false
       },
-      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png"
+      "runtimeSource": "res/img/touhou/touhou-yin-yang-off.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-091",
@@ -2236,7 +2290,8 @@
           "source": "sensor-001"
         }
       },
-      "runtimeSource": "res/img/touhou/touhou-youmu-half-phantom.png"
+      "runtimeSource": "res/img/touhou/touhou-youmu-half-phantom.png",
+      "ignoreBallMask": false
     },
     {
       "id": "art-094",
@@ -2269,47 +2324,6 @@
         }
       },
       "runtimeSource": "res/img/touhou/touhou-aya-maple-leaf.png"
-    },
-    {
-      "id": "art-095",
-      "src": "res/hd_img/touhou/touhou-torii-arrow-off.png",
-      "x": 68,
-      "y": 262,
-      "width": 25,
-      "height": 25,
-      "angle": 95.90425180592496,
-      "opacity": 1,
-      "crop": [
-        0,
-        0,
-        853,
-        853
-      ],
-      "plane": "lower",
-      "frames": 1,
-      "frameAxis": "x",
-      "state": "static",
-      "indicator": {
-        "off": "res/hd_img/touhou/touhou-torii-arrow-off.png",
-        "on": "res/hd_img/touhou/touhou-torii-arrow-on.png",
-        "defaultState": "off",
-        "trigger": {
-          "kind": "gap-output",
-          "source": "hole-006"
-        },
-        "behavior": {
-          "mode": "repeat",
-          "onSeconds": 0.4,
-          "offSeconds": 0.4
-        },
-        "releaseBehavior": {
-          "mode": "repeat",
-          "onSeconds": 0.1,
-          "offSeconds": 0.1
-        },
-        "impactFlash": false
-      },
-      "runtimeSource": "res/img/touhou/touhou-torii-arrow-off.png"
     }
   ],
   "gameplay": {

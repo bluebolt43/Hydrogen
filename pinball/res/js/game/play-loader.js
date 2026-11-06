@@ -7,8 +7,10 @@ async function preparePlayLayout(layout,theme){
   // Decode referenced art before starting, so missing assets produce a useful error.
   const sources=new Set([geometry.gameplay?.ballImage||'res/img/top-ball.png']);
   sources.add('res/img/system-marker-muted.png');
-  if(theme==='pirate'&&PirateTheaterCanvas.requested())PirateTheaterCanvas.initialSources.forEach(src=>sources.add(src));
-  else if(theme!=='pirate')PlayTheaterCanvas.initialSources(theaterTheme).forEach(src=>sources.add(src));
+  if(LayoutTheater.canvasEnabled()){
+   if(theme==='pirate')PirateTheaterCanvas.initialSources.forEach(src=>sources.add(src));
+   else PlayTheaterCanvas.initialSources(theaterTheme).forEach(src=>sources.add(src));
+  }
   function collectImages(value){
    if(typeof value==='string'&&/^res\/(?:img|hd_img)\/.+\.(?:png|jpe?g|webp|svg)$/i.test(value))sources.add(value);
    else if(value&&typeof value==='object')Object.values(value).forEach(collectImages);

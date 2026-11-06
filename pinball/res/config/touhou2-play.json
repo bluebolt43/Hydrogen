@@ -458,7 +458,8 @@
           "source": "sensor-004"
         }
       },
-      "runtimeSource": "res/img/touhou/touhou2-prop-alice-doll.png"
+      "runtimeSource": "res/img/touhou/touhou2-prop-alice-doll.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-007",
@@ -490,7 +491,8 @@
           "source": "sensor-003"
         }
       },
-      "runtimeSource": "res/img/touhou/touhou2-prop-flandre-doll.png"
+      "runtimeSource": "res/img/touhou/touhou2-prop-flandre-doll.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-008",
@@ -522,7 +524,8 @@
           "source": "sensor-003"
         }
       },
-      "runtimeSource": "res/img/touhou/touhou2-prop-remilia-bat-doll.png"
+      "runtimeSource": "res/img/touhou/touhou2-prop-remilia-bat-doll.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-010",
@@ -620,7 +623,8 @@
           "source": "sensor-005"
         }
       },
-      "runtimeSource": "res/img/touhou/touhou2-patchouli-hat.png"
+      "runtimeSource": "res/img/touhou/touhou2-patchouli-hat.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-touhou2-static-vine-left",
@@ -1610,7 +1614,8 @@
         "keepLevelOnHit": true,
         "group": "touhou2-bumpers"
       },
-      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png"
+      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-touhou2-bumper-circle-007",
@@ -1644,13 +1649,14 @@
         "keepLevelOnHit": true,
         "group": "touhou2-bumpers"
       },
-      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png"
+      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-touhou2-bumper-circle-008",
       "src": "res/hd_img/touhou/touhou2-orb-level-1.png",
-      "x": 245,
-      "y": 145,
+      "x": 244,
+      "y": 142,
       "width": 47,
       "height": 47,
       "angle": 0,
@@ -1678,7 +1684,8 @@
         "keepLevelOnHit": true,
         "group": "touhou2-bumpers"
       },
-      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png"
+      "runtimeSource": "res/img/touhou/touhou2-orb-level-1.png",
+      "ignoreBallMask": true
     },
     {
       "id": "art-touhou2-ball-top",
@@ -3372,8 +3379,8 @@
       "id": "circle-008",
       "type": "circle",
       "layer": "lower",
-      "cx": 245.243,
-      "cy": 141.897,
+      "cx": 243.243,
+      "cy": 138.897,
       "r": 13.733
     },
     {

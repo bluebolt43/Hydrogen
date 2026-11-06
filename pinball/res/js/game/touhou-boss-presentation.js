@@ -4,9 +4,9 @@ const FIRST_CAST_DELAY=8;
 class TouhouBossPresentation{
  constructor(game,theme='touhou1',{external=false,overlay=false,renderer=null}={}){
   this.external=external||overlay;this.overlay=overlay;
-  this.game=game;this.theme=theme;this.data=root.TouhouSpellcardSets?.[theme]??root.TouhouSpellcards;this.stage=0;this.elapsed=0;this.hasCast=false;this.originPending=false;this.musicWanted=false;
+  this.game=game;this.theme=theme;this.sharedMusic=root.AppStageMusic;this.data=root.TouhouSpellcardSets?.[theme]??root.TouhouSpellcards;this.stage=0;this.elapsed=0;this.hasCast=false;this.originPending=false;this.musicWanted=false;
   this.audio=new Audio();this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.6;this.audio.dataset.role='touhou-boss-bgm';document.body.append(this.audio);
-  if(this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
+  if(this.theme==='touhou1'&&!this.sharedMusic?.ownsTheme(this.theme))this.audio.src='res/audio/touhou1-menu.ogg';
   if(overlay){let selected=renderer;try{selected??=new URLSearchParams(root.location.search).get('spellRenderer')||localStorage.getItem('pinball-spell-renderer');}catch{}this.requestedRenderer=selected||'webgl';this.createOverlay(this.requestedRenderer);}
   this.previousMasks=[];this.mask=this.createMask();
  }
@@ -29,12 +29,12 @@ class TouhouBossPresentation{
  choose(stage){
   if(stage===this.stage)return;
   this.stage=stage;this.origin=undefined;this.defeated=false;this.elapsed=0;this.hasCast=false;this.originPending=false;this.clearSpells();this.audio.pause();this.audio.currentTime=0;this.musicWanted=false;
-  if(stage)this.audio.src=this.theme==='touhou2'?'res/audio/touhou2-b'+stage+'.ogg':'res/audio/touhou1/touhou-a'+stage+'-bgm.m4a';
-  else if(this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
+  if(stage&&!this.sharedMusic?.matches(this.theme,stage))this.audio.src=root.TouhouStageMusic.source(this.theme,stage);
+  else if(!stage&&this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
  }
  defeat(){this.defeated=true;this.elapsed=0;this.clearSpells();}
  onEvent(event){
-  if(event.type==='configured-attack'&&event.kind==='lv4')this.clearSpells();
+  if(event.type==='configured-attack'&&event.kind==='lv4'){this.elapsed=0;this.hasCast=false;this.clearSpells();}
   if(['new-game','ready','ball-save-ready'].includes(event.type)){
    this.elapsed=0;this.hasCast=false;this.clearSpells();
   }
@@ -57,6 +57,7 @@ class TouhouBossPresentation{
   return r&&o?{x:o.x,y:o.y*r.stageHeight/r.height}:undefined;
  }
  syncMusic(sound,retry=false,paused=this.game.paused){
+  if(this.sharedMusic?.matches(this.theme,this.stage)){this.sharedMusic.syncGamePause(paused);return;}
   const wanted=(!!this.stage||this.theme==='touhou1')&&!paused&&sound.enabled&&(sound.unlocked||root.PinballPlatform==='android');
   this.audio.muted=!sound.enabled;
   if(wanted&&(!this.musicWanted||retry))this.audio.play().catch(()=>{});

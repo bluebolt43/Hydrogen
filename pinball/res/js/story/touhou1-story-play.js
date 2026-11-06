@@ -1263,6 +1263,8 @@ const hostNext = document.getElementById('story-next');
 const hostSkip = document.getElementById('story-skip');
 const hostBegin = document.getElementById('begin');
 const hostAudio = hostedChapter === 1 ? bgm : document.getElementById(`a${hostedChapter}-bgm`);
+const hostSharedMusic = window.AppStageMusic?.matches('touhou1', hostedChapter) ? window.AppStageMusic : null;
+if (!hostSharedMusic) hostAudio.src = new URL('../../' + window.TouhouStageMusic.source('touhou1', hostedChapter), location.href).href;
 const hostMusicStart = Number(document.body.dataset.musicStart || 0);
 const hostSounds = [bgm, a2Bgm, a3Bgm, a4Bgm, a5Bgm, a6Bgm, a7Bgm, a8Bgm];
 let hostTimeline = [], hostTime = 0, hostPlaying = false, hostLast = 0;
@@ -1340,7 +1342,7 @@ function hostTick(now) {
   hostLast = now;
   hostTime = nextTime;
   hostPhone.dataset.time = String(hostTime);
-  if (hostPart === 'start' && hostTime >= hostMusicStart && !hostMusicStarted) {
+  if (!hostSharedMusic && hostPart === 'start' && hostTime >= hostMusicStart && !hostMusicStarted) {
     hostMusicStarted = true;
     hostAudio.play().catch(() => {});
   }
@@ -1356,7 +1358,11 @@ async function playHostChapter(key = hostKey) {
   hostPlaying = false; hostCompleted = false;
   hostNext.hidden = true; hostSkip.hidden = true;
   prepareHostChapter();
-  if (hostPart === 'start' && !hostAudio.muted) {
+  if (hostSharedMusic && !await hostSharedMusic.play()) {
+    if (serial === hostSerial) hostBegin.hidden = false;
+    return false;
+  }
+  if (!hostSharedMusic && hostPart === 'start' && !hostAudio.muted) {
     hostPrime = {serial, muted: hostAudio.muted};
     try {
       // Readiness is not an audible cue: delayed chapter music must not leak.

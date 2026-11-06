@@ -42,7 +42,13 @@ function createGame(core){
    // Restore clearance so the next sweep can resolve that wall using normal physics.
    if(hit.editorPortal.points)for(const edge of this.edges[this.ball.layer]||[]){
     if(!['wall','rail'].includes(edge.kind)||edge.n||!edge.a||!this.edgeEnabled(edge))continue;
-    const offset=sub(this.ball.p,nearest(this.ball.p,edge.a,edge.b).p),distance=len(offset),radius=this.physics.ballRadius+(edge.thickness||0)/2;
+    const radius=this.physics.ballRadius+(edge.thickness||0)/2,bounds=edge.segmentBounds;
+    // Use loading-time bounds when geometry is unchanged. Keep wall order and read the
+    // current ball position after each push, including chains of overlapping walls.
+    const prepared=bounds&&bounds[0]===edge.a[0]&&bounds[1]===edge.a[1]&&bounds[2]===edge.b[0]&&bounds[3]===edge.b[1];
+    const minX=prepared?bounds[4]:Math.min(edge.a[0],edge.b[0]),minY=prepared?bounds[5]:Math.min(edge.a[1],edge.b[1]),maxX=prepared?bounds[6]:Math.max(edge.a[0],edge.b[0]),maxY=prepared?bounds[7]:Math.max(edge.a[1],edge.b[1]);
+    if(this.ball.p[0]<minX-radius||this.ball.p[0]>maxX+radius||this.ball.p[1]<minY-radius||this.ball.p[1]>maxY+radius)continue;
+    const offset=sub(this.ball.p,nearest(this.ball.p,edge.a,edge.b).p),distance=len(offset);
     if(distance>=radius)continue;
     let normal;
     if(distance>1e-9)normal=mul(offset,1/distance);

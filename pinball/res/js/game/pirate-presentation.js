@@ -22,8 +22,8 @@ function showWarning(doc){
  const finished=animation.finished.catch(()=>{}).finally(cleanup);
  return {finished,cancel(){animation.cancel();cleanup();},pause(){animation.pause();},play(){animation.play();}};
 }
-function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='重新開始'){
- return doc.defaultView.GameOverDialog.show(doc,score,rows,currentId,onClose,buttonLabel);
+function showGameOver(doc,score,rows,currentId,onClose,buttonLabel,onLeave=null){
+ return doc.defaultView.GameOverDialog.show(doc,score,rows,currentId,onClose,buttonLabel,onLeave);
 }
 const sounds={
  metal:{src:'res/audio/ball-impact.wav',volume:1,interval:70,voices:4},

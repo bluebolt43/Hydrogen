@@ -210,12 +210,14 @@ class Renderer{
   }
   await this.decodeImages(images);
   const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const brush=canvas.getContext('2d');brush.setTransform(scale,0,0,scale,0,0);
-  const previousBrightness=this.brightness;this.brightness=brightness;
+  const previousBrightness=this.brightness,nativeTransform=brush.getTransform();this.brightness=brightness;
   try{for(const {a,img} of tasks){const [x,y,w,h]=a.crop,colors=new Set([a.indicator?.glow?.on,a.indicator?.glow?.complete,a.indicator?.glow?.preview?.color].filter(Boolean));
    if(a.indicator?.halo)this.drawHalo(brush,a.width,a.height,rasterScale(brush));
    for(let frame=0;frame<(a.frames||1);frame++){const sx=x+(a.frameAxis==='y'?0:frame*(a.frameStride||w)),sy=y+(a.frameAxis==='y'?frame*(a.frameStride||h):0);
     if(sx+w>(img.runtimeWidth??img.naturalWidth)+.01||sy+h>(img.runtimeHeight??img.naturalHeight)+.01)continue;
     this.drawRaster(brush,img,sx,sy,w,h,a.width,a.height);
+    // Axis-aligned art also uses rounded native-pixel sizes during play.
+    if(!a.angle&&!a.animation?.enabled&&!a.dynamicPose)this.drawRaster(brush,img,sx,sy,w,h,a.width,a.height,0,0,null,nativeTransform);
     for(const color of colors)this.drawGlow(brush,img,sx,sy,w,h,a.width,a.height,{color,alpha:0});
    }
   }}finally{this.brightness=previousBrightness;canvas.width=canvas.height=0;}
@@ -532,6 +534,19 @@ class Renderer{
   table.passes=[];for(const pass of this.drawPassDefinitions||[])this.prepareDrawPass(pass.items,pass.plane,game);
   return table;
  }
+ // A new ball replaces rule state, not the authored artwork or finite pictures.
+ // Rebind those state objects while retaining commands and prepared rasters.
+ rebindDrawTable(game){
+  const table=this.drawTable;
+  if(!table||table.game!==game||table.layoutRevision!==this.layoutRevision||table.imageRevision!==this.imageRevision||table.flippers!==game.flippers||(table.producer?.controller||null)!==(game.bonus||null)||table.imageLookup!==this.image)return false;
+  const previousTargets=new Set((table.groups||[]).flatMap(group=>group.targets)),targets=new Set((game.targetGroups||[]).flatMap(group=>group.targets));
+  if(previousTargets.size!==targets.size||[...previousTargets].some(id=>!targets.has(id)))return false;
+  const gates=new Map((game.gates||[]).map(gate=>[gate.id,gate])),posts=game.configuredPosts;
+  if(gates.size!==(table.gates?.length||0)||(table.gates||[]).some(gate=>!gates.has(gate.id))||(posts?.size||0)!==(table.posts?.size||0)||[...(table.posts?.keys()||[])].some(id=>!posts?.has(id)))return false;
+  for(const command of table.commands){command.gate=gates.get(command.art.bind);command.post=posts?.get(command.art.bind);}
+  table.groups=game.targetGroups;table.gates=game.gates;table.posts=posts;
+  this.bindingIndices?.delete(game);return true;
+ }
  refreshDrawTable(game){
   const table=this.drawTable;if(!table||table.game!==game)return null;
   return table.layoutRevision===this.layoutRevision&&table.imageRevision===this.imageRevision&&table.groups===game.targetGroups&&table.flippers===game.flippers&&table.gates===game.gates&&table.posts===game.configuredPosts&&(table.producer?.controller||null)===(game.bonus||null)&&table.imageLookup===this.image?table:this.prepareDrawTable(table.items,game);
@@ -594,7 +609,7 @@ class Renderer{
   }
   return index;
  }
- drawUncached(ctx,items,plane,game=null,stateOverrides=null){
+ drawUncached(ctx,items,plane,game=null,stateOverrides=null,preparation=null){
   const transform=this.rasterCacheEnabled?ctx.getTransform():null,scale=transform?rasterScale(ctx,transform):null;
   const missions=this.rasterCacheEnabled&&this.missionCacheEnabled&&game&&game.ball.state!=='ready'&&!this.beforeDraw?this.missionHeads:null;
   let states=stateOverrides||this.frameArtStates;const commands=game?this.drawCommands(items,game):null,bindings=!commands&&game&&this.trackedList(items)?this.bindingIndex(game):null;
@@ -608,7 +623,7 @@ class Renderer{
    const targetId=command?command.targetId:game&&o.bind&&(bindings?(bindings.targets.has(o.bind)?o.bind:bindings.targets.has(o.bind+'-1')?o.bind+'-1':null):(game.targetGroups?.some(g=>g.targets.includes(o.bind))?o.bind:game.targetGroups?.some(g=>g.targets.includes(o.bind+'-1'))?o.bind+'-1':null));
    let targetAlpha=1;
    const hitId=targetId||(o.state==='target'?o.bind:null);
-   if(game&&game.targetHits.has(hitId))continue;
+   if(game&&game.targetHits.has(hitId)&&!preparation?.targetVisible)continue;
    const state=states?.has(o)?states.get(o):command?.kind==='static'?command.baseState:this.map.artState(o,game,this,command);states?.set(o,state);if(!state)continue;
    const {src,baseSrc,frame}=state,baseImage=command?.images[baseSrc]||this.image(baseSrc),img=src===baseSrc?baseImage:command?.images[src]||this.image(src);
    let [sx,sy,sw,sh]=o.crop;if(o.frameAxis==='y')sy+=frame*(o.frameStride||sh);else sx+=frame*(o.frameStride||sw);
@@ -636,7 +651,7 @@ class Renderer{
    if(game&&o.state==='plunger'&&o.bind==='plunger'){
     const p=game.g.plunger,age=game.time-game.plungerReleasedAt;
     const ready=game.balls.some(b=>b.state==='ready');
-    const pull=ready?game.charge:(age>=0&&age<.08?game.plungerReleaseCharge*(1-age/.08)**2:0);
+    const pull=preparation?.plungerPull??(ready?game.charge:(age>=0&&age<.08?game.plungerReleaseCharge*(1-age/.08)**2:0));
     const angle=o.angle*Math.PI/180;
     // Anchor the sprite's top midpoint to the physical ball contact point.
     x=p.x-Math.sin(angle)*o.height/2;y=p.rest_y+p.stroke*pull+Math.cos(angle)*o.height/2;

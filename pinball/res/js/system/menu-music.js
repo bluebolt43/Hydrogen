@@ -3,30 +3,37 @@
 'use strict';
 function createMenuMusic(src){
  const audio=new Audio();audio.preload='none';audio.loop=true;
- let enabled=false,disposed=false,sourceAttached=false;
+ let enabled=false,disposed=false,sourceAttached=false,pendingPlay=null,appliedVolume=null;
  function pause(){
-  audio.pause();
+  pendingPlay=null;audio.pause();
  }
  function start(){
   if(!enabled||disposed)return;
   if(!sourceAttached){audio.src=src;sourceAttached=true;}
-  if(audio.paused)audio.play().catch(()=>{}); // Retry on a user gesture if autoplay is blocked.
+  if(audio.paused&&!pendingPlay){
+   const request=audio.play();pendingPlay=request;
+   const settled=()=>{if(pendingPlay===request)pendingPlay=null;};
+   Promise.resolve(request).then(settled,settled); // A later gesture may retry blocked playback.
+  }
  }
  function gesture(){start();}
  document.addEventListener('pointerup',gesture);document.addEventListener('keydown',gesture);
- return {audio,stop(){enabled=false;pause();audio.currentTime=0;},setEnabled(value){enabled=!!value;if(enabled)start();else pause();},dispose(){disposed=true;enabled=false;pause();document.removeEventListener('pointerup',gesture);document.removeEventListener('keydown',gesture);audio.removeAttribute('src');audio.load();}};
+ return {audio,
+  setSource(value){if(value===src)return;pause();src=value;if(sourceAttached){audio.removeAttribute('src');audio.load();}sourceAttached=false;if(enabled)start();},
+  play(){start();const request=pendingPlay;return request?Promise.resolve(request).then(()=>true,()=>false):Promise.resolve(!enabled||!audio.paused);},
+  stop(){enabled=false;if(!sourceAttached)return;pause();audio.currentTime=0;},setEnabled(value){value=!!value;if(enabled===value)return;enabled=value;if(enabled)start();else pause();},setVolume(value){if(appliedVolume===value)return;appliedVolume=value;audio.volume=value;},dispose(){disposed=true;enabled=false;pause();document.removeEventListener('pointerup',gesture);document.removeEventListener('keydown',gesture);audio.removeAttribute('src');audio.load();}};
 }
 function createMenuMixer(sources,initial){
  const tracks=Object.fromEntries(Object.entries(sources).map(([key,src])=>[key,createMenuMusic(src)]));
  let selected=initial,enabled=false,fade=null,raf=null,last=0,volume=1;
  const levels=Object.fromEntries(Object.keys(tracks).map(key=>[key,key===selected?1:0]));
- function applyVolume(){for(const [key,track] of Object.entries(tracks))track.audio.volume=levels[key]*volume;}
+ function applyVolume(){for(const [key,track] of Object.entries(tracks))track.setVolume(levels[key]*volume);}
  function tick(time){
   if(!enabled||!fade)return;const dt=Math.max(0,time-last);last=time;fade.elapsed+=dt;
   for(const [key,track] of Object.entries(tracks)){
    const duration=key===selected?1000:800,p=Math.min(1,fade.elapsed/duration),target=key===selected?1:0;
    levels[key]=fade.start[key]+(target-fade.start[key])*p;
-   if(key!==selected&&p===1)track.stop();
+   if(key!==selected&&p===1&&fade.start[key]>0){track.stop();fade.start[key]=0;}
   }
   applyVolume();
   if(fade.elapsed>=1000){fade=null;raf=null;}else raf=requestAnimationFrame(tick);

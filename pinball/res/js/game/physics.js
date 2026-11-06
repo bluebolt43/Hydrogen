@@ -69,11 +69,32 @@ function taperedHit(p,d,a,b,ra,rb,r){
  let best=null;for(const hit of [circleHit(p,d,a,ra+r),circleHit(p,d,b,rb+r),...sides.map(([a,b])=>segmentHit(p,d,a,b,r))])if(hit&&(!best||hit.t<best.t))best=hit;
  return best;
 }
+// Loading-time segment bounds are conservative; moved/dynamic edges use the exact test.
+function segmentMayHit(sweep,e,r){
+ const b=e.segmentBounds;if(!b||b[0]!==e.a[0]||b[1]!==e.a[1]||b[2]!==e.b[0]||b[3]!==e.b[1])return true;
+ return !(sweep[2]<b[4]-r||sweep[0]>b[6]+r||sweep[3]<b[5]-r||sweep[1]>b[7]+r);
+}
 class Grid {
  constructor(edges){this.map=new Map();this.size=24;for(const e of edges){const pts=e.c?[e.c,e.c]:[e.a,e.b],r=(e.r||0)+5;
+  if(!e.c)e.segmentBounds=[...e.a,...e.b,Math.min(e.a[0],e.b[0]),Math.min(e.a[1],e.b[1]),Math.max(e.a[0],e.b[0]),Math.max(e.a[1],e.b[1])];
   for(let x=Math.floor((Math.min(pts[0][0],pts[1][0])-r)/24);x<=Math.floor((Math.max(pts[0][0],pts[1][0])+r)/24);x++)for(let y=Math.floor((Math.min(pts[0][1],pts[1][1])-r)/24);y<=Math.floor((Math.max(pts[0][1],pts[1][1])+r)/24);y++){const k=x+','+y;if(!this.map.has(k))this.map.set(k,[]);this.map.get(k).push(e);}}
  }
- query(p,d,padding=5){const found=new Set();for(let x=Math.floor((Math.min(p[0],p[0]+d[0])-padding)/24);x<=Math.floor((Math.max(p[0],p[0]+d[0])+padding)/24);x++)for(let y=Math.floor((Math.min(p[1],p[1]+d[1])-padding)/24);y<=Math.floor((Math.max(p[1],p[1]+d[1])+padding)/24);y++)for(const e of this.map.get(x+','+y)||[])found.add(e);return found;}
+ // Opt-in sweep filtering preserves coarse-cell visitation and insertion order.
+ // Bounds are prepared by Grid construction; dynamic/moved segments stay conservative.
+ query(p,d,padding=5,filterSweep=false){
+  const left=Math.min(p[0],p[0]+d[0])-padding,top=Math.min(p[1],p[1]+d[1])-padding,right=Math.max(p[0],p[0]+d[0])+padding,bottom=Math.max(p[1],p[1]+d[1])+padding,margin=.002*21+1e-9;
+  const sweep=filterSweep?[left-margin,top-margin,right+margin,bottom+margin]:null,found=new Set();
+  for(let x=Math.floor(left/24);x<=Math.floor(right/24);x++)for(let y=Math.floor(top/24);y<=Math.floor(bottom/24);y++)for(const e of this.map.get(x+','+y)||[]){
+   if(filterSweep){
+    if(found.has(e))continue;
+    if(e.c){if(sweep[2]<e.c[0]-e.r||sweep[0]>e.c[0]+e.r||sweep[3]<e.c[1]-e.r||sweep[1]>e.c[1]+e.r)continue;}
+    else if(!segmentMayHit(sweep,e,(e.thickness||0)/2))continue;
+   }
+   found.add(e);
+  }
+  return found;
+ }
+
 }
 // PINBALL.DAT: ball/500=.3, table/305=[25,.5,pi/2], table/701=.2.
 // World distance and velocity are multiplied by 21; time is still seconds.
@@ -229,7 +250,10 @@ class CoreGame {
   for(let pass=0;pass<10&&remaining>1e-6;pass++){
    this.limitSpeed();
    const d=mul(b.v,remaining),portal=this.portalHit(b.p,d),trackHit=this.guidedTrackHit(b.p,d);let best=null;
-   for(const e of [...this.grids[b.layer].query(b.p,d,Math.max(5,r)),...this.dynamicEdges()]){
+   // segmentHit allows a -.002*21 entry distance. Include that tolerance behind
+   // the start as well as endpoint overlap; keep the original candidate order.
+   const margin=.002*21+1e-9,sweep=[Math.min(b.p[0],b.p[0]+d[0])-margin,Math.min(b.p[1],b.p[1]+d[1])-margin,Math.max(b.p[0],b.p[0]+d[0])+margin,Math.max(b.p[1],b.p[1]+d[1])+margin];
+   for(const e of [...this.grids[b.layer].query(b.p,d,Math.max(5,r),true),...this.dynamicEdges()]){
     if(this.targetHits.has(e.id))continue;
     if((e.kind==='plunger'||e.kind==='rescue-kicker')&&d[1]<=0)continue;
     if(!this.edgeEnabled(e))continue;
@@ -237,7 +261,8 @@ class CoreGame {
     // complete ball has crossed, so it cannot close through a straddling ball.
     if(e.retractUp&&(b.v[1]<0||b.p[1]>e.c[1]))continue;
     if(e.n&&(dot(d,e.n)>=-EPS||dot(sub(b.p,e.a),e.n)<r-.08))continue;
-   const h=e.c?circleHit(b.p,d,e.c,r+e.r):segmentHit(b.p,d,e.a,e.b,r+(e.thickness||0)/2);
+    const radius=r+(e.thickness||0)/2;if(!e.c&&!segmentMayHit(sweep,e,radius))continue;
+   const h=e.c?circleHit(b.p,d,e.c,r+e.r):segmentHit(b.p,d,e.a,e.b,radius);
     // A lane's launch face must not catch balls on its rounded end caps
     // through the adjacent divider. Check the impact, not the frame start.
     if(h&&e.faceOnly){const q=h.position||add(b.p,mul(d,h.t)),axis=sub(e.b,e.a),along=dot(sub(q,e.a),axis);if(along<0||along>dot(axis,axis))continue;}
@@ -358,7 +383,7 @@ class CoreGame {
  }
  advance(seconds){for(let t=0;t<seconds;t+=this.physics.step)this.step(Math.min(this.physics.step,seconds-t));}
 }
-const api={CoreGame,Grid,EPS,clamp,cross,CONFIG,taperedGeometry,taperedOutline,taperedHit,basicCollision,segmentHit,circleHit,inside,nearest,unit,sub,add,mul,dot,len,mix};
+const api={CoreGame,Grid,EPS,clamp,cross,CONFIG,taperedGeometry,taperedOutline,taperedHit,basicCollision,segmentMayHit,segmentHit,circleHit,inside,nearest,unit,sub,add,mul,dot,len,mix};
 // Compatibility for existing consumers; new maps subclass CoreGame directly.
 let defaultGame;Object.defineProperty(api,'Game',{get(){if(!defaultGame){const map=typeof module!=='undefined'&&module.exports?require('./table-mechanics.js'):root.TableMechanics;if(!map)throw Error('Load table-mechanics.js before creating the game');defaultGame=map.createGame(api);}return defaultGame;}});
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.PiratePhysics=api;

@@ -27,7 +27,8 @@ document.querySelectorAll('img[data-story-bubble="question"]').forEach(image=>{c
 const storyData=JSON.parse(document.getElementById('story-data').textContent);
 const phone=document.getElementById('phone'),begin=document.getElementById('begin');
 const next=document.getElementById('story-next'),skip=document.getElementById('story-skip');
-const music=document.querySelector('audio'),key=`ch${storyData.chapter}-${storyData.part}`;
+const sharedMusic=window.AppStageMusic?.matches('touhou2',storyData.chapter)?window.AppStageMusic:null;
+const music=sharedMusic?null:document.querySelector('audio'),key=`ch${storyData.chapter}-${storyData.part}`;
 const layers=storyData.layers.map(layer=>({...layer,element:document.getElementById(layer.id),visible:false}));
 let time=0,playing=false,last=0,frame=0,resumable=false,completed=false,nextTimer=0,playSerial=0;
 const clamp=value=>Math.max(0,Math.min(1,value));
@@ -35,7 +36,8 @@ const seen=()=>window.AppProgress?window.AppProgress.hasSeen(key):localStorage.g
 function render(ms){
  time=Math.max(0,Math.min(storyData.duration,Number(ms)||0));phone.dataset.time=String(time);
  for(const layer of layers){
-  let opacity=clamp((time-layer.start)/(layer.fade||700))*clamp((layer.end-time)/(layer.fadeOut||500));
+  const fadeIn=layer.fade===0?(time>=layer.start?1:0):clamp((time-layer.start)/(layer.fade||700));
+  let opacity=fadeIn*clamp((layer.end-time)/(layer.fadeOut||500));
   if(layer.dissolveDuration)opacity*=Math.pow(1-clamp((time-layer.dissolveStart)/layer.dissolveDuration),layer.dissolvePower||3);
   if(opacity===0&&!layer.visible)continue;
   layer.visible=opacity>0;
@@ -74,6 +76,7 @@ function finish(skipped=false){
 function tick(now){if(!playing)return;render(time+Math.max(0,now-last));last=now;if(time>=storyData.duration)finish();else frame=requestAnimationFrame(tick);}
 async function play(chapter=key){
  if(chapter!==key)return false;const serial=++playSerial;await window.viewReady;if(serial!==playSerial)return false;stop();clearTimeout(nextTimer);completed=false;next.hidden=true;skip.hidden=!seen();render(0);begin.hidden=true;
+ if(sharedMusic&&!await sharedMusic.play()){if(serial===playSerial)begin.hidden=false;return false;}
  if(music){music.currentTime=0;try{await music.play();}catch{if(serial===playSerial)begin.hidden=false;return false;}}
  if(serial!==playSerial)return false;
  playing=true;last=performance.now();frame=requestAnimationFrame(tick);return true;

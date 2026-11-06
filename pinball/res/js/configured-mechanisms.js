@@ -51,8 +51,8 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    // Connected guided segments have no free-ball entrance movement to count.
    if(layer!=='guided')this.crossConfiguredSensors(previous,layer);
   }
-  collide(dt){
-   if(this.config.physicsModel!=='legacy'){super.collide(dt);return;}
+  prepareFlippers(){
+   if(this.config.physicsModel!=='legacy')return;
    const Cadet=typeof module!=='undefined'?require('./game/space-cadet-flipper.js'):root.SpaceCadetFlipper;
    for(const f of this.flippers){
     if(!f.cadet)f.cadet=new Cadet(f,this.config);
@@ -73,6 +73,9 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
     };
     f.cadet.configuredWallGuard=true;
    }
+  }
+  collide(dt){
+   this.prepareFlippers();
    super.collide(dt);
   }
  emit(type,data={}){

@@ -231,7 +231,8 @@ class PirateTheaterCanvas{
  heartBounds(bounds){const [x,y,w,h]=this.hearts.box,s=bounds.width/360;return [(bounds.x||0)+x*s,bounds.y+y*s,(bounds.x||0)+(x+w)*s,bounds.y+(y+h)*s];}
  paintHearts(c,bounds){if(!this.present||this.closed||this.curtainDynamic)return;const h=this.hearts;c.save();c.translate(bounds.x||0,bounds.y);c.scale(bounds.width/360,bounds.width/360);c.drawImage(h.canvas,h.box[0],h.box[1],h.box[2],h.box[3]);c.restore();}
  prepareStageClip(key,suffix,width,height,scale,view,paintFrame,bounds){
-  if(this.closed&&!this.curtainDynamic){this.stageClip=null;return;}
+  // The fixed opening depends on scenery, not whether the curtains are open.
+  // Build it during loading and retain it across entrances and curtain changes.
   if(this.stageClip?.key!==key){
    const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const c=canvas.getContext('2d',{willReadFrequently:true});c.drawImage(suffix,0,0);c.setTransform(scale,0,0,scale,-view[0]*scale,-view[1]*scale);paintFrame(c);
    const left=Math.max(0,Math.ceil(((bounds.x||0)-view[0])*scale)),top=Math.max(0,Math.ceil((bounds.y-view[1])*scale)),right=Math.min(width,Math.floor(((bounds.x||0)+bounds.width-view[0])*scale)),bottom=Math.min(height,Math.floor((bounds.y+bounds.height-view[1])*scale)),path=new Path2D();

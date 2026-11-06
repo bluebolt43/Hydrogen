@@ -1,0 +1,23 @@
+body{background:#233b40;color:#efe2c5}.stage{background:#305e65}.background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--background-position,50% 66.6667%)}#enemies,#effects{position:absolute;inset:0}.enemy{position:absolute;left:50%;perspective:1000px}.boss-drift{width:100%;height:100%;transform-origin:50% 85%;animation:saga-breathe 3s ease-in-out infinite}.boss-drift img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 2px #142c3840)}.hp{position:absolute;top:5px;left:50%;transform:translateX(-50%);display:flex;justify-content:center;gap:.4cqw;z-index:6}.stage.defeated .hp{display:none}#effects{z-index:4;pointer-events:none}.stage[data-motion=boat] .boss-drift,.stage[data-motion=whale] .boss-drift{animation:saga-bob 3s ease-in-out infinite}.stage[data-motion=valkyrie] .boss-drift{animation:saga-fly 2.5s ease-in-out infinite}.stage[data-motion=raven] .boss-drift{animation:saga-raven 2.4s ease-in-out infinite}.stage[data-motion=serpent] .boss-drift{animation:saga-sick 3s ease-in-out infinite}.stage[data-motion=golem] .boss-drift{animation:saga-golem 4s ease-in-out infinite}.stage[data-motion=wolf] .boss-drift{animation:saga-wolf 3.2s ease-in-out infinite}.stage.defeated .boss-drift{animation:none}
+.strike{position:absolute;left:50%;top:56%;height:85%;transform:translate(-50%,-50%);transform-origin:50% 70%}.strike img{width:100%;height:100%;object-fit:contain}.prop{position:absolute;left:50%;top:60%;width:20%;height:40%;object-fit:contain;transform:translate(-50%,-50%)}.paper-piece{position:absolute;left:50%;top:60%;width:1.6%;aspect-ratio:1;background:#d8cba6;clip-path:polygon(8% 10%,82% 0,100% 65%,38% 100%,0 72%)}.rune-burst,.impact-ring{position:absolute;left:50%;top:56%;width:18%;aspect-ratio:1;transform:translate(-50%,-50%);border:2px solid #ffedc0;border-radius:50%;box-shadow:0 0 10px #ffd37b55}.rune-burst{border-radius:22%;border-color:#9ce9d7;box-shadow:0 0 16px #8cdbbf88;rotate:45deg}.pie-splat{position:absolute;left:50%;top:56%;width:13%;height:29%;transform:translate(-50%,-50%);background:#ebd9a6;border-radius:46% 54% 41% 59%;box-shadow:9px 1px 0 -4px #c8af71,-8px 5px 0 -3px #e8d4a2}.lightning{position:absolute;max-width:none;object-fit:fill;pointer-events:none}.controls button,.controls select{background:#314c4b;border-color:#b79b68;color:#fff0d0}.controls select{max-width:330px}#status{color:#d5dbc2}
+@keyframes saga-breathe{50%{scale:1.015 1.035}}@keyframes saga-bob{0%,100%{translate:0 2%;rotate:-1deg}50%{translate:0 -2%;rotate:1deg}}@keyframes saga-fly{0%,100%{translate:0 1%;rotate:-2deg}50%{translate:1% -6%;rotate:2deg}}@keyframes saga-raven{0%,100%{rotate:-3deg}50%{translate:0 -4%;rotate:3deg}}@keyframes saga-sick{0%,100%{rotate:-1deg;scale:1 .98}50%{rotate:1deg;scale:1.02 1}}@keyframes saga-golem{50%{translate:0 -1.5%;rotate:.6deg}}@keyframes saga-wolf{50%{translate:-1% 0;scale:1.025 1}}
+@media(prefers-reduced-motion:reduce){.boss-drift{animation:none!important}}
+
+.strike.projectile{left:0;top:0;transform:none;transform-origin:50% 50%}.attack-smoke{position:absolute;left:0;top:0;height:auto;transform-origin:50% 50%}
+
+/* Same waterline, artwork offsets and counter-moving waves as Pirate theater. */
+.saga-waterline{position:absolute;inset:calc(66.6667% + 1.9333cqw) 0 0;pointer-events:none}
+.saga-wave{position:absolute;left:-10%;width:120%;height:auto;max-width:none}
+.enemy{z-index:1}.saga-water-back{z-index:2}.saga-water-front{z-index:3}
+.saga-water-back .saga-wave{top:-19cqw;filter:brightness(.86);animation:saga-wave-back 8s ease-in-out infinite alternate}
+.saga-water-front .saga-wave{top:-16cqw;animation:saga-wave-front 6s ease-in-out -3s infinite alternate}
+.stage:not([data-ocean=true]) .saga-waterline{display:none}
+@keyframes saga-wave-back{from{transform:translate(-3%,0)}to{transform:translate(3%,-.6cqw)}}
+@keyframes saga-wave-front{from{transform:translate(3%,0)}to{transform:translate(-3%,-.9cqw)}}
+@media(prefers-reduced-motion:reduce){.saga-wave{animation:none}}
+
+.electric-sphere,.electric-burst{position:absolute;object-fit:contain;max-width:none;transform:translate(-50%,-50%);pointer-events:none}
+
+.lightning-mask{position:absolute;inset:0;background:#001326b0;pointer-events:none}
+
+

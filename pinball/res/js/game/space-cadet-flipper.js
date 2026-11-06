@@ -20,9 +20,13 @@ class SpaceCadetFlipper{
   this.configure(config);
  }
  configure(c){
+  const baseRadius=(this.f.radii[0]+c.ballRadius)/SCALE,tipRadius=(this.f.radii[1]+c.ballRadius)/SCALE;
+  if(this.upSeconds===c.flipperSeconds&&this.downSeconds===c.flipperReturnSeconds&&this.elasticity===c.flipperElasticity&&this.smoothness===c.flipperSmoothness&&this.collisionMult===c.flipperBoostScale&&this.baseRadius===baseRadius&&this.tipRadius===tipRadius)return;
+  this.pointsAngle=null;
   this.upSeconds=c.flipperSeconds;this.downSeconds=c.flipperReturnSeconds;this.elasticity=c.flipperElasticity;this.smoothness=c.flipperSmoothness;this.collisionMult=c.flipperBoostScale;
-  this.baseRadius=(this.f.radii[0]+c.ballRadius)/SCALE;this.tipRadius=(this.f.radii[1]+c.ballRadius)/SCALE;
+  this.baseRadius=baseRadius;this.tipRadius=tipRadius;
   this.distanceDiv=mag(sub(this.tip,this.origin))+this.tipRadius;
+  this.collisionOrigin=layout(this.origin);this.collisionRadius=Math.max(this.distanceDiv,this.baseRadius)*SCALE+.05;
   this.timeAdvance=Math.min(this.upSeconds,this.downSeconds)/(2*mag(sub(this.tip,this.raised))/this.tipRadius);
   const axis=unit(sub(this.tip,this.origin)),normal=[-axis[1],axis[0]];
   this.a2=add(this.origin,mul(normal,this.baseRadius));this.a1=add(this.tip,mul(normal,this.tipRadius));
@@ -41,7 +45,7 @@ class SpaceCadetFlipper{
   if(!this.flag)this.inputTime=time;this.flag=pressed?1:2;this.stopTime=this.angleMult+this.inputTime;
  }
  points(time){
-  const angle=this.angle(time),s=Math.sin(angle),c=Math.cos(angle),rotate=p=>{const q=sub(p,this.origin);return add(this.origin,[c*q[0]-s*q[1],s*q[0]+c*q[1]]);};
+  const angle=this.angle(time);if(angle===this.pointsAngle)return;this.pointsAngle=angle;const s=Math.sin(angle),c=Math.cos(angle),rotate=p=>{const q=sub(p,this.origin);return add(this.origin,[c*q[0]-s*q[1],s*q[0]+c*q[1]]);};
   this.A1=rotate(this.a1);this.A2=rotate(this.a2);this.B1=rotate(this.b1);this.B2=rotate(this.b2);this.T1=rotate(this.tip);
   this.lineA=line(this.A1,this.A2);this.lineB=line(this.B1,this.B2);
  }
@@ -59,11 +63,19 @@ class SpaceCadetFlipper{
   }
   return best;
  }
+ canHit(p,v,dt){
+  if(this.flag&&this.timeAdvance>1)return true;
+  // Cover the entire rotation, both caps, the ray's negative tolerance, and
+  // the source algorithm's direction-only motion samples (up to dt units).
+  const r=this.collisionRadius+Math.max(0,dt)*SCALE,x=this.collisionOrigin[0],y=this.collisionOrigin[1],tx=p[0]+v[0]*dt,ty=p[1]+v[1]*dt;
+  return Math.min(p[0],tx)<=x+r&&Math.max(p[0],tx)>=x-r&&Math.min(p[1],ty)<=y+r&&Math.max(p[1],ty)>=y-r;
+ }
  find(p,v,time,dt){
-  const velocity=world(v),speed=mag(velocity),ray={p:world(p),d:unit(velocity),min:.002,max:speed*dt};
   if(time>this.stopTime)this.flag=0;
   if(this.edgeCollision){this.edgeCollision=false;return null;}
   this.push=false;this.backside=false;
+  if(!this.canHit(p,v,dt))return null;
+  const velocity=world(v),speed=mag(velocity),ray={p:world(p),d:unit(velocity),min:.002,max:speed*dt};
   const finish=(hit,distance=hit.distance)=>{
    if(!hit.p||distance>=FAR)return null;
    this.contact=hit.p;this.normal=hit.n;

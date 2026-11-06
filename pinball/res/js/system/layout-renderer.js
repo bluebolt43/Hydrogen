@@ -115,12 +115,13 @@ function titleText(ctx,text,cx,cy,size,maxWidth,arc=0){
  }
  ctx.restore();
 }
-function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
- const corner=getImage(o.corner),edge=getImage(o.edge),w=o.width,h=o.height,t=Math.min(o.edgeWidth,edgeLimit(o)),c=t*4;
+function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360,part='all'){
+ const textures=part==='all'||part==='over',corner=textures?getImage(o.corner):null,edge=textures?getImage(o.edge):null,w=o.width,h=o.height,t=Math.min(o.edgeWidth,edgeLimit(o)),c=t*4;
  const lockFade=visibility(o).lock?Math.max(0,Math.min(1,o.lockFadeProgress??0)):0;
  const darkBoss=visibility(o).lock||o.bossDimmed===true;
  const bossReveal=darkBoss?Math.max(0,Math.min(1,o.bossRevealProgress??0)):0;
  for(const [key,layer] of [['background',o.background],['foreground',o.foreground],['lockMask',visibility(o).lock||o.action==='endless'?o.lockMask:null]]){
+  if(part==='over'||part==='under'&&key!=='background'||part==='moving'&&key==='background')continue;
   if(!layer)continue;const img=getImage(layer.src);if(!img)continue;
   const [x,y,cw,ch]=key==='background'?layer.crop:[0,0,1,1];let sw=cw*(img.runtimeWidth??img.naturalWidth),sh=ch*(img.runtimeHeight??img.naturalHeight),sx=x*(img.runtimeWidth??img.naturalWidth),sy=y*(img.runtimeHeight??img.naturalHeight);
   const ratio=w/h;if(key==='background'){if(sw/sh>ratio){const n=sh*ratio;sx+=(sw-n)/2;sw=n;}else{const n=sw/ratio;sy+=(sh-n)/2;sh=n;}}
@@ -138,6 +139,7 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360){
   if(key!=='foreground'||!darkBoss||bossReveal>0)drawRuntimeImage(ctx,img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
   ctx.restore();
  }
+ if(part==='under'||part==='moving')return;
  ctx.save();ctx.translate(o.x,o.y);
  function drawEdge(x,y,length,angle){
   if(!edge||length<=0)return;ctx.save();ctx.translate(x,y);ctx.rotate(angle);
@@ -199,6 +201,60 @@ function draw(ctx,d,getImage){
   else frame(ctx,o,getImage,d.canvas.height,d.canvas.width);
  }
 }
-const api={titleText,visibility,MIN_FRAME,FRAME_HEIGHT_RATIO,applyHeightPreset,widthPresets,applyWidthPreset,edgeLimit,defaults,buttonDefaults,lockDefaults,fixedBackground,lockRect,playButtonRect,validate,draw,frame};
+// Static runs are rasterized once, in their original painter order. A moving
+// card interrupts a run between its background and its frame/text overlay.
+function createSceneCache(){
+ let commands=[],layout=null,sx=1,sy=1;
+ function clear(){for(const row of commands)if(row.image)row.image.width=row.image.height=0;commands=[];layout=null;}
+ function prepare(d,width,height,getImage,animated){
+  clear();layout=d;sx=width/d.canvas.width;sy=height/d.canvas.height;
+  const lookup=getImage,images=new Map();getImage=src=>{if(!images.has(src))images.set(src,lookup(src));return images.get(src);};
+  const scratch=document.createElement('canvas');scratch.width=width;scratch.height=height;const raster=scratch.getContext('2d');
+  let pending=[],bounds=null;
+  const include=b=>{bounds=bounds?[Math.min(bounds[0],b[0]),Math.min(bounds[1],b[1]),Math.max(bounds[2],b[2]),Math.max(bounds[3],b[3])]:b;};
+  function flush(){
+   if(!pending.length)return;
+   const x=Math.max(0,Math.floor(bounds[0]*sx)),y=Math.max(0,Math.floor(bounds[1]*sy)),r=Math.min(width,Math.ceil(bounds[2]*sx)),b=Math.min(height,Math.ceil(bounds[3]*sy));
+   if(r>x&&b>y){
+    // Preserve the original device-space origin for SVG edges and text.
+    // Cropping before rasterization changes their sampling on some browsers.
+    raster.setTransform(1,0,0,1,0,0);raster.clearRect(0,0,width,height);raster.setTransform(sx,0,0,sy,0,0);raster.imageSmoothingEnabled=true;raster.imageSmoothingQuality='high';for(const paint of pending)paint(raster);
+    const image=document.createElement('canvas');image.width=r-x;image.height=b-y;image.getContext('2d').drawImage(scratch,x,y,r-x,b-y,0,0,r-x,b-y);commands.push({image,x,y});
+   }
+   pending=[];bounds=null;
+  }
+  function objectBounds(o){
+   const box=[o.x-2,o.y-2,o.x+o.width+2,o.y+o.height+2],visible=visibility(o);
+   const add=(x,y,w,h)=>{box[0]=Math.min(box[0],x-2);box[1]=Math.min(box[1],y-2);box[2]=Math.max(box[2],x+w+2);box[3]=Math.max(box[3],y+h+2);};
+   if(o.type==='frame'){
+    if(visible.title&&!(o.action==='endless'&&visible.lock)){const image=getImage(o.title?.src||'res/img/card-title.png');if(image){const w=o.title?.width??o.width*.8,h=w*(image.runtimeHeight??image.naturalHeight)/(image.runtimeWidth??image.naturalWidth),x=o.x+(o.width-w)/2,y=o.y+(o.title?.yOffset??-h/2);add(x,y,w,h);if(o.title?.text)add(x-h,y+(o.title.textY??0)-h,w+2*h,3*h);}}
+    if(visible.lock){const r=lockRect(o,d.canvas.width,d.canvas.height);add(r.x,r.y,r.width,r.height);const badge=o.lockImage?.badge;if(badge){const n=r.width*badge.width;add(r.x+r.width*badge.x,r.y+r.height*badge.y,n,n);}}
+    if(visible.button){const r=playButtonRect(o,d.canvas.height,d.canvas.width);add(r.x,r.y,r.width,r.height);}
+    if(visible.marker||visible.clear){const n=d.canvas.width*.07;add(o.x,o.y,o.width,n);}
+   }return box;
+  }
+  // The first bitmap always spans the full canvas, allowing exact replacement
+  // of transparent backgrounds too, without sparse copy/clipping operations.
+  include([0,0,d.canvas.width,d.canvas.height]);pending.push(c=>draw(c,{...d,objects:[]},getImage));
+  for(const o of d.objects){
+   const box=objectBounds(o);
+   if(animated(o)){
+    include(box);pending.push(c=>frame(c,o,getImage,d.canvas.height,d.canvas.width,'under'));flush();
+    commands.push({object:o,getImage});include(box);pending.push(c=>frame(c,o,getImage,d.canvas.height,d.canvas.width,'over'));
+   }else{include(box);pending.push(c=>draw(c,{canvas:d.canvas,objects:[o]},getImage));}
+  }
+  flush();scratch.width=scratch.height=0;return d;
+ }
+ function paint(ctx){
+  let first=true;
+  for(const row of commands){
+   if(row.image){ctx.setTransform(1,0,0,1,0,0);if(first)ctx.globalCompositeOperation='copy';ctx.drawImage(row.image,row.x,row.y);if(first)ctx.globalCompositeOperation='source-over';}
+   else{ctx.setTransform(sx,0,0,sy,0,0);frame(ctx,row.object,row.getImage,layout.canvas.height,layout.canvas.width,'moving');}
+   first=false;
+  }ctx.setTransform(sx,0,0,sy,0,0);
+ }
+ return {prepare,draw:paint,clear,get layout(){return layout;}};
+}
+const api={titleText,visibility,MIN_FRAME,FRAME_HEIGHT_RATIO,applyHeightPreset,widthPresets,applyWidthPreset,edgeLimit,defaults,buttonDefaults,lockDefaults,fixedBackground,lockRect,playButtonRect,validate,draw,frame,createSceneCache};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.SystemLayout=api;
 })(typeof window!=='undefined'?window:globalThis);

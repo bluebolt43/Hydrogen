@@ -144,7 +144,7 @@ function sourcePath(speed,delta,omega,ticks){
  const p={x,y,speed,delta,omega,ticks,endCos:Math.cos(omega*ticks),endSin:Math.sin(omega*ticks)};sourcePaths.set(key,p);return p;
 }
 function sourceDistance(frames,speed,accel=0,ticks=0){const n=Math.min(ticks,Math.floor(frames)),u=Math.min(ticks,frames)-n;return speed*frames+accel*(n*(n+1)/2+u*(n+1)+ticks*Math.max(0,frames-ticks));}
-function sourceTemplate(pattern,duration){
+function sourceTemplate(pattern,duration,aspect=361/642){
  const bullets=[],beams=[];let order=0;
  function shot(id,birth,a,speed,kind,color,radius,extra={}){if(birth>duration)return;bullets.push({id,birth,a,speed,kind,color,radius,x0:0,y0:0,order:order++,...extra});}
  function laser(birth,life,a,length,width,color,extra={}){if(birth<=duration)beams.push({birth,life,a,length,width,color,x0:0,y0:0,order:beams.length,...extra});}
@@ -161,27 +161,28 @@ function sourceTemplate(pattern,duration){
   }
  }else if(pattern==='rainbow-wind-chime'){
   const counts=[2,3,4,2,4,3,2],colors=['#ffacba','#ffd2a1','#fff1a0','#b9f4a7','#a7f5e3','#b8ceff','#e9b7ff'];
-  for(let wave=0;wave<=Math.floor(duration*60/7);wave+=2){
+  for(let wave=0;wave<=Math.floor(duration*60/7);wave++){
    const n=wave%96,base=50*DEG+(n<48?n:96-n)*7.5*DEG;
    for(let color=0;color<7;color++)for(let j=0;j<counts[color];j++)shot(`rainbow:${wave}:${color}:${j}`,wave*7/60,base+color*.11344639957+j*TAU/counts[color],2.6,'petal',colors[color],9);
   }
  }else if(pattern==='release-of-id'){
   // Table variant: larger hearts cross the full viewport and expire instead
   // of accumulating on the native slow-moving outer arcs.
-  // Pink fires continuously; inward curtains retain their existing clock.
+  // Pink waves and successive concentric blue rings use half-second spacing.
   const pinkInterval=.5,pinkLife=6.5,pinkFade=.7;
-  const inwardStart=pinkLife+.1,ringInterval=.5,inwardLife=4.2;
-  const cycleDuration=inwardStart+3*ringInterval+inwardLife;
-  for(let wave=0;wave*pinkInterval<=duration;wave++)for(let family=0;family<2;family++)for(let j=0;j<8;j++){
+  const inwardStart=1.2,ringInterval=.5,inwardLife=4.2;
+  const cycleDuration=inwardLife;
+  for(let wave=0;wave*pinkInterval<=duration;wave++)for(let family=0;family<2;family++)for(let j=0;j<12;j++){
    const birth=wave*pinkInterval;
-   const sign=family?1:-1,a=(leafRandom(1600+family)-.5)*TAU-sign*wave*Math.PI/32+(leafRandom(wave*2+family+1700)-.5)*TAU/64+j*TAU/8;
+   const sign=family?1:-1,a=(leafRandom(1600+family)-.5)*TAU-sign*wave*Math.PI/32+(leafRandom(wave*2+family+1700)-.5)*TAU/64+j*TAU/12;
    shot(`id-heart:${wave}:${family}:${j}`,birth,a,3.2,'heart',family?'#ff789f':'#ffbdd5',12,{path:sourcePath(3.2,-.006,sign*Math.PI/500,220),life:pinkLife,fadeOut:pinkFade});
   }
   // Super-Ego-inspired table hybrid: large blue/cyan inward heart curtains.
   // Shared ring clocks keep rotation independent of the projectile count.
-  // One curtain per inward firing window; the second curtain is omitted.
-  for(let window=0;inwardStart+window*cycleDuration<=duration;window++)for(let ring=0;ring<4;ring++){
-   const pulse=window*4,r=160+ring*160,count=[6,8,10,12][ring],birth=inwardStart+window*cycleDuration+ring*ringInterval,swirl=(pulse%2?1:-1)*.85;
+  // Ring distances reference the full canvas height while remaining circular.
+  // Start only curtains whose outer ring can finish before the spell ends.
+  for(let pulse=0;inwardStart+pulse*cycleDuration+3*ringInterval+inwardLife<=duration+1e-9;pulse++)for(let ring=0;ring<4;ring++){
+   const r=(160+ring*160)/aspect,count=[6,12,18,24][ring],birth=inwardStart+pulse*cycleDuration+ring*ringInterval,swirl=(pulse%2?1:-1)*.85;
    if(birth>duration)continue;
    for(let j=0;j<count;j++){
     const a=j*TAU/count+ring*.09+pulse*.17;
@@ -194,7 +195,7 @@ function sourceTemplate(pattern,duration){
   const period=268/60;
   for(let cycle=0;cycle<=Math.floor(duration/period);cycle++){
    const base=cycle*period,knives=[];
-   for(let family=0;family<2;family++)for(let row=0;row<8;row++)for(let layer=0;layer<(family?4:1);layer+=2)for(let j=0;j<(family?5:10);j++){
+   for(let family=0;family<2;family++)for(let row=0;row<8;row++)for(let layer=0;layer<(family?4:3);layer++)for(let j=0;j<(family?5:10);j++){
     const birth=base+(family?53+row*2:row*4)/60,a=family?-row*Math.PI/4+(j%2?-1:1)*Math.ceil(j/2)*Math.PI/80:row*Math.PI/4+j*TAU/10,speed=family?2.8-1.8*layer/4:2-layer/3,key=cycle*1000+family*500+row*40+layer*10+j;
     knives.push({id:`knife:${cycle}:${family}:${row}:${layer}:${j}`,birth,a,speed,color:family?'#ff8b9b':'#b3c8ff',aimAt:base+(family?53/60:0),motion:'knife',stopAt:base+90/60,resumeAt:base+168/60,changeAt:Infinity,randomTurn:leafRandom(key+2600),bounceTlr:false,fullScatter:true,key});
    }
@@ -269,22 +270,20 @@ function sourceTemplate(pattern,duration){
    }
   }
  }else if(pattern==='scarlet-gensokyo'){
-  // Table variant: stopped pellets every20ticks (native10), radius doubled.
+  // Native ten-tick seed cadence; config applies the shared 2/3 density.
   // Calls to sub41 consume200wall ticks apiece; parent timeline resumes on return.
   const period=930/60;
   for(let cycle=0;cycle<=Math.floor(duration/period);cycle++){
-   const base=cycle*period,large=[];let seedIndex=0;
+   const base=cycle*period,large=[];
    for(const [frame,count,layers,speed,delta,omega,ticks]of [[0,14,4,4,0,0,0],[200,12,1,2,.023,-Math.PI/128,80],[480,17,1,2,.026,Math.PI/128,60],[680,16,1,1,.023,-Math.PI/128,80]])for(let row=0;row<layers;row++)for(let j=0;j<count;j++){
     const v=layers>1?speed-(speed-1.8)*row/layers:speed,a=(leafRandom(cycle*11+frame)-.5)*TAU+j*TAU/count-row*Math.PI/10,path=ticks?sourcePath(v,delta,omega,ticks):null;
     const d={id:`scarlet-orb:${cycle}:${frame}:${row}:${j}`,birth:base+frame/60,a,speed:v,cos:Math.cos(a),sin:Math.sin(a),path};large.push(d);
     shot(d.id,d.birth,a,v,'bubble','#f394ee',23,{path});
    }
-   for(const [start,release,spiral]of [[0,200,false],[200,400,true],[480,680,false],[680,880,true]])for(let frame=start;frame<release;frame+=20)for(let j=0;j<large.length;j++){
+   for(const [start,release,spiral]of [[0,200,false],[200,400,true],[480,680,false],[680,880,true]])for(let frame=start;frame<release;frame+=10)for(let j=0;j<large.length;j++){
     const d=large[j];if(d.birth>base+frame/60||d.dead)continue;const f=(base+frame/60-d.birth)*60;let x,y;
     if(d.path){const p=d.path,n=Math.min(p.ticks,Math.floor(f)),tail=Math.max(0,f-p.ticks),px=p.x[n]+p.endCos*(p.speed+p.delta*p.ticks)*tail,py=p.y[n]+p.endSin*(p.speed+p.delta*p.ticks)*tail;x=px*d.cos-py*d.sin;y=px*d.sin+py*d.cos;}else{x=d.cos*d.speed*f;y=d.sin*d.speed*f;}
     if(192+x< -32||192+x>416||128+y< -32||128+y>480){d.dead=true;continue;}
-    // Keep four of every five eligible small seeds; preserve retained paths.
-    if(seedIndex++%5===4)continue;
     const endA=spiral?Math.hypot(x,y)*Math.PI/256+(leafRandom(cycle*11+release)-.5)*TAU:(leafRandom(cycle*2000+frame+j+3600)-.5)*TAU;
     shot(`scarlet:${cycle}:${frame}:${j}`,base+frame/60,endA,0,'round','#f6dfe1',7,{x0:x,y0:y,motion:'seed',releaseAt:base+release/60,endA,accel:.01,accelTicks:120});
    }
@@ -295,7 +294,7 @@ function sourceTemplate(pattern,duration){
    // Screen coordinates: left -> down -> right, then right -> down -> left.
    const start=cycle*period+stroke*4,sign=stroke?1:-1,angle=stroke?0:Math.PI,omega=sign*Math.PI/2;
    laser(start,2,angle,388,24,'#ff536b',{near:32,rotation:omega,charge:.4,ramp:.3,fadeOut:.2});
-   for(let frame=0;frame<120;frame+=10)for(let n=0;n<9;n++){
+   for(let frame=0;frame<120;frame+=5)for(let n=0;n<9;n++){
     const a=angle+omega*frame/60,r=32+n*48;
     shot(`sword-trail:${cycle}:${stroke}:${frame}:${n}`,start+frame/60,a+sign*Math.PI/2,.01,'rice','#ffd4d7',7.2,{x0:Math.cos(a)*r,y0:Math.sin(a)*r,accel:.02,accelTicks:96});
    }
@@ -303,9 +302,9 @@ function sourceTemplate(pattern,duration){
  }else if(pattern==='terrible-souvenir'){
   for(let half=0;half<=Math.floor(duration/(200/60));half++){
    const base=half*200/60,sign=half%2?-1:1;
-   for(let j=0;j<8;j++){const axis=j*TAU/8;laser(base,250/60,axis-sign*Math.PI/2,460,16,half%2?'#ff8cad':'#b497ff',{x0:Math.cos(axis)*64,y0:Math.sin(axis)*64,rotation:sign*.010472*60,charge:20/60,ramp:.3,fadeOut:50/60});}
-   // Table variant: nine eight-way volleys, six ticks apart.
-   for(let wave=0;wave<9;wave++)for(let j=0;j<8;j++)shot(`souvenir-gold:${half}:${wave}:${j}`,base+(200+wave*6)/60,j*TAU/8+Math.PI/2+wave*12,1.6,'orb','#fff292',9);
+   for(let j=0;j<16;j++){const axis=j*TAU/16;laser(base,250/60,axis-sign*Math.PI/2,460,16,half%2?'#ff8cad':'#b497ff',{x0:Math.cos(axis)*64,y0:Math.sin(axis)*64,rotation:sign*.010472*60,charge:20/60,ramp:.3,fadeOut:50/60});}
+   // Original sixteen eight-way volleys, six ticks apart.
+   for(let wave=0;wave<16;wave++)for(let j=0;j<8;j++)shot(`souvenir-gold:${half}:${wave}:${j}`,base+(200+wave*6)/60,j*TAU/8+Math.PI/2+wave*12,1.6,'orb','#fff292',9);
    // etAngle reads local0 (=12) and the expression stack (=12*.3):
    // the second angle offsets successive speed layers, not a shared aim.
    for(let row=0;row<8;row++)shot(`souvenir-orb:${half}:${row}`,base+296/60,12+row*12*.3,1.5-row/8,'bubble','#f09aff',23,{aimAt:base+296/60});
@@ -385,7 +384,7 @@ function sourceBeam(d,t,origin,aspect){
  return {x:origin.x+(d.x0+c*near)/384,y:origin.y+(d.y0+s*near)*aspect/384,dx:c*d.length/384,dy:s*d.length*aspect/384,width:(age<charge?(d.warningWidth??1):d.width*Math.max(.05,strength)*fade)/384,color:d.color,alpha:age<charge?.25:fade,core:age>=charge};
 }
 function sourceRuntime(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/642,targetAt=()=>({x:.5,y:.9}),emissionUntil=Infinity,stride=2,density=1,densityByFamily={},onRetire=()=>{},retired=new Set(),unculled=false,retireOutsideViewport=false}={}){
- const template=sourceTemplate(pattern,duration),active=[],output={bullets:[],beams:[]},aims=new Map(),stats={events:0,spawned:0,retired:0,visited:0};
+ const template=sourceTemplate(pattern,duration,aspect),active=[],output={bullets:[],beams:[]},aims=new Map(),stats={events:0,spawned:0,retired:0,visited:0};
  const knifeBounds={left:-origin.x*384-8,right:(1-origin.x)*384+8,top:-origin.y*384/aspect-8};
  const aim=t=>{if(!aims.has(t)){const p=targetAt(t);aims.set(t,Math.atan2((p.y-origin.y)*384/aspect,(p.x-origin.x)*384));}return aims.get(t);};
  const skip=d=>{const parts=d.id.split(':'),j=Number(parts.at(-1)),familyDensity=densityByFamily[parts[0]]??density;if(j%stride)return true;if(familyDensity>=1)return false;const g=Number(parts.at(-2)),n=j/stride+g;return Math.floor((n+1)*familyDensity+1e-9)===Math.floor(n*familyDensity+1e-9);};

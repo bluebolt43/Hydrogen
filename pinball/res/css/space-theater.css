@@ -1,0 +1,25 @@
+body{background:#101a28;color:#e9eff5}.stage{background:#050d17}.background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 66.6667%}#enemies,#effects{position:absolute;inset:0}.enemy{position:absolute;left:50%;top:50%;width:68%;height:94%;transform:translate(-50%,-50%);padding:0;border:0;background:transparent}.enemy:hover,.enemy:disabled{background:transparent;opacity:1}.boss-drift{position:absolute;inset:15% 0 0;display:block;animation:space-drift 7s ease-in-out infinite}.boss-drift img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 5px 6px #0005)}.hp{position:absolute;top:0;left:50%;transform:translateX(-50%);display:flex;justify-content:center;gap:3px}.hp[hidden]{display:none}.stage[data-level="8"] .boss-drift{animation:none}.paused .boss-drift{animation-play-state:paused}#effects{pointer-events:none;z-index:3}.impact{position:absolute;left:50%;top:56%;width:20%;aspect-ratio:1;border-radius:50%;border:5px solid #ffe8a6;box-shadow:0 0 24px #ffd780,inset 0 0 20px #fff2b8;transform:translate(-50%,-50%)}.controls button,.controls select{background:#243950;border-color:#5d809a;color:#e9eff5}.controls button:disabled{opacity:.5}.controls select{max-width:260px}#status{color:#c9e6f8}.stage.defeated .hp{display:none}@keyframes space-drift{0%,100%{transform:translate(-.4%,-1%)}50%{transform:translate(.4%,1%)}}@media(prefers-reduced-motion:reduce){.boss-drift{animation:none}}
+
+#fleet{position:absolute;inset:0}#fleet[hidden],.enemy[hidden],.fleet-ship[hidden]{display:none}.fleet-ship{position:absolute;height:85%;transform:translate(-50%,-50%)}.fleet-ship>img{position:absolute;inset:17% 0 0;width:100%;height:83%;object-fit:contain;animation:space-drift 7s ease-in-out infinite}.fleet-ship .hp{top:0}.fleet-ship .heart{width:clamp(17px,2.8cqw,29px);height:clamp(17px,2.8cqw,29px)}
+/* Snack weapons are reusable transparent sprites; movement uses pausable WAAPI. */
+.space-attack-sprite{position:absolute;height:auto;transform:translate(-50%,-50%);object-fit:contain;z-index:2;filter:drop-shadow(0 0 5px #80f4ff99)}
+.space-laser{position:absolute;height:4px;transform-origin:0 50%;background:#eaffff;border-radius:4px;box-shadow:0 0 5px #28dcff,0 0 10px #38cfff;z-index:1}
+.cannon-beam{height:18%;margin-top:-3%;background:linear-gradient(transparent,#51d9ff88 15%,#fffbe0 45%,#fff 50%,#fffbe0 55%,#51d9ff88 85%,transparent);box-shadow:0 0 18px #5adfff}
+.stage[data-attack="lv2"] .impact{border-color:#c7ffff;box-shadow:0 0 28px #3edbff,inset 0 0 20px #c7ffff}
+.stage[data-attack="lv3"] .impact{border-color:#ffe5a3;box-shadow:0 0 28px #ff902e,inset 0 0 20px #ffdb8a}
+.stage[data-attack="lv4"] .impact{border-width:8px;box-shadow:0 0 40px #b8ffff,inset 0 0 25px #fff}
+.space-cookie-crumb{position:absolute;width:1.2%;aspect-ratio:1;background:#eab85c;border:1px solid #6f3e24;clip-path:polygon(10% 0,100% 20%,75% 100%,0 70%);z-index:3}
+
+.space-ram-trail{position:absolute;width:22%;height:12%;transform:translateY(-50%);background:linear-gradient(90deg,#fff1adbb,#ff9e3c77,transparent);clip-path:polygon(0 35%,100% 0,75% 50%,100% 100%,0 65%)}
+
+.space-blackout{position:absolute;inset:0;background:#000;z-index:7}
+.space-super-explosion{left:50%;top:50%;width:90%;z-index:8;filter:none}
+.space-explosion-flash{position:absolute;inset:0;background:#fff3b0;z-index:9}
+
+.space-pasta-mask{inset:0;width:100%;height:100%;transform:none;object-fit:cover;filter:none}
+.space-black-hole{position:absolute;left:50%;top:50%;width:220%;aspect-ratio:1;background:#000;transform:translate(-50%,-50%);transform-origin:center;z-index:6;mask-repeat:no-repeat;mask-position:center;mask-composite:exclude;filter:none}
+
+.space-cookie-projectile{transform:none;translate:-50% -50%;transform-origin:50% 50%;aspect-ratio:1}
+
+.space-bandit-projectile{transform:none;translate:-50% -50%;transform-origin:center;filter:none}
+.space-bandit-hit{position:absolute;width:20%;aspect-ratio:1;translate:-50% -50%;background:#fff2b3;clip-path:polygon(50% 0,60% 30%,85% 10%,76% 40%,100% 50%,73% 60%,90% 90%,60% 73%,50% 100%,40% 73%,10% 90%,27% 60%,0 50%,27% 40%,10% 10%,40% 30%);z-index:4}

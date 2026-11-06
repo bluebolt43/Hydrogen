@@ -10,7 +10,7 @@ function screenOverlay(doc){
  const cleanup=()=>{win.removeEventListener('resize',position);viewport?.removeEventListener('resize',position);viewport?.removeEventListener('scroll',position);mask.remove();};
  return {mask,cleanup};
 }
-function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='重新開始'){
+function showGameOver(doc,score,rows,currentId,onClose,buttonLabel=PinballI18n.t('common.restart'),onLeave=null){
  const {mask,cleanup}=screenOverlay(doc);mask.className='pirate-game-over';mask.setAttribute('role','dialog');mask.setAttribute('aria-modal','true');mask.setAttribute('aria-label',PinballI18n.t('gameOver.label'));
 
  mask.innerHTML=`<style>
@@ -25,7 +25,9 @@ function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='重新開始
  const format=n=>Number(n).toLocaleString('en-US');
  const formatDate=endedAt=>{const date=new Date(endedAt);if(!endedAt||Number.isNaN(date.getTime()))return '—';return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('/');};
  mask.querySelector('[data-score]').textContent=format(score);
- mask.querySelector('button').textContent=buttonLabel;
+ const restartButton=mask.querySelector('button');restartButton.textContent=buttonLabel;
+ const buttons=[restartButton];let leaveButton=null;
+ if(onLeave){leaveButton=doc.createElement('button');leaveButton.className='leave-game';leaveButton.textContent=PinballI18n.t('table.leave');leaveButton.style.cssText='margin-top:10px;background:transparent;color:#f3dfaf';mask.querySelector('.content').append(leaveButton);buttons.push(leaveButton);}
  [...rows].sort((a,b)=>b.score-a.score).forEach((entry,i)=>{
   const row=doc.createElement('li');if(entry.id===currentId){row.className='current';row.setAttribute('aria-current','true');}
   const place=doc.createElement('span');place.className='place';place.textContent=String(i+1).padStart(2,'0');
@@ -46,9 +48,9 @@ function showGameOver(doc,score,rows,currentId,onClose,buttonLabel='重新開始
  }
  const observer=new win.ResizeObserver(drawFrame);
  const dispose=()=>{observer.disconnect();for(const image of images.values())image.onload=null;cleanup();};
- const close=()=>{if(closed)return;closed=true;dispose();onClose();};
- mask.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();if(e.target.closest('button'))close();});
- mask.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Tab'){e.preventDefault();mask.querySelector('button').focus();}});
+ const close=callback=>{if(closed)return;closed=true;dispose();callback();};
+ mask.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const button=e.target.closest('button');if(button)close(button===leaveButton?onLeave:onClose);});
+ mask.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Tab'){e.preventDefault();const index=buttons.indexOf(e.target.closest('button'));buttons[(index+(e.shiftKey?-1:1)+buttons.length)%buttons.length].focus();}});
  doc.body.append(mask);observer.observe(panel);drawFrame();mask.querySelector('button').focus();return {cancel(){closed=true;dispose();}};
 }
 window.GameOverDialog={show:showGameOver};

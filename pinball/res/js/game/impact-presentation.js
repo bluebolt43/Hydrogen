@@ -10,21 +10,13 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   lampsBySource.get(t.source).add(a);
  }
  const pulseColors=['#ffe59b','#b9f9ff'];
- const rings=[],swings=[],lampPulses=new Map(),recent=new Map();
- const effectLists=[rings,swings];let cleanedAt=null,cleanDirty=true,effectRevision=0;
+ const rings=[],lampPulses=new Map(),recent=new Map();
+ const effectLists=[rings];let cleanedAt=null,cleanDirty=true,effectRevision=0;
  let cannonAt=-Infinity;
  let comboFlashAt=-Infinity,comboFlash=null,comboFlashPending=null;
  let combo=0,lastHit=-10,popAt=-10,shakeAt=-10,shakePower=0;
  let hudText=null,hudPlacement=null,hudFrame=null;
  const hudRasters=new Map();
- const ringSprites=new Map();
- function prepareRings(){
-  if(!ballsLast||ringSprites.size||typeof document==='undefined')return;
-  for(const color of ['#ffd36d','#a9edff','#ffe69c','#e9b575','#a1f3de','#fff0bb','#ffe49b']){
-   const Art=typeof PinballArt==='undefined'?null:PinballArt,canvas=Art?Art.rasterCanvas(64,64,renderer.bitmapCacheEnabled):document.createElement('canvas');canvas.width=canvas.height=64;const c=canvas.getContext('2d');c.strokeStyle=color;c.lineWidth=2;c.beginPath();c.arc(32,32,28,0,Math.PI*2);c.stroke();ringSprites.set(color,Art?Art.rasterImage(canvas):canvas);
-  }
- }
- globalThis.addEventListener?.('pagehide',()=>{for(const sprite of ringSprites.values())sprite.close?.();ringSprites.clear();},{once:true});
  const intersects=(a,b)=>a[0]<b[2]&&b[0]<a[2]&&a[1]<b[3]&&b[1]<a[3];
  const fixedLayout=renderer.observedArt?.has(artLayers);
  function comboText(){
@@ -57,7 +49,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   recent.set(id,game.time);if(game.time-lastHit>2)combo=0;
   combo++;lastHit=popAt=game.time;
   game.combo={count:combo,multiplier:multiplier(combo),expiresAt:lastHit+2};
-  if([5,10,20,30].includes(combo)){burst(game.ball.p,'#ffd36d',1.4);pulseCombo();shakeAt=game.time;shakePower=.7;}
+  if([5,10,20,30].includes(combo)){pulseCombo();shakeAt=game.time;shakePower=.7;}
   return true;
  }
  function pulseCombo(){
@@ -120,7 +112,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   if(['new-game','ready','drain','game-over'].includes(e.type)){
    comboFlashAt=-Infinity;
    combo=0;lastHit=-10;game.combo={count:0,multiplier:1,expiresAt:0};recent.clear();
-   if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;rings.length=swings.length=0;effectState.clear();lampPulses.clear();}
+   if(e.type==='new-game'){cannonAt=-Infinity;shakeAt=-10;rings.length=0;effectState.clear();lampPulses.clear();}
   }
   if(e.type==='score'||e.type==='score-hit'){
    hit(e.id);
@@ -128,13 +120,11 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
    if(e.type==='score'&&game.scoringEnabled!==false&&e.points>0){const base=e.points,total=Math.round(base*multiplier(combo));game.score+=total-base;e.basePoints=base;e.points=total;e.multiplier=multiplier(combo);}
    pulse(e.id);
   }
-  if(e.type==='rollover'||e.type==='sensor'){if(e.combo!==false){hit(e.id);burst(position(e),'#a1f3de',.45);}pulse(e.id);}
+  if(e.type==='rollover'||e.type==='sensor'){if(e.combo!==false){hit(e.id);}pulse(e.id);}
   if(e.type==='slingshot-hit'){hit(e.id);pulse(e.id);}
-  if(e.type==='flipper-hit'){
-   const key='swing:'+e.id;if((recent.get(key)??-10)<=game.time-.1){recent.set(key,game.time);effectState.add(ImpactHitEffects.ring('swing',game.ball.p,plane(),game.time,{angle:Math.atan2(game.ball.v[1],game.ball.v[0])}),swings);}
-  }
+  if(e.type==='capture')burst(position(e),'#a1f3de',.8);
   if(['target-group-complete','configured-attack','bumper-upgraded','multiball-awarded','center-post-up','vortex-activated'].includes(e.type)){
-   burst(position(e),e.type==='configured-attack'?'#fff0bb':'#ffe49b',e.type==='configured-attack'?2:1.4);pulse(null,true);shakeAt=game.time;shakePower=e.type==='configured-attack'?1.3:.7;
+   pulse(null,true);shakeAt=game.time;shakePower=e.type==='configured-attack'?1.3:.7;
   }
   onEvent?.(e);
   if(comboFlash&&['bumper-upgraded','new-game'].includes(e.type))prepareComboFlash(comboFlash.scale).catch(console.error);
@@ -149,15 +139,14 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  }
  const floors=new Map(),trailStates=new WeakMap();let preparedAt=null,preparedRevision=null,preparedBallEffects=null,preparedBallTrails=null,preparedEffectRevision=-1;
  function floorEffects(plane){
-  let row=floors.get(plane);if(!row){row={rings:[],swings:[],lamps:[],balls:[]};floors.set(plane,row);}return row;
+  let row=floors.get(plane);if(!row){row={rings:[],lamps:[],balls:[]};floors.set(plane,row);}return row;
  }
  function prepareEffects(force=false){
   const dirty=cleanDirty;clean();
   if(!force&&!dirty&&preparedEffectRevision===effectRevision&&preparedAt===game.time&&preparedRevision===renderer.layoutRevision&&preparedBallEffects===game.g.gameplay?.ballEffects&&preparedBallTrails===game.g.gameplay?.ballTrails)return;
   preparedAt=game.time;preparedEffectRevision=effectRevision;preparedRevision=renderer.layoutRevision;preparedBallEffects=game.g.gameplay?.ballEffects;preparedBallTrails=game.g.gameplay?.ballTrails;
-  for(const row of floors.values())row.rings.length=row.swings.length=row.lamps.length=row.balls.length=0;
+  for(const row of floors.values())row.rings.length=row.lamps.length=row.balls.length=0;
   for(const r of rings)if(!r.suppressed)floorEffects(r.plane).rings.push(r);
-  for(const s of swings)if(!s.suppressed&&game.time-s.at<=.18)floorEffects(s.plane).swings.push(s);
   if(!comboFlashActive())for(const [id,q] of lampPulses){const a=artById.get(id);if(a&&!a.hidden&&game.time>=q.at)floorEffects(a.plane).lamps.push(q);}
   if(game.g.gameplay?.ballEffects!==false&&game.g.gameplay?.ballTrails!==false)for(const b of game.balls){
    if(b.state!=='playing')continue;const speed=Math.hypot(...b.v);if(speed<180)continue;
@@ -167,7 +156,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   }
  }
  function hasEffects(floor){
-  prepareEffects();const row=floors.get(floor);return !!row&&(row.lamps.length>0||!game.webglEffectsActive&&(row.rings.length>0||row.swings.length>0));
+  prepareEffects();const row=floors.get(floor);return !!row&&(row.lamps.length>0||!game.webglEffectsActive&&row.rings.length>0);
  }
  function drawTrails(ctx,floor,onlyBall=null){if(game.webglEffectsActive)return;prepareEffects();const row=floors.get(floor);if(!row?.balls.length)return;ctx.save();
   for(const {ball:b,speed,start,count} of row.balls){
@@ -181,6 +170,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  }
  function draw(ctx,floor,bounds=game.g.view_box){
   if(!hasEffects(floor))return;const row=floors.get(floor);
+  if(ballsLast&&!row.lamps.length){if(!game.webglEffectsActive)ImpactHitEffects.drawRings(ctx,row.rings,game.time);return;}
   ctx.save();ctx.lineCap='round';
   let transform,shadowScale,shadowStyle;
   // Legacy painters still interleave balls with artwork; the final-ball pass needs no holes.
@@ -189,7 +179,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
    ctx.beginPath();ctx.rect(...bounds);ctx.moveTo(b.p[0]+game.physics.ballRadius,b.p[1]);
    ctx.arc(...b.p,game.physics.ballRadius,0,Math.PI*2);ctx.clip('evenodd');
   }
-  if(!game.webglEffectsActive){for(const r of row.rings)ImpactHitEffects.drawRing(ctx,r,game.time,false,ringSprites.get(r.color));for(const s of row.swings)ImpactHitEffects.drawRing(ctx,s,game.time);}
+  if(!game.webglEffectsActive)ImpactHitEffects.drawRings(ctx,row.rings,game.time);
   ctx.save();
   for(const q of row.lamps){const a=q.art,age=game.time-q.at;
    const c=a.indicator,src=c.type==='bumper'&&c.keepLevelOnHit?c['lv'+game.bumperLevel(c.trigger?.source||a.bind)]:c.on||c.lv3||c.complete||a.src,img=renderer.image(src),fade=Math.sin(Math.PI*age/.35);
@@ -273,19 +263,16 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
    if(!game.webglEffectsActive){
    for(const {ball}of row.balls)for(const p of (ball.trail||[]).slice(-12))add(...p.p,7);
    for(const q of row.rings)bounds.push(ImpactHitEffects.bounds(q,game.time));
-   for(const q of row.swings)bounds.push(ImpactHitEffects.bounds(q,game.time));
    }
    for(const q of row.lamps){const a=q.art,r=Math.hypot(a.width,a.height)/2+24;add(a.x,a.y,r);}
   }
   if(!hudFrame&&combo>=2){const {cx,cy}=comboAnchor(game.g.view_box),size=comboText().size,r=Math.max(110,size*2+12);bounds.push([cx-r,cy-size-40,cx+r,cy+size*1.5+14]);}
-  return {full:false,isolated:[...(hudFrame?.damage||[]),...(comboFlashActive()?comboFlash.chunks.map(c=>c.bounds):[])],active:comboFlashActive()||[...floors.values()].some(r=>r.rings.length||r.swings.length||r.lamps.length ),bounds};
- },drawGPU(gpu,masks){
-  prepareEffects();gpu.useMask(null);
+  return {full:false,isolated:[...(hudFrame?.damage||[]),...(comboFlashActive()?comboFlash.chunks.map(c=>c.bounds):[])],active:comboFlashActive()||[...floors.values()].some(r=>r.rings.length||r.lamps.length ),bounds};
+ },drawGPU(gpu){
+  prepareEffects();
   for(const row of floors.values()){
    for(const r of row.rings)ImpactHitEffects.drawRing(gpu,r,game.time,true);
-   for(const s of row.swings)ImpactHitEffects.drawRing(gpu,s,game.time,true);
   }
-  for(const [plane,row]of floors){gpu.useMask(masks.get(plane));for(const {ball:b,speed,start,count}of row.balls){let previous=null,index=0;for(let i=start;i<(b.trail?.length||0);i++){const point=b.trail[i];if(point.layer!==b.layer)continue;if(previous){index++;gpu.line(previous.p,point.p,.5+index/count*2,combo>=10?'#ffe597':'#a9eaff',index/count*Math.min(.48,speed/1800));}previous=point;}}}
  },update:()=>prepareEffects(true),prepareHud,prepareComboFlash,drawComboFlash(ctx,bounds=game.g.view_box,regions=null,alreadyClipped=false){
   if(!comboFlashActive())return;
   ctx.save();
@@ -295,7 +282,6 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   ctx.drawImage(comboFlash.canvas,comboFlash.left,comboFlash.top,comboFlash.width,comboFlash.height);ctx.restore();
  },async prepareShadows(scale){
   if(!renderer.rasterCacheEnabled||!renderer.prepareShadowRaster)return;
-  prepareRings();
   await prepareComboFlash(scale);
   const entries=[],images=new Set();
   for(const a of artLayers){if(a.hidden||!a.indicator||a.indicator.impactFlash===false)continue;
@@ -317,8 +303,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  },preview(kind){
   cleanDirty=true;effectRevision++;
   const p=[180,230];
-  if(kind==='flipper'){effectState.add(ImpactHitEffects.ring('swing',p,plane(),game.time,{angle:-Math.PI/2}),swings);}
-  else burst(p,kind==='bumper'?'#a9edff':kind==='slingshot'?'#e9b575':'#ffe49b',kind==='complete'?2:1);
+  if(['target','bumper','rebound','slingshot','hole'].includes(kind))burst(p,kind==='bumper'?'#a9edff':kind==='hole'?'#a1f3de':kind==='slingshot'||kind==='rebound'?'#e9b575':'#ffe49b');
   if(kind==='combo'){combo=19;lastHit=game.time;recent.clear();hit('preview-combo');}
   if(kind==='combo')pulseCombo();else pulse(null,true);
  },ballGlowLevel(ball){
