@@ -27,7 +27,7 @@ addEventListener('pagehide',()=>sceneCache?.destroy(),{once:true});
 let graphicsPreparation=null,graphicsGeneration=0;
 let artworkReady=false,drawRequested=true,drawnGameTime,drawnBonusClock,drawnHudState,drawnPaused,drawnFrozen;
 window.layoutGame=game;
-const theater=new LayoutTheater(PLAYTEST_THEME);theater.bossStage=bossStage;theater.tutorialPreview=false;window.layoutTheater=theater;
+const theater=new LayoutTheater(PLAYTEST_THEME);theater.setPresentationReady(false);theater.bossStage=bossStage;theater.tutorialPreview=false;window.layoutTheater=theater;
 const theaterCanvas=theater.canvasBackend;theaterCanvas?.attach(preparedImages,()=>{drawRequested=true;});window.layoutTheaterCanvas=theaterCanvas;
 theater.onEnemyReady=data=>{game.freezeRemaining=0;if(data.type==='error')game.enemyActive=false;};
 theater.onEnemyDefeated=(data,stageCleared)=>{
@@ -641,7 +641,7 @@ function suspendGame(){fpsDisplay.reset();
  game.charge=game.chargeElapsed=0;game.input.left=game.input.right=game.input.launch=false;
  game.paused=true;soundBank.setPaused(true);
 }
-function resumeGame(){fpsDisplay.reset();if(suspendedGameState===null)return;const paused=suspendedGameState;suspendedGameState=null;if(game.paused===paused)syncAudioPause();else game.paused=paused;}
+function resumeGame(){theater.setPresentationReady(true);fpsDisplay.reset();if(suspendedGameState===null)return;const paused=suspendedGameState;suspendedGameState=null;if(game.paused===paused)syncAudioPause();else game.paused=paused;}
 function applyPhysicsModel(value){value='legacy';game.config.physicsModel=value;for(const f of game.flippers){f.angle=f.rest;f.omega=0;delete f.cadet;}for(const ball of game.balls){ball.spin=0;delete ball.rollingSpin;delete ball.slingshotContacts;}$('physicsModel').value=value;localStorage.setItem('pinball-physics-model',value);}
 function setEffectsRenderer(){
  // Collision rings use the legacy Canvas2D path on all tables, independently of Boss spells.
@@ -674,7 +674,8 @@ canvas.onpointerup=e=>endTouch(e);
 canvas.onpointercancel=e=>endTouch(e,true);
 canvas.onlostpointercapture=e=>endTouch(e,true);
 async function preprocessPlayGraphics(){
- await soundBank.prepare();
+ // Audio fetch/decode may finish later; it must not gate graphics readiness.
+ soundBank.prepare().catch(error=>console.warn('Sound preparation:',error));
  // Preprocess the complete resource plan before gameplay may advance.
  const drawingTable=artRenderer.refreshDrawTable(game)||artRenderer.prepareDrawTable(tableArt,game);
  await artRenderer.decodeImages([...drawingTable.images.values(),topBallImage]);
@@ -712,6 +713,7 @@ function preparePlayGraphics(){
 applyPlayAspect(playAspect);
 const tableArt=artRenderer.observeLayout([...artLayers,...topLayers]);
 await preparePlayGraphics();
+if(!window.AppControls)theater.setPresentationReady(true);
 previous=performance.now();accumulator=0;
 requestAnimationFrame(frame);
 try{setEffectsRenderer(localStorage.getItem('pinball-effects-renderer')||'webgl');}catch{setEffectsRenderer('webgl');}

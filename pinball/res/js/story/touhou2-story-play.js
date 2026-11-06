@@ -76,8 +76,8 @@ function finish(skipped=false){
 function tick(now){if(!playing)return;render(time+Math.max(0,now-last));last=now;if(time>=storyData.duration)finish();else frame=requestAnimationFrame(tick);}
 async function play(chapter=key){
  if(chapter!==key)return false;const serial=++playSerial;await window.viewReady;if(serial!==playSerial)return false;stop();clearTimeout(nextTimer);completed=false;next.hidden=true;skip.hidden=!seen();render(0);begin.hidden=true;
- if(sharedMusic&&!await sharedMusic.play()){if(serial===playSerial)begin.hidden=false;return false;}
- if(music){music.currentTime=0;try{await music.play();}catch{if(serial===playSerial)begin.hidden=false;return false;}}
+ if(sharedMusic)sharedMusic.play();
+ if(music){music.currentTime=0;music.play().catch(error=>console.warn('Story OST:',error));}
  if(serial!==playSerial)return false;
  playing=true;last=performance.now();frame=requestAnimationFrame(tick);return true;
 }

@@ -19,7 +19,7 @@ class LayoutTheater{
    if(e.data.type==='tutorial-bounds'){this.tutorialBounds=e.data.bounds;this.onTutorialBounds?.();return;}
    if(e.data.type==='sound'){this.soundBank?.play(e.data.name);this.onSound?.(e.data.name);return;}
    if(e.data.type==='warning'){this.showWarning(e.data.token);return;}
-   if(e.data.type==='ready'){this.ready=true;this.curtainClosing=false;this.send({command:'pause',paused:!!this.game?.paused});for(const message of this.pending)this.send(message);this.pending=[];}
+   if(e.data.type==='ready'){this.ready=true;this.curtainClosing=false;this.send({command:'pause',paused:!!this.game?.paused});this.flushPending();}
    if(['complete','error'].includes(e.data.type)&&e.data.id===this.generation+':reset:0')this.curtainClosing=false;
    if(e.data.type==='complete'&&this.activeCommands.has(e.data.id)&&e.data.defeated){
     const stageCleared=!!this.bossStage&&!this.bossDefeated&&Number.isFinite(e.data.maxHp)&&e.data.maxHp>0;
@@ -44,6 +44,8 @@ class LayoutTheater{
   if(this.game?.paused)warning.pause();
   warning.finished.then(()=>{if(generation!==this.generation||this.warning!==warning)return;this.warning=null;this.send({command:'warning-complete',token});});
  }
+ setPresentationReady(value){this.presentationReady=!!value;this.flushPending();}
+ flushPending(){if(!this.ready||this.presentationReady===false)return;for(const message of this.pending)this.send(message);this.pending=[];}
  send(message){this.frame.contentWindow.postMessage({channel:'pinball-theater',...message},'*');}
  hasEnemyCommand(){for(const id of this.activeCommands.keys())if(id.startsWith(this.generation+':enemy:'))return true;return false;}
  blocksTable(){return this.theme==='touhou1'||this.theme==='touhou2'?this.hasEnemyCommand():this.activeCommands.size>0;}
@@ -61,7 +63,7 @@ class LayoutTheater{
   const message={command,skipWarning:!!this.tutorialPreview,mode:this.bossStage?'boss':this.game?.g?.gameplay?.mode||'free',stage:this.bossStage||0,id:this.generation+':'+command+':'+(attack?(this.attackSerial=(this.attackSerial||0)+1):(e.eventId||0))};
   this.activeCommands.set(message.id,(this.activeCommands.get(message.id)||0)+1);
   this.syncGameState();
-  if(this.ready)this.send(message);else this.pending.push(message);
+  if(this.ready&&this.presentationReady!==false)this.send(message);else this.pending.push(message);
  }
  update(dt,game){if(this.game!==game){this.game=game;this.syncGameState();}if(this.paused!==game.paused){this.paused=game.paused;if(this.warning)this.warning[game.paused?'pause':'play']();if(this.ready)this.send({command:'pause',paused:game.paused});}}
  drawAttackMessage(ctx,x,y,width,height,time){
