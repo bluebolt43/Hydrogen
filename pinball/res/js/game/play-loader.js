@@ -20,11 +20,7 @@ async function preparePlayLayout(layout,theme){
   const preparedImages=new Map();
   await Promise.all([...sources].map(async src=>{
    const image=new Image(),resolved=PinballRuntimeImages.resolve(src);
-   // Local file images taint readback canvases. The build embeds the same
-   // runtime bytes for authored alpha masks; HTTP(S) keeps normal image URLs.
-   const local=typeof PLAY_LOCAL_IMAGES!=='undefined'&&PLAY_LOCAL_IMAGES;
-   image.src=local?.[src]||resolved;
-   if(local?.[src])PinballRuntimeImages.associate(image,resolved);
+   image.src=resolved;
    try{await PinballRuntimeImages.decode(image);}catch{throw Error('圖片載入失敗：'+src);}
    preparedImages.set(src,image);
   }));

@@ -62,7 +62,7 @@ class PirateTheaterCanvas{
   if(this.closed===close&&!this.curtainDynamic)return;
   this.curtainDynamic=true;this.phase();await this.animate(this,[{open:this.open},{open:close?0:1}],650);this.closed=close;this.curtainDynamic=false;this.phase();
  }
- async load(sources){await Promise.all(sources.map(async src=>{if(this.images.has(src))return;const im=new Image(),r=root.PinballRuntimeImages,url=r.resolve(src),local=typeof PLAY_LOCAL_IMAGES!=='undefined'&&PLAY_LOCAL_IMAGES;im.src=local?.[src]||url;if(local?.[src])r.associate(im,url);await r.decode(im);this.images.set(src,im);}));}
+ async load(sources){await Promise.all(sources.map(async src=>{if(this.images.has(src))return;const im=new Image(),r=root.PinballRuntimeImages;im.src=r.resolve(src);await r.decode(im);this.images.set(src,im);}));}
  async choose(data,token=this.generation){
   if(this.present&&!this.defeated)return;
   if(!data.skipWarning){this.warning=true;this.phase();await this.wait(1200);this.warning=false;this.phase();}
