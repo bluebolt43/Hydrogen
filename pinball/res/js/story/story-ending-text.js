@@ -1,6 +1,6 @@
 (function(root){
 'use strict';
-const canvases=new WeakMap();
+const labels=new WeakMap();
 const text=()=>root.PinballI18n?.t('story.end')||'END';
 function draw(ctx,width,height,alpha=1,color='#f5e4be'){
  const label=text(),size=width*.125;
@@ -19,26 +19,35 @@ function watch(redraw){
  const off=root.PinballI18n?.onChange(redraw)||(()=>{});
  root.addEventListener?.('pagehide',off,{once:true});return off;
 }
-function paint(canvas,alpha){
- let state=canvases.get(canvas);
+function paint(element,alpha){
+ element=labels.get(element)?.replacement||element;
+ // Legacy chapter markup supplies a canvas placeholder. Text must be a DOM
+ // layer: Android WebView can omit these transparent canvas overlays.
+ if(element.tagName==='CANVAS'){
+  const replacement=root.document.createElement('div');
+  for(const attribute of element.attributes)replacement.setAttribute(attribute.name,attribute.value);
+  element.replaceWith(replacement);labels.set(element,{replacement});element=replacement;
+ }
+ let state=labels.get(element);
  if(!state){
-  state={alpha:0};canvases.set(canvas,state);canvas.parentElement.style.isolation='isolate';
-  Object.assign(canvas.style,{position:'absolute',inset:'0',width:'100%',height:'100%',pointerEvents:'none',zIndex:'11'});
+  const caption=root.document.createElement('span');element.append(caption);
+  state={alpha:0};labels.set(element,state);element.parentElement.style.isolation='isolate';
+  Object.assign(element.style,{position:'absolute',inset:'0',width:'100%',height:'100%',pointerEvents:'none',zIndex:'11'});
+  Object.assign(caption.style,{position:'absolute',left:'50%',top:(868/1792*100)+'%',transform:'translate(-50%,-50%)',maxWidth:'80%',textAlign:'center',whiteSpace:'pre',lineHeight:'1.15',fontFamily:'Georgia,"Times New Roman",serif',fontWeight:'700'});
   state.redraw=()=>{
-   const box=canvas.getBoundingClientRect(),ratio=root.devicePixelRatio||1;
-   canvas.style.opacity=String(state.alpha);
-   const color=canvas.dataset?.endingColor||'#f5e4be';
-   const signature=[box.width,box.height,ratio,text(),color].join(':');if(state.signature===signature)return;state.signature=signature;
-   canvas.width=Math.max(1,Math.round(box.width*ratio));canvas.height=Math.max(1,Math.round(box.height*ratio));
-   const ctx=canvas.getContext('2d');ctx.setTransform(ratio,0,0,ratio,0,0);
-   draw(ctx,box.width,box.height,1,color);canvas.style.opacity=String(state.alpha);
+   const label=text(),box=element.getBoundingClientRect();
+   element.setAttribute('aria-label',label);
+   caption.textContent=root.PinballI18n?.locale==='zh-Hant'?[...label].join('\n'):label;
+   caption.style.fontSize=box.width*.125+'px';
+   caption.style.color=element.dataset?.endingColor||'#f5e4be';
   };
   watch(state.redraw);
-  if(root.ResizeObserver){const observer=new root.ResizeObserver(state.redraw);observer.observe(canvas);root.addEventListener?.('pagehide',()=>observer.disconnect(),{once:true});}
+  if(root.ResizeObserver){const observer=new root.ResizeObserver(state.redraw);observer.observe(element);root.addEventListener?.('pagehide',()=>observer.disconnect(),{once:true});}
+  state.redraw();
  }
- state.alpha=Math.max(0,Math.min(1,alpha));canvas.style.opacity=String(state.alpha);
- if(!state.signature)state.redraw();
+ state.alpha=Math.max(0,Math.min(1,alpha));element.style.opacity=String(state.alpha);
 }
+
 const api={draw,paint,watch};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.StoryEndingText=api;
 })(typeof window!=='undefined'?window:globalThis);

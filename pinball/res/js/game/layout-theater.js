@@ -130,7 +130,9 @@ class LayoutTheater{
   const [shakeX=0,shakeY=0]=(canvas.style?.translate||'').split(' ').map(v=>parseFloat(v)||0);
   const left=Math.round((r.left-shakeX*this.viewportCssScale.x)*64)/64,topY=Math.round((r.top-shakeY*this.viewportCssScale.y)*64)/64;
   this.positionFrame({left:(left+m.e*sx)+'px',top:(topY+(m.d*sceneY+m.f)*sy)+'px',width:(360*m.a*sx)+'px',height:Math.max(0,sceneH*m.d*sy)+'px',visibility:sceneH>0?'visible':'hidden',zIndex:'2'});
-  const viewport={rect:r,transform:m};
+  // Spell geometry uses the same unshaken box as the theater. CSS camera
+  // motion is carried separately so it cannot invalidate a live simulation.
+  const viewport={rect:{left,top:topY,width:r.width,height:r.height},transform:m,translation:{x:shakeX*this.viewportCssScale.x,y:shakeY*this.viewportCssScale.y}};
   if(this.customScore)return viewport;
   this.paintScorePanel(ctx,game,top);
   return viewport;

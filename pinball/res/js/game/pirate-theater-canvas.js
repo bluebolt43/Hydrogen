@@ -154,8 +154,9 @@ class PirateTheaterCanvas{
  }
  heartBox(count=this.heartLayoutCount??this.hp){const [,y]=this.enemyBox(),size=360*.028,gap=3,w=count?count*size+(count-1)*gap:0;return [180-w/2,Math.max(5,y-size-5),w,size,gap];}
  prepareHearts(){
+  // The clipping path reads this raster on HP changes; avoid a GPU readback.
   const key=[this.present,this.hp,this.level,this.maxHp,this.height,this.typeIndex,this.stateIndex,this.pixelScale,this.heartLayoutCount].join('|');if(this.hearts?.key===key)return;
-  const box=this.heartBox(),c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(box[2]*this.pixelScale));c.height=Math.max(1,Math.ceil(box[3]*this.pixelScale));const b=c.getContext('2d');b.scale(this.pixelScale,this.pixelScale);if(this.present)for(let i=0;i<this.hp;i++)this.drawImage(b,'res/img/health-heart.svg',i*(box[3]+box[4]),0,box[3],box[3]);this.hearts={key,canvas:c,box};
+  const box=this.heartBox(),c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(box[2]*this.pixelScale));c.height=Math.max(1,Math.ceil(box[3]*this.pixelScale));const b=c.getContext('2d',{willReadFrequently:true});b.scale(this.pixelScale,this.pixelScale);if(this.present)for(let i=0;i<this.hp;i++)this.drawImage(b,'res/img/health-heart.svg',i*(box[3]+box[4]),0,box[3],box[3]);this.hearts={key,canvas:c,box};
  }
  actors(force=false){
   if(!force&&this.closed&&!this.curtainDynamic)return [];

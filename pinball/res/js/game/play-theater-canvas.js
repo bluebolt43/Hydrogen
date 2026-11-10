@@ -117,7 +117,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
  heartBox(){const p=this.heartPoints();if(!p.length)return [0,0,0,0,0];const x=Math.min(...p.map(v=>v.x)),y=Math.min(...p.map(v=>v.y));return [x,y,Math.max(...p.map(v=>v.x+v.size))-x,Math.max(...p.map(v=>v.y+v.size))-y,0];}
  prepareHearts(){
   const key=[this.present,this.health,this.heartLayoutCounts,this.level,this.stateIndex,this.phaseIndex,this.pixelScale,this.height].join('|');if(this.hearts?.key===key)return;
-  const box=this.heartBox(),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.ceil(box[2]*this.pixelScale));canvas.height=Math.max(1,Math.ceil(box[3]*this.pixelScale));const c=canvas.getContext('2d');c.scale(this.pixelScale,this.pixelScale);
+  const box=this.heartBox(),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.ceil(box[2]*this.pixelScale));canvas.height=Math.max(1,Math.ceil(box[3]*this.pixelScale));const c=canvas.getContext('2d',{willReadFrequently:true});c.scale(this.pixelScale,this.pixelScale);
   if(this.present)for(const p of this.heartPoints())if(p.slot<this.health[p.index])this.drawImage(c,'res/img/health-heart.svg',p.x-box[0],p.y-box[1],p.size,p.size);
   if(this.hearts?.canvas)this.hearts.canvas.width=this.hearts.canvas.height=0;this.hearts={key,canvas,box};
  }

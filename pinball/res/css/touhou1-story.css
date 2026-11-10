@@ -176,7 +176,8 @@
 #a8-air-background { display: none; }
 #stage.a8-preview #a8-air-background, #stage.a8-end-preview #a8-air-background { display: block; opacity: 1; }
 
-.story-ending-caption { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.story-layer-scene:has([data-story-ending-caption]) { container-type: inline-size; }
+.story-ending-caption { position: absolute; right: 5.8448%; bottom: 5.8014%; max-width: 88.31%; color: #fff; font: bold 6.1637cqw/1 Georgia, "Times New Roman", "Noto Serif CJK TC", serif; white-space: nowrap; pointer-events: none; z-index: 1; }
 
 /* Keep the complete thought balloon inside the airborne close-up. */
 #stage #a8-end-suspect-actors { transform-origin: 50% 0; transform: translate(-3%, 2%) scale(.90); }

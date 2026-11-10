@@ -88,17 +88,17 @@ class TouhouBossPresentation{
   if(!(width>0&&height>0))return;
   const layoutChanged=!this.layout||this.layout.height!==height||this.layout.stageHeight!==stageHeight;
   if(layoutChanged)this.layout={height,stageHeight};
+  const shift=viewport?.translation,translate=shift&&(shift.x||shift.y)?shift.x+'px '+shift.y+'px':'';
   const ball=this.game.balls.find(b=>b.state==='playing');
   if(ball?.p){const [x,y]=ball.p;this.target={x:(r.left+(m.a*x+m.c*y+m.e)*r.width/ctx.canvas.width-left)/width,y:(r.top+(m.b*x+m.d*y+m.f)*sy-top)/height};}
   const pixels=Math.round(360*height/width);
   if(this.external){
    const sx=ctx.canvas.width/r.width,sy=ctx.canvas.height/r.height;this.canvasBounds={x:Math.round((left-r.left)*sx),y:Math.round((top-r.top)*sy),width:Math.max(1,Math.round(width*sx)),height:Math.max(1,Math.round(height*sy))};
-   for(const mask of masks){if(mask.canvas.width!==this.canvasBounds.width)mask.canvas.width=this.canvasBounds.width;if(mask.canvas.height!==this.canvasBounds.height)mask.canvas.height=this.canvasBounds.height;}
-   if(this.mask.prepared&&this.mask.prepared.key!==this.mask.preparationKey())this.mask.prepare(this.mask.entry.stage);
-   if(this.overlayCanvas){const c=this.overlayCanvas,b=this.canvasBounds;if(c.width!==b.width)c.width=b.width;if(c.height!==b.height)c.height=b.height;for(const [key,value]of Object.entries({left:left+'px',top:top+'px',width:width+'px',height:height+'px'}))if(c.style[key]!==value)c.style[key]=value;}
+   for(const mask of masks){const resized=mask.canvas.width!==this.canvasBounds.width||mask.canvas.height!==this.canvasBounds.height;if(mask.canvas.width!==this.canvasBounds.width)mask.canvas.width=this.canvasBounds.width;if(mask.canvas.height!==this.canvasBounds.height)mask.canvas.height=this.canvasBounds.height;if(resized&&mask===this.mask&&!mask.active&&mask.prepared)mask.prepare(mask.entry.stage);}
+   if(this.overlayCanvas){const c=this.overlayCanvas,b=this.canvasBounds;if(c.width!==b.width)c.width=b.width;if(c.height!==b.height)c.height=b.height;for(const [key,value]of Object.entries({left:left+'px',top:top+'px',width:width+'px',height:height+'px',translate}))if(c.style[key]!==value)c.style[key]=value;}
    if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();return;
   }
-  const style={left:left+'px',top:top+'px',width:width+'px',height:height+'px'};
+  const style={left:left+'px',top:top+'px',width:width+'px',height:height+'px',translate};
   for(const mask of masks){const c=mask.canvas;if(c.height!==pixels)c.height=pixels;for(const key in style)if(c.style[key]!==style[key])c.style[key]=style[key];}
   if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();
  }
