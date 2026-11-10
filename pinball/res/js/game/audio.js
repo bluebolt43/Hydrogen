@@ -8,7 +8,7 @@ class SoundBank {
   this.buffered=buffered;this.fetcher=fetcher;this.bufferContext=null;this.outputGain=null;this.volume=1;this.loadErrors=[];this.destroyed=false;
   this.audioSession=audioSession;this.previousSessionType=null;this.sessionError=null;
   for(const [name,clip] of Object.entries(clips)){
-   const voices=Array.from({length:clip.voices||3},()=>{const audio=new AudioClass(clip.src);audio.preload='auto';audio.volume=clip.volume??1;return {audio,token:0};});
+   const voices=Array.from({length:clip.voices||3},()=>{const audio=new AudioClass(clip.src);audio.preload=buffered&&!clip.stream?'none':'auto';audio.volume=clip.volume??1;return {audio,token:0};});
    this.clips.set(name,{...clip,voices,last:-Infinity,next:0});
   }
  }
@@ -24,7 +24,7 @@ class SoundBank {
   await Promise.all([...this.clips.values()].filter(clip=>!clip.stream).map(async clip=>{
    const src=clip.voices[0].audio.src;
    if(!pending.has(src))pending.set(src,(async()=>{const response=await this.fetcher(src);if(!response.ok)throw Error('Audio fetch failed: '+src);return this.bufferContext.decodeAudioData(await response.arrayBuffer());})());
-   try{const buffer=await pending.get(src);if(!this.destroyed){clip.buffer=buffer;clip.bufferVoices=new Set();}}catch(error){this.loadErrors.push(String(error));}
+   try{const buffer=await pending.get(src);if(!this.destroyed){for(const voice of clip.voices){voice.token++;voice.audio.pause();voice.audio.currentTime=0;voice.audio.removeAttribute?.('src');voice.audio.load?.();}clip.buffer=buffer;clip.bufferVoices=new Set();}}catch(error){this.loadErrors.push(String(error));}
   }));
   return !this.destroyed&&[...this.clips.values()].some(clip=>clip.buffer);
  }
@@ -36,6 +36,7 @@ class SoundBank {
   // unlike HTMLAudio. Declare media playback before resuming from the gesture.
   if((this.buffered||this.synthEnabled)&&this.audioSession)try{if(this.audioSession.type!=='playback'){this.previousSessionType??=this.audioSession.type;this.audioSession.type='playback';}}catch(error){this.sessionError=String(error);}
   this.resumeContext(this.bufferContext);this.resumeContext(this.synthContext);
+  for(const clip of this.clips.values())for(const voice of clip.voices)voice.syncFailed=false;
   if(this.unlocked)return;this.unlocked=true;
   if(this.synthEnabled&&this.AudioContextClass){try{this.synthContext=new this.AudioContextClass();this.synthContext.resume().catch(()=>{});}catch{}}
   // iOS may ignore volume writes. Mute and stop within the gesture instead
@@ -63,10 +64,18 @@ class SoundBank {
  }
  // Keep a finite mechanism recording aligned to its animation, including resume.
  sync(name,position,active){
-  const clip=this.clips.get(name);if(!clip)return;
+  const clip=this.clips.get(name);if(!clip||this.destroyed)return;
   const voice=clip.voices[0],audio=voice.audio;
-  if(!active||!this.enabled||this.paused||!this.unlocked){if(!audio.paused){voice.token++;audio.pause();}return;}
-  if(audio.paused||Math.abs(audio.currentTime-position)>.15){voice.token++;audio.currentTime=position;audio.volume=clip.volume??1;Promise.resolve(audio.play()).catch(()=>{});}
+  if(!active||!this.enabled||this.paused||!this.unlocked){
+   if(voice.syncPending||!audio.paused){voice.token++;audio.pause();}
+   voice.syncPending=false;voice.syncFailed=false;return;
+  }
+  if(voice.syncPending||voice.syncFailed)return;
+  if(audio.paused||Math.abs(audio.currentTime-position)>.15){
+   const token=++voice.token;voice.syncPending=true;audio.currentTime=position;audio.volume=clip.volume??1;
+   try{Promise.resolve(audio.play()).then(()=>{if(voice.token===token)voice.syncPending=false;},()=>{if(voice.token===token){voice.syncPending=false;voice.syncFailed=true;}});}
+   catch{voice.syncPending=false;voice.syncFailed=true;}
+  }
  }
  playBeam(){
   const context=this.synthContext;if(!context||!this.enabled||this.paused||!this.unlocked)return false;
@@ -78,11 +87,11 @@ class SoundBank {
   oscillator.onended=()=>{this.synthVoices.delete(oscillator);oscillator.disconnect();filter.disconnect();gain.disconnect();};
   oscillator.start(at);oscillator.stop(at+.085);return true;
  }
- stop(){for(const voice of this.synthVoices)voice.stop();this.synthVoices.clear();for(const clip of this.clips.values()){clip.last=-Infinity;if(clip.buffer){for(const source of clip.bufferVoices){source.stop();source.onended();}continue;}for(const voice of clip.voices){voice.token++;voice.audio.pause();voice.audio.currentTime=0;}}}
+ stop(){for(const voice of this.synthVoices)voice.stop();this.synthVoices.clear();for(const clip of this.clips.values()){clip.last=-Infinity;if(clip.buffer){for(const source of clip.bufferVoices){source.stop();source.onended();}}for(const voice of clip.voices){voice.token++;voice.syncPending=false;voice.syncFailed=false;voice.audio.pause();voice.audio.currentTime=0;}}}
  setVolume(volume){if(!Number.isFinite(volume))return;this.volume=Math.max(0,Math.min(1,volume));if(this.outputGain)this.outputGain.gain.value=this.volume;}
  setEnabled(enabled){this.enabled=!!enabled;if(!this.enabled)this.stop();}
  setPaused(paused){if(this.paused===!!paused)return;this.paused=!!paused;if(this.paused)this.stop();}
- destroy(){if(this.destroyed)return;this.destroyed=true;this.stop();for(const clip of this.clips.values())clip.buffer=null;for(const context of new Set([this.bufferContext,this.synthContext]))if(context)Promise.resolve(context.close()).catch(()=>{});if(this.previousSessionType!==null&&this.audioSession?.type==='playback')try{this.audioSession.type=this.previousSessionType;}catch{}}
+ destroy(){if(this.destroyed)return;this.destroyed=true;this.stop();for(const clip of this.clips.values()){clip.buffer=null;for(const voice of clip.voices){voice.audio.removeAttribute?.('src');voice.audio.load?.();}}for(const context of new Set([this.bufferContext,this.synthContext]))if(context)Promise.resolve(context.close()).catch(()=>{});if(this.previousSessionType!==null&&this.audioSession?.type==='playback')try{this.audioSession.type=this.previousSessionType;}catch{}}
 }
 if(typeof module!=='undefined'&&module.exports)module.exports=SoundBank;else root.PinballSound=SoundBank;
 })(typeof window!=='undefined'?window:globalThis);

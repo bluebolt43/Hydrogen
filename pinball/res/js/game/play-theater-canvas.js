@@ -32,10 +32,11 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
  async reset(){await this.curtains(true);this.present=false;this.typeIndex=0;this.level=1;this.configure();this.effects=[];if(this.theme.startsWith('touhou'))this.report('boss-stage',{stage:0});this.phase();}
  async choose(data,token=this.generation){
   if(this.present&&!this.defeated)return;
-  if(!data.skipWarning){this.warning=true;this.phase();await this.wait(1200);this.warning=false;this.phase();}
+  const chooseIndex=()=>data.mode==='boss'?Number(data.stage)-1:data.mode==='free'?Math.floor(Math.random()*this.data.bosses.length):(this.defeated?(this.typeIndex+1)%this.data.bosses.length:this.typeIndex);
+  let index=this.theme.startsWith('touhou')?chooseIndex():undefined;
+  if(!data.skipWarning){this.warning=true;this.phase();if(this.theme.startsWith('touhou'))this.report('boss-warning',{stage:index+1});await this.wait(1200);this.warning=false;this.phase();}
   await this.curtains(true);
-  const index=data.mode==='boss'?Number(data.stage)-1:data.mode==='free'?Math.floor(Math.random()*this.data.bosses.length):(this.defeated?(this.typeIndex+1)%this.data.bosses.length:this.typeIndex);
-  if(!this.data.bosses[index])throw Error('Unknown '+this.theme+' stage '+data.stage);
+  index??=chooseIndex();if(!this.data.bosses[index])throw Error('Unknown '+this.theme+' stage '+data.stage);
   await this.load(sources(this.data.bosses[index]));
   if(this.theme==='steampunk')await this.load([this.data.backgrounds[this.data.bosses[index].background||0].src]);
   if(data.background)await this.load([data.background]);

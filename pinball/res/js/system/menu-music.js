@@ -10,6 +10,7 @@ function createMenuMusic(src){
  function start(){
   if(!enabled||disposed)return;
   if(!sourceAttached){audio.src=src;sourceAttached=true;}
+  if(!audio.loop&&audio.ended)return;
   if(audio.paused&&!pendingPlay){
    const request=audio.play();pendingPlay=request;
    const settled=()=>{if(pendingPlay===request)pendingPlay=null;};
@@ -21,7 +22,7 @@ function createMenuMusic(src){
  return {audio,
   setSource(value){if(value===src)return;pause();src=value;if(sourceAttached){audio.removeAttribute('src');audio.load();}sourceAttached=false;if(enabled)start();},
   play(){start();const request=pendingPlay;return request?Promise.resolve(request).then(()=>true,()=>false):Promise.resolve(!enabled||!audio.paused);},
-  stop(){enabled=false;if(!sourceAttached)return;pause();audio.currentTime=0;},setEnabled(value){value=!!value;if(enabled===value)return;enabled=value;if(enabled)start();else pause();},setVolume(value){if(appliedVolume===value)return;appliedVolume=value;audio.volume=value;},dispose(){disposed=true;enabled=false;pause();document.removeEventListener('pointerup',gesture);document.removeEventListener('keydown',gesture);audio.removeAttribute('src');audio.load();}};
+  stop(){enabled=false;if(!sourceAttached)return;pause();audio.currentTime=0;},setEnabled(value){if(disposed)return;value=!!value;const changed=enabled!==value;enabled=value;if(enabled)start();else if(changed||!audio.paused||pendingPlay)pause();},setVolume(value){if(appliedVolume===value)return;appliedVolume=value;audio.volume=value;},dispose(){disposed=true;enabled=false;pause();document.removeEventListener('pointerup',gesture);document.removeEventListener('keydown',gesture);audio.removeAttribute('src');audio.load();}};
 }
 function createMenuMixer(sources,initial){
  const tracks=Object.fromEntries(Object.entries(sources).map(([key,src])=>[key,createMenuMusic(src)]));
@@ -40,7 +41,8 @@ function createMenuMixer(sources,initial){
  }
  function sync(){for(const [key,track] of Object.entries(tracks))track.setEnabled(enabled&&(key===selected||!!fade&&fade.start[key]>0&&fade.elapsed<800));}
  applyVolume();
- return {setEnabled(value){if(enabled===!!value)return;enabled=!!value;sync();if(raf!==null)cancelAnimationFrame(raf);raf=null;if(enabled&&fade){last=performance.now();raf=requestAnimationFrame(tick);}},
+ // Native interruptions may pause audio without changing our requested state.
+ return {setEnabled(value){const changed=enabled!==!!value;enabled=!!value;sync();if(!changed)return;if(raf!==null)cancelAnimationFrame(raf);raf=null;if(enabled&&fade){last=performance.now();raf=requestAnimationFrame(tick);}},
   setVolume(value){volume=Math.max(0,Math.min(1,Number(value)||0));applyVolume();},
   select(key){if(key===selected)return;if(!tracks[key])throw Error('Unknown music');if(raf!==null)cancelAnimationFrame(raf);raf=null;
    tracks[key].stop();levels[key]=0;selected=key;applyVolume();

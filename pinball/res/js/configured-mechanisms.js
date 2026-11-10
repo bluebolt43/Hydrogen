@@ -347,11 +347,10 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  return;
  }for(const post of this.configuredPosts?.values()||[])if(post.sensors.length&&post.sensors.every(id=>post.collected.has(id)))this.activatePost(post);
  }
- activatePost(p){if(p.raised)return;
+ activatePost(p){if(!p.raised)p.contacts.clear();
  p.raised=true;
  p.left=p.hits;
  p.collected.clear();
- p.contacts.clear();
  this.syncPost();
  this.emit('center-post-up',{id:p.id});
  }
@@ -438,7 +437,6 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
 
   const touchedPosts=new Set();
   for(const id of crossedRollovers)for(const post of this.postsByRollover.get(id)||[]){
-   if(post.raised)continue;
    post.collected.add(id);touchedPosts.add(post);
   }
   for(const post of touchedPosts)if(post.sensors.every(id=>post.collected.has(id)))this.activatePost(post);

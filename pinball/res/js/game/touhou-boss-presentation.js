@@ -6,7 +6,7 @@ class TouhouBossPresentation{
   this.external=external||overlay;this.overlay=overlay;
   this.game=game;this.theme=theme;this.sharedMusic=root.AppStageMusic;this.data=root.TouhouSpellcardSets?.[theme]??root.TouhouSpellcards;this.stage=0;this.elapsed=0;this.hasCast=false;this.originPending=false;this.musicWanted=false;
   this.audio=new Audio();this.audio.loop=true;this.audio.preload='metadata';this.audio.volume=.6;this.audio.dataset.role='touhou-boss-bgm';document.body.append(this.audio);
-  if(this.theme==='touhou1'&&!this.sharedMusic?.ownsTheme(this.theme))this.audio.src='res/audio/touhou1-menu.ogg';
+  if(!this.sharedMusic?.ownsTheme(this.theme))this.audio.src=root.TouhouStageMusic.menuSource(this.theme);
   if(overlay){let selected=renderer;try{selected??=new URLSearchParams(root.location.search).get('spellRenderer')||localStorage.getItem('pinball-spell-renderer');}catch{}this.requestedRenderer=selected||'webgl';this.createOverlay(this.requestedRenderer);}
   this.previousMasks=[];this.mask=this.createMask();
  }
@@ -25,12 +25,15 @@ class TouhouBossPresentation{
   const mask=new root.TouhouSpellMask(canvas,{data:this.data,external:this.external});mask.naturalDrain=true;mask.extendBeamsToViewport=true;
   mask.targetProvider=()=>this.target??{x:.5,y:.9};return mask;
  }
+ prepare(stage){
+  return this.mask.prepare(stage);
+ }
  clearSpells(){this.originPending=false;this.mask.clear();for(const mask of this.previousMasks){mask.destroy();mask.canvas.remove();}this.previousMasks=[];if(this.overlayCanvas){if(this.overlayPainted){if(this.webgl){this.webgl.begin();this.webgl.end();}else this.overlayContext.clearRect(0,0,this.overlayCanvas.width,this.overlayCanvas.height);}this.overlayPainted=false;this.overlayCanvas.hidden=true;}}
  choose(stage){
   if(stage===this.stage)return;
   this.stage=stage;this.origin=undefined;this.defeated=false;this.elapsed=0;this.hasCast=false;this.originPending=false;this.clearSpells();this.audio.pause();this.audio.currentTime=0;this.musicWanted=false;
   if(stage&&!this.sharedMusic?.matches(this.theme,stage))this.audio.src=root.TouhouStageMusic.source(this.theme,stage);
-  else if(!stage&&this.theme==='touhou1')this.audio.src='res/audio/touhou1-menu.ogg';
+  else if(!stage)this.audio.src=root.TouhouStageMusic.menuSource(this.theme);
  }
  defeat(){this.defeated=true;this.elapsed=0;this.clearSpells();}
  onEvent(event){
@@ -58,7 +61,7 @@ class TouhouBossPresentation{
  }
  syncMusic(sound,retry=false,paused=this.game.paused){
   if(this.sharedMusic?.matches(this.theme,this.stage)){this.sharedMusic.syncGamePause(paused);return;}
-  const wanted=(!!this.stage||this.theme==='touhou1')&&!paused&&sound.enabled&&(sound.unlocked||root.PinballPlatform==='android');
+  const wanted=(!!this.stage||!!root.TouhouStageMusic.menuSource(this.theme))&&!paused&&sound.enabled&&(sound.unlocked||root.PinballPlatform==='android');
   this.audio.muted=!sound.enabled;
   if(wanted&&(!this.musicWanted||retry))this.audio.play().catch(()=>{});
   if(!wanted&&this.musicWanted)this.audio.pause();
@@ -91,6 +94,7 @@ class TouhouBossPresentation{
   if(this.external){
    const sx=ctx.canvas.width/r.width,sy=ctx.canvas.height/r.height;this.canvasBounds={x:Math.round((left-r.left)*sx),y:Math.round((top-r.top)*sy),width:Math.max(1,Math.round(width*sx)),height:Math.max(1,Math.round(height*sy))};
    for(const mask of masks){if(mask.canvas.width!==this.canvasBounds.width)mask.canvas.width=this.canvasBounds.width;if(mask.canvas.height!==this.canvasBounds.height)mask.canvas.height=this.canvasBounds.height;}
+   if(this.mask.prepared&&this.mask.prepared.key!==this.mask.preparationKey())this.mask.prepare(this.mask.entry.stage);
    if(this.overlayCanvas){const c=this.overlayCanvas,b=this.canvasBounds;if(c.width!==b.width)c.width=b.width;if(c.height!==b.height)c.height=b.height;for(const [key,value]of Object.entries({left:left+'px',top:top+'px',width:width+'px',height:height+'px'}))if(c.style[key]!==value)c.style[key]=value;}
    if(layoutChanged&&this.origin)this.mask.origin=this.mapOrigin();return;
   }

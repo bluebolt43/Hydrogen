@@ -2,10 +2,10 @@
 'use strict';
 const canvases=new WeakMap();
 const text=()=>root.PinballI18n?.t('story.end')||'END';
-function draw(ctx,width,height,alpha=1){
+function draw(ctx,width,height,alpha=1,color='#f5e4be'){
  const label=text(),size=width*.125;
  ctx.save();ctx.globalAlpha*=Math.max(0,Math.min(1,alpha));
- ctx.fillStyle='#f5e4be';ctx.font='700 '+size+'px Georgia,"Times New Roman",serif';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+ ctx.fillStyle=color;ctx.font='700 '+size+'px Georgia,"Times New Roman",serif';ctx.textAlign='center';ctx.textBaseline='alphabetic';
  const vertical=root.PinballI18n?.locale==='zh-Hant',glyphs=vertical?[...label]:[label],gap=size*1.15;
  for(let i=0;i<glyphs.length;i++){
   const glyph=glyphs[i],metrics=ctx.measureText(glyph),center=height*(868/1792)+(i-(glyphs.length-1)/2)*gap;
@@ -27,10 +27,11 @@ function paint(canvas,alpha){
   state.redraw=()=>{
    const box=canvas.getBoundingClientRect(),ratio=root.devicePixelRatio||1;
    canvas.style.opacity=String(state.alpha);
-   const signature=[box.width,box.height,ratio,text()].join(':');if(state.signature===signature)return;state.signature=signature;
+   const color=canvas.dataset?.endingColor||'#f5e4be';
+   const signature=[box.width,box.height,ratio,text(),color].join(':');if(state.signature===signature)return;state.signature=signature;
    canvas.width=Math.max(1,Math.round(box.width*ratio));canvas.height=Math.max(1,Math.round(box.height*ratio));
    const ctx=canvas.getContext('2d');ctx.setTransform(ratio,0,0,ratio,0,0);
-   draw(ctx,box.width,box.height);canvas.style.opacity=String(state.alpha);
+   draw(ctx,box.width,box.height,1,color);canvas.style.opacity=String(state.alpha);
   };
   watch(state.redraw);
   if(root.ResizeObserver){const observer=new root.ResizeObserver(state.redraw);observer.observe(canvas);root.addEventListener?.('pagehide',()=>observer.disconnect(),{once:true});}

@@ -28,6 +28,15 @@
 <header><h1 id="announcement-title" data-i18n="announcement.title">公告</h1><button id="close-announcement" type="button" aria-label="關閉" data-i18n-aria-label="announcement.close">×</button></header>
 <div id="announcement-content" tabindex="0" aria-live="polite"></div>
 </dialog>
+<dialog id="privacy-dialog" aria-labelledby="privacy-title">
+<header><h1 id="privacy-title" data-i18n="legal.privacy">隱私權政策</h1><button id="close-privacy" type="button" aria-label="返回" data-i18n-aria-label="common.back"><img src="img/system-marker-back.runtime.webp" alt=""></button></header>
+<div id="privacy-content" tabindex="0"><p class="privacy-local-note" data-i18n="privacy.localNote">本機副本，可離線閱讀。外部連結需要網路。</p><div id="privacy-document"></div></div>
+<footer><a id="privacy-online" data-i18n="privacy.online" href="https://chickeneren43.github.io/document/pinballtales/privacy-policy.html" target="_blank" rel="noopener noreferrer">線上最新版 ↗</a></footer>
+</dialog>
+<dialog id="licenses-dialog" aria-labelledby="licenses-title">
+<header><h1 id="licenses-title" data-i18n="legal.credits">授權說明</h1><button id="close-licenses" type="button" aria-label="返回" data-i18n-aria-label="common.back"><img src="img/system-marker-back.runtime.webp" alt=""></button></header>
+<div id="licenses-content" tabindex="0"></div>
+</dialog>
 <section id="app-settings" aria-labelledby="settings-title" hidden>
 <button id="close-settings" type="button" aria-label="返回" data-i18n-aria-label="common.back"><img src="img/system-marker-back.runtime.webp" alt=""></button>
 <h1 id="settings-title" data-i18n="settings.title">設定</h1>
@@ -38,14 +47,16 @@
 <div class="setting-row"><label for="volume-setting" data-i18n="settings.volume">音量</label><input id="volume-setting" type="range" min="0" max="100" step="1" value="100"><output id="volume-value" for="volume-setting">100%</output></div>
 <label class="setting-row" for="aspect-setting">試玩畫面比例<select id="aspect-setting"><option value="portrait">直向（原布局）</option><option value="landscape">16:9 橫向</option></select></label>
 <label class="setting-row" for="launch-setting"><span data-i18n="settings.launch">發射模式</span><select id="launch-setting"><option value="hold" data-i18n="settings.hold">按住</option><option value="drag" data-i18n="settings.drag">拖曳</option></select></label>
-<label class="setting-row" for="fps-setting"><span data-i18n="settings.showFPS">顯示 FPS</span><input id="fps-setting" type="checkbox"></label>
-<label class="setting-row" for="theater-setting" hidden><span data-i18n="settings.theaterRenderer">劇場顯示方式</span><select id="theater-setting"><option value="dom">DOM / CSS</option><option value="canvas">Canvas</option></select></label>
-<p data-i18n="settings.theaterRendererHint" hidden>下次進入球桌時套用。</p>
 
-<div id="billing-settings" hidden><button id="restore-purchases" type="button" data-i18n="purchase.restore">恢復購買</button><p id="restore-purchases-status" role="status"></p></div>
+
+<div id="billing-settings" hidden><button id="restore-purchases" class="settings-info-button" type="button" data-i18n="purchase.sync">同步購買資訊</button><p id="restore-purchases-status" role="status"></p></div>
 <div id="clear-records-section" hidden>
 <button id="clear-game-records" type="button" data-i18n="settings.clearRecords">清除遊戲紀錄</button>
 <p data-i18n="settings.clearRecordsHint">清除排行榜、關卡進度及劇情已讀紀錄。</p>
+</div>
+<div id="settings-info">
+<button id="open-privacy" class="settings-info-button" type="button"><span data-i18n="legal.privacy">隱私權政策</span><span aria-hidden="true">›</span></button>
+<button id="open-licenses" class="settings-info-button" type="button"><span data-i18n="legal.credits">授權說明</span><span aria-hidden="true">›</span></button>
 </div>
 <p id="save-status" role="status"></p>
 </div>

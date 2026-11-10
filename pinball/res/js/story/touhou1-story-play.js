@@ -22,10 +22,6 @@ case "7-end":
 case "8-start":
 case "8-end":
 (function(){
-const storyBubbles = {"question":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\">\n  <path d=\"M170 70H790Q890 70 890 170V470Q890 555 805 570L850 665 700 575H170Q70 575 70 475V170Q70 70 170 70Z\" fill=\"white\" stroke=\"#303038\" stroke-width=\"14\" stroke-linejoin=\"round\"/>\n  <g transform=\"translate(480 310) scale(.65) translate(-480 -310)\">\n    <path d=\"M399 219C404 145 549 139 570 217C592 294 489 306 484 369\" fill=\"none\" stroke=\"#38965b\" stroke-width=\"40\" stroke-linecap=\"round\"/>\n    <circle cx=\"484\" cy=\"440\" r=\"23\" fill=\"#38965b\"/>\n  </g>\n</svg>","refusal":"<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"640\" height=\"430\" viewBox=\"0 0 640 430\"><path d=\"M110 35H530Q600 35 600 105V265Q600 335 530 335H480L530 400 410 335H110Q40 335 40 265V105Q40 35 110 35Z\" fill=\"white\" stroke=\"#34343d\" stroke-width=\"10\" stroke-linejoin=\"round\"/><g fill=\"#88649d\"><circle cx=\"210\" cy=\"185\" r=\"22\"/><circle cx=\"320\" cy=\"185\" r=\"22\"/><circle cx=\"430\" cy=\"185\" r=\"22\"/></g></svg>"};
-document.querySelectorAll("img[data-story-bubble]").forEach(image => {
-  image.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(storyBubbles[image.dataset.storyBubble].replaceAll("#38965b", image.id === "a3-reply" ? "#38965b" : "#dc403c"));
-});
 const decodeStoryScene = element => typeof element.decode === 'function' ? PinballRuntimeImages.decode(element) : Promise.all([...element.querySelectorAll('img')].map(image => PinballRuntimeImages.decode(image)));
 const hostedChapter = Number(document.body?.dataset?.storyChapter || 0);
 const stage = document.querySelector('#stage');
@@ -307,7 +303,7 @@ const stage = document.querySelector('#stage');
         const seconds = Math.min(24, Number(endAnimations[0]?.currentTime || 0) / 1000);
         seekInput.max = 24; seekInput.value = seconds;
         document.querySelector('#time').textContent = `${seconds.toFixed(1)} / 24.0 s`;
-        document.querySelector('#shot-name').textContent = seconds < 7 ? '靈夢認定提著錢袋的魔理沙是兇手，追上攔下' : seconds < 16 ? '魔理沙開心地表示要去買魔法材料' : '魔理沙不服被指控，靈夢發怒舉御幣';
+        document.querySelector('#shot-name').textContent = seconds < 7 ? '靈夢認定提著錢袋的魔理沙是兇手，追上攔下' : seconds < 16 ? '魔理沙拿著錢袋，開心地表示打算拿錢去買蘋果' : '魔理沙不服被指控，靈夢發怒舉御幣';
       }
       if (isA8End) {
         const seconds = Math.min(44, Number(endAnimations[0]?.currentTime || 0) / 1000);
@@ -839,10 +835,10 @@ const stage = document.querySelector('#stage');
       shot(a4EndWatch, 5.4, 5.8, 15, 15.6),
       shot(a4EndReimu, 15, 15.6, 22, 22),
       a4EndYuyuko.animate([
-        { opacity: 0, transform: 'translate(-2%, -23%) scale(.42)', offset: 0 },
-        { opacity: 1, transform: 'translate(-2%, -23%) scale(.42)', offset: .8 / 22 },
+        { opacity: 0, transform: 'translate(-2%, -17%) scale(.42)', offset: 0 },
+        { opacity: 1, transform: 'translate(-2%, -17%) scale(.42)', offset: .8 / 22 },
         ...Array.from({ length: 22 }, (_, i) => ({ opacity: 1,
-          transform: `translate(-2%, ${-23 - Math.cos(i * Math.PI / 2) * 1.0}%) scale(.42)`, offset: (i + 1) / 22 }))
+          transform: `translate(-2%, ${-17 - Math.cos(i * Math.PI / 2) * 1.0}%) scale(.42)`, offset: (i + 1) / 22 }))
       ], options)
     ];
     endAnimations[0].finished.then(() => {
@@ -1281,10 +1277,6 @@ function pauseHostTimeline() {
   hostTimeline.forEach(animation => { animation.pause(); animation.currentTime = hostTime; });
 }
 
-function hostSeen() {
-  if (window.AppProgress) return window.AppProgress.hasSeen(hostKey);
-  return localStorage.getItem('pinball-touhou1-story-seen-v1:' + hostKey) === '1';
-}
 function hostMarkSeen() {
   if (window.AppProgress) window.AppProgress.markSeen(hostKey);
   else localStorage.setItem('pinball-touhou1-story-seen-v1:' + hostKey, '1');
@@ -1354,7 +1346,7 @@ async function playHostChapter(key = hostKey) {
   prepareHostChapter();
   if (hostSharedMusic) hostSharedMusic.play();
   if (serial !== hostSerial) return false;
-  hostBegin.hidden = true; hostSkip.hidden = !hostSeen();
+  hostBegin.hidden = true; hostSkip.hidden = false;
   paused = false; hostPlaying = true; hostLast = performance.now();
   runHostTimeline();
   hostFrame = requestAnimationFrame(hostTick);
@@ -1362,7 +1354,7 @@ async function playHostChapter(key = hostKey) {
 }
 document.getElementById('start').onclick = () => playHostChapter();
 document.getElementById('replay').onclick = () => playHostChapter();
-hostSkip.onclick = () => { if (hostSeen()) finishHostChapter(true); };
+hostSkip.onclick = () => { if (!hostSkip.hidden) finishHostChapter(true); };
 hostNext.onclick = completeHostChapter;
 if (hostEmbedded) document.getElementById('chapters').hidden = true;
 window.addEventListener('pagehide', () => {

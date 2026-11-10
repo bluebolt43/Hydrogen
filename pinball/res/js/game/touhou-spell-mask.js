@@ -20,9 +20,37 @@ class TouhouSpellMask{
  constructor(canvas,{onComplete=()=>{},data=root.TouhouSpellcards,external=false}={}){this.external=external;this.liveSimulation=true;this.densityStride=2;this.renderFPS=60;this.data=data;this.canvas=canvas;this.ctx=canvas.getContext('2d',{willReadFrequently:true});this.onComplete=onComplete;this.elapsed=0;this.active=false;this.paused=false;this.frame=0;this.tick=this.tick.bind(this);}
  start(stage,origin,variant){
   const entry=this.data.bosses.find(c=>c.stage===Number(stage));if(!entry)throw Error('Unknown spell stage '+stage);
+  const prepared=this.prepared;this.prepared=null;
   const spells=entry.spells||[entry],sequence=variant===undefined&&spells.length>1;
   if(this.entry&&this.entry!==entry)this.clearBulletRaster();
-  this.clear();this.duration=entry.duration??this.data.duration;this.entry=entry;this.cards=sequence?spells:[spells[(variant??0)%spells.length]];this.card=sequence?entry:this.cards[0];this.origin=origin??this.card.origin;this.attacks=sequence&&entry.attackSequence?entry.attackSequence.map(part=>({...part,card:spells[part.spell],origin:origin??spells[part.spell].origin})):null;this.aims=new Map();this.sampleStates=new Map();this.sampleTime=-1;this.elapsed=0;this.lastRenderAt=-Infinity;this.hasRendered=false;this.active=true;this.paused=false;this.last=performance.now();if(!this.external)this.frame=requestAnimationFrame(this.tick);return this.card;
+  this.clear();this.duration=entry.duration??this.data.duration;this.entry=entry;this.cards=sequence?spells:[spells[(variant??0)%spells.length]];this.card=sequence?entry:this.cards[0];this.origin=origin??this.card.origin;this.attacks=sequence&&entry.attackSequence?entry.attackSequence.map(part=>({...part,card:spells[part.spell],origin:origin??spells[part.spell].origin})):null;this.aims=new Map();this.sampleStates=new Map();this.sampleTime=-1;this.elapsed=0;this.lastRenderAt=-Infinity;this.hasRendered=false;this.active=true;this.paused=false;this.last=performance.now();
+  if(prepared?.entry===entry&&prepared.key===this.preparationKey(variant)){
+   this.prepared=prepared;this.sampleStates=prepared.states;
+   for(const [index,state]of this.sampleStates){state.retired.clear();state.simulation?.reset();state.simulation?.setOrigin(this.attacks?.[index]?.origin??this.origin);}
+   this.sampleKey=this.sampleGeometryKey();
+  }
+  if(!this.external)this.frame=requestAnimationFrame(this.tick);return this.card;
+ }
+
+ sampleGeometryKey(){return [this.origin?.x,this.origin?.y,this.canvas.width,this.canvas.height,this.densityStride,this.data.densityStride,this.liveSimulation].join(':');}
+ preparationKey(variant){return [this.entry.stage,variant,this.canvas.width,this.canvas.height,this.densityStride,this.data.densityStride,this.liveSimulation,this.naturalDrain].join(':');}
+ prepare(stage,variant){
+  if(this.active||!this.liveSimulation)return false;
+  this.start(stage,undefined,variant);this.clear();
+  for(let i=0;i<(this.attacks??this.cards).length;i++)this.sampleState(i);
+  if([...this.sampleStates.values()].some(state=>!state.simulation)){this.prepared=null;return false;}
+  this.prepared={key:this.preparationKey(variant),entry:this.entry,states:this.sampleStates};return true;
+ }
+ sampleState(index){
+  const {canvas}=this,span=this.duration/this.cards.length,attack=this.attacks?.[index],spell=attack?.card??this.cards[index],offset=attack?.start??index*span,origin=attack?.origin??this.origin;
+  if(!this.sampleStates.has(index))this.sampleStates.set(index,{retired:new Set(),stride:spell.densityStride??this.entry.densityStride??this.data.densityStride??this.densityStride,leafRows:spell.emissionRows??this.entry.emissionRows,leafArms:spell.emissionArms??this.entry.emissionArms,turnAfter:spell.turnAfter??this.entry.turnAfter,rowDensity:spell.emissionRowDensity??this.entry.emissionRowDensity??1,rowStride:spell.emissionRowStride??this.entry.emissionRowStride??1,densityByFamily:spell.particleDensityByFamily??this.entry.particleDensityByFamily??{},density:spell.particleDensity??this.entry.particleDensity??1});
+  const state=this.sampleStates.get(index);if('simulation' in state)return state;
+  const targetAt=state.targetAt=time=>{
+   const key=index+':'+time;if(!this.aims.has(key))this.aims.set(key,this.targetProvider?.(offset+time)??{x:.5,y:.9});
+   return this.aims.get(key);
+  },emissionUntil=state.emissionUntil=attack?attack.end-offset:index<this.cards.length-1?span:this.naturalDrain?this.duration-offset:Infinity;
+  state.simulation=this.liveSimulation&&root.TouhouSpellPatterns.createSimulation?.(spell.pattern,{duration:this.duration-offset,origin,aspect:canvas.width/canvas.height,targetAt,emissionUntil,stride:state.stride,rowStride:state.rowStride,rowDensity:state.rowDensity,leafRows:state.leafRows,leafArms:state.leafArms,turnAfter:state.turnAfter,density:state.density,densityByFamily:state.densityByFamily,onRetire:id=>state.retired.add(id),retireAboveViewport:spell.pattern==='leaf-veiling',retireOutsideViewport:!['icicle-fall','leaf-veiling','gray-thaumaturgy'].includes(spell.pattern)})||null;
+  return state;
  }
 
  onEvent(event){if(event.type==='boss-spell')return this.start(event.stage);if(['new-game','boss-defeated','boss-changed'].includes(event.type))this.clear();if(event.type==='pause')this.pause(event.paused);}
@@ -48,7 +76,7 @@ class TouhouSpellMask{
   if(t<0){this.remainingParticles=0;if(this.webglRenderer){this.webglRenderer.aura(this,castTime,lead);return;}if(!this.external)c.clearRect(0,0,canvas.width,canvas.height);this.drawCurrentAura(castTime,lead);return;}
   // Duo bosses take turns firing; earlier bullets keep their original paths.
   const span=this.duration/this.cards.length;
-  const sampleKey=[this.origin?.x,this.origin?.y,canvas.width,canvas.height,this.densityStride,this.data.densityStride,this.liveSimulation].join(':');
+  const sampleKey=this.sampleGeometryKey();
   if(t<this.sampleTime||sampleKey!==this.sampleKey)this.sampleStates.clear();
   this.sampleTime=t;this.sampleKey=sampleKey;
   const fade=this.naturalDrain?Math.min(1,t/.35):Math.min(1,t/.35,Math.max(0,(this.duration-t)/.8));
@@ -56,12 +84,7 @@ class TouhouSpellMask{
   for(let index=0;index<(this.attacks??this.cards).length;index++){
    const attack=this.attacks?.[index],spell=attack?.card??this.cards[index],offset=attack?.start??index*span,localTime=t-offset,origin=attack?.origin??this.origin;
    if(localTime<0)continue;
-   if(!this.sampleStates.has(index))this.sampleStates.set(index,{retired:new Set(),stride:spell.densityStride??this.entry.densityStride??this.data.densityStride??this.densityStride,leafRows:spell.emissionRows??this.entry.emissionRows,leafArms:spell.emissionArms??this.entry.emissionArms,turnAfter:spell.turnAfter??this.entry.turnAfter,rowDensity:spell.emissionRowDensity??this.entry.emissionRowDensity??1,rowStride:spell.emissionRowStride??this.entry.emissionRowStride??1,densityByFamily:spell.particleDensityByFamily??this.entry.particleDensityByFamily??{},density:spell.particleDensity??this.entry.particleDensity??1});
-   const state=this.sampleStates.get(index),targetAt=time=>{
-    const key=index+':'+time;if(!this.aims.has(key))this.aims.set(key,this.targetProvider?.(offset+time)??{x:.5,y:.9});
-    return this.aims.get(key);
-   },emissionUntil=attack?attack.end-offset:index<this.cards.length-1?span:this.naturalDrain?this.duration-offset:Infinity;
-   if(!('simulation' in state))state.simulation=this.liveSimulation&&root.TouhouSpellPatterns.createSimulation?.(spell.pattern,{duration:this.duration-offset,origin,aspect:canvas.width/canvas.height,targetAt,emissionUntil,stride:state.stride,rowStride:state.rowStride,rowDensity:state.rowDensity,leafRows:state.leafRows,leafArms:state.leafArms,turnAfter:state.turnAfter,density:state.density,densityByFamily:state.densityByFamily,onRetire:id=>state.retired.add(id),retireAboveViewport:spell.pattern==='leaf-veiling',retireOutsideViewport:!['icicle-fall','leaf-veiling','gray-thaumaturgy'].includes(spell.pattern)})||null;
+   const state=this.sampleState(index),{targetAt,emissionUntil}=state;
    const part=state.simulation?state.simulation.step(localTime):root.TouhouSpellPatterns.sample(spell.pattern,localTime,origin,canvas.width/canvas.height,targetAt,emissionUntil,state);
    const radiusScale=spell.bulletRadiusScale??this.entry.bulletRadiusScale??1;
    for(const b of part.bullets){
@@ -416,7 +439,7 @@ class TouhouSpellMask{
   this.sprites.set(key,sprite);return sprite;
  }
 
- destroy(){this.clear();this.clearBulletRaster();if(this.sprites){for(const sprite of this.sprites.values())sprite.canvas.width=sprite.canvas.height=0;this.sprites.clear();this.sprites=null;}if(this.leafRasterCache){for(const entry of this.leafRasterCache.entries.values())entry.tile=null;this.leafRasterCache.entries.clear();for(const atlas of this.leafRasterCache.atlases)atlas.canvas.width=atlas.canvas.height=0;this.leafRasterCache.atlases=[];this.leafRasterCache.bytes=0;this.leafRasterCache=null;}this.leafRasterHints=null;if(this.grayRasterCache){for(const entry of this.grayRasterCache.entries.values())entry.tile=null;this.grayRasterCache.entries.clear();this.grayRasterCache.canvas.width=this.grayRasterCache.canvas.height=0;this.grayRasterCache.bytes=0;this.grayRasterCache=null;}this.grayRasterHints=null;}
+ destroy(){this.prepared=null;this.sampleStates?.clear();this.aims?.clear();this.clear();this.clearBulletRaster();if(this.sprites){for(const sprite of this.sprites.values())sprite.canvas.width=sprite.canvas.height=0;this.sprites.clear();this.sprites=null;}if(this.leafRasterCache){for(const entry of this.leafRasterCache.entries.values())entry.tile=null;this.leafRasterCache.entries.clear();for(const atlas of this.leafRasterCache.atlases)atlas.canvas.width=atlas.canvas.height=0;this.leafRasterCache.atlases=[];this.leafRasterCache.bytes=0;this.leafRasterCache=null;}this.leafRasterHints=null;if(this.grayRasterCache){for(const entry of this.grayRasterCache.entries.values())entry.tile=null;this.grayRasterCache.entries.clear();this.grayRasterCache.canvas.width=this.grayRasterCache.canvas.height=0;this.grayRasterCache.bytes=0;this.grayRasterCache=null;}this.grayRasterHints=null;}
 }
 root.TouhouSpellMask=TouhouSpellMask;
 })(window);

@@ -1,0 +1,10 @@
+.story-ending-credits{position:absolute;inset:0;z-index:24;background:#000;display:grid;place-items:center;pointer-events:none;color:#f3eee4}.story-ending-credits[hidden]{display:none}
+.credit-card{width:86%;max-width:86%;padding:0;line-height:1.45;white-space:normal;font-weight:400;letter-spacing:.015em}
+.credit-card{display:flex;flex-direction:column;align-items:center;text-align:center}
+.credit-group{display:flex;flex-direction:column;align-items:center;width:100%;min-width:0}
+.credit-group+.credit-group::before{content:"";display:block;width:38px;height:1px;background:#b5a48b66;margin:1em auto .9em}
+.credit-role{display:block;color:#bcb09d;font-size:max(14px,.68em);font-weight:500;line-height:1.3;letter-spacing:.08em;margin-bottom:.5em}
+.credit-name{display:block;max-width:100%;line-height:1.45;white-space:pre-wrap;overflow-wrap:break-word;color:#f3eee4}
+.credit-brand{display:block;font-size:1.35em;font-weight:500;line-height:1.35;letter-spacing:.055em;color:#fffaf0}
+.credit-brand::after{content:"";display:block;width:48px;height:1px;background:#b5a48b88;margin:.75em auto}
+.credit-subtitle{font-size:.82em;color:#c8bdac;line-height:1.5;letter-spacing:.1em}

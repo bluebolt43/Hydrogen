@@ -853,7 +853,8 @@
           "mode": "keep"
         },
         "impactFlash": false
-      }
+      },
+      "ignoreBallMask": true
     },
     {
       "id": "art-touhou2-static-clock-corner",
@@ -888,7 +889,8 @@
         },
         "impactFlash": false,
         "group": "touhou2-clock"
-      }
+      },
+      "ignoreBallMask": true
     },
     {
       "id": "art-touhou2-upgrade-target-002",
@@ -2490,6 +2492,28 @@
       "frameAxis": "x",
       "state": "static",
       "runtimeSource": "res/img/touhou/touhou2-vase-table.png"
+    },
+    {
+      "id": "art-023",
+      "src": "res/hd_img/touhou/touhou2-chair.png",
+      "x": 223,
+      "y": 158,
+      "width": 28,
+      "height": 26,
+      "angle": 0,
+      "opacity": 1,
+      "crop": [
+        0,
+        0,
+        1312,
+        1199
+      ],
+      "plane": "background",
+      "frames": 1,
+      "frameAxis": "x",
+      "state": "static",
+      "bind": "",
+      "ignoreBallMask": true
     }
   ],
   "gameplay": {
@@ -4117,6 +4141,15 @@
       "qy": 302.47,
       "x2": 50,
       "y2": 285
+    },
+    {
+      "id": "circle-011",
+      "type": "circle",
+      "layer": "lower",
+      "cx": 224,
+      "cy": 158,
+      "r": 9.22,
+      "mechanic": "solid-circle"
     }
   ],
   "gravityRegions": [

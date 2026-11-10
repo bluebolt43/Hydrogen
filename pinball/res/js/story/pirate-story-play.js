@@ -170,15 +170,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -262,7 +261,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -271,7 +270,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -402,15 +401,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -494,7 +492,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -503,7 +501,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -663,15 +661,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -755,7 +752,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -764,7 +761,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -895,15 +892,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -987,7 +983,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -996,7 +992,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -1139,15 +1135,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -1231,7 +1226,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -1240,7 +1235,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -1387,15 +1382,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -1479,7 +1473,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -1488,7 +1482,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -1673,15 +1667,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -1765,7 +1758,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -1774,7 +1767,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -1922,15 +1915,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -2014,7 +2006,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -2023,7 +2015,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -2188,15 +2180,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -2280,7 +2271,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -2289,7 +2280,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -2444,15 +2435,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -2536,7 +2526,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -2545,7 +2535,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -2684,15 +2674,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -2776,7 +2765,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -2785,7 +2774,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -2940,15 +2929,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -3032,7 +3020,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -3041,7 +3029,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -3245,15 +3233,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -3337,7 +3324,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -3346,7 +3333,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -3510,15 +3497,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -3602,7 +3588,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -3611,7 +3597,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -3819,15 +3805,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -3911,7 +3896,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -3920,7 +3905,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });
@@ -4094,15 +4079,14 @@ const sounds=[...document.querySelectorAll('audio')];
 const images=[...phone.querySelectorAll('img')];
 const error=document.querySelector('#error');
 const skipButton=document.createElement('button');
-skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='Skip';skipButton.hidden=true;
+skipButton.id='story-skip';skipButton.type='button';skipButton.textContent='跳過';skipButton.hidden=true;
 phone.append(skipButton);
 const nextButton=document.createElement('button');
-nextButton.id='story-next';nextButton.type='button';nextButton.textContent='Next';nextButton.hidden=true;
+nextButton.id='story-next';nextButton.type='button';nextButton.textContent='繼續';nextButton.hidden=true;
 phone.append(nextButton);
 let nextTimer=0,awaitingNext=false;
 const storyTheme=new URLSearchParams(location.search).get('theme')||location.pathname.match(/([a-z0-9-]+)-chapter\d+-/)?.[1]||'pirate';
 const seenKey=chapter=>`pinball-${storyTheme}-story-seen-v1:${chapter}`;
-function hasSeen(chapter){if(window.AppProgress)return window.AppProgress.hasSeen(chapter);try{return localStorage.getItem(seenKey(chapter))==='1';}catch{return false;}}
 function markSeen(chapter){if(window.AppProgress){window.AppProgress.markSeen(chapter);return;}try{localStorage.setItem(seenKey(chapter),'1');}catch{}}
 function showError(message){error.textContent=message;error.hidden=false;}
 function stopSounds(){for(const sound of sounds)sound.pause();}
@@ -4186,7 +4170,7 @@ async function play(chapter=activeChapter){
  document.querySelectorAll('[data-chapter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.chapter===chapter)));
  document.querySelector('#begin').hidden=true;
  draw(offset);
- start=performance.now()-offset;draw(offset);skipButton.hidden=!hasSeen(chapter);
+ start=performance.now()-offset;draw(offset);skipButton.hidden=false;
  raf=requestAnimationFrame(tick);
  if(chapter==='ch7-start'&&!ch7PreviewThird)playSound(ch7Music,.8);
  else if(chapter==='ch8-end')playSound(ch8Music,1);
@@ -4195,7 +4179,7 @@ async function play(chapter=activeChapter){
  return true;
 }
 skipButton.addEventListener('click',()=>{
- if(skipButton.hidden||!hasSeen(activeChapter))return;
+ if(skipButton.hidden)return;
  ++playId;cancelAnimationFrame(raf);raf=0;stopSounds();skipButton.hidden=true;
  finishStory(true);
 });

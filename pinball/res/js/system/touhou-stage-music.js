@@ -3,7 +3,9 @@
 'use strict';
 const source=(theme,stage)=>{
  if(!Number.isInteger(stage)||stage<1||stage>8)return '';
- return theme==='touhou1'?`res/audio/touhou1/touhou-a${stage}-bgm.m4a`:theme==='touhou2'?`res/audio/touhou2-b${stage}.ogg`:'';
+ return theme==='touhou1'?`res/audio/touhou1/touhou-a${stage}-bgm.m4a`:theme==='touhou2'?`res/audio/touhou2-b${stage}.${stage>=7?'mp3':'ogg'}`:'';
 };
-root.TouhouStageMusic={source};
+const menuSources={touhou1:'res/audio/touhou1-menu.ogg',touhou2:'res/audio/touhou2-menu.ogg'};
+const menuSource=theme=>menuSources[theme]||'';
+root.TouhouStageMusic={source,menuSource};
 })(typeof window!=='undefined'?window:globalThis);

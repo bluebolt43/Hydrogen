@@ -1,0 +1,89 @@
+#finale{position:absolute;inset:0;z-index:22}#finale[hidden]{display:none}#finale #stage{position:relative;width:100%;height:100%;background:#000;overflow:hidden}
+#picture{width:100%;height:100%;object-fit:contain}
+#actor{position:absolute;left:15%;bottom:5%;width:75%;height:64%;object-fit:contain}
+#mask{position:absolute;inset:0;display:grid;place-items:center;background:#0008;color:white;font-size:72px;font-weight:bold}
+#mask[hidden],#actor[hidden]{display:none}
+#gap-scene{position:absolute;inset:0;pointer-events:none;overflow:hidden}#gap-scene[hidden],#gap-scene img[hidden]{display:none}.space-divider{position:absolute;top:50%;width:100%;height:4px;transform:translateY(-50%);background:#190e27}#gap-source-clip,#gap-destination-clip{position:absolute;inset:0}#gap-source-clip{clip-path:inset(0 0 66% 0)}#gap-destination-clip{clip-path:inset(50% 0 18% 0)}#gap-source-clip img,#gap-destination-clip img{position:absolute;height:auto;object-fit:contain;transform:translate(-50%,-100%);transform-origin:50% 100%;filter:drop-shadow(0 3px 2px #20131b44)}#gap-source-rift,#gap-rift{position:absolute;height:7%;object-fit:fill;transform-origin:50% 50%;transform:translate(-50%,-50%)}#gap-source-rift{left:26%;top:34%;width:24%}#gap-rift{left:50%;top:82%;width:40%}
+ #stage{isolation:isolate}#reimu-shadow{position:absolute;left:-12%;top:-16%;width:130%;height:auto;opacity:.48;pointer-events:none;mix-blend-mode:multiply;object-fit:contain;filter:brightness(0) blur(2px);animation:reimu-shadow-rise var(--shadow-duration,3000ms) ease-out both paused;animation-delay:var(--shadow-delay,0ms)}#reimu-shadow[hidden]{display:none}@keyframes reimu-shadow-rise{from{transform:translateY(100%)}to{transform:translateY(0)}}
+ #ending{position:absolute;inset:0;z-index:20;pointer-events:none}#ending-black{position:absolute;inset:0;width:100%;height:100%}#ending-black{background:#000}#ending[hidden]{display:none}
+ #story-clip{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;background:#000}#story-clip[hidden]{display:none}
+#suika-search-scene{position:absolute;inset:0;pointer-events:none}#suika-search-scene [hidden],#suika-search-scene[hidden]{display:none}
+#suika-search-box{position:absolute;left:35.07%;top:38.88%;width:51.01%;height:auto}
+#suika-walk-path{position:absolute;left:33%;top:81.5%;width:45%;transform:translate(-50%,-100%)}
+#suika-walk-sprite{display:block;width:100%;height:auto;transform-origin:50% 94%}
+#suika-comic-panel{position:absolute;left:0;top:22.2%;width:100%;height:31.640625%;box-sizing:border-box;background:#fff;overflow:hidden}
+#suika-comic-character{position:absolute;left:0;top:0;width:55%;height:100%}
+#suika-comic-character img,#suika-comic-looking{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+#suika-search-lines{position:absolute;inset:0;width:100%;height:100%}
+#suika-search-lines .left-lines{animation:suika-left-lines 2200ms linear 1 both paused;animation-delay:var(--search-delay)}
+#suika-search-lines .right-lines{animation:suika-right-lines 2200ms linear 1 both paused;animation-delay:var(--search-delay)}
+#suika-search-bubble{left:55%!important;top:0!important;width:45%!important;height:100%!important;animation:suika-thought-appear 350ms ease-out both paused;animation-delay:var(--thought-delay)}
+#suika-search-bubble img{object-position:50% 50%}.suika-search-question{position:absolute;left:85%;top:12%;color:#79509b;font-size:clamp(20px,3vh,34px);font-weight:800}
+@keyframes suika-thought-appear{from{opacity:0}to{opacity:1}}
+@keyframes suika-left-lines{0%,10%{opacity:1}35%,100%{opacity:0}}
+@keyframes suika-right-lines{0%,49%{opacity:0}50%,60%{opacity:1}85%,100%{opacity:0}}
+
+#suika-foot-panel{position:absolute;left:0;top:55%;width:100%;height:31.640625%;box-sizing:border-box;border:3px solid #111;background:#fff;overflow:hidden}
+#suika-foot-panel img{width:100%;height:100%;object-fit:contain}
+#suika-pain{position:absolute;left:10%;top:53%;width:72%;height:39%;object-fit:contain;transform-origin:50% 75%;animation:suika-pain-roll 1100ms ease-in-out infinite both paused;animation-delay:var(--pain-delay)}
+@keyframes suika-pain-roll{0%,100%{transform:translateX(-4%) rotate(-16deg)}50%{transform:translateX(4%) rotate(16deg)}}
+
+#suika-closed-door{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#suika-search-box{transform-origin:50% 50%}
+#suika-coin-cut{position:absolute;inset:0;background:#000;overflow:hidden}
+#suika-coin-field{position:absolute;inset:-3%;animation:suika-coin-shake 220ms linear infinite both paused;animation-delay:var(--coin-delay)}
+#suika-coin-field img{position:absolute;height:auto}
+@keyframes suika-coin-shake{0%,100%{transform:translate(-1%,0) rotate(-.5deg)}25%{transform:translate(1%,1%) rotate(.5deg)}50%{transform:translate(-1%,-1%)}75%{transform:translate(1%,-1%)}}
+
+#suika-entry-black{position:absolute;inset:0;background:#000;pointer-events:none}
+
+/* Full-stage transitions cover the embedded story as well as local sprites. */
+#shot-transition{position:absolute;inset:0;z-index:30;pointer-events:none;background:#000;display:grid;place-items:center}
+#shot-transition[hidden]{display:none}
+#shot-transition svg{display:none}
+#shot-transition[data-type="time-stop"]{background:radial-gradient(ellipse at center,#e9faff44,#15356099);backdrop-filter:grayscale(1)}
+#shot-transition[data-type="time-stop"] svg{display:block;width:80%;fill:none;stroke:#c3f1ff;stroke-width:2;filter:drop-shadow(0 0 9px #b0eaff)}
+#return-mask{position:absolute;inset:0;z-index:30;pointer-events:none;display:grid;place-items:center}
+#return-mask[hidden]{display:none}
+#return-mask::after{content:"";position:absolute;inset:0;background:#0006;z-index:1}
+#return-mask svg{position:relative;z-index:2;width:48%;fill:#fff;filter:drop-shadow(0 3px 9px #000a)}
+#return-mask[data-phase="forward"]::after{background:repeating-linear-gradient(0deg,#0008 0 2px,#0004 2px 5px)}
+#return-mask .return-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#return-mask .return-frame[hidden]{display:none}
+#return-mask .return-pause,#return-mask .return-forward{display:none}
+#return-mask[data-phase="pause"] .return-pause,#return-mask[data-phase="forward"] .return-forward{display:block}
+
+#gap-door{position:absolute;max-width:none;object-fit:fill}
+#gap-door[hidden],#gap-float[hidden]{display:none}
+#gap-scene.authored-gap .space-divider{display:none}
+#gap-scene.authored-gap #gap-source-rift{height:auto;object-fit:fill;z-index:4}
+#gap-scene.authored-gap #gap-source-clip img,#gap-scene.authored-gap #gap-destination-clip img{object-fit:fill;filter:none}
+#gap-scene.authored-gap img#gap-peek,#gap-scene.authored-gap img#gap-yukari,#gap-scene.authored-gap img#gap-float{object-fit:contain}
+
+#koishi-play-scene{position:absolute;inset:0;background:#000;overflow:hidden}
+#koishi-play-scene[hidden],#koishi-comic-panel[hidden]{display:none}
+#koishi-garden{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#koishi-eye{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#koishi-hearts{position:absolute;inset:0;pointer-events:none}
+#koishi-hearts span{position:absolute;line-height:1}
+#koishi-comic-panel{position:absolute;left:0;top:67%;width:100%;height:31.640625%;border:3px solid #111;background:#fff;overflow:hidden}
+#koishi-rpg{display:block;width:100%;height:100%;image-rendering:pixelated}
+#koishi-break-cut{position:absolute;inset:0;background:#000}
+#koishi-break-cut[hidden]{display:none}
+#koishi-break-cut img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+
+#moneybag-scene{position:absolute;inset:0;overflow:hidden;background:#000;pointer-events:none}
+#moneybag-scene[hidden]{display:none}
+#moneybag-world{position:absolute;inset:0;transform-origin:66% 74.5625%}
+#moneybag-background{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#moneybag-bag{position:absolute;height:auto}
+
+#box-crack-panel{position:absolute;z-index:10;transform:translate(-50%,-50%);background:#fff;border:2px solid #222;overflow:hidden}
+#box-crack-panel[hidden]{display:none}
+#box-crack-panel img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+
+#actor-prop{position:absolute;object-fit:contain;pointer-events:none}#actor-prop[hidden]{display:none}
+
+#actor,#actor-prop{z-index:1}
+
+#picture{position:relative}#picture-previous{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}#picture-previous[hidden]{display:none}

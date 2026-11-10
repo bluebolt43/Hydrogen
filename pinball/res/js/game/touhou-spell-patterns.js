@@ -392,6 +392,7 @@ function sourceRuntime(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/642,t
  // Group only identical clocks; headings and painter order stay per bullet.
  const motionGroups=new Map();for(const d of ordered)if(d.path||!d.motion||d.motion==='converge'){let groups=motionGroups.get(d.path||null);if(!groups){groups=new Map();motionGroups.set(d.path||null,groups);}const key=d.birth+':'+d.speed+':'+(d.accel??0)+':'+(d.accelTicks??0)+':'+(d.life??0)+':'+(d.swirl??0);let g=groups.get(key);if(!g){g={time:NaN};groups.set(key,g);}d.motionGroup=g;}
  const events=ordered.slice().sort((a,b)=>a.birth-b.birth||a.order-b.order),beams=template.beams.filter(d=>d.birth<emissionUntil);stats.events=events.length;let cursor=0,last=-Infinity;
+ for(const d of [...events,...beams]){d.initialA=d.a;d.initialX=d.x0;d.initialY=d.y0;}
  function step(t){
   if(t<last){cursor=0;active.length=0;retired.clear();}last=t;output.bullets.length=0;output.beams.length=0;
   while(cursor<events.length&&events[cursor].birth<=t){const d=events[cursor++];sourcePrepare(d,aim,knifeBounds);let lo=0,hi=active.length;while(lo<hi){const m=(lo+hi)>>1;if(active[m].order<d.order)lo=m+1;else hi=m;}active.splice(lo,0,d);stats.spawned++;}
@@ -411,7 +412,13 @@ function sourceRuntime(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/642,t
   for(const d of beams){if(d.birth>t||t>=d.birth+d.life)continue;sourcePrepare(d,aim);const b=sourceBeam(d,t,origin,aspect);if(b)output.beams.push(b);}
   return output;
  }
- return {step,stats};
+ // Warning preparation has not emitted or aimed any particles yet.
+ function setOrigin(value){origin=value;knifeBounds.left=-origin.x*384-8;knifeBounds.right=(1-origin.x)*384+8;knifeBounds.top=-origin.y*384/aspect-8;}
+ function reset(){
+  cursor=0;last=-Infinity;active.length=output.bullets.length=output.beams.length=0;aims.clear();retired.clear();stats.spawned=stats.retired=stats.visited=0;
+  for(const list of [events,beams])for(const d of list){d.a=d.initialA;d.x0=d.initialX;d.y0=d.initialY;d.prepared=false;d.redirected=false;d.lastOutA=undefined;if(d.motionGroup)d.motionGroup.time=NaN;}
+ }
+ return {step,stats,setOrigin,reset};
 }
 function sourceSample(pattern,t,origin,aspect,targetAt,emissionUntil,state){
  const duration=Math.max(14,Math.ceil(t/14)*14);let cached=state?.sourceSimulation;
@@ -526,7 +533,7 @@ function createSimulation(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/64
  if(SOURCE_PATTERNS.has(pattern))return sourceRuntime(pattern,{duration,origin,aspect,targetAt,emissionUntil,stride,density,densityByFamily,onRetire,retireOutsideViewport});
  const supported=['icicle-fall','leaf-veiling','gray-thaumaturgy','six-realms-sword','resurrection-butterfly','invisible-full-moon'];
  if(!supported.includes(pattern))return null;
- const sx=1/384,sy=(['leaf-veiling','gray-thaumaturgy','six-realms-sword','resurrection-butterfly','invisible-full-moon'].includes(pattern))?aspect/384:(1-origin.y)/352,bounds=origin.x>=.1&&origin.x<=.9&&origin.y>=0&&origin.y<=.5&&aspect>=.35&&aspect<=1?VIRTUAL_BOUNDS[pattern]:null;
+ const sx=1/384;let sy=(['leaf-veiling','gray-thaumaturgy','six-realms-sword','resurrection-butterfly','invisible-full-moon'].includes(pattern))?aspect/384:(1-origin.y)/352,bounds=origin.x>=.1&&origin.x<=.9&&origin.y>=0&&origin.y<=.5&&aspect>=.35&&aspect<=1?VIRTUAL_BOUNDS[pattern]:null;
  const events=[],active=[],beamEvents=[],activeBeams=[],output={bullets:[],beams:[]},stats={events:0,spawned:0,retired:0,visited:0};let grayGroups,order=0,cursor=0,beamCursor=0,last=-Infinity,motionFrame=0;
  const project=a=>Math.atan2(Math.sin(a)*sy/aspect,Math.cos(a)*sx);
  const skip=id=>{const end=id.lastIndexOf(':'),index=Number(id.slice(end+1));if(index%stride)return true;if(density>=1)return false;const previous=id.lastIndexOf(':',end-1),group=Number(id.slice(previous+1,end)),slot=index/stride+group;return Math.floor((slot+1)*density+1e-9)===Math.floor(slot*density+1e-9);};
@@ -534,7 +541,7 @@ function createSimulation(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/64
   const rank=order++;if(birth>duration||birth>=emissionUntil||kind!=='glow'&&skip(id))return;
   const d={id,birth,type,order:rank,kind,color,radius,...extra};d.bullet={id,x:0,y:0,angle:0,kind,color,radius:radius*sx,alpha:1};events.push(d);return d;
  }
- function linear(id,birth,x,y,a,speed,kind,color,radius){add(id,birth,0,kind,color,radius,{x0:x,y0:y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,angle:project(a)});}
+ function linear(id,birth,x,y,a,speed,kind,color,radius){add(id,birth,0,kind,color,radius,{a,x0:x,y0:y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,angle:project(a)});}
  const aimCache=new Map(),aim=t=>{if(!aimCache.has(t)){const target=targetAt(t);aimCache.set(t,Math.atan2((target.y-origin.y)/sy,(target.x-origin.x)/sx));}return aimCache.get(t);};
 
  function scheduleBeam(d){d.order=beamEvents.length;if(d.birth<=duration)beamEvents.push(d);}
@@ -581,7 +588,7 @@ function createSimulation(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/64
   for(let wave=0;wave<=Math.floor(duration/.45);wave++)for(const side of [-1,1])for(let row=0;row<3;row++){
    const theta=(-10+(wave%11)*5.625)*DEG,a=side===1?theta:Math.PI-theta,down=a+(side===1?1:-1)*Math.PI/2;
    const travel=86+row*55,v=side===1?89:78,cos=Math.cos(a),sin=Math.sin(a);
-   add(`ice:${wave}:${side}:${row}`,wave*.45,5,'ice','#a6a8ff',5,{wave,group:iceGroups[wave]??(iceGroups[wave]={stamp:-Infinity}),endX:cos*travel,endY:sin*travel,nextVx:Math.cos(down)*v,nextVy:Math.sin(down)*v,angleStart:project(a),angleEnd:project(down)});
+   add(`ice:${wave}:${side}:${row}`,wave*.45,5,'ice','#a6a8ff',5,{a,down,wave,group:iceGroups[wave]??(iceGroups[wave]={stamp:-Infinity}),endX:cos*travel,endY:sin*travel,nextVx:Math.cos(down)*v,nextVy:Math.sin(down)*v,angleStart:project(a),angleEnd:project(down)});
   }
   for(let wave=0;wave<=Math.floor(duration/1.8);wave++)for(let j=0;j<5;j++){
    const a=Math.PI/2+(j-2)*.22;
@@ -717,7 +724,19 @@ function createSimulation(pattern,{duration=14,origin={x:.5,y:.12},aspect=361/64
   }
   return output;
  }
- return {step:pattern==='icicle-fall'?stepIce:pattern==='leaf-veiling'?stepLeaf:pattern==='gray-thaumaturgy'?stepGray:step,stats};
+ function setOrigin(value){
+  origin=value;bounds=origin.x>=.1&&origin.x<=.9&&origin.y>=0&&origin.y<=.5&&aspect>=.35&&aspect<=1?VIRTUAL_BOUNDS[pattern]:null;
+  if(pattern==='icicle-fall'){
+   sy=(1-origin.y)/352;
+   for(const d of events)if(d.type===5){d.angleStart=project(d.a);d.angleEnd=project(d.down);}else d.angle=project(d.a);
+  }
+ }
+ function reset(){
+  cursor=beamCursor=motionFrame=0;last=-Infinity;active.length=activeBeams.length=output.bullets.length=output.beams.length=0;aimCache.clear();stats.spawned=stats.retired=stats.visited=0;
+  for(const d of events){d.prepared=false;if(d.group){d.group.stamp=-Infinity;d.group.heading=undefined;}}
+  if(grayGroups)for(const g of grayGroups)for(const live of g.live)live.length=0;
+ }
+ return {step:pattern==='icicle-fall'?stepIce:pattern==='leaf-veiling'?stepLeaf:pattern==='gray-thaumaturgy'?stepGray:step,stats,setOrigin,reset};
 }
 
 const api={sample,createSimulation,virtualBounds:VIRTUAL_BOUNDS};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.TouhouSpellPatterns=api;
