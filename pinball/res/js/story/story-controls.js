@@ -4,6 +4,8 @@ const interactionStyle=document.createElement('style');
 interactionStyle.id='story-interaction-style';
 interactionStyle.textContent='#phone,#phone *{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}#phone img,#phone svg image{-webkit-user-drag:none}';
 interactionStyle.textContent+='#story-skip,#skip-intro{touch-action:none;overflow:hidden}.story-hold-progress{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.story-hold-progress rect{fill:none;stroke:#eee;stroke-width:4;stroke-dasharray:100;stroke-dashoffset:100;animation:story-hold-border .9s linear forwards}@keyframes story-hold-border{to{stroke-dashoffset:0}}';
+// Keep the six story players' visible controls on the Touhou1 design.
+interactionStyle.textContent+='#phone :is(#start,#replay,#story-skip,#skip-intro,#story-next){box-sizing:border-box;padding:12px 18px;border:1px solid #fff9;border-radius:24px;background:#102c3ee6;color:#fff;font:16px system-ui;cursor:pointer;text-shadow:none;box-shadow:none}';
 document.head.append(interactionStyle);
 const isFinalEnding=()=>document.body.dataset.storyChapter==='8'&&document.body.dataset.storyPart==='end';
 const isSkip=button=>button?.id==='story-skip'||button?.id==='skip-intro';
