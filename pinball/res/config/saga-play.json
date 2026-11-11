@@ -443,7 +443,7 @@
       "x": 217,
       "y": 449,
       "width": 51,
-      "height": 11,
+      "height": 8.219472,
       "angle": -209.3,
       "opacity": 1,
       "crop": [
@@ -465,7 +465,7 @@
       "x": 141,
       "y": 449,
       "width": 51,
-      "height": 11,
+      "height": 8.219472,
       "angle": 29.3,
       "opacity": 1,
       "crop": [
@@ -508,7 +508,7 @@
       "src": "res/hd_img/saga/saga-plunger.png",
       "x": 322,
       "y": 419,
-      "width": 14,
+      "width": 8.187661,
       "height": 130,
       "angle": 0,
       "opacity": 1,
@@ -537,7 +537,7 @@
       "x": 157,
       "y": 146,
       "width": 16,
-      "height": 18,
+      "height": 15.011236,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -569,7 +569,7 @@
       "x": 113,
       "y": 155,
       "width": 16,
-      "height": 18,
+      "height": 14.877651,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -601,7 +601,7 @@
       "x": 74,
       "y": 260,
       "width": 16,
-      "height": 18,
+      "height": 13.834684,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -788,7 +788,7 @@
       "src": "res/hd_img/saga/saga-palace.png",
       "x": 312,
       "y": 13,
-      "width": 94,
+      "width": 65.998328,
       "height": 61,
       "angle": 0,
       "opacity": 1,
@@ -877,7 +877,7 @@
       "x": 89,
       "y": 158,
       "width": 23,
-      "height": 17,
+      "height": 28.365827,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -911,7 +911,7 @@
       "x": 89,
       "y": 157,
       "width": 36,
-      "height": 22,
+      "height": 31.572711,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -933,7 +933,7 @@
       "x": 259,
       "y": 177,
       "width": 21,
-      "height": 17,
+      "height": 25.899233,
       "angle": 0,
       "opacity": 1,
       "crop": [
@@ -967,7 +967,7 @@
       "x": 259,
       "y": 176,
       "width": 33,
-      "height": 21,
+      "height": 28.941652,
       "angle": 0,
       "opacity": 1,
       "crop": [

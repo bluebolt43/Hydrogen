@@ -6,7 +6,7 @@ function draw(ctx,width,height,alpha=1,color='#f5e4be'){
  const label=text(),size=width*.125;
  ctx.save();ctx.globalAlpha*=Math.max(0,Math.min(1,alpha));
  ctx.fillStyle=color;ctx.font='700 '+size+'px Georgia,"Times New Roman",serif';ctx.textAlign='center';ctx.textBaseline='alphabetic';
- const vertical=root.PinballI18n?.locale==='zh-Hant',glyphs=vertical?[...label]:[label],gap=size*1.15;
+ const vertical=root.PinballI18n?.locale?.startsWith('zh-'),glyphs=vertical?[...label]:[label],gap=size*1.15;
  for(let i=0;i<glyphs.length;i++){
   const glyph=glyphs[i],metrics=ctx.measureText(glyph),center=height*(868/1792)+(i-(glyphs.length-1)/2)*gap;
   const baseline=center+(metrics.actualBoundingBoxAscent-metrics.actualBoundingBoxDescent)/2;
@@ -37,7 +37,7 @@ function paint(element,alpha){
   state.redraw=()=>{
    const label=text(),box=element.getBoundingClientRect();
    element.setAttribute('aria-label',label);
-   caption.textContent=root.PinballI18n?.locale==='zh-Hant'?[...label].join('\n'):label;
+   caption.textContent=root.PinballI18n?.locale?.startsWith('zh-')?[...label].join('\n'):label;
    caption.style.fontSize=box.width*.125+'px';
    caption.style.color=element.dataset?.endingColor||'#f5e4be';
   };

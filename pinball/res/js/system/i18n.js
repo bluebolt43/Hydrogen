@@ -3,10 +3,12 @@
 'use strict';
 if(root.PinballI18n)return;
 function create(catalogs,storage,language=root.navigator?.languages?.[0]||root.navigator?.language||'en'){
- const fallback='zh-Hant',listeners=new Set(),supported=Object.freeze(['zh-Hant','en','ja']);
+ const fallback='zh-Hant',listeners=new Set(),supported=Object.freeze(['zh-Hant','zh-Hans','en','ja']);
  const normalize=value=>supported.includes(value)?value:fallback;
- const systemLanguage=String(language).trim().toLowerCase().split(/[-_]/)[0];
- let locale=systemLanguage==='zh'?'zh-Hant':systemLanguage==='ja'?'ja':'en';
+ const languageTag=String(language).trim().toLowerCase().replace(/_/g,'-'),parts=languageTag.split('-');
+ const systemLanguage=parts[0];
+ const chineseLocale=parts.includes('hant')?'zh-Hant':parts.includes('hans')||parts.includes('cn')||parts.includes('sg')?'zh-Hans':'zh-Hant';
+ let locale=systemLanguage==='zh'?chineseLocale:systemLanguage==='ja'?'ja':'en';
  try{const saved=storage?.getItem('pinball-language');if(supported.includes(saved))locale=saved;}catch{}
  function t(key,params={}){
   const message=language=>Object.hasOwn(catalogs[language]||{},key)?catalogs[language][key]:undefined;

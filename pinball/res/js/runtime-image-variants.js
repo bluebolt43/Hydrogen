@@ -108,6 +108,11 @@ function prepareImage(image,observer){
  image.style.backgroundOrigin='content-box';image.style.backgroundClip='content-box';
  paintDOM(image,record);observer?.observe(image,{box:'border-box'});
 }
+function releaseImage(image){
+ const old=domRecords.get(image);
+ if(old){for(const key of Object.keys(old.styles))image.style[key]=old.styles[key];domRecords.delete(image);}
+ image.removeAttribute('src');image[trimKey]=null;
+}
 function observeDOM(node){
  if(typeof ResizeObserver==='undefined'||typeof MutationObserver==='undefined')return ()=>{};
  const observer=new ResizeObserver(entries=>{for(const {target} of entries){const r=domRecords.get(target);if(r)paintDOM(target,r);}});
@@ -144,6 +149,7 @@ function prepareSVG(image,src){
 
 const mode=base.hostname==='appassets.androidplatform.net'?'apk':'online';
 const readiness=new WeakMap();
+function release(image){readiness.delete(image);releaseImage(image);}
 function decode(image){
  track(image);
  const previous=readiness.get(image);if(previous?.src===image.src)return previous.ready;
@@ -193,6 +199,6 @@ function convertLayout(layout,editor){
  if(copy.gameplay)copy.gameplay=refs(copy.gameplay);
  return copy;
 }
-root.PinballRuntimeImages=Object.freeze({mode,resolve,decode,draw,prepare:track,width:imageWidth,height:imageHeight,associate,observeDOM,prepareSVG,objectPosition,objectFit,editorSource:value=>records.get(value)?.hd||value.replace(/^res\/img\//,'res/hd_img/'),toEditor:layout=>convertLayout(layout,true),toRuntime:layout=>convertLayout(layout,false)});
+root.PinballRuntimeImages=Object.freeze({mode,resolve,decode,release,draw,prepare:track,width:imageWidth,height:imageHeight,associate,observeDOM,prepareSVG,objectPosition,objectFit,editorSource:value=>records.get(value)?.hd||value.replace(/^res\/img\//,'res/hd_img/'),toEditor:layout=>convertLayout(layout,true),toRuntime:layout=>convertLayout(layout,false)});
 observeDOM(document);
 })(window);

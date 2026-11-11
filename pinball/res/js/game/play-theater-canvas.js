@@ -42,6 +42,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   if(data.background)await this.load([data.background]);
   if(token!==this.generation){const error=new Error('Stale theater command');error.name='AbortError';throw error;}
   this.typeIndex=index;this.level=index+1;this.configure();this.entryBackground=data.background;this.present=true;this.phase();
+  await this.prepareSprites();
   if(this.theme.startsWith('touhou'))this.report('boss-stage',{stage:this.level});
   await this.curtains(false);
   if(this.theme==='steampunk')await this.enterSteam();
@@ -152,7 +153,8 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   this.images.set(key,c);return key;
  }
  holeRaster(scale){const step=Math.round(Math.max(0,scale)*32),key='canvas:hole:'+step;if(!this.images.has(key)){const canvas=document.createElement('canvas');canvas.width=canvas.height=128;const c=canvas.getContext('2d');c.fillStyle='#000';c.fillRect(0,0,128,128);const mask=this.images.get(this.data.blackHoleMask),size=128*step/32;if(mask&&size){c.globalCompositeOperation='destination-out';root.PinballRuntimeImages.draw(c,mask,(128-size)/2,(128-size)/2,size,size);}this.images.set(key,canvas);}return key;}
- centered(src,x,y,w,h=w,layer=6){const e=this.sprite(src,w,layer);e.height=h;e.x=x-w/2;e.y=y-h/2;return e;}
+ // Bitmap effects retain the original DOM object-fit:contain; procedural fills keep their box.
+ centered(src,x,y,w,h=w,layer=6){const e=this.sprite(src,w,layer);e.contain=!src.startsWith('canvas:');e.height=h;e.x=x-w/2;e.y=y-h/2;return e;}
  async ring(x,y,w=72){const e=this.centered(this.primitive('ring'),x,y,w);await this.animate(e,[{sx:.2,sy:.2,opacity:1},{sx:1.5,sy:1.5,opacity:0}],300);this.remove(e);}
  async overlay(color,frames,duration){const e=this.centered(this.primitive(color),180,this.height/2,360,this.height,8);await this.animate(e,frames,duration);this.remove(e);}
  async projectile(src,x,y,width,duration=1100,delay=0){const e=this.centered(src,180,this.height+width*.6,width),p=(cx,cy,s,a)=>pose(cx-width/2,cy-width/2,s,a),apex=this.height-Math.min(this.height*.4,360*.19);await this.animate(e,[{...p(180,this.height+width*.6,1,0),offset:0},{...p(180,apex,1,0),offset:.16,easing:'ease-in'},{...p(180,apex,1,0),offset:.48},{...p((180+x)/2,Math.min(apex,y)-25,.56,324),offset:.8},{...p(x,y,.18,720),offset:1}],duration,'linear',delay);this.remove(e);}
@@ -175,7 +177,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   const a=this.data.attacks[kind],b=this.enemyBox(),x=kind==='lv4'?180:b[0]+b[2]/2,y=kind==='lv4'?81:Math.max(25,Math.min(b[1]+b[3]*.4,this.height*.85));
   await Promise.all([a.src,a.secondarySrc].filter(Boolean).map((src,i)=>this.projectile(src,x+(a.secondarySrc?(i?15:-15):0),y,360*a.width/100)));
   if(kind==='lv3'){this.sound('electric-charge');const e=this.centered(this.data.electricSrc,x,y,360*.82,this.height*.92);await this.animate(e,[{opacity:0,sx:.05,sy:.05},{opacity:.32,sx:.35,sy:.35,offset:.35},{opacity:.8,sx:1,sy:1}],1500,'ease-out');this.remove(e);const burst=this.centered(this.data.electricBurstSrc,x,y,360*.92,this.height);await this.animate(burst,[{opacity:0,sx:.25,sy:.25},{opacity:1,sx:1,sy:1,offset:.3},{opacity:0,sx:1.15,sy:1.15}],650);this.remove(burst);}
-  if(kind==='lv4'){await this.overlay('shade',[0,1,.12,1,.12,1,.12,1].map(opacity=>({opacity})),900);this.sound('judgment');const bolt=this.centered(this.data.lightningSrc,180,43.2,86.4);await this.animate(bolt,[{sy:0,opacity:0},{sy:1,opacity:1}],180);await this.wait(220);await this.animate(bolt,[{opacity:1},{opacity:0}],180);this.remove(bolt);await this.wait(250);}
+  if(kind==='lv4'){await this.overlay('shade',[0,1,.12,1,.12,1,.12,1].map(opacity=>({opacity})),900);this.sound('judgment');const bolt=this.centered(this.data.lightningSrc,180,43.2,86.4);bolt.contain=false;await this.animate(bolt,[{sy:0,opacity:0},{sy:1,opacity:1}],180);await this.wait(220);await this.animate(bolt,[{opacity:1},{opacity:0}],180);this.remove(bolt);await this.wait(250);}
   for(let i=0;i<(kind==='lv2'?2:1);i++){this.sound('explosion');await Promise.all([this.damage(kind==='lv2'?1:a.damage),kind==='lv3'?Promise.resolve():this.smoke(x+(kind==='lv2'?(i?15:-15):0),y)]);}
  }
  async enterSteam(){
@@ -198,7 +200,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   if(kind==='lv1'){for(let i=0;i<6;i++){this.sound('space-beam');const fromX=360*(i%2?.58:.42),fromY=this.height*1.1,dx=x-fromX,dy=y-fromY,length=Math.hypot(dx,dy),e=this.sprite(this.primitive('beam'),length,6,[0,.5]);e.height=4;e.x=fromX;e.y=fromY-2;e.angle=Math.atan2(dy,dx)*180/Math.PI;await this.animate(e,[{opacity:0,sx:0},{opacity:1,sx:1,offset:.1},{opacity:0,sx:1}],95);this.remove(e);}}
   if(kind==='lv2'){const e=this.centered(art.lv2.src,180,this.height*1.35,64.8);await this.animate(e,[{opacity:0},{opacity:1,y:this.height*.7-32.4}],1100);await this.animate(e,[{x:e.x,y:e.y,angle:0,sx:1,sy:1},{x:(180+x)/2-32.4,y:Math.min(this.height*.7,y)-54-32.4,angle:315,sx:.75,sy:.75,offset:.55},{x:x-32.4,y:y-32.4,angle:720,sx:.35,sy:.35}],850,'ease-in');this.remove(e);this.sound('explosion');await this.smoke(x,y,2);}
   if(kind==='lv3')await Promise.all([0,1,2].map(async i=>{await this.projectile(art.lv3.src,x+(i-1)*18,y,82.8,720,i*95);this.sound('explosion');await Promise.all([this.smoke(x+(i-1)*18,y),this.ring(x,y)]);}));
-  if(kind==='lv4'){const e=this.centered(art.lv4.src,180,this.height/2,360,this.height);await this.animate(e,[{opacity:0},{opacity:1}],700);await this.wait(250);const hole=this.centered(this.holeRaster(.9),180,this.height/2,792,792,7);hole.maskScale=.9;await this.animate(hole,[{opacity:0,maskScale:.9,angle:0},{opacity:.8,maskScale:.45,angle:-130,offset:.5},{opacity:.8,maskScale:0,angle:-300}],1600,'ease-in');this.remove(e);await this.wait(250);this.sound('explosion');await this.explosion(this.data.effects.explosion,180,this.height/2,360,this.height,900);await this.animate(hole,[{opacity:1},{opacity:0}],250);this.remove(hole);}
+  if(kind==='lv4'){const e=this.centered(art.lv4.src,180,this.height/2,360,this.height);e.contain=false;e.cover=true;await this.animate(e,[{opacity:0},{opacity:1}],700);await this.wait(250);const hole=this.centered(this.holeRaster(.9),180,this.height/2,792,792,7);hole.maskScale=.9;await this.animate(hole,[{opacity:0,maskScale:.9,angle:0},{opacity:.8,maskScale:.45,angle:-130,offset:.5},{opacity:.8,maskScale:0,angle:-300}],1600,'ease-in');this.remove(e);await this.wait(250);this.sound('explosion');await this.explosion(this.data.effects.explosion,180,this.height/2,360,this.height,900);await this.animate(hole,[{opacity:1},{opacity:0}],250);this.remove(hole);}
   await this.ring(x,y);if(kind==='lv1')this.sound('metal');await this.damage(Number(kind.slice(-1)));
  }
 }

@@ -165,3 +165,11 @@ body{display:grid;place-items:center}
 #licenses-content pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.75 ui-monospace,monospace;color:#ded4c6}
 
 input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+
+#app-update-dialog{position:absolute;inset:0;margin:auto;width:88%;max-width:340px;box-sizing:border-box;padding:24px;background:radial-gradient(ellipse at top,#583528,#211a20 80%);color:#ffe1a0;border:2px solid #c49a49;border-radius:16px;font:clamp(15px,4.444cqw,20px)/1.5 system-ui,sans-serif;box-shadow:0 12px 48px #000b}
+#app-update-dialog::backdrop{background:#000a}
+#app-update-dialog h2{font-size:1.2em;margin:0 0 16px;text-align:center}
+.app-update-actions{display:flex;gap:12px;margin-top:20px}
+.app-update-actions button{flex:1;min-height:48px;padding:8px;border:1px solid #b99359;border-radius:8px;background:#30212a;color:#f6dfb4;font:inherit;cursor:pointer}
+.app-update-actions [data-update-now]{background:#d8ae60;color:#24170b}
+.app-update-actions button:focus-visible{outline:2px solid #a9d9ff;outline-offset:2px}

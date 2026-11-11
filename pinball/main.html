@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/main.css">
 <link rel="preload" as="image" href="img/touhou/touhou-loading-suika.webp">
 <link rel="preload" as="image" href="img/chickeneren-logo.webp">
-<script id="pinball-release-control">window.PinballReleaseControl=47;</script>
+<script id="pinball-release-control">window.PinballReleaseControl=48;</script>
 </head>
 <body>
 <section id="fanwork-notice" tabindex="-1">
@@ -43,7 +43,7 @@
 <button id="close-settings" type="button" aria-label="返回" data-i18n-aria-label="common.back"><img src="img/system-marker-back.runtime.webp" alt=""></button>
 <h1 id="settings-title" data-i18n="settings.title">設定</h1>
 <div id="settings-content">
-<label class="setting-row" for="language-setting"><span data-i18n="settings.language">語言</span><select id="language-setting"><option value="zh-Hant">繁體中文</option><option value="en">English</option><option value="ja">日本語</option></select></label>
+<label class="setting-row" for="language-setting"><span data-i18n="settings.language">語言</span><select id="language-setting"><option value="zh-Hant">繁體中文</option><option value="zh-Hans">简体中文</option><option value="en">English</option><option value="ja">日本語</option></select></label>
 <label class="setting-row" for="sound-setting"><span data-i18n="settings.sound">聲音</span><input id="sound-setting" type="checkbox"></label>
 <label id="haptics-row" class="setting-row" for="haptics-setting" hidden><span data-i18n="settings.haptics">振動</span><input id="haptics-setting" type="checkbox"></label>
 <div class="setting-row"><label for="volume-setting" data-i18n="settings.volume">音量</label><input id="volume-setting" type="range" min="0" max="100" step="1" value="100"><output id="volume-value" for="volume-setting">100%</output></div>
@@ -63,12 +63,18 @@
 <p id="save-status" role="status"></p>
 </div>
 </section>
+<dialog id="app-update-dialog" aria-labelledby="app-update-title" aria-describedby="app-update-message">
+<h2 id="app-update-title" data-i18n="update.title">有新版本</h2>
+<p id="app-update-message" data-i18n="update.message">有新版本可用，要前往 Google Play 更新嗎？</p>
+<div class="app-update-actions"><button type="button" data-update-later data-i18n="update.later">稍後</button><button type="button" data-update-now data-i18n="update.now">前往更新</button></div>
+</dialog>
 <p id="load-error" role="alert" hidden></p>
 </main>
 <script src="js/runtime-image-variants.js" type="application/x-pinball-pending" data-pinball-type=""></script>
 <script src="js/system/layout-renderer.js" type="application/x-pinball-pending" data-pinball-type=""></script><script src="js/system/unlock-renderer.js" type="application/x-pinball-pending" data-pinball-type=""></script>
 <script src="js/system/menu-music.js" type="application/x-pinball-pending" data-pinball-type=""></script><script src="js/system/touhou-stage-music.js" type="application/x-pinball-pending" data-pinball-type=""></script>
 <script src="js/system/menu-transition.js" type="application/x-pinball-pending" data-pinball-type=""></script>
+<script src="js/system/app-updates.js" type="application/x-pinball-pending" data-pinball-type=""></script>
 <script src="js/main.bundle.js" type="application/x-pinball-pending" data-pinball-type=""></script>
 <script src="../io-audio-loader.js"></script></body>
 </html>

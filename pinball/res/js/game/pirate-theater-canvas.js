@@ -73,7 +73,7 @@ class PirateTheaterCanvas{
   else if(this.defeated){index=(this.typeIndex+1)%PirateTheaterCatalog.length;level++;}
   await this.load([...PirateTheaterCatalog[index].states.map(s=>s.src),...['pirate-theater-background-day','pirate-theater-background-night','pirate-story-kraken-cave','pirate-story-waterfall-channel'].map(image)]);
   if(token!==this.generation){const error=new Error('Stale theater command');error.name='AbortError';throw error;}
-  this.typeIndex=index;this.level=level;this.stateIndex=0;this.hp=this.maxHp=this.level+2;this.defeated=false;this.present=true;this.actor={...pose(),visible:true};this.phase();await this.curtains(false);
+  this.typeIndex=index;this.level=level;this.stateIndex=0;this.hp=this.maxHp=this.level+2;this.defeated=false;this.present=true;this.actor={...pose(),visible:true};this.phase();await this.prepareSprites();await this.curtains(false);
  }
  get enemy(){return PirateTheaterCatalog[this.typeIndex];}
  get night(){return ['pirate-gunship','rock-shell-beast'].includes(this.enemy.id);}
@@ -210,21 +210,56 @@ class PirateTheaterCanvas{
    if(!legacy&&this.drawRows.has(a.id))continue;
    c.save();
    if(!this.effectOverflow(a)){c.beginPath();c.rect(0,0,360,this.height);c.clip();if(!legacy&&this.stageClip){c.setTransform(1,0,0,1,0,0);c.clip(this.stageClip.path);if(this.stageClip.heartPath)c.clip(this.stageClip.heartPath,'evenodd');c.setTransform(native);}}
-   const h=a.height||a.width*root.PinballRuntimeImages.height(this.images.get(a.src))/root.PinballRuntimeImages.width(this.images.get(a.src)),[ox,oy]=a.origin||[.5,.5],wpx=Math.max(1,Math.round(a.width*scale)),hpx=Math.max(1,Math.round(h*scale)),sprite=this.spriteRaster(a,wpx,hpx),x=Math.round((a.x+a.width*ox)*native.a+native.e),y=Math.round((a.y+h*oy)*native.d+native.f);
-   c.setTransform(1,0,0,1,0,0);c.globalAlpha=a.opacity??1;c.translate(x,y);if(a.angle)c.rotate(a.angle*Math.PI/180);if(a.sx!==1||a.sy!==1)c.scale(a.sx??1,a.sy??1);c.drawImage(sprite.image,-Math.round(wpx*ox),-Math.round(hpx*oy));c.restore();
+   // Animated hole masks already have a reusable source; do not upscale them into cache-sized bitmaps.
+   const h=a.height||a.width*root.PinballRuntimeImages.height(this.images.get(a.src))/root.PinballRuntimeImages.width(this.images.get(a.src)),[ox,oy]=a.origin||[.5,.5],wpx=Math.max(1,Math.round(a.width*scale)),hpx=Math.max(1,Math.round(h*scale)),image=a.maskScale!==undefined?this.images.get(a.src):this.spriteRaster(a,wpx,hpx).image,x=Math.round((a.x+a.width*ox)*native.a+native.e),y=Math.round((a.y+h*oy)*native.d+native.f);
+   c.setTransform(1,0,0,1,0,0);c.globalAlpha=a.opacity??1;c.translate(x,y);if(a.angle)c.rotate(a.angle*Math.PI/180);if(a.sx!==1||a.sy!==1)c.scale(a.sx??1,a.sy??1);c.drawImage(image,-Math.round(wpx*ox),-Math.round(hpx*oy),wpx,hpx);c.restore();
   }
   c.beginPath();c.rect(0,0,360,this.height);c.clip();
   if(this.present&&(this.curtainDynamic||legacy&&!this.closed)){const h=this.hearts;c.drawImage(h.canvas,h.box[0],h.box[1],h.box[2],h.box[3]);}
   if(this.curtainDynamic)this.paintCurtains(c,this.open);c.restore();
  }
+ clearSpriteCache(){for(const entry of this.spriteCache.values()){if(entry.image.close)entry.image.close();else entry.image.width=entry.image.height=0;}this.spriteCache.clear();this.spritePixels=0;}
+ async prepareSprites(){
+  const key=()=>[this.typeIndex,this.level,this.height,this.pixelScale].join('|'),target=key(),generation=this.generation;
+  if(this.preparedSpriteKey===target&&this.preparedSpriteKeys.every(k=>this.spriteCache.has(k)))return;
+  const request=this.spritePreparation=(this.spritePreparation||0)+1,plan=await this.collectSpritePlan();
+  if(request!==this.spritePreparation||generation!==this.generation){const error=new Error('Stale sprite preparation');error.name='AbortError';throw error;}
+  this.clearSpriteCache();const pixels=plan.reduce((n,p)=>n+p.width*p.height,0);this.spriteBudget=Math.max(1048576,Math.min(2097152,pixels+65536));
+  const keys=[];let preparedPixels=0;
+  for(const row of plan){
+   if(request!==this.spritePreparation||generation!==this.generation){const error=new Error('Stale sprite preparation');error.name='AbortError';throw error;}
+   if(key()!==target)return this.prepareSprites();
+   if(preparedPixels+row.width*row.height>this.spriteBudget)continue;
+   this.spriteRaster(row.item,row.width,row.height);preparedPixels+=row.width*row.height;keys.push(row.key);
+   await new Promise(resolve=>requestAnimationFrame(resolve));
+  }
+  if(request!==this.spritePreparation||generation!==this.generation){const error=new Error('Stale sprite preparation');error.name='AbortError';throw error;}
+  if(key()!==target)return this.prepareSprites();
+  this.preparedSpriteKey=target;this.preparedSpriteKeys=keys;this.preparedSpriteStats={requested:plan.length,prepared:keys.length,pixels,preparedPixels,budget:this.spriteBudget};
+ }
+ async collectSpritePlan(){
+  const plan=new Map(),r=root.PinballRuntimeImages,scale=this.pixelScale;
+  const remember=item=>{if(!item?.src||item.maskScale!==undefined)return;const im=this.images.get(item.src);if(!im)return;const width=Math.max(1,Math.round(item.width*scale)),height=Math.max(1,Math.round((item.height||item.width*r.height(im)/r.width(im))*scale)),key=[item.src,width,height,item.filter||'',!!item.contain,!!item.cover].join('|');plan.set(key,{item:{...item},width,height,key});};
+  // Replay only the authored sprite descriptions, on detached animation/state objects.
+  const preview=Object.assign(Object.create(Object.getPrototypeOf(this)),this,{effects:[],animations:[],actor:{...this.actor,visible:true},actorStates:this.actorStates?.map(a=>({...a,visible:true})),health:this.health&&[...this.health],present:true,closed:false,curtainDynamic:false,defeated:false,invalidate(){},phase(){},report(){},sound(){},async damage(){},async wait(){},async animate(target,frames){remember(target);Object.assign(target,frames.at(-1));},remove(item){remember(item);const i=this.effects.indexOf(item);if(i>=0)this.effects.splice(i,1);}});
+  const phases=this.enemy.phases||this.enemy.damageStates||[],variants=Math.max(3,phases.length);
+  for(let state=0;state<variants;state++){
+   preview.stateIndex=Math.min(state,2);preview.phaseIndex=Math.min(state,Math.max(0,phases.length-1));preview.health=this.health&&[...this.health];
+   for(const item of preview.actors(true))remember(item);
+   for(const kind of this.data?['lv1','lv2','lv3','lv4']:['ball','barrel','pirates','kraken']){preview.effects=[];await preview.attack(kind);}
+   if(this.health)for(let hp=0;hp<=Math.max(...this.maximum);hp++){preview.health=this.maximum.map(max=>Math.min(max,hp));for(const item of preview.actors(true))remember(item);}
+  }
+  const size=this.heartPoints?this.heartPoints()[0]?.size:this.heartBox()[3];if(size)remember({src:'res/img/health-heart.svg',width:size,height:size});
+  return [...plan.values()];
+ }
  spriteRaster(item,width,height){
-  const key=[item.src,width,height,item.filter||'',!!item.contain].join('|');let entry=this.spriteCache.get(key);
+  const key=[item.src,width,height,item.filter||'',!!item.contain,!!item.cover].join('|');let entry=this.spriteCache.get(key);
   if(entry){this.spriteCache.delete(key);this.spriteCache.set(key,entry);return entry;}
   const art=root.PinballArt,canvas=art.rasterCanvas(width,height,true),c=canvas.getContext('2d');
-  if(item.contain){const r=root.PinballRuntimeImages,im=this.images.get(item.src),scale=Math.min(width/r.width(im),height/r.height(im)),w=r.width(im)*scale,h=r.height(im)*scale;this.drawImage(c,item.src,(width-w)/2,(height-h)/2,w,h,item.filter);}
+  if(item.contain||item.cover){const r=root.PinballRuntimeImages,im=this.images.get(item.src),scale=(item.cover?Math.max:Math.min)(width/r.width(im),height/r.height(im)),w=r.width(im)*scale,h=r.height(im)*scale;this.drawImage(c,item.src,(width-w)/2,(height-h)/2,w,h,item.filter);}
   else this.drawImage(c,item.src,0,0,width,height,item.filter);
   entry={image:art.rasterImage(canvas),pixels:width*height};this.spriteCache.set(key,entry);this.spritePixels+=entry.pixels;
-  while(this.spritePixels>1048576&&this.spriteCache.size>1){const [id,old]=this.spriteCache.entries().next().value;this.spriteCache.delete(id);this.spritePixels-=old.pixels;if(old.image.close)old.image.close();else old.image.width=old.image.height=0;}
+  while(this.spritePixels>(this.spriteBudget||1048576)&&this.spriteCache.size>1){const [id,old]=this.spriteCache.entries().next().value;this.spriteCache.delete(id);this.spritePixels-=old.pixels;if(old.image.close)old.image.close();else old.image.width=old.image.height=0;}
   return entry;
  }
  setView(bounds,scale){this.height=bounds.height/(bounds.width/360);this.pixelScale=scale*(bounds.width/360);this.prepareHearts();}
