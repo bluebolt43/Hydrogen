@@ -99,7 +99,7 @@
   .a7-end-scene { display: none; opacity: 0; }
   #stage.a7-end-preview .a7-end-scene { display: block; }
   #stage.a7-end-preview #end-search, #stage.a7-end-preview #end-money { display: none; }
-  #a7-witness { transform: scaleX(-1); }
+  img#a7-witness { transform: scaleX(-1); }
   #stage #a7-refusal { inset: auto; top: 15%; left: 55%; width: 34%; height: 22%; object-fit: contain; }
   #stage.a7-preview #a7-bg, #stage.a7-preview #a7-reimu, #stage.a7-preview #a7-yukari, #stage.a7-preview #a7-evasive, #stage.a7-preview #a7-witness, #stage.a7-preview #a7-box, #stage.a7-preview #a7-refusal, #stage.a7-preview #a7-gohei { display: block; }
   #stage.a7-preview #end-search, #stage.a7-preview #end-money { display: none; }
