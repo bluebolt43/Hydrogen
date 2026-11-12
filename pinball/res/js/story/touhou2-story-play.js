@@ -725,7 +725,7 @@ function render(ms){
  }
  phone.dataset.phase=storyData.cues.filter(c=>time>=c.time).at(-1)?.id||'opening';
  if(finale){
-  finaleRoot.hidden=time<storyData.finale.start;
+  finaleRoot.hidden=time<storyData.finale.start||time>=storyData.finale.start+finale.total;
   if(!finaleRoot.hidden){const state=finale.render(time-storyData.finale.start);phone.dataset.phase=state.ending?'finale-end':'finale-'+state.shot.id;}
  }
  if(credits){credits.render(time-storyData.credits.start);if(!creditsRoot.hidden)phone.dataset.phase=creditsRoot.dataset.phase==='card'?'credits-'+creditsRoot.dataset.card:'credits-black';}
