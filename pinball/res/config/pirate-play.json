@@ -2611,8 +2611,7 @@
           "onSeconds": 0.15,
           "offSeconds": 0.15,
           "cycles": 11
-        },
-        "screenMask": true
+        }
       },
       "runtimeSource": "res/img/pirate/pirate-octopus-off.png"
     },

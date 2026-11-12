@@ -2,12 +2,16 @@
 (function(root){
 'use strict';
 const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]],add=(a,b)=>[a[0]+b[0],a[1]+b[1]],mul=(a,k)=>a.map(v=>v*k),length=a=>Math.hypot(...a),unit=a=>mul(a,1/(length(a)||1)),dot=(a,b)=>a[0]*b[0]+a[1]*b[1],cross=(a,b)=>a[0]*b[1]-a[1]*b[0];
+// One light at table position (180, 180), 240 units above the floor. Layer heights are
+// visual approximations; projection is prepared once after rail joints settle.
+const railLight=[180,180,240],railHeight={lower:1,upper:3,tavern:3,top:5};
+function shadowPoint(p,layer,theme){if(theme!=='steampunk')return [p[0]+2,p[1]+4];const h=railHeight[layer]??railHeight.lower,k=h/(railLight[2]-h);return [p[0]+(p[0]-railLight[0])*k,p[1]+(p[1]-railLight[1])*k];}
 function editorTrack(s){
  const n=s.type==='arc'?Math.max(8,Math.ceil((Math.hypot(s.qx-s.x1,s.qy-s.y1)+Math.hypot(s.x2-s.qx,s.y2-s.qy))/1.5)):1;
  const points=Array.from({length:n+1},(_,i)=>{const t=i/n,u=1-t;return s.type==='arc'?[u*u*s.x1+2*u*t*s.qx+t*t*s.x2,u*u*s.y1+2*u*t*s.qy+t*t*s.y2]:[s.x1+(s.x2-s.x1)*t,s.y1+(s.y2-s.y1)*t]});
  return {id:s.id,points,width:s.trackWidth,railMaterial:s.railMaterial,layer:s.layer||'lower',showAboveArt:s.showAboveArt===true};
 }
-function outlines(tracks){
+function outlines(tracks,theme){
  const result=new Map();
  for(const track of tracks){
   const points=[track.points[0]];
@@ -36,15 +40,18 @@ function outlines(tracks){
    }
   }
  }
+ for(const track of result.values())track.shadowRails=track.rails.map(rail=>rail.map(p=>shadowPoint(p,track.layer,theme)));
  return result;
 }
-function drawRails(ctx,tracks,plane){
+function drawRails(ctx,tracks,plane,maskOnly=false){
  const visible=[...tracks.values()].filter(track=>track.showAboveArt&&(track.layer==='tavern'?'upper':track.layer||'lower')===plane);
  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
  // Draw every shadow first so a following segment cannot cover the metal joint.
- ctx.save();ctx.translate(2,4);ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=3;
- for(const track of visible)for(const rail of track.rails){ctx.beginPath();ctx.moveTo(...rail[0]);for(const p of rail.slice(1))ctx.lineTo(...p);ctx.stroke();}
+ if(!maskOnly){
+ ctx.save();ctx.strokeStyle='rgba(0,0,0,.4)';ctx.lineWidth=3;
+ for(const track of visible)for(const rail of track.shadowRails){ctx.beginPath();ctx.moveTo(...rail[0]);for(const p of rail.slice(1))ctx.lineTo(...p);ctx.stroke();}
  ctx.restore();
+ }
  for(const track of visible){
   for(const rail of track.rails){ctx.beginPath();ctx.moveTo(...rail[0]);for(const p of rail.slice(1))ctx.lineTo(...p);ctx.strokeStyle=track.railMaterial==='gold'?'#705126':'#52616a';ctx.lineWidth=2.6;ctx.stroke();ctx.strokeStyle=track.railMaterial==='gold'?'#ddbc70':'#b6c2c6';ctx.lineWidth=.75;ctx.stroke();}
  }
@@ -54,7 +61,8 @@ function drawRails(ctx,tracks,plane){
    if(joint)continue;
    for(const rail of track.rails){
     const [x,y]=end?rail.at(-1):rail[0];
-    for(const [dx,dy,r,color] of [[0,.6,2.1,'rgba(45,30,20,.28)'],[0,0,1.8,'#6c512f'],[0,-.15,1.25,'#c2a365'],[-.35,-.55,.4,'#e8d6a6']]){ctx.beginPath();ctx.arc(x+dx,y+dy,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
+    if(!maskOnly){ctx.beginPath();ctx.arc(x,y+.6,2.1,0,Math.PI*2);ctx.fillStyle='rgba(45,30,20,.28)';ctx.fill();}
+    for(const [dx,dy,r,color] of [[0,0,1.8,'#6c512f'],[0,-.15,1.25,'#c2a365'],[-.35,-.55,.4,'#e8d6a6']]){ctx.beginPath();ctx.arc(x+dx,y+dy,r,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
     ctx.fillStyle='#705735';ctx.fillRect(x-.7,y-.15,1.4,.35);
    }
   }
@@ -63,7 +71,7 @@ function drawRails(ctx,tracks,plane){
 }
 function createRenderer(tracks){
  const Art=typeof module!=='undefined'&&module.exports?require('./art-layers.js'):root.PinballArt,caches=new Map(),budget=2097152;
- return {draw(ctx,plane){
+ return {drawMask(ctx,plane){drawRails(ctx,tracks,plane,true);},draw(ctx,plane){
   const visible=[...tracks.values()].filter(t=>t.showAboveArt&&(t.layer==='tavern'?'upper':t.layer||'lower')===plane);
   if(!visible.length)return;
   const m=ctx.getTransform();
@@ -71,7 +79,7 @@ function createRenderer(tracks){
   let entry=caches.get(plane);
   if(!entry||entry.sx!==m.a||entry.sy!==m.d){
    let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
-   for(const t of visible)for(const rail of t.rails)for(const [x,y] of rail){x0=Math.min(x0,x-6);y0=Math.min(y0,y-6);x1=Math.max(x1,x+8);y1=Math.max(y1,y+10);}
+   for(const t of visible)for(const rail of [...t.rails,...t.shadowRails])for(const [x,y] of rail){x0=Math.min(x0,x-6);y0=Math.min(y0,y-6);x1=Math.max(x1,x+8);y1=Math.max(y1,y+10);}
    const left=Math.floor(x0*m.a+m.e),top=Math.floor(y0*m.d+m.f),width=Math.ceil(x1*m.a+m.e)-left,height=Math.ceil(y1*m.d+m.f)-top;
    if(width*height>budget)return drawRails(ctx,tracks,plane);
    const canvas=Art.rasterCanvas(width,height,true);
@@ -83,5 +91,5 @@ function createRenderer(tracks){
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(entry.canvas,Math.round(entry.left+m.e-entry.e),Math.round(entry.top+m.f-entry.f));ctx.restore();
  }};
 }
-const api={editorTrack,outlines,drawRails,createRenderer};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.GuidedTrackGeometry=api;
+const api={editorTrack,outlines,drawRails,createRenderer,shadowPoint};if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.GuidedTrackGeometry=api;
 })(globalThis);

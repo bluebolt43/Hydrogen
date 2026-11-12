@@ -31,7 +31,7 @@ function entries(objects,templates={}){return objects.filter(o=>eligible(o)&&mod
  const local=!Number.isFinite(o.x1)&&o.type!=='circle',x=o.x??o.cx??((o.x1+o.x2)/2),y=o.y??o.cy??((o.y1+o.y2)/2);
  let d=local?templatePath(o,templates[o.type]):path(o);
  if(local&&!d){if(o.type==='centerPost')d=circle(0,0,o.radius??5);else if(o.outline)d=o.outline.map(([px,py],i)=>`${i?'L':'M'}${px*o.width} ${py*o.height}`).join('')+'Z';else d=path({...o,x:0,y:0,angle:0,width:o.width??templates[o.type]?.width??10,height:o.height??templates[o.type]?.height??10});}
- return {id:o.id,plane:o.layer||'lower',color:typeof o.neonBorder==='string'?o.neonBorder:null,d,x,y,local,angle:o.angle||0};
+ return {id:o.id,plane:o.layer||'lower',aboveArt:o.showAboveArt===true,color:typeof o.neonBorder==='string'?o.neonBorder:null,d,x,y,local,angle:o.angle||0};
  });}
 
 function strokes(settings){const selected=settings?.neonBorderColor,base=selected==='blue'?'#648dff':selected==='yellow'?'#ffda59':color;return [[4.5,base,.08],[2.5,base,.25],[1.25,base,1],[.4,selected==='blue'?'#dce9ff':selected==='yellow'?'#fff6cb':'#ffe5ff',1]];}

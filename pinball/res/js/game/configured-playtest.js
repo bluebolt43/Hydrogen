@@ -116,8 +116,9 @@ $('leaveGame').onclick=()=>{leaveDialog.close();if(window.AppControls?.exitGame)
 function topHit(a,x,y){if(!a||a.hidden||!controls.art)return false;const angle=-a.angle*Math.PI/180,dx=x-a.x,dy=y-a.y-(topItems.has(a)?topOffset():0);return Math.abs(dx*Math.cos(angle)-dy*Math.sin(angle))<=a.width/2&&Math.abs(dx*Math.sin(angle)+dy*Math.cos(angle))<=a.height/2;}
 
 
-const spaceNeon=SpaceNeonBorders.createRenderer(SpaceNeonBorders.entries(G.art_layout_objects||[],G.art_layout_templates));
-addEventListener('pagehide',()=>spaceNeon.destroy(),{once:true});
+const spaceNeonEntries=SpaceNeonBorders.entries(G.art_layout_objects||[],G.art_layout_templates);
+const spaceNeon=SpaceNeonBorders.createRenderer(spaceNeonEntries.filter(e=>!e.aboveArt)),spaceNeonAboveArt=SpaceNeonBorders.createRenderer(spaceNeonEntries.filter(e=>e.aboveArt));
+addEventListener('pagehide',()=>{spaceNeon.destroy();spaceNeonAboveArt.destroy();},{once:true});
 function bonusArt(plane){const producer=artRenderer.drawTable?.producer;if(controls.art&&producer?.enabled&&plane===producer.plane)producer.draw(ctx,artRenderer);}
 const activeBallLayers=new Set();
 const ballsByPlane=new Map(['lower','upper','top'].map(plane=>[plane,[]]));
@@ -260,7 +261,7 @@ function circle(p,r,fill,stroke){ctx.beginPath();ctx.arc(...p,r,0,Math.PI*2);if(
 const reboundEffects=createReboundEffects(game,soundBank);
 const impactPresentation=createImpactPresentation(game,artLayers,artRenderer,{ballsLast:layeredRenderingEnabled,collisionRingsHandled:true});
 theater.onSound=name=>impactPresentation.onTheaterSound(name);
-const trackOverlay=GuidedTrackGeometry.outlines([...(G.guided_tracks||[]),...(G.visual_tracks||[])]);const trackLayout=new Map([...trackOverlay].map(([id,t])=>[id,{...t,showAboveArt:true}]));
+const trackOverlay=GuidedTrackGeometry.outlines([...(G.guided_tracks||[]),...(G.visual_tracks||[])],PLAYTEST_THEME);const trackLayout=new Map([...trackOverlay].map(([id,t])=>[id,{...t,showAboveArt:true}]));
 const trackRenderer=GuidedTrackGeometry.createRenderer(trackOverlay);
 function withLayoutLayer(layer,draw,active=null){
  active??=game.balls.some(b=>b.state!=='drained'&&(b.state==='guided'?(game.guidedTracks.find(t=>t.id===b.track?.id)?.layer||'lower'):b.layer)===layer);
@@ -424,8 +425,12 @@ function prepareAuthoredBallMasks(key){
   }
  }
  ballMasks.prepare(key,canvas.width,canvas.height,view,(c,plane,region=null,staticOnly=false)=>{
-  if(!controls.art)return;const brightness=artRenderer.brightness;artRenderer.brightness=.82;
-  try{for(const source of plans.get(plane)){if(staticOnly&&!source.fixed)continue;const b=source.previousBounds;if(region&&b&&(b[2]<=region[0]||region[2]<=b[0]||b[3]<=region[1]||region[3]<=b[1]))continue;source.paint(c);}}finally{artRenderer.brightness=brightness;}
+  const brightness=artRenderer.brightness;artRenderer.brightness=.82;
+  try{if(controls.art)for(const source of plans.get(plane)){if(staticOnly&&!source.fixed)continue;const b=source.previousBounds;if(region&&b&&(b[2]<=region[0]||region[2]<=b[0]||b[3]<=region[1]||region[3]<=b[1]))continue;source.paint(c);}}finally{artRenderer.brightness=brightness;}
+  // Rails are painted after the balls of their own plane. Reuse the visible
+  // geometry without its cast shadow in the fixed authored mask.
+  if((theater.theme==='touhou1'||theater.theme==='touhou2')&&plane!=='lower')return;
+  for(let i=planes.indexOf(plane);i<planes.length;i++)trackRenderer.drawMask(c,planes[i]);
  },sources);
 }
 // Finite, stationary source states only. The scene cache renders comparisons
@@ -497,6 +502,7 @@ function prepareSceneUnits(key){
   addBonus(plane);
   const plan=artDrawPlans.get(plane);if(!plan.hasBallMarker)addBalls(plane);
   let drawn=false;for(const batch of plan.batches){if(batch)addArt(plane,batch);else if(!drawn){addBalls(plane);drawn=true;}}
+  if(controls.art&&SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay)&&spaceNeonEntries.some(e=>e.aboveArt&&e.plane===plane))sceneUnits.push({fixed:false,bounds:[0,-170.5,360,469.5],key:()=>spaceNeonAboveArt.key(game,G.gameplay,plane),paint:paint(()=>spaceNeonAboveArt.draw(ctx,game,G.gameplay,plane))});
   sceneUnits.push({fixed:true,paint:paint(()=>trackRenderer.draw(ctx,plane))});
   const posts=[...(game.configuredPosts?.values()||[])].filter(p=>(p.layer==='tavern'?'upper':p.layer)===plane);
   if(posts.length&&!spaceTheme)sceneUnits.push({fixed:false,bounds:[Math.min(...posts.map(p=>p.center[0]-14)),Math.min(...posts.map(p=>p.center[1]-14)),Math.max(...posts.map(p=>p.center[0]+14)),Math.max(...posts.map(p=>p.center[1]+14))],key:postCountKey(posts),paint:paint(()=>ConfiguredMechanisms.drawPostCounts(game,ctx,plane))});
@@ -694,7 +700,7 @@ async function preprocessPlayGraphics(){
  for(const plane of ['lower','upper','top'])for(const batch of artDrawPlans.get(plane).batches)if(batch)drawPasses.push({plane,items:batch});
  drawPasses.push({plane:'foreground',items:artByPlane.get('foreground')},...frameArtPlanes);
  artRenderer.setDrawPasses(drawPasses,game);
- if(SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay))spaceNeon.prepare(game,G.gameplay,canvas.width/view[2]);
+ if(SpaceNeonBorders.enabled(PLAYTEST_THEME,G.gameplay)){spaceNeon.prepare(game,G.gameplay,canvas.width/view[2]);spaceNeonAboveArt.prepare(game,G.gameplay,canvas.width/view[2]);}
  game.bonus?.prepareArtwork?.(canvas.width/view[2],artRenderer,[-view[0]*canvas.width/view[2],-view[1]*canvas.width/view[2]]);prepareScoreGraphics();
  game.prepareFlippers?.();
  for(const f of game.flippers)f.cadet?.points(game.time);

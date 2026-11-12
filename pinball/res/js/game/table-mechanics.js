@@ -28,7 +28,7 @@ function createGame(core){
   if(type==='launch')this.ball.launchGuard=true;
   if(['capture','plunger-ready','drain'].includes(type))this.ball.launchGuard=false;
   if(type==='free-ball-launch'||type==='release'&&this.sockets.some(s=>s.id===data.id&&s.mechanic==='shark-inlet'))this.sharkFlashAt=this.time;
-  if(type==='target-hit'){this.targetVisualAt??=new Map();this.targetVisualAt.set(data.id,this.time);}
+  if(type==='target-hit'){this.targetVisualAt??=new Map();this.targetVisualAt.set(data.id,this.time);if(data.objectId)this.targetVisualAt.set(data.objectId,this.time);}
   if(type==='layer'){this.layerEnteredAt??=new Map();this.layerEnteredAt.set(data.id,this.time);}
   if(type==='flipper-hit'){this.flipperHitAt??=new Map();this.flipperHitAt.set(data.id,this.time);}
   if(type==='flag-hit'){this.flagHitAt??=new Map();this.flagHitAt.set(data.id,this.time);}

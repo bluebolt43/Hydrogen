@@ -39,11 +39,11 @@ class PirateTheaterCanvas{
   }).catch(error=>{if(error.name!=='AbortError'&&token===this.generation)this.report('error',{id,message:String(error)});});
  }
  cancel(){this.attackActive=false;const error=new Error('Theater reset');error.name='AbortError';for(const a of this.animations)a.reject(error);this.animations=[];this.effects=[];this.warning=false;}
- animate(target,frames,duration,easing='linear',delay=0){
-  const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ animate(target,frames,duration,easing='linear',delay=0,keepDuration=false){
+  const reduced=!keepDuration&&matchMedia('(prefers-reduced-motion:reduce)').matches;
   return new Promise((resolve,reject)=>{const keys=[...new Set(frames.flatMap(f=>Object.keys(f)))].filter(k=>!['offset','easing'].includes(k));let previous={};for(const k of keys)previous[k]=target[k]??(k==='opacity'?1:0);const normalized=frames.map((f,i)=>{previous={...previous,...f};return {...previous,offset:f.offset??i/(frames.length-1),easing:f.easing};});for(const k of keys)target[k]=normalized[0][k];this.animations.push({target,frames:normalized,start:this.clock+(reduced?0:delay),duration:reduced?1:duration,easing,resolve,reject});this.invalidate?.();});
  }
- wait(duration){return this.animate({},[{},{}],duration);}
+ wait(duration,keepDuration=false){return this.animate({},[{},{}],duration,'linear',0,keepDuration);}
  tick(now,paused){
   const dt=this.previous===undefined?0:Math.max(0,now-this.previous);this.previous=now;
   if(!paused&&!this.paused)this.clock+=dt;
@@ -65,7 +65,7 @@ class PirateTheaterCanvas{
  async load(sources){await Promise.all(sources.map(async src=>{if(this.images.has(src))return;const im=new Image(),r=root.PinballRuntimeImages;im.src=r.resolve(src);await r.decode(im);this.images.set(src,im);}));}
  async choose(data,token=this.generation){
   if(this.present&&!this.defeated)return;
-  if(!data.skipWarning){this.warning=true;this.phase();await this.wait(1200);this.warning=false;this.phase();}
+  if(!data.skipWarning){this.warning=true;this.phase();await this.wait(1200,true);this.warning=false;this.phase();}
   await this.curtains(true);
   let index=this.typeIndex,level=this.level;
   if(data.mode==='boss'&&data.stage>=1&&data.stage<=PirateTheaterCatalog.length){index=data.stage-1;level=data.stage;}
@@ -85,33 +85,43 @@ class PirateTheaterCanvas{
  tutorialBounds(){const [x,y,w,h]=this.enemyBox(),heart=this.heartBox();return {boss:{x:x/360,y:y/this.height,w:w/360,h:h/this.height},hearts:{x:heart[0]/360,y:heart[1]/this.height,w:heart[2]/360,h:heart[3]/this.height}};}
  sound(name){this.report('sound',{name});}
  sprite(src,size,layer=6,origin=[.5,.5]){const item={id:'effect:'+(this.effectSerial=(this.effectSerial||0)+1),src,width:size,...pose(),layer,origin};this.effects.push(item);return item;}
+ stormShade(){
+  const src='canvas:pirate-storm';
+  if(!this.images.has(src)){const canvas=document.createElement('canvas');canvas.width=128;canvas.height=64;const c=canvas.getContext('2d'),gradient=c.createRadialGradient(64,8,0,64,8,100);gradient.addColorStop(0,'rgba(0,19,38,.55)');gradient.addColorStop(1,'#001326');c.fillStyle=gradient;c.fillRect(0,0,128,64);this.images.set(src,canvas);}
+  const shade=this.sprite(src,360,5.5);shade.height=this.height;shade.opacity=0;return shade;
+ }
  remove(item){const index=this.effects.indexOf(item);if(index>=0)this.effects.splice(index,1);this.invalidate?.();}
  async smoke(x,y,bursts=1){
   const size=360*.256;
   for(let i=0;i<bursts;i++){const item=this.sprite(image('pirate-explosion-smoke'),size);await this.animate(item,[{...pose(x-size/2,y-size/2,.2),opacity:0,offset:0},{...pose(x-size/2,y-size/2,.95),opacity:1,offset:.15},{...pose(x-size/2,y-size/2-360*.012,1.15),opacity:.9,offset:.5},{...pose(x-size/2,y-size/2-360*.04,1.4),opacity:0,offset:1}],650,'linear',i?120:0);this.remove(item);}
+ }
+ async airdrop(src,startX,hitX,hitY,size,spin,delay=0){
+  const item=this.sprite(src,size),apex=this.height-Math.min(this.height*.4,360*.19),p=(x,y,s,a)=>pose(x-size/2,y-size/2,s,a);
+  Object.assign(item,p(startX,this.height+size*.6,1,0));
+  await this.animate(item,[{...p(startX,this.height+size*.6,1,0),offset:0},{...p(startX,apex,1,0),offset:.24,easing:'ease-in'},{...p(startX,apex,1,0),offset:.27},{...p((startX+hitX)/2,Math.min(apex,hitY)-360*.07,.56,spin*.45),offset:.7},{...p(hitX,hitY,.18,spin),offset:1}],720,'linear',delay);
+  this.remove(item);
  }
  async attack(kind){
   if(!['ball','barrel','pirates','kraken'].includes(kind))return;
   const [ex,ey,ew]=this.enemyBox(),water=this.height*2/3+360*.019333,cx=ex+ew/2,cy=Math.max(360*.07,Math.min(ey+ew*.4,water-360*.025));
   this.phase();
   if(kind==='kraken'){
+   const shade=this.stormShade();
    const size=360*.32,baseY=water+360*.075,low=['bamboo-raft','lateen-boat'].includes(this.enemy.id),raised=baseY-size*.95+(low?(size*.95-360*.075)/2:0);
    const arms=[0,1].map(i=>{const a=this.sprite(image('pirate-kraken-tentacle'),size,i?3:1,[.5,.95]);a.x=cx+(i?1:-1)*Math.max(ew*.55,360*.115)-size/2;a.y=this.height+size*.1;a.sx=i?-1:1;return a;});
-   this.sound('thunder');await Promise.all(arms.map(a=>this.animate(a,[{y:a.y},{y:raised}],700,'ease-out')));
-   await Promise.all(arms.map((a,i)=>this.animate(a,[0,-9,10,-6,0].map(angle=>({angle:angle*(i?-1:1)})),950,'ease-in-out')));
+   this.sound('thunder');await Promise.all([this.animate(shade,[{opacity:0},{opacity:.7}],700),...arms.map(a=>this.animate(a,[{y:a.y},{y:raised}],700,'ease-out'))]);
+   await Promise.all([this.animate(shade,[.7,.22,.7,.16,.7].map(opacity=>({opacity})),950),...arms.map((a,i)=>this.animate(a,[0,-9,10,-6,0].map(angle=>({angle:angle*(i?-1:1)})),950,'ease-in-out'))]);
    const bolt=this.sprite(image('pirate-lightning'),360*.24,6,[.5,0]);bolt.x=cx-360*.12;bolt.height=cy+360*.015;bolt.sy=0;bolt.opacity=0;
-   await this.animate(bolt,[{sy:0,opacity:0},{sy:1,opacity:1}],180,'ease-in');this.sound('explosion');
+   await Promise.all([this.animate(shade,[{opacity:.7},{opacity:.05,offset:.35},{opacity:.6}],180),this.animate(bolt,[{sy:0,opacity:0},{sy:1,opacity:1}],180,'ease-in')]);this.sound('explosion');
    const puff=this.sprite(image('pirate-explosion-smoke'),360*.256);puff.x=cx-puff.width/2;puff.y=cy-puff.width/2;
    await Promise.all([this.animate(bolt,[{opacity:1},{opacity:0}],260),this.animate(puff,[{sx:.2,sy:.2,opacity:0,offset:0},{sx:1,sy:1,opacity:1,offset:.2},{sx:1.15,sy:1.15,y:puff.y-8,opacity:.9,offset:.6},{sx:1.35,sy:1.35,y:puff.y-20,opacity:0,offset:1}],700)]);
-   this.remove(bolt);this.remove(puff);await this.damage(4);await Promise.all(arms.map(a=>this.animate(a,[{y:raised},{y:this.height+size*.1}],650,'ease-in')));arms.forEach(a=>this.remove(a));
+   this.remove(bolt);this.remove(puff);await this.damage(4);await Promise.all([this.animate(shade,[{opacity:shade.opacity},{opacity:0}],650),...arms.map(a=>this.animate(a,[{y:raised},{y:this.height+size*.1}],650,'ease-in'))]);arms.forEach(a=>this.remove(a));this.remove(shade);
   }else{
    const count=kind==='pirates'?3:1,src=image({ball:'pirate-volleyball',barrel:'pirate-explosive-barrel',pirates:'pirate-airborne-crew'}[kind]);
    await Promise.all(Array.from({length:count},async(_,i)=>{
-    const size=360*(count===3?.23:.28),spread=i-(count-1)/2,startX=180+spread*360*.2,apex=this.height-Math.min(this.height*.4,360*.19),hitX=cx+spread*ew*.18,spin=(i%2?-1:1)*720,item=this.sprite(src,size);
-    const p=(x,y,s,a)=>pose(x-size/2,y-size/2,s,a);
-    Object.assign(item,p(startX,this.height+size*.6,1,0));
-    await this.animate(item,[{...p(startX,this.height+size*.6,1,0),offset:0},{...p(startX,apex,1,0),offset:.24,easing:'ease-in'},{...p(startX,apex,1,0),offset:.27},{...p((startX+hitX)/2,Math.min(apex,cy)-360*.07,.56,spin*.45),offset:.7},{...p(hitX,cy,.18,spin),offset:1}],720,'linear',i*95);
-    this.remove(item);this.sound('explosion');await this.smoke(hitX,cy,kind==='barrel'?2:1);
+    const size=360*(count===3?.23:.28),spread=i-(count-1)/2,startX=180+spread*360*.2,hitX=cx+spread*ew*.18,spin=(i%2?-1:1)*720;
+    await this.airdrop(src,startX,hitX,cy,size,spin,i*95);
+    this.sound('explosion');await this.smoke(hitX,cy,kind==='barrel'?2:1);
    }));await this.damage({ball:1,barrel:2,pirates:3}[kind]);
   }
   this.phase();
@@ -289,7 +299,7 @@ class PirateTheaterCanvas{
   this.stageClip.heartKey=heartKey;this.stageClip.heartPath=path;
  }
 
- paintWarning(c,view){if(!this.warning)return;c.save();c.fillStyle='#000a';c.fillRect(...view);c.globalAlpha=mix(.15,1,(Math.cos(this.clock/600*Math.PI*2)+1)/2);c.fillStyle=c.strokeStyle='#ff3038';c.textAlign='center';c.font='bold 28px monospace';const x=view[0]+view[2]/2,y=view[1]+view[3]/2;c.fillText('WARNING',x,y-65);c.beginPath();c.moveTo(x,y-48);c.lineTo(x-32,y+12);c.lineTo(x+32,y+12);c.closePath();c.lineWidth=3;c.stroke();c.fillRect(x-2,y-27,4,19);c.beginPath();c.arc(x,y+3,3,0,Math.PI*2);c.fill();c.fillText('ENERMY',x,y+48);c.fillRect(x-85,y+62,170,2);c.restore();}
+ paintWarning(c,view){if(!this.warning)return;c.save();c.fillStyle='#000a';c.fillRect(...view);c.globalAlpha=matchMedia('(prefers-reduced-motion:reduce)').matches?1:mix(.15,1,(Math.cos(this.clock/600*Math.PI*2)+1)/2);c.fillStyle=c.strokeStyle='#ff3038';c.textAlign='center';c.font='bold 28px monospace';const x=view[0]+view[2]/2,y=view[1]+view[3]/2;c.fillText('WARNING',x,y-65);c.beginPath();c.moveTo(x,y-48);c.lineTo(x-32,y+12);c.lineTo(x+32,y+12);c.closePath();c.lineWidth=3;c.stroke();c.fillRect(x-2,y-27,4,19);c.beginPath();c.arc(x,y+3,3,0,Math.PI*2);c.fill();c.fillText('ENERMY',x,y+48);c.fillRect(x-85,y+62,170,2);c.restore();}
 }
 root.PirateTheaterCanvas=PirateTheaterCanvas;
 })(typeof window!=='undefined'?window:globalThis);

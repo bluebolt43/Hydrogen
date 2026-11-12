@@ -879,5 +879,8 @@
   "res/img/touhou/touhou2-vase-table.png": "res/img/touhou/touhou2-vase-table.runtime.webp",
   "res/img/touhou/touhou2-vine-center.png": "res/img/touhou/touhou2-vine-center.runtime.webp",
   "res/img/touhou/touhou2-vine-left.png": "res/img/touhou/touhou2-vine-left.runtime.webp",
-  "res/img/touhou/touhou2-vine-right.png": "res/img/touhou/touhou2-vine-right.runtime.webp"
+  "res/img/touhou/touhou2-vine-right.png": "res/img/touhou/touhou2-vine-right.runtime.webp",
+  "res/img/saga/saga-item-shop-sign.png": "res/img/saga/saga-item-shop-sign.runtime.webp",
+  "res/img/saga/saga-inn-sign.png": "res/img/saga/saga-inn-sign.runtime.webp",
+  "res/img/saga/saga-quest-house-sign.png": "res/img/saga/saga-quest-house-sign.runtime.webp"
 }

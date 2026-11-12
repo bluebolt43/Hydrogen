@@ -454,7 +454,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
  r.collected.add(id);
   const display=this.targetDisplayById.get(r.id);
  display.hits.add(id);
- this.emit('target-hit',{id,group:r.id,count:r.collected.size});
+ this.emit('target-hit',{id,objectId:r.members?.find(member=>id===member||id.startsWith(member+'-')),group:r.id,count:r.collected.size});
   if(r.collected.size!==r.targets.length)return;
  r.collected.clear();
  r.last=this.time;

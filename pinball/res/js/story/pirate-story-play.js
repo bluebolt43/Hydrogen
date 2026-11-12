@@ -295,6 +295,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const scene=document.querySelector('#scene');
 const scene2=document.querySelector('#scene2');
 const scene3=document.querySelector('#scene3');
@@ -389,13 +460,15 @@ scene3.hidden=elapsed<scene3Start||elapsed>=scene4Start;
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -441,7 +514,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -527,7 +601,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -632,16 +706,89 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function render(){document.querySelector('#scene4').hidden=false;phone.dataset.phase='scene4';}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -687,7 +834,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -773,7 +921,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -878,6 +1026,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const scene5=document.querySelector('#scene5');
 const finaleShots = {
   cooking: { x: .22, y: .64, scale: 1.85 },
@@ -910,13 +1129,15 @@ function renderFinale(elapsed) {
 function render(elapsed){scene5.hidden=false;renderFinale(elapsed-scene5Start);}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -962,7 +1183,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -1048,7 +1270,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -1153,16 +1375,89 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function render(){document.querySelector('#stage2-end').hidden=false;phone.dataset.phase='stage2-2';}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -1208,7 +1503,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -1294,7 +1590,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -1399,6 +1695,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const sharkArrival=document.querySelector('#shark-arrival');
 function render(elapsed){
   sharkArrival.hidden = elapsed < sharkStart || elapsed >= ch3FirstStart;
@@ -1414,13 +1781,15 @@ phone.dataset.phase=elapsed<ch3FirstStart?'stage3-comic':elapsed<ch3SecondStart?
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -1466,7 +1835,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -1552,7 +1922,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -1657,6 +2027,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const sharkEnd=document.querySelector('#shark-end');
 const bottleEnding=document.querySelector('#bottle-ending');
 const bottle=document.querySelector('#bottle');
@@ -1676,13 +2117,15 @@ if(elapsed>=bottleStart)renderBottle(elapsed-bottleStart);
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -1728,7 +2171,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -1814,7 +2258,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -1919,6 +2363,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const nightScene = document.querySelector('#night-scene'), nightIsland = document.querySelector('#night-island'), stage4First = document.querySelector('#stage4-first');
 function renderNight(ms) {
   const t = clamp((ms - 2000) / 5000, 0, 1), ease = t*t*(3-2*t);
@@ -1976,13 +2491,15 @@ function renderStage4(ms) {
 function render(elapsed){nightScene.hidden=elapsed>=stage4FirstStart;stage4Story.hidden=elapsed<stage4FirstStart;if(elapsed>=stage4FirstStart)renderStage4(elapsed-stage4FirstStart);else{phone.dataset.phase='stage4-island';renderNight(elapsed-nightStart);}}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -2028,7 +2545,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -2114,7 +2632,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -2219,6 +2737,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const victory=document.querySelector('#victory'),victoryTheater=document.querySelector('#victory-theater');
 let victoryReady=false,victoryStarted=false;
 function renderVictory(){
@@ -2239,13 +2828,15 @@ function render(){victory.hidden=false;renderVictory();}
 function resetChapter(){victoryReady=false;victoryStarted=false;victoryTheater.src='../pirate-theater.html?embed&story-victory';}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -2291,7 +2882,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -2377,7 +2969,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -2482,6 +3074,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function render(elapsed){
 document.querySelector("#ch5-story").hidden=false;
   if(elapsed>=ch5Start){
@@ -2519,13 +3182,15 @@ document.querySelector("#ch5-story").hidden=false;
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -2571,7 +3236,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -2657,7 +3323,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -2762,6 +3428,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function render(elapsed){
  document.querySelector('#ch5-story').hidden=false;
  const ms=elapsed-ch5Start,endMs=elapsed-ch5Stop;
@@ -2789,13 +3526,15 @@ function render(elapsed){
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -2841,7 +3580,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -2927,7 +3667,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -3032,6 +3772,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function render(elapsed){
 document.querySelector("#ch6-story").hidden=false;
   if(elapsed>=ch6Start){
@@ -3043,13 +3854,15 @@ document.querySelector("#ch6-story").hidden=false;
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -3095,7 +3908,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -3181,7 +3995,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -3286,6 +4100,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function render(elapsed){
 document.querySelector("#ch6-story").hidden=false;
   if(elapsed>=ch6Start){
@@ -3313,13 +4198,15 @@ document.querySelector("#ch6-story").hidden=false;
 }
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -3365,7 +4252,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -3451,7 +4339,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -3556,6 +4444,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const ch7Layout={"version":1,"coordinateSystem":"background-pixels","background":{"src":"../img/pirate/pirate-story-kraken-cave.png","width":1672,"height":941},"camera":{"x":560,"y":22,"width":500,"height":888.89,"aspectRatio":"9:16"},"objects":[{"id":"pirate-eye-closed-1","asset":"pirate-eye-closed","src":"../img/pirate/pirate-eye-closed.png","x":736,"y":268,"width":35,"height":33.97,"zIndex":1},{"id":"pirate-eye-closed-2","asset":"pirate-eye-closed","src":"../img/pirate/pirate-eye-closed.png","x":828,"y":210,"width":40,"height":38.82,"zIndex":2},{"id":"pirate-eye-glowing-3","asset":"pirate-eye-glowing","src":"../img/pirate/pirate-eye-glowing.png","x":637,"y":278,"width":60,"height":58.24,"zIndex":3},{"id":"pirate-eye-open-4","asset":"pirate-eye-open","src":"../img/pirate/pirate-eye-open.png","x":948,"y":272,"width":60,"height":58.24,"zIndex":4},{"id":"pirate-eye-open-5","asset":"pirate-eye-open","src":"../img/pirate/pirate-eye-open.png","x":890,"y":316,"width":50,"height":48.53,"zIndex":5},{"id":"pirate-story-kraken-body-6","asset":"pirate-story-kraken-body","src":"../img/pirate/pirate-story-kraken-body.png","x":470,"y":356,"width":700,"height":393.96,"zIndex":6},{"id":"pirate-story-kraken-attack-burst-7","asset":"pirate-story-kraken-attack-burst","src":"../img/pirate/pirate-story-kraken-attack-burst.png","x":0,"y":0,"width":1680,"height":945.5,"zIndex":7}]};
 let ch7EyeSchedules=[];
 function resetCh7Eyes(){
@@ -3632,13 +4591,15 @@ function render(elapsed){document.querySelector('#ch7-story').hidden=false;
 function resetChapter(){resetCh7Eyes();}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -3684,7 +4645,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -3770,7 +4732,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -3875,6 +4837,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const ch7EndLayout={"version":1,"coordinateSystem":"background-pixels","background":{"src":"../img/pirate/pirate-story-kraken-cave.png","width":1672,"height":941},"camera":{"x":560,"y":22,"width":500,"height":888.89,"aspectRatio":"9:16"},"objects":[{"id":"stage7-4-1","asset":"stage7-4","src":"../img/pirate/pirate-story-kraken-defeated.png","x":450,"y":173,"width":700,"height":583.33,"zIndex":1},{"id":"stage7-3-boss-2","asset":"stage7-3-boss","src":"../img/pirate/pirate-story-kraken-body.png","x":470,"y":356,"width":700,"height":393.96,"zIndex":2},{"id":"stage7-4-3","asset":"stage7-4","src":"../img/pirate/pirate-story-kraken-defeated.png","x":850,"y":300,"width":100,"height":83.33,"zIndex":3},{"id":"stage7-5-4","asset":"stage7-5","src":"../img/pirate/pirate-story-treasure-cave.png","x":596.2,"y":219.35,"width":435.99,"height":245.38,"zIndex":4}]};
 function renderCh7End(ms){
  const camera=ch7EndLayout.camera,scale=storyWidth/camera.width;
@@ -3911,13 +4944,15 @@ function renderCh7End(ms){
 function render(elapsed){document.querySelector('#ch7-end-story').hidden=false;renderCh7End(elapsed-ch7EndStart);phone.dataset.phase='stage7-end';}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -3963,7 +4998,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -4049,7 +5085,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -4154,6 +5190,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 const ch8Dialogue=[
   {speaker:'officer',text:'✋'},
   {speaker:'main',image:'../img/pirate/pirate-kraken-normal.png',label:'章魚'},
@@ -4234,13 +5341,15 @@ function render(elapsed){document.querySelector('#ch8-story').hidden=false;rende
 function resetChapter(){ch8LastReactionBeat=-1;}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -4286,7 +5395,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -4372,7 +5482,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};
@@ -4477,6 +5587,77 @@ function blend(from, to, progress) {
   return Object.fromEntries(['x', 'y', 'scale'].map(key => [key, from[key] + (to[key] - from[key]) * ease]));
 }
 ;
+/* A camera renders into one screen-sized surface, regardless of scene zoom. */
+class StoryViewportCamera {
+ constructor(stage,source=stage.querySelector('#camera')){
+  this.stage=stage;this.canvas=document.createElement('canvas');this.canvas.className='story-viewport';
+  this.canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';
+  this.canvas.hidden=true;source.after(this.canvas);this.context=this.canvas.getContext('2d');
+ }
+ invalidate(){this.frameKey=undefined;}
+ begin(camera,contentKey){
+  const frameKey=contentKey===undefined?undefined:[camera.width,camera.height,camera.x,camera.y,camera.zoom,camera.alpha,devicePixelRatio,contentKey].join('|');
+  if(frameKey!==undefined&&frameKey===this.frameKey&&!this.canvas.hidden)return false;
+  this.frameKey=frameKey;this.camera=camera;const ratio=devicePixelRatio||1,w=Math.max(1,Math.round(camera.width*ratio)),h=Math.max(1,Math.round(camera.height*ratio));
+  if(this.canvas.width!==w)this.canvas.width=w;if(this.canvas.height!==h)this.canvas.height=h;
+  const c=this.context;c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,w,h);
+  c.setTransform(ratio*camera.zoom,0,0,ratio*camera.zoom,ratio*camera.x,ratio*camera.y);
+  c.globalAlpha=camera.alpha;this.canvas.hidden=false;return true;
+ }
+ image(image,box,alpha=1,flipX=false,flipY=false,fit='fill'){
+  if(!image?.complete||!image.naturalWidth||alpha<=0)return;
+  const runtime=PinballRuntimeImages,iw=runtime.width(image),ih=runtime.height(image),camera=this.camera,c=this.context;
+  let [x,y,w,h]=box;if(!(w>0&&h>0))return;
+  if(fit==='contain'||fit==='cover'){const scale=(fit==='cover'?Math.max:Math.min)(w/iw,h/ih),dw=iw*scale,dh=ih*scale;x+=(w-dw)/2;y+=(h-dh)/2;w=dw;h=dh;}
+  const left=Math.max(x,-camera.x/camera.zoom),top=Math.max(y,-camera.y/camera.zoom),right=Math.min(x+w,(camera.width-camera.x)/camera.zoom),bottom=Math.min(y+h,(camera.height-camera.y)/camera.zoom);
+  if(right<=left||bottom<=top)return;
+  const sx=(flipX?x+w-right:left-x)*iw/w,sy=(flipY?y+h-bottom:top-y)*ih/h,sw=(right-left)*iw/w,sh=(bottom-top)*ih/h;
+  c.save();c.globalAlpha*=alpha;
+  if(flipX||flipY){c.translate(flipX?left+right:0,flipY?top+bottom:0);c.scale(flipX?-1:1,flipY?-1:1);}
+  runtime.draw(c,image,sx,sy,sw,sh,left,top,right-left,bottom-top);c.restore();
+ }
+ bubble(node,box,alpha){
+  const c=this.context,style=getComputedStyle(node),[x,y,w,h]=box,border=parseFloat(style.borderTopWidth)||0;
+  c.save();c.globalAlpha*=alpha;c.fillStyle=style.backgroundColor;c.strokeStyle=style.borderTopColor;c.lineWidth=border;
+  c.beginPath();c.ellipse(x+w/2,y+h/2,Math.max(0,(w-border)/2),Math.max(0,(h-border)/2),0,0,Math.PI*2);c.fill();if(border)c.stroke();
+  const tail=getComputedStyle(node,'::after'),tw=parseFloat(tail.width),th=parseFloat(tail.height);
+  if(tail.content!=='none'&&tw>0&&th>0){
+   const tx=x+parseFloat(tail.left),ty=y+h-parseFloat(tail.bottom)-th,m=new DOMMatrix(tail.transform),origin=tail.transformOrigin.split(' ').map(parseFloat);
+   c.translate(tx+origin[0],ty+origin[1]);c.transform(m.a,m.b,m.c,m.d,m.e,m.f);c.translate(-origin[0],-origin[1]);
+   c.fillStyle=tail.backgroundColor;c.fillRect(0,0,tw,th);c.beginPath();c.moveTo(tw,0);c.lineTo(tw,th);c.lineTo(0,th);c.stroke();
+  }c.restore();
+ }
+ hide(){this.canvas.hidden=true;}
+ dispose(){this.canvas.width=this.canvas.height=0;this.canvas.remove();}
+}
+
+/* Single-image camera: keep the authored DOM geometry and overlay order. */
+class StoryImageViewport {
+ constructor(image){
+  this.image=image;this.viewport=new StoryViewportCamera(image.parentElement,image);
+  image.style.visibility='hidden';image.style.willChange='auto';
+ }
+ render(){
+  const image=this.image,viewport=this.viewport;
+  if(image.hidden||!image.complete||!image.naturalWidth){viewport.hide();return;}
+  const style=getComputedStyle(image),parent=image.parentElement;
+  const m=new DOMMatrix(style.transform),[ox,oy]=style.transformOrigin.split(' ').map(parseFloat);
+  const x=image.offsetLeft+ox-m.a*ox-m.c*oy+m.e,y=image.offsetTop+oy-m.b*ox-m.d*oy+m.f;
+  const width=image.offsetWidth,height=image.offsetHeight;
+  viewport.canvas.style.zIndex=style.zIndex;
+  viewport.canvas.style.opacity=style.opacity;
+  const pose={width:parent.clientWidth,height:parent.clientHeight,x,y,zoom:m.a,alpha:1};
+  const key=[image.currentSrc,width,height,m.b,m.c,m.d].join('|');
+  if(!viewport.begin(pose,key))return;
+  if(m.b===0&&m.c===0&&m.a===m.d&&m.a>0){viewport.image(image,[0,0,width,height],1,false,false,style.objectFit);return;}
+  // A rotating camera still draws into the bounded viewport, never a giant layer.
+  const c=viewport.context,r=devicePixelRatio||1;
+  c.setTransform(r*m.a,r*m.b,r*m.c,r*m.d,r*x,r*y);
+  PinballRuntimeImages.draw(c,image,0,0,width,height);
+ }
+ dispose(){this.viewport.dispose();}
+}
+;
 function renderCh8End(ms){
   const scale=storyWidth/940;
   document.querySelector('#ch8-end-world').style.transform=`scale(${scale})`;
@@ -4523,13 +5704,15 @@ function renderCh8End(ms){
 function render(elapsed){document.querySelector('#ch8-end-story').hidden=false;renderCh8End(elapsed-ch8End);}
 ;
 // Asset lifetimes follow the same scene boundaries used by the renderer.
+// The ending vignette has a transparent center: retain the sunset until the
+// opaque end card finishes fading in at 45.7s.
 const pirateImageRanges={
  'ch1-start':[['#scene2',scene2Start,scene3Start],['#scene3',scene3Start,scene4Start+1]],
  'ch3-start':[['#shark-arrival,#ch3-comic-panel',sharkStart,ch3FirstStart],['#ch3-first',ch3FirstStart,ch3SecondStart],['#ch3-second',ch3SecondStart,sharkEndStart+1]],
  'ch3-end':[['#shark-end',sharkEndStart,bottleStart],['#bottle-ending',bottleStart,nightStart+1]],
  'ch4-start':[['#night-scene',nightStart,stage4FirstStart],['#stage4-story',stage4FirstStart,victoryStart+1]],
  'ch7-start':[['#ch7-composition',ch7Start,ch7Start+18000],['#ch7-second',ch7Start+16500,ch7Start+32000],['#ch7-third',ch7Start+33000,ch7EndStart+1]],
- 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+37200],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
+ 'ch8-end':[['#ch8-end-world',ch8End,ch8EndStop+1],['#ch8-end-finale',ch8End+15700,ch8End+45700],['#ch8-end-fifth',ch8End+35700,ch8EndStop+1],['#ch8-end-sixth',ch8End+44200,ch8EndStop+1]]
 };
 ;
 const previewMode=new URLSearchParams(location.search).has('preview');
@@ -4575,7 +5758,8 @@ function playSound(sound,volume){
  const warn=()=>{if(id===playId&&playing&&!previewMode)requestPlayback();};
  try{sound.currentTime=0;sound.volume=volume;Promise.resolve(sound.play()).catch(warn);}catch{warn();}
 }
-function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);}
+const imageViewports=[...phone.querySelectorAll('#scene,#scene5,#hooked,#night-island,#stage4-first,#stage4-grin,#stage4-scope,#stage4-map')].map(image=>new StoryImageViewport(image));
+function draw(elapsed){lastElapsed=Math.min(elapsed,playbackEnd-.01);render(lastElapsed);for(const camera of imageViewports)camera.render();}
 function completeStory(skipped=false){
  if(nextTimer){clearTimeout(nextTimer);nextTimer=0;}
  awaitingNext=false;nextButton.hidden=true;
@@ -4661,7 +5845,7 @@ document.querySelector('#start').addEventListener('click',()=>play());
 
 document.querySelectorAll('[data-chapter]').forEach(button=>button.addEventListener('click',()=>play(button.dataset.chapter)));
 window.addEventListener('resize',()=>draw(lastElapsed));
-window.addEventListener('pagehide',()=>{++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
+window.addEventListener('pagehide',()=>{for(const camera of imageViewports)camera.dispose();++playId;cancelAnimationFrame(raf);if(nextTimer)clearTimeout(nextTimer);stopSounds();});
 window.viewReady=storyImages.prepare(chapters[activeChapter][0]).then(()=>{storyImages.commit(chapters[activeChapter][0]);}).then(()=>{if(!playId&&!previewMode)draw(chapters[activeChapter][0]);});
 window.viewReady.catch(()=>showError('章節圖片載入失敗，請確認素材路徑。'));
 window.viewAPI={play,prepare:ms=>storyImages.seek(chapters[activeChapter][0]+ms),render:ms=>draw(chapters[activeChapter][0]+ms),get duration(){return (playbackEnd-chapters[activeChapter][0])/1000},suspend(){resumeStory=playing;playing=false;cancelAnimationFrame(raf);stopSounds();},resume(){if(!resumeStory)return;resumeStory=false;playing=true;start=performance.now()-lastElapsed;raf=requestAnimationFrame(tick);}};

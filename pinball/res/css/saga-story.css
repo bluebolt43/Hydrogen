@@ -14,6 +14,8 @@
 #ch6-world .shore-looking{left:0;bottom:0;width:70%}#ch6-world .raven-thought{left:38%;top:44%;width:44%}
 #ch6-world .cat{left:51.2%;bottom:12%;width:44.5%}
 #ch6-world .smoke{left:14%;top:31%;width:120%;transform-origin:50% 60%}
+#ch6-world[data-state="confess"] .bun,#ch6-world[data-state="help"] .bun{left:46%;top:37%;width:40%}
+#ch6-world[data-state="idea"] .idea{left:6%;top:31%;width:72%}
 #ch6-world .rescue-scene{left:7%;bottom:13%;width:86%;height:auto}
 #ch6-world .ch8-companions{inset:0;width:100%;height:100%;object-fit:fill}
 #end-curtain{position:absolute;inset:0;display:grid;place-items:center;background:#000;color:#f5ead4;z-index:20;pointer-events:none}
@@ -45,3 +47,6 @@ body{display:grid;place-items:center}#phone{position:relative;width:min(100vw,56
 #puppy-memory .tooth-smile,#puppy-memory .tooth-cry{left:22%;top:4%;width:66%}
 
 #ch2-world aside.request{position:absolute;aspect-ratio:4/3;background:#fff1d8;border:2px solid #66472e;border-radius:50%;box-sizing:border-box}#ch2-world aside.request::after{content:"";position:absolute;left:19%;bottom:-10%;width:15%;height:22%;background:#fff1d8;border-right:2px solid #66472e;border-bottom:2px solid #66472e;transform:skew(-24deg) rotate(30deg)}#ch2-world aside.request img{position:absolute;left:10%;top:-18%;width:80%;height:118%;object-fit:contain;z-index:1}
+
+/* Keep layout for the viewport renderer without allocating a zoomed compositor surface. */
+#camera.viewport-source{visibility:hidden;will-change:auto}

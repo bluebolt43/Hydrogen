@@ -34,14 +34,16 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   if(this.present&&!this.defeated)return;
   const chooseIndex=()=>data.mode==='boss'?Number(data.stage)-1:data.mode==='free'?Math.floor(Math.random()*this.data.bosses.length):(this.defeated?(this.typeIndex+1)%this.data.bosses.length:this.typeIndex);
   let index=this.theme.startsWith('touhou')?chooseIndex():undefined;
-  if(!data.skipWarning){this.warning=true;this.phase();if(this.theme.startsWith('touhou'))this.report('boss-warning',{stage:index+1});await this.wait(1200);this.warning=false;this.phase();}
+  if(!data.skipWarning){this.warning=true;this.phase();if(this.theme.startsWith('touhou'))this.report('boss-warning',{stage:index+1});await this.wait(1200,true);this.warning=false;this.phase();}
   await this.curtains(true);
   index??=chooseIndex();if(!this.data.bosses[index])throw Error('Unknown '+this.theme+' stage '+data.stage);
   await this.load(sources(this.data.bosses[index]));
   if(this.theme==='steampunk')await this.load([this.data.backgrounds[this.data.bosses[index].background||0].src]);
   if(data.background)await this.load([data.background]);
   if(token!==this.generation){const error=new Error('Stale theater command');error.name='AbortError';throw error;}
-  this.typeIndex=index;this.level=index+1;this.configure();this.entryBackground=data.background;this.present=true;this.phase();
+  this.typeIndex=index;this.level=index+1;this.configure();this.entryBackground=data.background;
+  if(this.theme==='steampunk'&&this.level>1)for(const actor of this.actorStates)actor.opacity=0;
+  this.present=true;this.phase();
   await this.prepareSprites();
   if(this.theme.startsWith('touhou'))this.report('boss-stage',{stage:this.level});
   await this.curtains(false);
@@ -128,7 +130,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   if(this.level===8)return this.health[1]||this.health[2]?[1,2].filter(i=>this.health[i]>0).sort((a,b)=>this.health[a]-this.health[b]):live;
   return c.targetOrder?c.targetOrder.filter(i=>this.health[i]>0):live.sort((a,b)=>this.health[a]-this.health[b]);
  }
- async damage(amount){
+ async damage(amount,defeatSound=true){
   const previous=[...this.health],order=this.targetOrder();if(this.theme==='steampunk'&&this.level===8&&(this.health[1]||this.health[2]))order.push(0);
   for(const i of order){const hit=Math.min(amount,this.health[i]);this.health[i]-=hit;amount-=hit;if(!amount)break;}
   this.hp=this.health.reduce((a,b)=>a+b,0);this.defeated=!this.hp;
@@ -137,7 +139,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   await Promise.all(lost);this.heartLayoutCounts=null;
   for(let i=0;i<this.health.length;i++)if(previous[i]!==this.health[i]){
    const a=this.actorStates[i];
-   if(!this.health[i]){if(this.defeated&&this.theme.startsWith('touhou'))this.report('boss-stage',{stage:this.level,defeated:true});this.sound('explosion');const b=this.enemyBox(i),distance=this.theme==='saga'||this.theme==='space'&&this.level===8?0:this.theme==='steampunk'?b[3]*1.8:b[3]*.15;await this.animate(a,[{opacity:1,y:a.y},{opacity:0,y:a.y+distance,angle:this.theme==='steampunk'?22:a.angle}],this.theme==='saga'?700:650);a.visible=false;}
+   if(!this.health[i]){if(this.defeated&&this.theme.startsWith('touhou'))this.report('boss-stage',{stage:this.level,defeated:true});if(defeatSound)this.sound('explosion');const b=this.enemyBox(i),distance=this.theme==='saga'||this.theme==='space'&&this.level===8?0:this.theme==='steampunk'?b[3]*1.8:b[3]*.15;await this.animate(a,[{opacity:1,y:a.y},{opacity:0,y:a.y+distance,angle:this.theme==='steampunk'?22:a.angle}],this.theme==='saga'?700:650);a.visible=false;}
    else if(this.theme==='saga'){const state=this.hp*100<=this.maxHp*34?2:this.hp*100<=this.maxHp*67?1:0;if(state!==this.stateIndex){await this.animate(a,[{flipAngle:0},{flipAngle:90}],500);this.stateIndex=state;await this.animate(a,[{flipAngle:-90},{flipAngle:0}],500);}}
    else if(this.theme==='space'&&!this.enemy.ships){const phases=this.enemy.phases||this.enemy.damageStates||[],floor=()=>phases.slice(this.phaseIndex+1).reduce((n,p)=>n+p.health,0);while(this.phaseIndex<phases.length-1&&this.hp<=floor()){await this.animate(a,[{flipAngle:0},{flipAngle:90}],160);this.phaseIndex++;this.phase();await this.animate(a,[{flipAngle:-90},{flipAngle:0}],160);}}
   }
@@ -157,7 +159,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
  centered(src,x,y,w,h=w,layer=6){const e=this.sprite(src,w,layer);e.contain=!src.startsWith('canvas:');e.height=h;e.x=x-w/2;e.y=y-h/2;return e;}
  async ring(x,y,w=72){const e=this.centered(this.primitive('ring'),x,y,w);await this.animate(e,[{sx:.2,sy:.2,opacity:1},{sx:1.5,sy:1.5,opacity:0}],300);this.remove(e);}
  async overlay(color,frames,duration){const e=this.centered(this.primitive(color),180,this.height/2,360,this.height,8);await this.animate(e,frames,duration);this.remove(e);}
- async projectile(src,x,y,width,duration=1100,delay=0){const e=this.centered(src,180,this.height+width*.6,width),p=(cx,cy,s,a)=>pose(cx-width/2,cy-width/2,s,a),apex=this.height-Math.min(this.height*.4,360*.19);await this.animate(e,[{...p(180,this.height+width*.6,1,0),offset:0},{...p(180,apex,1,0),offset:.16,easing:'ease-in'},{...p(180,apex,1,0),offset:.48},{...p((180+x)/2,Math.min(apex,y)-25,.56,324),offset:.8},{...p(x,y,.18,720),offset:1}],duration,'linear',delay);this.remove(e);}
+ async projectile(src,x,y,width,duration=1100,delay=0,startX=180){const e=this.centered(src,startX,this.height+width*.6,width),p=(cx,cy,s,a)=>pose(cx-width/2,cy-width/2,s,a),apex=this.height-Math.min(this.height*.4,360*.19);await this.animate(e,[{...p(startX,this.height+width*.6,1,0),offset:0},{...p(startX,apex,1,0),offset:.16,easing:'ease-in'},{...p(startX,apex,1,0),offset:.48},{...p((startX+x)/2,Math.min(apex,y)-25,.56,324),offset:.8},{...p(x,y,.18,720),offset:1}],duration,'linear',delay);this.remove(e);}
  async attack(command){
   const kind={ball:'lv1',barrel:'lv2',pirates:'lv3',airdrop:'lv3',kraken:'lv4'}[command]||command;if(!/^lv[1-4]$/.test(kind))throw Error('Unknown '+this.theme+' attack '+command);
   if(this.theme.startsWith('touhou'))await this.attackTouhou(kind);
@@ -175,10 +177,11 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
  }
  async attackSaga(kind){
   const a=this.data.attacks[kind],b=this.enemyBox(),x=kind==='lv4'?180:b[0]+b[2]/2,y=kind==='lv4'?81:Math.max(25,Math.min(b[1]+b[3]*.4,this.height*.85));
-  await Promise.all([a.src,a.secondarySrc].filter(Boolean).map((src,i)=>this.projectile(src,x+(a.secondarySrc?(i?15:-15):0),y,360*a.width/100)));
+  const spread=kind==='lv2'?360*.12:0;
+  await Promise.all([a.src,a.secondarySrc].filter(Boolean).map((src,i)=>{const offset=i?spread:-spread;return this.projectile(src,x+offset*.35,y,360*a.width/100,1100,0,180+offset);}));
   if(kind==='lv3'){this.sound('electric-charge');const e=this.centered(this.data.electricSrc,x,y,360*.82,this.height*.92);await this.animate(e,[{opacity:0,sx:.05,sy:.05},{opacity:.32,sx:.35,sy:.35,offset:.35},{opacity:.8,sx:1,sy:1}],1500,'ease-out');this.remove(e);const burst=this.centered(this.data.electricBurstSrc,x,y,360*.92,this.height);await this.animate(burst,[{opacity:0,sx:.25,sy:.25},{opacity:1,sx:1,sy:1,offset:.3},{opacity:0,sx:1.15,sy:1.15}],650);this.remove(burst);}
   if(kind==='lv4'){await this.overlay('shade',[0,1,.12,1,.12,1,.12,1].map(opacity=>({opacity})),900);this.sound('judgment');const bolt=this.centered(this.data.lightningSrc,180,43.2,86.4);bolt.contain=false;await this.animate(bolt,[{sy:0,opacity:0},{sy:1,opacity:1}],180);await this.wait(220);await this.animate(bolt,[{opacity:1},{opacity:0}],180);this.remove(bolt);await this.wait(250);}
-  for(let i=0;i<(kind==='lv2'?2:1);i++){this.sound('explosion');await Promise.all([this.damage(kind==='lv2'?1:a.damage),kind==='lv3'?Promise.resolve():this.smoke(x+(kind==='lv2'?(i?15:-15):0),y)]);}
+  for(let i=0;i<(kind==='lv2'?2:1);i++){this.sound('explosion');await Promise.all([this.damage(kind==='lv2'?1:a.damage),kind==='lv3'?Promise.resolve():this.smoke(x+(i?spread:-spread)*.35,y)]);}
  }
  async enterSteam(){
   const stage=this.level;
@@ -190,7 +193,7 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
  async attackSteam(kind){
   const art=this.data.attacks,b=this.enemyBox(this.targetOrder()[0]||0),x=b[0]+b[2]/2,y=b[1]+b[3]/2,damage=Number(kind.slice(-1));
   if(kind==='lv1'){const e=this.centered(art.gun,180,this.height*.65,342,this.height*1.1);this.sound('machine-gun');const hit=this.damage(1);for(let i=0;i<6;i++)await this.animate(e,[{opacity:1},{opacity:0}],95);await hit;this.remove(e);await this.ring(x,y);}
-  if(kind==='lv2'){const shell=this.centered(this.primitive('shell'),180,this.height*.96,9);await this.animate(shell,[{y:shell.y,sx:2,sy:2},{y:this.height*.5,sx:.6,sy:.6}],350);this.remove(shell);this.sound('explosion');await Promise.all([this.damage(1),this.smoke(180,this.height*.5)]);this.sound('explosion');await Promise.all([this.damage(1),this.smoke(180,this.height*.5)]);}
+  if(kind==='lv2'){const shell=this.centered(this.primitive('shell'),180,this.height*.96,9);await this.animate(shell,[{y:shell.y,sx:2,sy:2},{y:this.height*.5,sx:.6,sy:.6}],350);this.remove(shell);this.sound('explosion');await Promise.all([this.damage(1,false),this.smoke(180,this.height*.5)]);this.sound('explosion');await Promise.all([this.damage(1,false),this.smoke(180,this.height*.5)]);}
   if(kind==='lv3'){await this.projectile(art.mine,180,this.height*.5,100.8,720);this.sound('electric-charge');const e=this.centered(art.electric,180,this.height*.5,295.2,this.height*.92);await this.animate(e,[{opacity:0,sx:.05,sy:.05},{opacity:.32,sx:.35,sy:.35,offset:.35},{opacity:.8,sx:1,sy:1}],1500);this.sound('explosion');await Promise.all([this.damage(damage),this.animate(e,[{opacity:.8},{opacity:0}],220),this.explosion(art.explosion,180,this.height*.5,331.2,this.height,650)]);this.remove(e);}
   if(kind==='lv4'){const shade=this.centered(this.primitive('shade'),180,this.height/2,360,this.height,7);await this.animate(shade,[{opacity:0},{opacity:.7}],300);this.sound('judgment');const beam=this.centered(art.beam,180,this.height*.5,75,this.height*1.5,8);await this.animate(beam,[{sy:0},{sy:1}],450);const flash=this.centered(this.primitive('white'),180,this.height/2,360,this.height,9);await this.animate(flash,[{opacity:0,sx:.004},{opacity:.35,sx:.5,offset:.45},{opacity:1,sx:1}],1400);await this.damage(4);await this.wait(300);this.remove(beam);this.remove(shade);await this.animate(flash,[{opacity:1},{opacity:0}],800);this.remove(flash);}
  }
@@ -199,9 +202,16 @@ class PlayTheaterCanvas extends root.PirateTheaterCanvas{
   const b=this.enemyBox(this.targetOrder()[0]||0),x=b[0]+b[2]/2,y=this.form().core?b[1]+b[3]*this.form().core.y:this.height*.56,art=this.data.attacks;
   if(kind==='lv1'){for(let i=0;i<6;i++){this.sound('space-beam');const fromX=360*(i%2?.58:.42),fromY=this.height*1.1,dx=x-fromX,dy=y-fromY,length=Math.hypot(dx,dy),e=this.sprite(this.primitive('beam'),length,6,[0,.5]);e.height=4;e.x=fromX;e.y=fromY-2;e.angle=Math.atan2(dy,dx)*180/Math.PI;await this.animate(e,[{opacity:0,sx:0},{opacity:1,sx:1,offset:.1},{opacity:0,sx:1}],95);this.remove(e);}}
   if(kind==='lv2'){const e=this.centered(art.lv2.src,180,this.height*1.35,64.8);await this.animate(e,[{opacity:0},{opacity:1,y:this.height*.7-32.4}],1100);await this.animate(e,[{x:e.x,y:e.y,angle:0,sx:1,sy:1},{x:(180+x)/2-32.4,y:Math.min(this.height*.7,y)-54-32.4,angle:315,sx:.75,sy:.75,offset:.55},{x:x-32.4,y:y-32.4,angle:720,sx:.35,sy:.35}],850,'ease-in');this.remove(e);this.sound('explosion');await this.smoke(x,y,2);}
-  if(kind==='lv3')await Promise.all([0,1,2].map(async i=>{await this.projectile(art.lv3.src,x+(i-1)*18,y,82.8,720,i*95);this.sound('explosion');await Promise.all([this.smoke(x+(i-1)*18,y),this.ring(x,y)]);}));
+  if(kind==='lv3'){
+   let remaining=3;const targets=this.targetOrder().filter(index=>{if(remaining<=0)return false;remaining-=this.health[index];return true;});
+   await Promise.all([0,1,2].map(async i=>{
+    const box=this.enemyBox(targets[i%targets.length]),spread=i-1,hitX=box[0]+box[2]/2+(targets.length===1?spread*box[2]*.18:0),hitY=box[1]+box[3]*(this.form().core?.y??.5);
+    await this.airdrop(art.lv3.src,180+spread*72,hitX,hitY,82.8,(i%2?-1:1)*720,i*95);
+    this.sound('explosion');await Promise.all([this.smoke(hitX,hitY),this.ring(hitX,hitY)]);
+   }));
+  }
   if(kind==='lv4'){const e=this.centered(art.lv4.src,180,this.height/2,360,this.height);e.contain=false;e.cover=true;await this.animate(e,[{opacity:0},{opacity:1}],700);await this.wait(250);const hole=this.centered(this.holeRaster(.9),180,this.height/2,792,792,7);hole.maskScale=.9;await this.animate(hole,[{opacity:0,maskScale:.9,angle:0},{opacity:.8,maskScale:.45,angle:-130,offset:.5},{opacity:.8,maskScale:0,angle:-300}],1600,'ease-in');this.remove(e);await this.wait(250);this.sound('explosion');await this.explosion(this.data.effects.explosion,180,this.height/2,360,this.height,900);await this.animate(hole,[{opacity:1},{opacity:0}],250);this.remove(hole);}
-  await this.ring(x,y);if(kind==='lv1')this.sound('metal');await this.damage(Number(kind.slice(-1)));
+  if(kind!=='lv3')await this.ring(x,y);if(kind==='lv1')this.sound('metal');await this.damage(Number(kind.slice(-1)));
  }
 }
 root.PlayTheaterCanvas=PlayTheaterCanvas;

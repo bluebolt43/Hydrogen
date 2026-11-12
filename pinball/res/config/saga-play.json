@@ -533,97 +533,97 @@
     },
     {
       "id": "art-026",
-      "src": "res/hd_img/saga/saga-item-shop.png",
+      "src": "res/hd_img/saga/saga-item-shop-sign.png",
       "x": 157,
       "y": 146,
-      "width": 16,
-      "height": 15.011236,
+      "width": 22,
+      "height": 22,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        26,
-        23,
-        1246,
-        1169
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "bind": "",
-      "runtimeSource": "res/img/saga/saga-item-shop.png",
+      "runtimeSource": "res/img/saga/saga-item-shop-sign.png",
       "animation": {
         "enabled": true,
         "effect": "shake",
-        "duration": 0.65,
-        "amplitude": 1.8,
+        "duration": 0.75,
+        "amplitude": 2.8,
         "trigger": {
           "kind": "target",
-          "source": "target-004"
+          "source": "target-001"
         }
       }
     },
     {
       "id": "art-027",
-      "src": "res/hd_img/saga/saga-inn.png",
+      "src": "res/hd_img/saga/saga-inn-sign.png",
       "x": 113,
       "y": 155,
-      "width": 16,
-      "height": 14.877651,
+      "width": 22,
+      "height": 22,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        67,
-        27,
-        1226,
-        1140
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "bind": "",
-      "runtimeSource": "res/img/saga/saga-inn.png",
+      "runtimeSource": "res/img/saga/saga-inn-sign.png",
       "animation": {
         "enabled": true,
         "effect": "shake",
-        "duration": 0.65,
-        "amplitude": 1.8,
+        "duration": 0.75,
+        "amplitude": 2.8,
         "trigger": {
           "kind": "target",
-          "source": "target-005"
+          "source": "target-002"
         }
       }
     },
     {
       "id": "art-028",
-      "src": "res/hd_img/saga/saga-quest-house.png",
+      "src": "res/hd_img/saga/saga-quest-house-sign.png",
       "x": 74,
       "y": 260,
-      "width": 16,
-      "height": 13.834684,
+      "width": 22,
+      "height": 22,
       "angle": 0,
       "opacity": 1,
       "crop": [
-        52,
-        76,
-        1234,
-        1067
+        0,
+        0,
+        1254,
+        1254
       ],
       "plane": "lower",
       "frames": 1,
       "frameAxis": "x",
       "state": "static",
       "bind": "",
-      "runtimeSource": "res/img/saga/saga-quest-house.png",
+      "runtimeSource": "res/img/saga/saga-quest-house-sign.png",
       "animation": {
         "enabled": true,
         "effect": "shake",
-        "duration": 0.65,
-        "amplitude": 1.8,
+        "duration": 0.75,
+        "amplitude": 2.8,
         "trigger": {
           "kind": "target",
-          "source": "target-006"
+          "source": "target-003"
         }
       }
     },
@@ -2155,7 +2155,7 @@
       "attack": "lv1"
     },
     {
-      "id": "target-004",
+      "id": "target-001",
       "type": "target",
       "layer": "lower",
       "x": 156.775,
@@ -2164,13 +2164,13 @@
       "targetGroup": {
         "id": "targetGroup-005",
         "members": [
-          "target-004"
+          "target-001"
         ],
         "action": "boss"
       }
     },
     {
-      "id": "target-005",
+      "id": "target-002",
       "type": "target",
       "layer": "lower",
       "x": 113.299,
@@ -2179,7 +2179,7 @@
       "targetGroup": {
         "id": "targetGroup-003",
         "members": [
-          "target-005"
+          "target-002"
         ],
         "action": "boss"
       }
@@ -3512,7 +3512,7 @@
       "thickness": 5
     },
     {
-      "id": "target-006",
+      "id": "target-003",
       "type": "target",
       "layer": "lower",
       "x": 74,
@@ -3521,7 +3521,7 @@
       "targetGroup": {
         "id": "targetGroup-004",
         "members": [
-          "target-006"
+          "target-003"
         ],
         "action": "boss"
       }
