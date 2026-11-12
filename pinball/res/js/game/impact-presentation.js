@@ -15,12 +15,16 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
  let cannonAt=-Infinity;
  let comboFlashAt=-Infinity,comboFlash=null,comboFlashPending=null;
  let combo=0,lastHit=-10,popAt=-10,shakeAt=-10,shakePower=0;
- let hudText=null,hudPlacement=null,hudFrame=null;
+ let hudText=null,hudPlacement=null,hudFrame=null,hudPreparedKey=null;
  const hudRasters=new Map();
  const intersects=(a,b)=>a[0]<b[2]&&b[0]<a[2]&&a[1]<b[3]&&b[1]<a[3];
  const fixedLayout=renderer.observedArt?.has(artLayers);
+ function comboDescription(count){
+  const size=Math.min(28,13+Math.log2(count)*2.5);
+  return {count,text:String(count),size,font:'bold '+size+'px sans-serif',multiplier:'×'+multiplier(count)};
+ }
  function comboText(){
-  if(!hudText||hudText.count!==combo){const size=Math.min(28,13+Math.log2(combo)*2.5);hudText={count:combo,text:String(combo),size,font:'bold '+size+'px sans-serif',multiplier:'×'+multiplier(combo)};}
+  if(!hudText||hudText.count!==combo)hudText=comboDescription(combo);
   return hudText;
  }
  const multiplier=n=>n>=30?4:n>=20?3:n>=10?2:n>=5?1.5:1;
@@ -239,11 +243,43 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   if(previous)previous.canvas.width=previous.canvas.height=0;
   const result={key,canvas,width:canvas.width/scale,height:canvas.height/scale};hudRasters.set(id,result);return result;
  }
+ function hudGlyphs(label){
+  return [['label','COMBO','bold 9px sans-serif',9,true],['number',label.text,label.font,label.size,true],['multiplier',label.multiplier,'bold 9px sans-serif',9,false]];
+ }
+ async function prepareHudText(scale){
+  const hud=game.g.gameplay?.comboHud||{},outline=hud.outline||'#142735',key=JSON.stringify([scale,hud.color,outline]);
+  const prime=count=>hudGlyphs(comboDescription(count)).map(([id,text,font,size,stroke])=>hudRaster(id,text,font,size,hud.color||(count>=10?'#ffe39a':'#c6f5ff'),outline,scale,stroke));
+  if(hudPreparedKey!==key){
+   const canvas=document.createElement('canvas'),brush=canvas.getContext('2d');
+   try{
+    // The font reaches its 28px cap at Combo 64. Prepare each finite size
+    // without advancing the game; keep only the existing three HUD rasters.
+    for(let count=2;count<=64;count++){
+     for(const raster of prime(count)){
+      if(canvas.width<raster.canvas.width)canvas.width=raster.canvas.width;
+      if(canvas.height<raster.canvas.height)canvas.height=raster.canvas.height;
+      brush.drawImage(raster.canvas,0,0);
+     }
+     // Main suspends the view's frame/timer clock until loading completes.
+     if(count%8===0)await new Promise(resolve=>{const channel=new MessageChannel();channel.port1.onmessage=()=>{channel.port1.close();channel.port2.close();resolve();};channel.port2.postMessage(null);});
+    }
+    // Larger Combo values share the capped font, including every digit.
+    const text='0123456789',font=comboDescription(64).font;brush.font=font;
+    canvas.width=Math.ceil((brush.measureText(text).width+8)*scale);canvas.height=Math.ceil(64*scale);
+    brush.setTransform(scale,0,0,scale,4*scale,32*scale);brush.font=font;brush.lineWidth=3;brush.strokeStyle=outline;brush.fillStyle=hud.color||'#ffe39a';brush.strokeText(text,0,0);brush.fillText(text,0,0);
+    hudPreparedKey=key;
+   }finally{canvas.width=canvas.height=0;}
+  }
+  // Loading starts at Combo 0; retain the first visible HUD, or the current
+  // value when preparing a resized game. Neither path changes Combo state.
+  prime(Math.max(2,combo));
+ }
  function prepareHud(scale,bounds){
   clean();const parts=[],damage=[],hud=game.g.gameplay?.comboHud||{},previous=hudFrame;
   let bar=null;
   if(combo>=2){const {cx,cy}=comboAnchor(bounds),label=comboText(),age=Math.max(0,game.time-popAt),pop=age<.3?1+.18*Math.exp(-age*18):1,color=hud.color||(combo>=10?'#ffe39a':'#c6f5ff'),outline=hud.outline||'#142735';
-   for(const [id,text,font,size,y,zoom,stroke] of [['label','COMBO','bold 9px sans-serif',9,cy-25,1,true],['number',label.text,label.font,label.size,cy,pop,true],['multiplier',label.multiplier,'bold 9px sans-serif',9,cy+label.size*.85,1,false]]){
+   for(const [id,text,font,size,stroke] of hudGlyphs(label)){
+    const y=id==='label'?cy-25:id==='number'?cy:cy+label.size*.85,zoom=id==='number'?pop:1;
     const raster=hudRaster(id,text,font,size,color,outline,scale,stroke),w=raster.width*zoom,h=raster.height*zoom;
     parts.push({id,raster,x:cx-w/2,y:y-h/2,w,h,key:raster.key+'|'+cx+'|'+y+'|'+zoom,bounds:[cx-w/2,y-h/2,cx+w/2,y+h/2]});
    }
@@ -273,7 +309,7 @@ function createImpactPresentation(game,artLayers,renderer,{ballsLast=false,colli
   for(const row of floors.values()){
    for(const r of row.rings)ImpactHitEffects.drawRing(gpu,r,game.time,true);
   }
- },update:()=>prepareEffects(true),prepareHud,prepareComboFlash,drawComboFlash(ctx,bounds=game.g.view_box,regions=null,alreadyClipped=false){
+ },update:()=>prepareEffects(true),prepareHud,prepareHudText,prepareComboFlash,drawComboFlash(ctx,bounds=game.g.view_box,regions=null,alreadyClipped=false){
   if(!comboFlashActive())return;
   ctx.save();
   if(!ballsLast)for(const b of game.balls){if(b.state==='drained')continue;ctx.beginPath();ctx.rect(...bounds);ctx.moveTo(b.p[0]+game.physics.ballRadius,b.p[1]);ctx.arc(...b.p,game.physics.ballRadius,0,Math.PI*2);ctx.clip('evenodd');}

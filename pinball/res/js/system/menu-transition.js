@@ -9,7 +9,7 @@ function startMenuTransition(host,from,to,getImage,settings,reverse=false,sound=
  function schedule(){if(pending.length&&!paused&&!disposed&&frame===null)frame=requestAnimationFrame(prepareIncoming);}
  function prepareIncoming(){frame=null;if(paused||disposed)return;try{pending=pending.filter(row=>{if(row.animation.currentTime===null||row.animation.currentTime<row.delay-50)return true;painters.get(row.node)?.();painters.delete(row.node);return false;});}catch(error){rejectPrepared(error);return;}if(!pending.length)resolvePrepared();else schedule();}
  const lookup=getImage,images=new Map();getImage=src=>{if(!images.has(src))images.set(src,lookup(src));return images.get(src);};
- const preload=value=>{if(typeof value==='string'&&value.startsWith('res/img/'))getImage(value);else if(value&&typeof value==='object')Object.values(value).forEach(preload);};preload([from,to]);
+ for(const src of new Set([...SystemLayout.imageSources(from),...SystemLayout.imageSources(to)]))getImage(src);
  const kind=o=>o.type==='frame'?'frame':/system-marker-/.test(o.src)?'system':'title';
  const rank=o=>o.action==='tutorial'?0:Number.isInteger(o.stage)?o.stage:o.action==='endless'?9:10;
  function piece(o,deferred=false){

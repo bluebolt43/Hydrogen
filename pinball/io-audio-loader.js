@@ -60,13 +60,16 @@
   players.clear();document.documentElement.dataset.audioState='ready';
  }
  async function startGame(){
-  for(const node of document.querySelectorAll('script[type="application/x-pinball-pending"]')){
+  const scripts=[...document.querySelectorAll('script[type="application/x-pinball-pending"]')],preloads=new Map();
+  // Download in parallel; execution below still follows the original order.
+  for(const node of scripts)if(node.src){const link=document.createElement('link');link.rel='preload';link.as='script';link.href=node.src;document.head.append(link);preloads.set(node,link);}
+  for(const node of scripts){
    const script=document.createElement('script');
    for(const attr of node.attributes)if(attr.name!=='type'&&attr.name!=='data-pinball-type')script.setAttribute(attr.name,attr.value);
    const type=node.getAttribute('data-pinball-type');if(type)script.type=type;
    script.async=false;script.textContent=node.textContent;
-   const ready=script.src||type==='module'?new Promise((resolve,reject)=>{script.onload=resolve;script.onerror=()=>reject(new Error('Game script could not load'));}):null;
-   node.replaceWith(script);if(ready)await ready;
+   const ready=script.src||type==='module'?new Promise((resolve,reject)=>{script.onload=resolve;script.onerror=()=>reject(new Error('Game script could not load: '+script.src));}):null;
+   node.replaceWith(script);try{if(ready)await ready;}finally{preloads.get(node)?.remove();}
   }
  }
  prepareAudio().catch(error=>{rejectAudio(error);document.documentElement.dataset.audioState='error';console.warn('io audio initialization failed',error);});

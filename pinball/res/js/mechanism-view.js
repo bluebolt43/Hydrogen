@@ -40,9 +40,7 @@ function draw(o,game,ctx,circle){if(!o)return false;if(game.hiddenObjects?.has(o
  ctx.restore();
  return true;
  }
-function drawPostCounts(game,ctx,plane,color='#fff5bb'){
- for(const post of game.configuredPosts?.values()||[]){
-  if(!post.raised||(post.layer==='tavern'?'upper':post.layer)!==plane)continue;
+function drawPostCount(post,ctx,color){
   ctx.save();
   ctx.globalAlpha=1;ctx.setLineDash([]);
   ctx.font='bold '+Math.max(7,Math.min(12,post.radius*1.3))+'px sans-serif';
@@ -51,7 +49,21 @@ function drawPostCounts(game,ctx,plane,color='#fff5bb'){
   ctx.strokeText(String(post.left),...post.center);
   ctx.fillText(String(post.left),...post.center);
   ctx.restore();
+}
+function drawPostCounts(game,ctx,plane,color='#fff5bb'){
+ for(const post of game.configuredPosts?.values()||[]){
+  if(!post.raised||(post.layer==='tavern'?'upper':post.layer)!==plane)continue;
+  drawPostCount(post,ctx,color);
  }
+}
+function preparePostCounts(game,scale,color='#fff5bb'){
+ if(!game.configuredPosts?.size)return;
+ const canvas=document.createElement('canvas');
+ canvas.width=Math.ceil(128*scale);canvas.height=Math.ceil(32*scale);
+ try{
+  const ctx=canvas.getContext('2d');ctx.setTransform(scale,0,0,scale,0,0);
+  for(const post of game.configuredPosts.values())drawPostCount({radius:post.radius,center:[64,16],left:'0123456789'},ctx,color);
+ }finally{canvas.width=canvas.height=0;}
 }
 function status(game){const items=[...(game.configuredPosts?.values()||[])].map(p=>'Center post '+p.id+'：'+(p.raised?'剩 '+p.left+' 次':p.collected.size+'/'+p.sensors.length));
  if(game.gapLock){const gap=game.gapLock;items.push('隙間 '+(gap.active?'多球中':gap.count+'/3 · '+(gap.armed?'開啟':gap.routePending?'首趟進行中':gap.passes?'首趟完成，待再次進入':'待首趟完成')));}
@@ -60,7 +72,7 @@ function status(game){const items=[...(game.configuredPosts?.values()||[])].map(
 function groupStatus(game){return [...[...(game.attackRemaining||[])].filter(([id])=>game.g.mechanisms.attacks[id]&&game.g.mechanisms.attacks[id]!=='none'||game.rolloverGroups?.some(g=>g.id===id&&g.attack!=='none')).map(([id,n])=>id+' 攻擊倒數 '+n),...(game.configuredGroups||[]).map(g=>g.id+' '+(g.action==='unblock'?'解除阻擋 '+g.unlocked+'/'+g.blockers.length+' · Target '+g.collected.size+'/'+g.targets.length:g.collected.size+'/'+g.targets.length)),...(game.rolloverGroups||[]).map(g=>g.id+' '+g.collected.size+'/'+g.members.length)].join(' · ');
  }
 
-const api={draw,drawPostCounts,status,groupStatus};
+const api={draw,drawPostCounts,preparePostCounts,status,groupStatus};
  if(typeof module!=='undefined')module.exports=api;
  else root.MechanismView=api;
 })(globalThis);

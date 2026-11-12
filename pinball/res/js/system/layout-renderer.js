@@ -115,6 +115,16 @@ function titleText(ctx,text,cx,cy,size,maxWidth,arc=0){
  }
  ctx.restore();
 }
+const bossSilhouettes=new WeakMap();
+function bossSilhouette(image){
+ const source=image.currentSrc||image.src,width=image.runtimeWidth??image.naturalWidth,height=image.runtimeHeight??image.naturalHeight;
+ const previous=bossSilhouettes.get(image);
+ if(previous?.source===source&&previous.width===width&&previous.height===height)return previous.canvas;
+ const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
+ const paint=canvas.getContext('2d');drawRuntimeImage(paint,image,0,0,width,height);
+ paint.globalCompositeOperation='source-in';paint.fillStyle='#000';paint.fillRect(0,0,width,height);
+ bossSilhouettes.set(image,{source,width,height,canvas});return canvas;
+}
 function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360,part='all'){
  const textures=part==='all'||part==='over',corner=textures?getImage(o.corner):null,edge=textures?getImage(o.edge):null,w=o.width,h=o.height,t=Math.min(o.edgeWidth,edgeLimit(o)),c=t*4;
  const lockFade=visibility(o).lock?Math.max(0,Math.min(1,o.lockFadeProgress??0)):0;
@@ -132,9 +142,9 @@ function frame(ctx,o,getImage,canvasHeight=640,canvasWidth=360,part='all'){
    ctx.translate(px+o.bossSway*1.26,py);ctx.rotate(o.bossSway*1.1*Math.PI/180);ctx.translate(-px,-py);
   }
   if(key==='foreground'&&darkBoss){
-   ctx.filter='brightness(0)';ctx.globalAlpha=1-bossReveal;
-   drawRuntimeImage(ctx,img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
-   ctx.filter='none';ctx.globalAlpha=bossReveal;
+   ctx.globalAlpha=1-bossReveal;
+   drawRuntimeImage(ctx,bossSilhouette(img),sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
+   ctx.globalAlpha=bossReveal;
   }else if(key==='lockMask')ctx.globalAlpha=Math.max(0,Math.min(1,o.maskAlpha??1))*(1-lockFade);
   if(key!=='foreground'||!darkBoss||bossReveal>0)drawRuntimeImage(ctx,img,sx,sy,sw,sh,o.x+(w-dw)/2+(layer.x??0),o.y+(h-dh)/2+(layer.y??0),dw,dh);
   ctx.restore();
@@ -201,6 +211,22 @@ function draw(ctx,d,getImage){
   else frame(ctx,o,getImage,d.canvas.height,d.canvas.width);
  }
 }
+// Enumerate the same visible image dependencies before allocating scene canvases.
+function imageSources(d){
+ const sources=new Set(),add=src=>{if(src)sources.add(src);};
+ add(d.background?.src);
+ for(const o of d.objects){
+  if(o.type==='image'){add(o.src);continue;}
+  const v=visibility(o);add(o.corner);add(o.edge);add(o.background?.src);add(o.foreground?.src);
+  if(v.lock||o.action==='endless')add(o.lockMask?.src);
+  if(v.marker)add('res/img/card-marker-empty.png');
+  if(v.clear)add('res/img/card-marker-complete.png');
+  if(v.title&&!(o.action==='endless'&&v.lock))add(o.title?.src||'res/img/card-title.png');
+  if(v.lock){const lock=o.lockImage||lockDefaults;add(lock.src);add(lock.badge?.src);}
+  if(v.button)add((o.playButton||buttonDefaults).src);
+ }
+ return [...sources];
+}
 // Static runs are rasterized once, in their original painter order. A moving
 // card interrupts a run between its background and its frame/text overlay.
 function createSceneCache(){
@@ -255,6 +281,6 @@ function createSceneCache(){
  }
  return {prepare,draw:paint,clear,get layout(){return layout;}};
 }
-const api={titleText,visibility,MIN_FRAME,FRAME_HEIGHT_RATIO,applyHeightPreset,widthPresets,applyWidthPreset,edgeLimit,defaults,buttonDefaults,lockDefaults,fixedBackground,lockRect,playButtonRect,validate,draw,frame,createSceneCache};
+const api={imageSources,titleText,visibility,MIN_FRAME,FRAME_HEIGHT_RATIO,applyHeightPreset,widthPresets,applyWidthPreset,edgeLimit,defaults,buttonDefaults,lockDefaults,fixedBackground,lockRect,playButtonRect,validate,draw,frame,createSceneCache};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.SystemLayout=api;
 })(typeof window!=='undefined'?window:globalThis);

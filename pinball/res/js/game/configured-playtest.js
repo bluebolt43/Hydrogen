@@ -685,6 +685,8 @@ async function preprocessPlayGraphics(){
  try{await artRenderer.prepareArtwork(artLayers,canvas.width/view[2]);}finally{artRenderer.brightness=1;}
  await artRenderer.prepareMissionLights(artLayers,canvas.width/view[2],.82,-view[0]*canvas.width/view[2],-view[1]*canvas.width/view[2]);
  await impactPresentation.prepareShadows(canvas.width/view[2]);
+ await impactPresentation.prepareHudText(canvas.width/view[2]);
+ ConfiguredMechanisms.preparePostCounts(game,canvas.width/view[2],spaceTheme?'#000':'#fff5bb');
  artRenderer.refreshDrawTable(game);
  prepareFrameArt();
  const drawPasses=[{plane:'background',items:backgroundBelowBall},{plane:'background',items:backgroundAboveBall}];
