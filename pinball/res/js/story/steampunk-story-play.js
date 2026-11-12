@@ -233,7 +233,7 @@ const StoryImages=(()=>{
   waiters.clear();heldAudio.clear();loading?.remove();
   queue.cancelOwner(owner);
  });
- return {decode,create,release,timeline,domRanges,animationRanges};
+ return {decode,create,release,timeline,domRanges,animationRanges,imageSource:image=>records.get(image)?.loadedURL||image.src};
 })();
 const match=location.pathname.match(/\/steampunk-chapter([1-8])-(start|end)\.html$/);
 if(!match)return;
@@ -457,7 +457,7 @@ function paintRaceSequence(panel,layout,t){
 
   if(hero){const p=clamp((t-timing.hero)/timing.heroMove);hero.style.opacity=t>=timing.hero?exitOpacity:0;hero.style.transform=`translateX(${-160+440*p}%) scaleX(-1)`;}
   panel.querySelector('.race-heart').style.opacity=0;
-  const on=panel.querySelector('[data-race-on]').src,off=layout.assets.find(a=>a.id==='asset-001').src;
+  const on=StoryImages.imageSource(panel.querySelector('[data-race-on]')),off=StoryImages.imageSource(panel.querySelector('[data-race-id="image-001"]'));
   for(const id of ['image-001','image-005','image-003']){
    const lamp=panel.querySelector(`[data-race-id="${id}"]`);
    lamp.src=PinballRuntimeImages.resolve(t>=2.4?on:off);
@@ -493,7 +493,7 @@ function paintRaceSequence(panel,layout,t){
   const flicker=Math.max(0,age)% .62;
   mask.querySelector('[data-engine-short]').style.opacity=age>=0&&(flicker<.08||flicker>.15&&flicker<.22||flicker>.35&&flicker<.4)?1:0;
  }
- const on=panel.querySelector('[data-race-on]').src,off=layout.assets.find(a=>a.id==='asset-001').src;
+ const on=StoryImages.imageSource(panel.querySelector('[data-race-on]')),off=StoryImages.imageSource(panel.querySelector('[data-race-id="image-001"]'));
  for(const id of ['image-001','image-005','image-003'])panel.querySelector(`[data-race-id="${id}"]`).src=PinballRuntimeImages.resolve(t>=1.4?on:off);
  for(const [from,to,blast] of [['image-007','image-006','image-012'],['image-008','image-009','image-013'],['image-010','image-011','image-014']]){
   const a=objects[from],b=objects[to],progress=ease((t-timing.rivals)/timing.rivalMove),drop=clamp((t-timing.drop)/timing.dropDuration);

@@ -166,20 +166,20 @@ body{display:grid;place-items:center}
 
 input,textarea,[contenteditable="true"]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 
-#app-update-dialog{position:absolute;inset:0;margin:auto;width:88%;max-width:340px;box-sizing:border-box;padding:24px;background:radial-gradient(ellipse at top,#583528,#211a20 80%);color:#ffe1a0;border:2px solid #c49a49;border-radius:16px;font:clamp(15px,4.444cqw,20px)/1.5 system-ui,sans-serif;box-shadow:0 12px 48px #000b}
-#app-update-dialog::backdrop{background:#000a}
-#app-update-dialog h2{font-size:1.2em;margin:0 0 16px;text-align:center}
-.app-update-actions{display:flex;gap:12px;margin-top:20px}
-.app-update-actions button{flex:1;min-height:48px;padding:8px;border:1px solid #b99359;border-radius:8px;background:#30212a;color:#f6dfb4;font:inherit;cursor:pointer}
-.app-update-actions [data-update-now]{background:#d8ae60;color:#24170b}
-.app-update-actions button:focus-visible{outline:2px solid #a9d9ff;outline-offset:2px}
+:is(#app-update-dialog,#clear-records-dialog){position:absolute;inset:0;margin:auto;width:88%;max-width:340px;box-sizing:border-box;padding:24px;background:radial-gradient(ellipse at top,#583528,#211a20 80%);color:#ffe1a0;border:2px solid #c49a49;border-radius:16px;font:clamp(15px,4.444cqw,20px)/1.5 system-ui,sans-serif;box-shadow:0 12px 48px #000b}
+:is(#app-update-dialog,#clear-records-dialog)::backdrop{background:#000a}
+:is(#app-update-dialog,#clear-records-dialog) h2{font-size:1.2em;margin:0 0 16px;text-align:center}
+.settings-dialog-actions{display:flex;gap:12px;margin-top:20px}
+.settings-dialog-actions button{flex:1;min-height:48px;padding:8px;border:1px solid #b99359;border-radius:8px;background:#30212a;color:#f6dfb4;font:inherit;cursor:pointer}
+.settings-dialog-actions :is([data-update-now],[data-clear-confirm]){background:#d8ae60;color:#24170b}
+.settings-dialog-actions button:focus-visible{outline:2px solid #a9d9ff;outline-offset:2px}
 
-.language-menu{position:relative;min-width:0;max-width:62%}
-.language-menu summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2.222cqw;border:1px solid #b99359;border-radius:8px;background:#30212a;color:#f6dfb4;cursor:pointer;list-style:none}
-.language-menu summary::-webkit-details-marker{display:none}
-.language-menu summary:focus-visible,.language-options button:focus-visible{outline:2px solid #a9d9ff;outline-offset:2px}
-.language-options{position:absolute;right:0;top:calc(100% + 6px);z-index:5;min-width:160px;padding:4px;border:1px solid #b99359;border-radius:8px;background:#30212a;box-shadow:0 8px 24px #0009}
-.language-options button{position:relative;display:block;width:100%;min-height:44px;padding:8px 34px 8px 12px;border:0;border-radius:6px;background:transparent;color:#f6dfb4;text-align:left;white-space:nowrap;cursor:pointer}
-.language-options button[aria-pressed="true"]{background:#61472b}
-.language-options button[aria-pressed="true"]::after{content:'✓';position:absolute;right:12px}
-.language-options button:hover{background:#584333}
+.settings-menu{position:relative;min-width:0;max-width:62%}
+.settings-menu summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2.222cqw;border:1px solid #b99359;border-radius:8px;background:#30212a;color:#f6dfb4;cursor:pointer;list-style:none}
+.settings-menu summary::-webkit-details-marker{display:none}
+.settings-menu summary:focus-visible,.settings-options button:focus-visible{outline:2px solid #a9d9ff;outline-offset:2px}
+.settings-options{position:absolute;right:0;top:calc(100% + 6px);z-index:5;min-width:160px;padding:4px;border:1px solid #b99359;border-radius:8px;background:#30212a;box-shadow:0 8px 24px #0009}
+.settings-options button{position:relative;display:block;width:100%;min-height:44px;padding:8px 34px 8px 12px;border:0;border-radius:6px;background:transparent;color:#f6dfb4;text-align:left;white-space:nowrap;cursor:pointer}
+.settings-options button[aria-pressed="true"]{background:#61472b}
+.settings-options button[aria-pressed="true"]::after{content:'✓';position:absolute;right:12px}
+.settings-options button:hover{background:#584333}

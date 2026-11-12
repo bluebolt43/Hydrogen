@@ -168,7 +168,7 @@ function createGame(Base,P){return class ConfiguredGame extends Base{
    this.emit('object-effect',{source,object:rule.object,action:rule.action});
   }
  }
- capture(...args){if(args[0]===this.g.gameplay?.touhouGap?.hole&&(!this.gapLock?.armed||this.gapBusy()))return;const playing=this.ball.state==='playing',start=this.events.length;super.capture(...args);if(playing&&this.ball.state==='captured'&&this.held?.id===args[0]&&!this.events.slice(start).some(e=>e.type==='object-effect'&&e.source===args[0]))this.applyObjectEffect(args[0]);}
+ capture(...args){if(args[0]===this.g.gameplay?.touhouGap?.hole&&(!this.gapLock?.armed||this.gapBusy()))return;const playing=this.ball.state==='playing',start=this.events.length;args[5]+=this.socketsById.get(args[0])?.captureBonus||0;super.capture(...args);if(playing&&this.ball.state==='captured'&&this.held?.id===args[0]&&!this.events.slice(start).some(e=>e.type==='object-effect'&&e.source===args[0]))this.applyObjectEffect(args[0]);}
  // Rule state.
  resetTargets(){
  for(const part of this.objectGeometryOriginal?.keys()||[])this.restoreObjectGeometry(part);

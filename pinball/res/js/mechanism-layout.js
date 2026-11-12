@@ -153,6 +153,11 @@ function prepare(layout,g){
  for(const r of rolloverGroups)attackCounts[r.id]=r.attackCount??1;
  for(const [id,count] of Object.entries(attackCounts))if(!Number.isInteger(count)||count<1||count>99)throw Error('攻擊倒數需為 1～99：'+id);
  const targetAttackSources={};for(const o of objects.filter(o=>o.type==='target'&&o.attack&&o.attack!=='none'))for(const p of parts(g).filter(p=>p.kind==='target'&&(p.id===o.id||p.id.startsWith(o.id+'-'))))targetAttackSources[p.id]=o.id;
+ for(const object of objects.filter(o=>o.captureBonus!==undefined)){
+  const socket=parts(g).find(p=>p.id===object.id&&p.kind==='socket');
+  if(!['hole','blockhole'].includes(object.type)||!Number.isSafeInteger(object.captureBonus)||object.captureBonus<0)throw Error('入洞加分設定不合法：'+object.id);
+  if(socket)socket.captureBonus=object.captureBonus;
+ }
  g.mechanisms={posts:configs,groups,attacks,rolloverGroups,attackCounts,targetAttackSources};
  return g;
 }

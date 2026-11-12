@@ -16,7 +16,7 @@ try{localStorage.setItem('pinball-physics-model','legacy');}catch{}
 game.config.physicsModel='legacy';
 game.storyMode=!!bossStage&&!tutorialMode;
 game.spaceEndlessMode=['sci-fi','space','cosmic-dessert'].includes(PLAYTEST_THEME)&&!bossStage&&!tutorialMode&&!new URLSearchParams(location.search).has('editor');
-game.disableBossTargetLife=['touhou1','touhou2','norse'].includes(PLAYTEST_THEME);
+game.disableBossTargetLife=['pirate','touhou1','touhou2','norse'].includes(PLAYTEST_THEME);
 game.targetRehitRequiresExit=PLAYTEST_THEME==='touhou1';
 game.preserveTableOnDrain=!!bossStage;
 game.scoringEnabled=!bossStage;
@@ -179,9 +179,10 @@ let floatingRewards=[];
 let screenDimAlpha=0,screenDimTime=null,screenDimAnchor=null,screenDimDrawn=false;
 function updateScreenDimEvent(e){if(['new-game','drain','ball-saved','ready','game-over'].includes(e.type)){screenDimAlpha=0;screenDimTime=null;screenDimAnchor=null;}}
 function updateScreenDim(){
- if(controls.screenMask===false){screenDimAlpha=0;screenDimTime=game.time;screenDimAnchor=null;screenDimDrawn=false;artRenderer.beforeDraw=null;return;}
+ if(controls.screenMask===false){screenDimAlpha=0;screenDimTime=theaterCanvas.clock/1000;screenDimAnchor=null;screenDimDrawn=false;artRenderer.beforeDraw=null;return;}
  const effect=controls.art?maskCandidates.find(o=>IndicatorLights.maskActive(o,game)):null;
- const now=game.time,dt=screenDimTime===null?0:Math.max(0,now-screenDimTime);screenDimTime=now;
+ // Theater attacks freeze physics; their shade must keep fading with the animation.
+ const now=theaterCanvas.clock/1000,dt=screenDimTime===null?0:Math.max(0,now-screenDimTime);screenDimTime=now;
  screenDimAlpha=effect?Math.min(.2,screenDimAlpha+dt*.2/.4):Math.max(0,screenDimAlpha-dt*.2/.6);
  if(effect)screenDimAnchor=effect;
  screenDimDrawn=false;

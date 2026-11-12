@@ -4697,9 +4697,7 @@
           "target-011"
         ],
         "bumpers": [
-          "circle-024",
-          "circle-025",
-          "circle-026"
+          "circle-023"
         ],
         "repeatExtraBall": true
       }
@@ -5059,7 +5057,8 @@
       "x": 187,
       "y": 325,
       "angle": 0,
-      "attractionRadius": 62
+      "attractionRadius": 62,
+      "captureBonus": 10000
     },
     {
       "id": "oneway-015",

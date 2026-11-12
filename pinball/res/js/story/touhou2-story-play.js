@@ -233,7 +233,7 @@ const StoryImages=(()=>{
   waiters.clear();heldAudio.clear();loading?.remove();
   queue.cancelOwner(owner);
  });
- return {decode,create,release,timeline,domRanges,animationRanges};
+ return {decode,create,release,timeline,domRanges,animationRanges,imageSource:image=>records.get(image)?.loadedURL||image.src};
 })();
 const match=location.pathname.match(/\/touhou2-chapter([1-8])-(start|end)\.html$/);
 if(!match)return;
